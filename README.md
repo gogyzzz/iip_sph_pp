@@ -2,7 +2,21 @@
 
 C library for speech preprocessing.
 
+## TODO
++ OpenMP
++ Complex 
+
+## Requirement
+cmake 3.10 or higher
+
 ## Installation
+
+### CMAKE 3.10.3
++ ubuntu  
+Use ubuntu\_cmake\_3\_10\_3\_installer.sh to install proper cmake  
++ Windows
+[32bit installer](https://cmake.org/files/v3.10/cmake-3.10.3-win64-x64.msi)  
+[64bit installer](https://cmake.org/files/v3.10/cmake-3.10.3-win32-x86.msi)    
 
 ## Schedule
 
