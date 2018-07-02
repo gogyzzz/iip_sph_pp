@@ -23,14 +23,6 @@
 #define NTYPE 1
 
 
-#define CTYPE double
-/*
- * If CTYPE = float  ->  set NTCYPE = 0
- * If CTYPE = double ->  set NCTYPE = 1
- *
- * */
-#define NCTYPE 1
-
 /************************************
  *여기까지 설정해주세요
  *********************************** */
@@ -54,15 +46,15 @@ typedef struct MAT
 	UINT d2;
 }MAT;
 
-typedef struct COMPLEX
+typedef struct CTYPE
 {
-	CTYPE re;
-	CTYPE im;
-}COMPLEX;
+	DTYPE re;
+	DTYPE im;
+}CTYPE;
 
 typedef struct CMAT
 {
-	COMPLEX* data;
+	CTYPE* data;
 	/*
 	 *	if ndim = 0  --> 1D
 	 *			= 1  --> 2D
@@ -89,9 +81,11 @@ MAT* zeros_3d(UINT,UINT,UINT);
 /**** set overloading  ****/
 #define set_load(_x,_xx,_xxx,_3,_2,_1,...) _1
 #define set(...) set_load(__VA_ARGS__, set_3d,set_2d,set_1d)(__VA_ARGS__)
-void set_1d(MAT*,UINT,UINT);
-void set_2d(MAT*,UINT,UINT,UINT);
-void set_3d(MAT*,UINT,UINT,UINT,UINT);
+void set_1d(MAT*,UINT,DTYPE);
+void set_2d(MAT*,UINT,UINT,DTYPE);
+void set_3d(MAT*,UINT,UINT,UINT,DTYPE);
+
+void fill(MAT*, DTYPE);
 
 /****  get overloadnig ****/
 #define get_load(_x,_xx,_3,_2,_1,...) _1
@@ -99,6 +93,12 @@ void set_3d(MAT*,UINT,UINT,UINT,UINT);
 DTYPE get_1d(MAT*,UINT);
 DTYPE get_2d(MAT*,UINT,UINT);
 DTYPE get_3d(MAT*,UINT,UINT,UINT);
+
+#define submat_load(_x,_xx,_7,_6,_5,_4,_3,_2,_1,...) _1
+#define submat(...) submat_load(__VA_ARGS__, submat_3d,_,submat_2d,_,submat_1d)(__VA_ARGS__)
+void submat_1d(MAT*, MAT*, int,int);
+void submat_2d(MAT*, MAT*, int,int, int,int);
+void submat_3d(MAT*, MAT*, int,int, int,int, int,int);
 
 /****  miscellaneous ****/ 
 void free_MAT(MAT*);
