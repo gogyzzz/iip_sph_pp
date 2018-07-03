@@ -7,15 +7,6 @@
  * 3: 
  *
  *
- *
- *
- *
- *
- *
- *
- *
- *
- *
  * */
 
 int main()
@@ -149,14 +140,8 @@ int main()
       cset(a2, i, j, (DTYPE)((i+1) + a2->d0*j),(DTYPE)((i+1) + a2->d0*j) );
   print_CMAT(a2);
 
-  // expected below
-  // 1.000000 4.000000 7.000000 10.000000
-  // 2.000000 5.000000 8.000000 11.000000
-  // 3.000000 6.000000 9.000000 12.00000
-
   csubmat(a2, a2sub,  1,2,  1,3,  -1,-1);
   print_CMAT(a2sub); // [5.0, 8.0] expected
-
 
 	free_CMAT(a1);
   free_CMAT(a2);
@@ -164,9 +149,6 @@ int main()
   free_CMAT(a2sub);
 
 	free_CMAT(b1);
-
-
-
 #endif	
 
 	return 0;

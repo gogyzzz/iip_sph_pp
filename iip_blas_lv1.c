@@ -35,8 +35,15 @@ void mp_axpy(UINT N, DTYPE SA, DTYPE* SX, UINT INCX, DTYPE* SY, UINT INCY)
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	for(ITER i=0;i<N;i++)
+
+ITER i;
+
+#pragma omp parallel for shared(SX,SY) private(i)
+for(i=0;i<N;i++)
+	{
 		SY[i*INCY] = SX[i*INCX] * SA + SY[i*INCY];	
+	}
+
 }
 
 void caxpy(DTYPE alpha, CMAT* x,CMAT* y)
@@ -68,10 +75,13 @@ void mp_caxpy(UINT N, DTYPE SA, CTYPE* SX, UINT INCX, CTYPE* SY, UINT INCY)
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	for(ITER i=0;i<N;i++)
+ITER i;
+
+#pragma omp parallel for shared(SX,SY) private(i)
+	for(i=0;i<N;i++)
 	{
-					SY[i*INCY].re = SX[i*INCX].re * SA + SY[i*INCY].re;
-					SY[i*INCY].im = SX[i*INCX].im * SA + SY[i*INCY].im;
+			SY[i*INCY].re = SX[i*INCX].re * SA + SY[i*INCY].re;
+			SY[i*INCY].im = SX[i*INCX].im * SA + SY[i*INCY].im;
 		
 	}
 }

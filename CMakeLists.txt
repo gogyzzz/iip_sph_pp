@@ -6,18 +6,22 @@ set(PROJECT_NAME iip_sph_pp)
 
 #include(CMakeDependentOption)
 
-option(USE_CUDA "Using CUDA" OFF)
-option(BLAS_OPEN "BLAS : OpenBLAS" ON)
-
-#MKL은 컴파일 옵션이 많아서 일이 많다
-option(BLAS_MKL "BLAS : IntelMKL" OFF)
-
-option(USE_OPENMP "Using OpenMP" OFF)
+#BLAS
+option(USE_CUDA "Using CUDA"                 OFF)
+option(BLAS_OPEN "BLAS : OpenBLAS"           OFF)
+		#MKL은 컴파일 옵션이 많아서 일이 많다
+option(BLAS_MKL "BLAS : IntelMKL"            OFF)
+#OpenMP
+option(USE_OPENMP "Using OpenMP"             ON)
 
 
 #설정을 다 하셨다면 이 옵션을 ON 해주세요
 option(I_DID_WHAT_I_HAVE_TO_DO "SET THIS ON" ON)
 
+message(STATUS "USE_CUDA   : " ${USE_CUDA})
+message(STATUS "BLAS_OPEN  : " ${BLAS_OPEN})
+message(STATUS "BLAS_MKL   : " ${BLAS_MKL})
+message(STATUS "USE_OPENMP : " ${USE_OPENMP})
 
 set(LINKLIBS)
 set(COMMON_SRC)
@@ -33,25 +37,20 @@ if(NOT I_DID_WHAT_I_HAVE_TO_DO)
 endif()
 
 
+#Untested
 if(USE_CUDA)
 	project(${PROJECT_NAME} CUDA)
-	
 	
 	list(APPEND CUDA_SRC )
 	add_definitions(-DUSE_CUDA=1)
 
-
 	CUDA_ADD_EXECUTABLE(out ${COMMON_SRC} ${CUDA_SRC})
-
 	CUDA_ADD_CUBLAS_TO_TARGET(out)
 	#CUDA_ADD_CUFFT_TO_TARGET(out)
 
-
-
 else()
-	project(${PROJECT_NAME})
+		project(${PROJECT_NAME} C)
 	list(APPEND C_SRC iip_blas_lv1.c)
-
 
 	if(BLAS_OPEN)
 		find_package(BLAS REQUIRED)
@@ -74,13 +73,19 @@ else()
 	endif()
 
 
+	if(USE_OPENMP)
+		find_package(OpenMP REQUIRED)
+		if(NOT OPENMP_FOUND)
+			message(FATAL_ERROR "Can't find OpenMP")
+		endif()
+		list(APPEND CMAKE_C_FLAGS ${OpenMP_C_FLAGS})
+		list(APPEND CMAKE_EXE_LINKER_FLAGS ${OpenMP_EXE_LINKER_FLAGS})
+	endif()
+
+
+
 	add_executable(out ${COMMON_SRC} ${C_SRC})
 endif()
-
-#이렇게 하는건 너무 멀리 나간듯
-#add_definitions(-DDTYPE=float)
-
-
 
 #generic function 
 target_link_libraries(out ${LINKLIBS})

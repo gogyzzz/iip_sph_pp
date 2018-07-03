@@ -10,7 +10,6 @@
 #include "cblas.h"
 #endif
 
-
 /***********************************
  * 이 부분은 직접 해주세요
  ************************************/
@@ -29,7 +28,6 @@
 #define SINT int32_t
 #define ITER long
 
-
 /*
  * #define AA BB
  * str(AA) -> 'AA'
@@ -37,8 +35,6 @@
  * */
 #define str(x) #x
 #define xstr(x) str(x)
-
-
 
 typedef struct MAT
 {
@@ -73,7 +69,6 @@ typedef struct CMAT
 	UINT d1;
 	UINT d2;
 }CMAT;
-
 
 /*
 오버로딩
@@ -171,8 +166,33 @@ void print_CMAT(CMAT*);
 /********************
  **** iip_blas_lv1.c ****
  ********************/
+
+/* TODO
+ * + common
+ * asum
+ * nrm2
+ * rot
+ * scal
+ * swap
+ * i?amax
+ * i?amin
+ * copy
+ * -------axpy
+ * + s,d
+ * dot
+ * rotm
+ * rotmg
+ * rotg
+ * + c,z
+ * dotc
+ * dotu
+ *
+ * */
 void mp_axpy(UINT,DTYPE,DTYPE*,UINT,DTYPE*,UINT);
 void axpy(DTYPE,MAT*,MAT*);
 
 void mp_caxpy(UINT,DTYPE,CTYPE*,UINT,CTYPE*,UINT);
 void caxpy(DTYPE,CMAT*,CMAT*);
+
+
+
