@@ -6,9 +6,12 @@
 #define DEBUG 0
 
 #if USE_CBLAS 
-
 #include "cblas.h"
 #endif
+#if BLAS_CU
+#include "cublas_v2.h"
+#endif
+
 
 /***********************************
  * 이 부분은 직접 해주세요
@@ -24,6 +27,19 @@
 /************************************
  *여기까지 설정해주세요
  *********************************** */
+
+/* 
+INDEX
+iip_matrix
+iip_blas_lv1
+
+
+
+
+*/
+
+
+
 #define UINT uint32_t
 #define SINT int32_t
 #define ITER long
@@ -39,11 +55,6 @@
 typedef struct MAT
 {
 	DTYPE* data;
-	/*
-	 *	if ndim = 0  --> 1D
-	 *			= 1  --> 2D
-	 *			= 2  --> 3D
-	 * */
 	UINT ndim;
 	UINT d0;
 	UINT d1;
@@ -59,16 +70,12 @@ typedef struct CTYPE
 typedef struct CMAT
 {
 	CTYPE* data;
-	/*
-	 *	if ndim = 0  --> 1D
-	 *			= 1  --> 2D
-	 *			= 2  --> 3D
-	 * */
 	UINT ndim;
 	UINT d0;
 	UINT d1;
 	UINT d2;
 }CMAT;
+
 
 /*
 오버로딩
@@ -94,13 +101,13 @@ _2,_1
 
 
 /********************
- **** iip_math.c ****
+ **** iip_matrix ****
  ********************/
 
 void fill(MAT*, DTYPE);
 void cfill(CMAT*, DTYPE,DTYPE);
 
-/**** zeros overloading  ****/
+/**** zeros  ****/
 #define zeros_load(_x,_3,_2,_1,...) _1
 #define zeros(...) zeros_load(__VA_ARGS__, zeros_3d,zeros_2d,zeros_1d)(__VA_ARGS__) 
 
@@ -110,7 +117,6 @@ MAT* zeros_3d(UINT,UINT,UINT);
 
 #define czeros_load(_x,_3,_2,_1,...) _1
 #define czeros(...) czeros_load(__VA_ARGS__, czeros_3d,czeros_2d,czeros_1d)(__VA_ARGS__) 
-
 CMAT* czeros_1d(UINT);
 CMAT* czeros_2d(UINT,UINT);
 CMAT* czeros_3d(UINT,UINT,UINT);
@@ -164,7 +170,7 @@ void print_MAT(MAT*);
 void print_CMAT(CMAT*);
 
 /********************
- **** iip_blas_lv1.c ****
+ **** iip_blas_lv1 ****
  ********************/
 
 /* TODO
