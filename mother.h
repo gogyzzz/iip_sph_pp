@@ -33,12 +33,7 @@ INDEX
 iip_matrix
 iip_blas_lv1
 
-
-
-
 */
-
-
 
 #define UINT uint32_t
 #define SINT int32_t
@@ -106,6 +101,21 @@ _2,_1
 
 void fill(MAT*, DTYPE);
 void cfill(CMAT*, DTYPE,DTYPE);
+
+/*** allocMAT ***/
+#define allocMAT_load(_x,_3,_2,_1,...) _1
+#define allocMAT(...) allocMAT_load(__VA_ARGS__, allocMAT_3d,allocMAT_2d,allocMAT_1d)(__VA_ARGS__) 
+
+MAT* allocMAT_1d(UINT);
+MAT* allocMAT_2d(UINT,UINT);
+MAT* allocMAT_3d(UINT,UINT,UINT);
+
+#define callocMAT_load(_x,_3,_2,_1,...) _1
+#define callocMAT(...) callocMAT_load(__VA_ARGS__, callocMAT_3d,callocMAT_2d,callocMAT_1d)(__VA_ARGS__) 
+CMAT* callocMAT_1d(UINT);
+CMAT* callocMAT_2d(UINT,UINT);
+CMAT* callocMAT_3d(UINT,UINT,UINT);
+
 
 /**** zeros  ****/
 #define zeros_load(_x,_3,_2,_1,...) _1
