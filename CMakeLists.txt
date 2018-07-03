@@ -6,20 +6,18 @@ set(PROJECT_NAME iip_sph_pp)
 
 #include(CMakeDependentOption)
 
-#cmake가 이전 환경을 저장하기 때문에
-#두개이상의 라이브러리 매크로가 TRUE 되는것을 방지
-#CMAKE_DEPENDENT_OPTION(BLAS_OPEN "BLAS : OpenBLAS" OFF "BLAS_MKL;BLAS_CU" OFF)
-#CMAKE_DEPENDENT_OPTION(BLAS_MKL "BLAS : IntelMKL" OFF "BLAS_OPEN;BLAS_CU" OFF)
-#CMAKE_DEPENDENT_OPTION(BLAS_CU "BLAS : CUDA" OFF "BLAS_OPEN;BLAS_MKL" OFF)
-
-option(BLAS_OPEN "BLAS : OpenBLAS" OFF)
-option(BLAS_MKL "BLAS : IntelMKL" OFF)
-#option(BLAS_CU "BLAS : cubals" OFF)
 option(USE_CUDA "Using CUDA" OFF)
+option(BLAS_OPEN "BLAS : OpenBLAS" ON)
 
-message(STATUS "OpenBLAS : " ${BLAS_OPEN})
-message(STATUS "IntelMKL : " ${BLAS_MKL})
-#message(STATUS "CUBLAS : " ${BLAS_CU})
+#MKL은 컴파일 옵션이 많아서 일이 많다
+option(BLAS_MKL "BLAS : IntelMKL" OFF)
+
+option(USE_OPENMP "Using OpenMP" OFF)
+
+
+#설정을 다 하셨다면 이 옵션을 ON 해주세요
+option(I_DID_WHAT_I_HAVE_TO_DO "SET THIS ON" ON)
+
 
 set(LINKLIBS)
 set(COMMON_SRC)
@@ -27,7 +25,13 @@ set(C_SRC)
 set(CUDA_SRC)
 
 
-list(APPEND COMMON_SRC main.c iip_math.c)
+list(APPEND COMMON_SRC main.c iip_matrix.c)
+
+
+if(NOT I_DID_WHAT_I_HAVE_TO_DO)
+			message(FATAL_ERROR "*****************************************\nYOU NEED TO SET CONFIGURATION OPTIONS MANUALLY\n****************************************")
+endif()
+
 
 if(USE_CUDA)
 	project(${PROJECT_NAME} CUDA)
