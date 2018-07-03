@@ -52,7 +52,7 @@ axpy : y = a\*x + y
 
 <details><summary>TEST PART 1</summary>
 ```c
-
+//foo();
 ```
 
 </details>
