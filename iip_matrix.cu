@@ -1,5 +1,19 @@
 #include "mother.h"
 
+#if DEBUG
+#define CUDA_CALL(x) \
+{ \
+	
+	const cudaError_t a = (x); \
+	if(a != cudaSuccess) { \
+		printf("\nCuda Error: %s (err_num=%d) at line:%d\n", cudaGetErrorString(a), a, __LINE__); \
+		cudaDeviceReset(); assert(0); \
+	} \
+}
+#else
+#define CUDA_CALL(x) {(x);}
+#endif
+
 /**** allocMAT  ****/
 MAT* alloc_MAT_1d(UINT d0)
 {
