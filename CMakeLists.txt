@@ -6,13 +6,17 @@ set(PROJECT_NAME iip_sph_pp)
 
 #include(CMakeDependentOption)
 
+###################################################
+###################################################
+###################################################
+
 #BLAS
 option(USE_CUDA "Using CUDA"                 ON)
 
 option(BLAS_CU  " BLAS : cublas"             ON)
 option(BLAS_OPEN "BLAS : OpenBLAS"           OFF)
-		#MKL은 컴파일 옵션이 많아서 일이 많다
 option(BLAS_MKL "BLAS : IntelMKL"            OFF)
+
 #OpenMP
 option(USE_OPENMP "Using OpenMP"             OFF)
 
@@ -20,6 +24,9 @@ option(USE_OPENMP "Using OpenMP"             OFF)
 #설정을 다 하셨다면 이 옵션을 ON 해주세요
 option(I_DID_WHAT_I_HAVE_TO_DO "SET THIS ON" ON)
 
+###################################################
+###################################################
+###################################################
 message(STATUS "USE_CUDA   : " ${USE_CUDA})
 message(STATUS "BLAS_OPEN  : " ${BLAS_OPEN})
 message(STATUS "BLAS_MKL   : " ${BLAS_MKL})
@@ -43,12 +50,15 @@ endif()
 if(USE_CUDA)
 	project(${PROJECT_NAME} CUDA)
 	list(APPEND CUDA_SRC iip_matrix.cu)
-
+	
 	add_definitions(-DUSE_CUDA=1)
 
 	if(BLAS_CU)
 	add_definitions(-DBLAS_CU=1)
 	endif()
+
+#.c 파일도 다 .cu로 컴파일
+	SET_SOURCE_FILES_PROPERTIES(${COMMON_SRC} PROPERTIES LANGUAGE CUDA)
 	add_executable(out ${COMMOC_SRC} ${CUDA_SRC})
 #	CUDA_ADD_EXECUTABLE(out ${COMMON_SRC} ${CUDA_SRC})
 #	CUDA_ADD_CUBLAS_TO_TARGET(out)

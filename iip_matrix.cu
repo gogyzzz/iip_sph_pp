@@ -1,6 +1,92 @@
 #include "mother.h"
 
+/**** allocMAT  ****/
+MAT* alloc_MAT_1d(UINT d0)
+{
+#if DEBUG
+printf("%s\n",__func__);
+#endif
+	MAT* mat = (MAT*)malloc(sizeof(MAT));
+	mat->ndim = 0;
+	mat->d0 = d0;
+	mat->d1 = 1;
+	mat->d2 = 1;
+	cudaMalloc((void**)&(mat->data),sizeof(DTYPE) * d0);
 
+	return mat;
+}
+MAT* alloc_MAT_2d(UINT d0,UINT d1)
+{
+#if DEBUG
+printf("%s\n",__func__);
+#endif
+	MAT* mat = (MAT*)malloc(sizeof(MAT));
+	mat->ndim = 1;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = 1;
+	cudaMalloc((void**)&(mat->data),sizeof(DTYPE) * d0* d1);
+
+	return mat;
+
+}
+MAT* alloc_MAT_3d(UINT d0,UINT d1,UINT d2)
+{
+#if DEBUG
+printf("%s\n",__func__);
+#endif
+	MAT* mat = (MAT*)malloc(sizeof(MAT));
+	mat->ndim = 2;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = d2;
+	cudaMalloc((void**)&(mat->data),sizeof(DTYPE) * d0* d1*d2);
+	
+	return mat;
+}
+
+CMAT* calloc_MAT_1d(UINT d0)
+{
+#if DEBUG
+printf("%s\n",__func__);
+#endif
+	CMAT* mat = (MAT*)malloc(sizeof(CMAT));
+	mat->ndim = 0;
+	mat->d0 = d0;
+	mat->d1 = 1;
+	mat->d2 = 1;
+	cudaMalloc((void**)&(mat->data),sizeof(CTYPE) * d0);
+
+	return mat;
+}
+CMAT* calloc_MAT_2d(UINT d0,UINT d1)
+{
+#if DEBUG
+printf("%s\n",__func__);
+#endif
+	CMAT* mat = (MAT*)malloc(sizeof(CMAT));
+	mat->ndim = 1;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = 1;
+	cudaMalloc((void**)&(mat->data),sizeof(CTYPE) * d0* d1);
+
+	return mat;
+}
+CMAT* calloc_MAT_3d(UINT d0,UINT d1,UINT d2)
+{
+#if DEBUG
+printf("%s\n",__func__);
+#endif
+	CMAT* mat = (MAT*)malloc(sizeof(CMAT));
+	mat->ndim = 2;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = d2;
+	cudaMalloc((void**)&(mat->data),sizeof(CTYPE) * d0* d1* d2);
+
+	return mat;
+}
 /**** zeros  ****/
 
 MAT* zeros_1d(UINT d0)
@@ -105,51 +191,62 @@ void set_1d(MAT*mat, UINT idx0, DTYPE val)
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	mat->data[idx0] = val;
+	cu_set<<<1,1>>>(mat->data,idx0,1,1,val);
+	cudaThreadSynchronize();
 }
 void set_2d(MAT*mat, UINT idx0, UINT idx1, DTYPE val)
 {
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	mat->data[idx0 + (mat->d0)*idx1 ] = val;
-  printf("i0: %d, i1: %d, val: %lf\n",idx0, idx1, val);
-
+	cu_set<<<1,1>>>(mat->data,idx0,idx1,1,val);
+	cudaThreadSynchronize();
 }
 void set_3d(MAT*mat, UINT idx0, UINT idx1, UINT idx2, DTYPE val)
 {
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	mat->data[idx0 + (mat->d0)*idx1 + (mat->d0) * (mat->d1) * idx2] = val;
-
+	cu_set<<<1,1>>>(mat->data,idx0,idx1,idx2,val);
+	cudaThreadSynchronize();
 }
 
-void cset_1d(CMAT*mat, UINT idx0, DTYPE re, DTYPE im)
+__global__ void cu_set(DTYPE*data,UINT d0,UINT d1,UINT d2,DTYPE val)
+{
+	data[idx0 + (mat->d0)*idx1 + (mat->d0) * (mat->d1) * idx2] = val;
+}
+
+
+
+void cset_1d(CMAT*mat, UINT idx0, DTYPE re,DTYPE im)
 {
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	mat->data[idx0].re =re;
-	mat->data[idx0].im =im;
+	cu_cset<<<1,1>>>(mat->data,idx0,1,1,re,im);
+	cudaThreadSynchronize();
 }
-void cset_2d(CMAT*mat, UINT idx0, UINT idx1, DTYPE re, DTYPE im)
+void cset_2d(CMAT*mat, UINT idx0, UINT idx1, DTYPE re,DTYPE im)
 {
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	mat->data[idx0 + (mat->d0)*idx1 ].re = re;
-	mat->data[idx0 + (mat->d0)*idx1 ].im = im;
-
+	cu_cset<<<1,1>>>(mat->data,idx0,idx1,1,re,im);
+	cudaThreadSynchronize();
 }
-void cset_3d(CMAT*mat, UINT idx0, UINT idx1, UINT idx2, DTYPE re, DTYPE im)
+void cset_3d(CMAT*mat, UINT idx0, UINT idx1, UINT idx2, DTYPE re,DTYPE im)
 {
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	mat->data[idx0 + (mat->d0)*idx1 + (mat->d0) * (mat->d1) * idx2].re = re;
-	mat->data[idx0 + (mat->d0)*idx1 + (mat->d0) * (mat->d1) * idx2].im = im;
+	cu_cset<<<1,1>>>(mat->data,idx0,idx1,idx2,val);
+	cudaThreadSynchronize();
+}
 
+__global__ void cu_cset(CTYPE*data,UINT d0,UINT d1,UINT d2,DTYPE re,DTYPE im)
+{
+	data[idx0 + (mat->d0)*idx1 + (mat->d0) * (mat->d1) * idx2].re = re;
+	data[idx0 + (mat->d0)*idx1 + (mat->d0) * (mat->d1) * idx2].in = in;
 }
 
 /**** fill ****/
@@ -163,6 +260,14 @@ void fill(MAT*mat, DTYPE val) // for real mat
 #endif
   for (i=0; i < len; i++)
     mat->data[i] = val;
+}
+
+__global__ void cu_fill(DTYPE* data, UINT len,DTYPE val)
+{
+	ITER i = 0;
+	
+	for(i=0;i<len;i++)
+		data[i] = val;
 }
 
 void cfill(CMAT*cmat, DTYPE re, DTYPE im) // for complex mat
