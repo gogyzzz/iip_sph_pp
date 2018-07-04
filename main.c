@@ -1,12 +1,12 @@
 #include "mother.h"
 
-#define PART 2
+#define PART -1
 /*
  * 1: Dmatrix
  * 2: Cmatrix
  * 3:
  *
- *
+ * -1: Temp
  * */
 
 int main()
@@ -149,6 +149,55 @@ int main()
 	free_CMAT(a2sub);
 
 	free_CMAT(b1);
+
+#elif PART == -1
+	MAT* a1;
+	MAT* a2;
+	MAT* a3;
+	MAT* a3_;
+	MAT* a2sub;
+
+	a1 = zeros(4);
+	a2 = zeros(3, 4);
+	a3 = zeros(2, 3, 4);
+	a3_ = zeros(2, 3, 4);
+	a2sub = zeros(1, 2);
+
+	printf("a1\n");
+	print_MAT(a1);
+
+	printf("a2\n");
+	print_MAT(a2);
+
+	printf("a3\n");
+	print_MAT(a3);
+
+	set(a1, 2, 1);
+	set(a2, 1, 2, 1);
+	set(a3, 0, 1, 2, 1);
+
+	fill(a3, 1.25);
+
+	printf("a1\n");
+	print_MAT(a1);
+
+	printf("a2\n");
+	print_MAT(a2);
+
+	printf("a3\n");
+	print_MAT(a3);
+
+	printf("a3_\n");
+	print_MAT(a3_);
+
+	copy(a3, 1, a3_, 1);
+
+	printf("a3\n");
+	print_MAT(a3);
+
+	printf("a3_\n");
+	print_MAT(a3_);
+
 #endif	
 
 	return 0;
