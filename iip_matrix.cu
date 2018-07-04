@@ -1,9 +1,9 @@
-#include "mother.h"
+//#include "mother.h"
+#include "iip_matrix.h"
 
 #if DEBUG
 #define CUDA_CALL(x) \
 { \
-
 	const cudaError_t a = (x); \
 	if(a != cudaSuccess) { \
 		printf("\nCuda Error: %s (err_num=%d) at line:%d\n", cudaGetErrorString(a), a, __LINE__); \
@@ -13,6 +13,10 @@
 #else
 #define CUDA_CALL(x) {(x);}
 #endif
+
+cublasHandle_t handle;
+UINT max_thread;
+UINT max_block;
 
 /**** allocMAT  ****/
 MAT* alloc_MAT_1d(UINT d0)
@@ -25,7 +29,7 @@ printf("%s\n",__func__);
 	mat->d0 = d0;
 	mat->d1 = 1;
 	mat->d2 = 1;
-	CUDA_CALL(cudaMalloc((void**)&(mat->data),sizeof(DTYPE) * d0))
+	cudaMalloc((void**)&(mat->data),sizeof(DTYPE) * d0);
 
 	return mat;
 }
@@ -39,7 +43,7 @@ printf("%s\n",__func__);
 	mat->d0 = d0;
 	mat->d1 = d1;
 	mat->d2 = 1;
-	CUDA_CALL(cudaMalloc((void**)&(mat->data),sizeof(DTYPE) * d0* d1))
+	cudaMalloc((void**)&(mat->data),sizeof(DTYPE) * d0* d1);
 
 	return mat;
 
@@ -54,8 +58,8 @@ printf("%s\n",__func__);
 	mat->d0 = d0;
 	mat->d1 = d1;
 	mat->d2 = d2;
-	CUDA_CALL(cudaMalloc((void**)&(mat->data),sizeof(DTYPE) * d0* d1*d2))
-
+	cudaMalloc((void**)&(mat->data),sizeof(DTYPE) * d0* d1*d2);
+	
 	return mat;
 }
 
@@ -64,12 +68,12 @@ CMAT* calloc_MAT_1d(UINT d0)
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	CMAT* mat = (MAT*)malloc(sizeof(CMAT));
+	CMAT* mat = (CMAT*)malloc(sizeof(CMAT));
 	mat->ndim = 0;
 	mat->d0 = d0;
 	mat->d1 = 1;
 	mat->d2 = 1;
-	CUDA_CALL(cudaMalloc((void**)&(mat->data),sizeof(CTYPE) * d0))
+	cudaMalloc((void**)&(mat->data),sizeof(CTYPE) * d0);
 
 	return mat;
 }
@@ -78,12 +82,12 @@ CMAT* calloc_MAT_2d(UINT d0,UINT d1)
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	CMAT* mat = (MAT*)malloc(sizeof(CMAT));
+	CMAT* mat = (CMAT*)malloc(sizeof(CMAT));
 	mat->ndim = 1;
 	mat->d0 = d0;
 	mat->d1 = d1;
 	mat->d2 = 1;
-	CUDA_CALL(cudaMalloc((void**)&(mat->data),sizeof(CTYPE) * d0* d1))
+	cudaMalloc((void**)&(mat->data),sizeof(CTYPE) * d0* d1);
 
 	return mat;
 }
@@ -92,12 +96,12 @@ CMAT* calloc_MAT_3d(UINT d0,UINT d1,UINT d2)
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	CMAT* mat = (MAT*)malloc(sizeof(CMAT));
+	CMAT* mat = (CMAT*)malloc(sizeof(CMAT));
 	mat->ndim = 2;
 	mat->d0 = d0;
 	mat->d1 = d1;
 	mat->d2 = d2;
-	CUDA_CALL(cudaMalloc((void**)&(mat->data),sizeof(CTYPE) * d0* d1* d2))
+	cudaMalloc((void**)&(mat->data),sizeof(CTYPE) * d0* d1* d2);
 
 	return mat;
 }
@@ -113,8 +117,8 @@ printf("%s\n",__func__);
 	mat->d0 = d0;
 	mat->d1 = 1;
 	mat->d2 = 1;
-	CUDA_CALL(cudaMalloc((void**)&(mat->data),sizeof(DTYPE) * d0))
-    CUDA_CALL(cudaMemset(mat->data,0,sizeof(DTYPE)*d0))
+	cudaMalloc((void**)&(mat->data),sizeof(DTYPE) * d0);
+    cudaMemset(mat->data,0,sizeof(DTYPE)*d0  );
 	return mat;
 }
 
@@ -128,9 +132,9 @@ printf("%s\n",__func__);
 	mat->d0 = d0;
 	mat->d1 = d1;
 	mat->d2 = 1;
-
-	CUDA_CALL(cudaMalloc((void**)&(mat->data),sizeof(DTYPE) * d0 *d1))
-    CUDA_CALL(cudaMemset(mat->data,0,sizeof(DTYPE)*d0*d1))
+	
+	cudaMalloc((void**)&(mat->data),sizeof(DTYPE) * d0 *d1);
+    cudaMemset(mat->data,0,sizeof(DTYPE)*d0*d1);
 
 	return mat;
 }
@@ -145,8 +149,8 @@ printf("%s\n",__func__);
 	mat->d1 = d1;
 	mat->d2 = d2;
 
-	CUDA_CALL(cudaMalloc((void**)&(mat->data),sizeof(DTYPE) * d0 *d1 *d2))
-    CUDA_CALL(cudaMemset(mat->data,0,sizeof(DTYPE)*d0*d1*d2))
+	cudaMalloc((void**)&(mat->data),sizeof(DTYPE) * d0 *d1 *d2);
+    cudaMemset(mat->data,0,sizeof(DTYPE)*d0*d1*d2);
 	return mat;
 }
 
@@ -161,9 +165,9 @@ printf("%s\n",__func__);
 	mat->d0 = d0;
 	mat->d1 = 1;
 	mat->d2 = 1;
-
-	CUDA_CALL(cudaMalloc((void**)&(mat->data),sizeof(CTYPE) * d0))
-    CUDA_CALL(cudaMemset(mat->data,0,sizeof(CTYPE)*d0))
+	
+	cudaMalloc((void**)&(mat->data),sizeof(CTYPE) * d0);
+    cudaMemset(mat->data,0,sizeof(CTYPE)*d0);
 	return mat;
 }
 
@@ -177,9 +181,9 @@ printf("%s\n",__func__);
 	mat->d0 = d0;
 	mat->d1 = d1;
 	mat->d2 = 1;
-
-	CUDAL_CALL(cudaMalloc((void**)&(mat->data),sizeof(CTYPE) * d0 *d1))
-    CUDA_CALL(cudaMemset(mat->data,0,sizeof(CTYPE)*d0*d1))
+	
+	cudaMalloc((void**)&(mat->data),sizeof(CTYPE) * d0 *d1);
+    cudaMemset(mat->data,0,sizeof(CTYPE)*d0*d1);
 	return mat;
 }
 CMAT* czeros_3d(UINT d0,UINT d1,UINT d2)
@@ -192,9 +196,9 @@ printf("%s\n",__func__);
 	mat->d0 = d0;
 	mat->d1 = d1;
 	mat->d2 = d2;
-
-	CUDA_CALL(cudaMalloc((void**)&(mat->data),sizeof(CTYPE) * d0 *d1*d2))
-    CUDA_CALL(cudaMemset(mat->data,0,sizeof(CTYPE)*d0*d1*d2))
+	
+	cudaMalloc((void**)&(mat->data),sizeof(CTYPE) * d0 *d1*d2);
+    cudaMemset(mat->data,0,sizeof(CTYPE)*d0*d1*d2);
 	return mat;
 }
 
@@ -205,101 +209,108 @@ void set_1d(MAT*mat, UINT idx0, DTYPE val)
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	cu_set<<<1,1>>>(mat->data,idx0,1,1,val);
-	CUDA_CALL(cudaThreadSynchronize())
+	cu_set<<<1,1>>>(mat->data,idx0,val);
+	cudaThreadSynchronize();
 }
 void set_2d(MAT*mat, UINT idx0, UINT idx1, DTYPE val)
 {
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	cu_set<<<1,1>>>(mat->data,idx0,idx1,1,val);
-	CUDA_CALL(cudaThreadSynchronize())
+	cu_set<<<1,1>>>(mat->data,idx0 + (mat->d0)*idx1,val);
+	cudaThreadSynchronize();
 }
 void set_3d(MAT*mat, UINT idx0, UINT idx1, UINT idx2, DTYPE val)
 {
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	cu_set<<<1,1>>>(mat->data,idx0,idx1,idx2,val);
-	CUDA_CALL(cudaThreadSynchronize())
+	cu_set<<<1,1>>>(mat->data,idx0 + (mat->d0)*idx1 + (mat->d0)*(mat->d1)*idx2,val);
+	cudaThreadSynchronize();
 }
 
-__global__ void cu_set(DTYPE*data,UINT d0,UINT d1,UINT d2,DTYPE val)
+__global__ void cu_set(DTYPE*data,UINT idx,DTYPE val)
 {
-	data[idx0 + (mat->d0)*idx1 + (mat->d0) * (mat->d1) * idx2] = val;
+	data[idx]=val;
 }
-
-
 
 void cset_1d(CMAT*mat, UINT idx0, DTYPE re,DTYPE im)
 {
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	cu_cset<<<1,1>>>(mat->data,idx0,1,1,re,im);
-	CUDA_CALL(cudaThreadSynchronize())
+	cu_cset<<<1,1>>>(mat->data,idx0,re,im);
+	cudaThreadSynchronize();
 }
 void cset_2d(CMAT*mat, UINT idx0, UINT idx1, DTYPE re,DTYPE im)
 {
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	cu_cset<<<1,1>>>(mat->data,idx0,idx1,1,re,im);
-	CUDA_CALL(cudaThreadSynchronize())
+	cu_cset<<<1,1>>>(mat->data,idx0 + (mat->d0)*idx1,re,im);
+	cudaThreadSynchronize();
 }
 void cset_3d(CMAT*mat, UINT idx0, UINT idx1, UINT idx2, DTYPE re,DTYPE im)
 {
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	cu_cset<<<1,1>>>(mat->data,idx0,idx1,idx2,val);
-	CUDA_CALL(cudaThreadSynchronize())
+	cu_cset<<<1,1>>>(mat->data,idx0 + (mat->d0)*idx1 + (mat->d0)*(mat->d1)*idx2,re,im);
+	cudaThreadSynchronize();
 }
 
-__global__ void cu_cset(CTYPE*data,UINT d0,UINT d1,UINT d2,DTYPE re,DTYPE im)
+__global__ void cu_cset(CTYPE*data,UINT idx,DTYPE re,DTYPE im)
 {
-	data[idx0 + (mat->d0)*idx1 + (mat->d0) * (mat->d1) * idx2].re = re;
-	data[idx0 + (mat->d0)*idx1 + (mat->d0) * (mat->d1) * idx2].in = in;
+	data[idx].re=re;
+	data[idx].im=im;
 }
+
 
 /**** fill ****/
 
 void fill(MAT*mat, DTYPE val) // for real mat
 {
-  ITER i = 0;
-  UINT len = mat->d0 * mat->d1 * mat->d2;
 #if DEBUG
   printf("%s\n",__func__);
 #endif
-  for (i=0; i < len; i++)
-    mat->data[i] = val;
+  UINT len = (mat->d0) * (mat->d1) * (mat->d2);
+	printf("max_thread : %d\n",max_thread);
+	UINT num_block = (UINT)(len/(UINT)max_thread)+1;
+	
+	cu_fill<<<num_block,max_thread>>>(mat->data,len-1,val,max_thread);
+	cudaThreadSynchronize();
 }
 
-__global__ void cu_fill(DTYPE* data, UINT len,DTYPE val)
+__global__ void cu_fill(DTYPE* data, UINT len,DTYPE val,UINT size_block)
 {
-	ITER i = 0;
-
-	for(i=0;i<len;i++)
-		data[i] = val;
+	ITER idx = threadIdx.x + blockIdx.x * size_block;
+	if(idx > len)
+		return;
+  data[idx]= val;
 }
 
-void cfill(CMAT*cmat, DTYPE re, DTYPE im) // for complex mat
+void cfill(CMAT*mat, DTYPE re, DTYPE im) // for complex mat
 {
-  ITER i = 0;
-  UINT len = cmat->d0 * cmat->d1 * cmat->d2;
 #if DEBUG
   printf("%s\n",__func__);
 #endif
-  for (i=0; i < len; i++)
-  {
-    cmat->data[i].re = re;
-    cmat->data[i].im = im;
-  }
+  UINT len = (mat->d0) * (mat->d1) * (mat->d2);
+
+	UINT num_block = (len/max_thread)+1;
+	cu_cfill<<<num_block,max_thread>>>(mat->data,len-1,re,im,max_thread);
+	cudaThreadSynchronize();
+}
+__global__ void cu_cfill(CTYPE* data, UINT len,DTYPE re,DTYPE im,UINT size_block)
+{
+	ITER idx = threadIdx.x + blockIdx.x * size_block;
+	if(idx > len)
+		return;
+  data[idx].re = re;
+	data[idx].im = im; 
 }
 
 /**** get ****/
-
+/*
 DTYPE get_1d(MAT*mat, UINT idx0)
 {
 #if DEBUG
@@ -345,9 +356,9 @@ printf("%s\n",__func__);
 #endif
 	return mat->data[idx0 + (mat-> d0) * idx1 + (mat->d0) * (mat->d1) * idx0];
 }
-
+*/
 /**** submat ****/
-
+/*
 void submat_1d(MAT* mat, MAT* submat, ITER d0_st, ITER d0_ed)
 {
 #if DEBUG
@@ -368,13 +379,13 @@ void submat_2d(MAT* mat, MAT* submat,
 }
 
 
-void submat_3d(MAT* mat, MAT* submat,
+void submat_3d(MAT* mat, MAT* submat, 
     ITER d0_st, ITER d0_ed,
     ITER d1_st, ITER d1_ed,
     ITER d2_st, ITER d2_ed)
 {
   ITER i, j, k;
-
+  
 #if DEBUG
   prITERf("%s\n",__func__);
 #endif
@@ -390,7 +401,7 @@ void submat_3d(MAT* mat, MAT* submat,
   if ( d1_ed == -1 ) d1_ed = mat->d1;
   if ( d2_st == -1 ) d2_st = 0;
   if ( d2_ed == -1 ) d2_ed = mat->d2;
-
+  
   for (i = 0; d0_st+i < d0_ed; i++)
     for (j = 0; d1_st+j < d1_ed; j++)
       for (k = 0; d2_st+k < d2_ed; k++)
@@ -423,13 +434,13 @@ void csubmat_2d(CMAT* mat, CMAT* submat,
 }
 
 
-void csubmat_3d(CMAT* mat, CMAT* submat,
+void csubmat_3d(CMAT* mat, CMAT* submat, 
     ITER d0_st, ITER d0_ed,
     ITER d1_st, ITER d1_ed,
     ITER d2_st, ITER d2_ed)
 {
   ITER i, j, k;
-
+  
 #if DEBUG
   prITERf("%s\n",__func__);
 #endif
@@ -444,7 +455,7 @@ void csubmat_3d(CMAT* mat, CMAT* submat,
   if ( d1_ed == -1 ) d1_ed = mat->d1;
   if ( d2_st == -1 ) d2_st = 0;
   if ( d2_ed == -1 ) d2_ed = mat->d2;
-
+  
   for (i = 0; d0_st+i < d0_ed; i++)
     for (j = 0; d1_st+j < d1_ed; j++)
       for (k = 0; d2_st+k < d2_ed; k++)
@@ -453,14 +464,14 @@ void csubmat_3d(CMAT* mat, CMAT* submat,
         submat->data[i + j*(submat->d0) + k*(submat->d0*submat->d1)].im = mat->data[(d0_st+i) + (d1_st+j)*(mat->d0) + (d2_st+k)*(mat->d0*mat->d1)].im;
       }
 }
-
+*/
 /**** miscellaneous  ****/
 void free_MAT(MAT *mat)
 {
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	free(mat->data);
+	cudaFree(mat->data);
 	free(mat);
 }
 
@@ -469,11 +480,11 @@ void free_CMAT(CMAT *mat)
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-	free(mat->data);
+	cudaFree(mat->data);
 	free(mat);
 }
 
-
+/*
 void print_MAT(MAT* mat)
 {
   ITER k, j, i;
@@ -482,13 +493,13 @@ printf("%s\n",__func__);
 #endif
 	for(k = 0; k < mat->d2; k++)
 	{
-		for(i=0; i < mat->d0 ; i++)
+		for(i=0; i < mat->d0 ; i++)	
 		{
 			for(j=0; j < mat->d1;j++)
 				printf("%.3lf ",mat->data[k*(mat->d1)*(mat->d0) + j*(mat->d0) + i]);
 			printf("\n");
 		}
-	printf("\n");
+	printf("\n");		
 	}
 }
 
@@ -500,16 +511,18 @@ printf("%s\n",__func__);
 #endif
 	for(k = 0; k < mat->d2; k++)
 	{
-		for(i=0; i < mat->d0 ; i++)
+		for(i=0; i < mat->d0 ; i++)	
 		{
 			for(j=0; j < mat->d1;j++)
 			{
 				printf("%.3lf ",mat->data[k*(mat->d1)*(mat->d0) + j*(mat->d0) + i].re);
 				printf("%.3lf| ",mat->data[k*(mat->d1)*(mat->d0) + j*(mat->d0) + i].im);
-
+			
 			}
 			printf("\n");
 		}
-	printf("\n");
+	printf("\n");		
 	}
 }
+
+*/
