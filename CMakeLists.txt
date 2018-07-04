@@ -11,9 +11,9 @@ set(PROJECT_NAME iip_sph_pp)
 ###################################################
 
 #BLAS
-option(USE_CUDA "Using CUDA"                 OFF)
+option(USE_CUDA "Using CUDA"                 ON)
 
-option(BLAS_CU  " BLAS : cublas"             OFF)
+option(BLAS_CU  " BLAS : cublas"             ON)
 option(BLAS_OPEN "BLAS : OpenBLAS"           OFF)
 option(BLAS_MKL "BLAS : IntelMKL"            OFF)
 
@@ -45,6 +45,16 @@ if(NOT I_DID_WHAT_I_HAVE_TO_DO)
 			message(FATAL_ERROR "*****************************************\nYOU NEED TO SET CONFIGURATION OPTIONS MANUALLY\n****************************************")
 endif()
 
+#GET OS
+#UNIX   TRUE for UNIX,APPLE
+#WIN32  TRUE for Windows 32bit and 64bit
+#APPLE  TRUE for APPLE
+if(UNIX)
+	add_definitions(-DOS_UNIX=1)
+elseif(WIN32)
+	add_definitions(-DOS_WIN=1)
+endif()
+
 
 #Untested
 if(USE_CUDA)
@@ -52,14 +62,14 @@ if(USE_CUDA)
 	list(APPEND CUDA_SRC iip_matrix.cu)
 	
 	add_definitions(-DUSE_CUDA=1)
-
-	if(BLAS_CU)
-	add_definitions(-DBLAS_CU=1)
-	endif()
-
-#.c 파일도 다 .cu로 컴파일
+	
+		
+# compile .c files by nvcc
 	SET_SOURCE_FILES_PROPERTIES(${COMMON_SRC} PROPERTIES LANGUAGE CUDA)
 	add_executable(out ${COMMOC_SRC} ${CUDA_SRC})
+	
+	list(APPEND LINKLIBS ${CUDA_CUBLAS_LIBRARIES})
+	
 #	CUDA_ADD_EXECUTABLE(out ${COMMON_SRC} ${CUDA_SRC})
 #	CUDA_ADD_CUBLAS_TO_TARGET(out)
 	#CUDA_ADD_CUFFT_TO_TARGET(out)
@@ -78,16 +88,23 @@ else()
 		list(APPEND LINKLIBS ${BLAS_LIBRARIES})
 	
 	elseif(BLAS_MKL)
+#linux 라면 mkl 사용시 컴파일 옵션을 구질구질하게 걸어줘야하는데
+#Windows VS를 쓰면 mkl 플러그인이 있어서 쓰기 편하다
+#그렇다면 Window일땐 그냥 냅두는것이?
+	if(UNIX)
 		#MKL 은 원래도 수동으로 경로를 잡아서 cmake가 해줄순 없다
 		set(MKL_PATH)
 		if("${MKL_PATH}" STREQUAL "")
 				message(FATAL_ERROR "ADD AN ARGUMENT '-DMKL_PATH=<ALL REQUIRED MKL libs>'")
 		endif()
-		add_definitions(-DUSE_CBLAS=1)
 		message(STATUS "MKL_PATH : " ${MKL_PATH})
 		list(APPEND LINKLIBS ${MKL_PATH})
-	endif()
+	endif()	
+	
+	add_definitions(-DUSE_CBLAS=1)
 
+	endif()
+	
 
 	if(USE_OPENMP)
 		find_package(OpenMP REQUIRED)
