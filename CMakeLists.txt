@@ -11,9 +11,9 @@ set(PROJECT_NAME iip_sph_pp)
 ###################################################
 
 #BLAS
-option(USE_CUDA "Using CUDA"                 ON)
+option(USE_CUDA "Using CUDA"                 OFF)
 
-option(BLAS_CU  " BLAS : cublas"             ON)
+option(BLAS_CU  " BLAS : cublas"             OFF)
 option(BLAS_OPEN "BLAS : OpenBLAS"           OFF)
 option(BLAS_MKL "BLAS : IntelMKL"            OFF)
 

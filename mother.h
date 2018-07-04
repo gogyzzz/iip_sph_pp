@@ -98,6 +98,7 @@ _2,_1
  **** pre main for CUDA ****
  ***************************/
 
+/*
 //This only works in GNU
 void __attribute__ ((constructor)) premain()
 {
@@ -105,3 +106,4 @@ void __attribute__ ((constructor)) premain()
 
 }
 
+*/
