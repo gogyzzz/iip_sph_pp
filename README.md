@@ -3,12 +3,16 @@
 C library for speech preprocessing.
 
 ## TODO
-+ OpenMP
 + blas level 1
 + more matrix operation
++ CUDA implement
 
 ## Requirement
-cmake 3.10 or higher
+cmake 3.10 or higher  
+(OPTION)OpenBLAS
+(OPTION)intelMKL
+(OPTION)CUDA
+(OPTION)OpenMP
 
 ## Installation
 
