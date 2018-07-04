@@ -35,5 +35,8 @@ void axpy(DTYPE,MAT*,MAT*);
 void mp_caxpy(UINT,DTYPE,CTYPE*,UINT,CTYPE*,UINT);
 void caxpy(DTYPE,CMAT*,CMAT*);
 
+void mp_copy(UINT, )
+void copy();
+
 
 #endif
