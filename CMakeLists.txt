@@ -13,13 +13,12 @@ set(PROJECT_NAME iip_sph_pp)
 #BLAS
 option(USE_CUDA "Using CUDA"                 ON)
 
-option(BLAS_CU  " BLAS : cublas"             ON)
+#option(BLAS_CU  " BLAS : cublas"             ON)
 option(BLAS_OPEN "BLAS : OpenBLAS"           OFF)
 option(BLAS_MKL "BLAS : IntelMKL"            OFF)
 
 #OpenMP
 option(USE_OPENMP "Using OpenMP"             OFF)
-
 
 #설정을 다 하셨다면 이 옵션을 ON 해주세요
 option(I_DID_WHAT_I_HAVE_TO_DO "SET THIS ON" ON)
@@ -37,10 +36,6 @@ set(COMMON_SRC)
 set(C_SRC)
 set(CUDA_SRC)
 
-
-list(APPEND COMMON_SRC main.c)
-
-
 if(NOT I_DID_WHAT_I_HAVE_TO_DO)
 			message(FATAL_ERROR "*****************************************\nYOU NEED TO SET CONFIGURATION OPTIONS MANUALLY\n****************************************")
 endif()
@@ -55,6 +50,8 @@ elseif(WIN32)
 	add_definitions(-DOS_WIN=1)
 endif()
 
+#list(APPEND COMMON_SRC main.c)
+list(APPEND COMMON_SRC test_matrix.c)
 
 #Untested
 if(USE_CUDA)
@@ -62,17 +59,14 @@ if(USE_CUDA)
 	list(APPEND CUDA_SRC iip_matrix.cu)
 	
 	add_definitions(-DUSE_CUDA=1)
-	
 		
-# compile .c files by nvcc
+	# compile .c files by nvcc
 	SET_SOURCE_FILES_PROPERTIES(${COMMON_SRC} PROPERTIES LANGUAGE CUDA)
-	add_executable(out ${COMMOC_SRC} ${CUDA_SRC})
+
+	add_executable(out ${COMMON_SRC} ${CUDA_SRC})
 	
 	list(APPEND LINKLIBS ${CUDA_CUBLAS_LIBRARIES})
-	
-#	CUDA_ADD_EXECUTABLE(out ${COMMON_SRC} ${CUDA_SRC})
-#	CUDA_ADD_CUBLAS_TO_TARGET(out)
-	#CUDA_ADD_CUFFT_TO_TARGET(out)
+  target_link_libraries(out ${LINKLIBS} rt cublas)
 
 else()
 	project(${PROJECT_NAME} C)
@@ -118,7 +112,7 @@ else()
 
 
 	add_executable(out ${COMMON_SRC} ${C_SRC})
+  target_link_libraries(out ${LINKLIBS})
 endif()
 
 #generic function 
-target_link_libraries(out ${LINKLIBS})
