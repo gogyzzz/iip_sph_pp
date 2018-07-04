@@ -1,4 +1,8 @@
-#include "mother.h"
+#ifndef IIP_MATRIX_H
+#define IIP_MATRIX_H
+
+//#include "mother.h"
+#include "iip_type.h"
 
 /********************
  **** iip_matrix ****
@@ -88,3 +92,6 @@ void free_MAT(MAT*);
 void free_CMAT(CMAT*);
 void print_MAT(MAT*);
 void print_CMAT(CMAT*);
+
+
+#endif
