@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#define DEBUG 0
+#define DEBUG 1
 
 /***********************************
 * 이 부분은 직접 해주세요

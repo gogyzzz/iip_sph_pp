@@ -237,7 +237,7 @@ printf("%s\n",__func__);
 void submat_1d(MAT* mat, MAT* submat, ITER d0_st, ITER d0_ed)
 {
 #if DEBUG
-  prITERf("%s\n",__func__);
+  printf("%s\n",__func__);
 #endif
   submat_3d(mat, submat, d0_st, d0_ed, -1, -1, -1, -1);
 }
@@ -248,7 +248,7 @@ void submat_2d(MAT* mat, MAT* submat,
     ITER d1_st, ITER d1_ed)
 {
 #if DEBUG
-  prITERf("%s\n",__func__);
+	printf("%s\n",__func__);
 #endif
   submat_3d(mat, submat, d0_st, d0_ed, d1_st, d1_ed, -1, -1);
 }
@@ -262,7 +262,7 @@ void submat_3d(MAT* mat, MAT* submat,
   ITER i, j, k;
   
 #if DEBUG
-  prITERf("%s\n",__func__);
+  printf("%s\n",__func__);
 #endif
   if (mat->d0 < submat->d0 || mat->d1 < submat->d1 || mat->d2 < submat->d2)
   {
@@ -292,7 +292,7 @@ void submat_3d(MAT* mat, MAT* submat,
 void csubmat_1d(CMAT* mat, CMAT* submat, ITER d0_st, ITER d0_ed)
 {
 #if DEBUG
-  prITERf("%s\n",__func__);
+  printf("%s\n",__func__);
 #endif
   csubmat_3d(mat, submat, d0_st, d0_ed, -1, -1, -1, -1);
 }
@@ -303,7 +303,7 @@ void csubmat_2d(CMAT* mat, CMAT* submat,
     ITER d1_st, ITER d1_ed)
 {
 #if DEBUG
-  prITERf("%s\n",__func__);
+  printf("%s\n",__func__);
 #endif
   csubmat_3d(mat, submat, d0_st, d0_ed, d1_st, d1_ed, -1, -1);
 }
@@ -317,7 +317,7 @@ void csubmat_3d(CMAT* mat, CMAT* submat,
   ITER i, j, k;
   
 #if DEBUG
-  prITERf("%s\n",__func__);
+  printf("%s\n",__func__);
 #endif
   if (mat->d0 < submat->d0 || mat->d1 < submat->d1 || mat->d2 < submat->d2)
   {
