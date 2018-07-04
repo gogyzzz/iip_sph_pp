@@ -11,6 +11,9 @@
 void fill(MAT*, DTYPE);
 void cfill(CMAT*, DTYPE,DTYPE);
 
+__global__ void cu_fill(DTYPE*,UINT,DTYPE,UINT);
+__global__ void cu_cfill(CTYPE*,UINT,DTYPE,DTYPE,UINT);
+
 /*** allocMAT ***/
 #define alloc_MAT_load(_x,_3,_2,_1,...) _1
 #define alloc_MAT_load_(args_list) alloc_MAT_load args_list
@@ -60,8 +63,8 @@ void cset_2d(CMAT*,UINT,UINT,DTYPE,DTYPE);
 void cset_3d(CMAT*,UINT,UINT,UINT,DTYPE,DTYPE);
 
 #if USE_CUDA
-__global__ void cu_set(DTYPE*,UINT,UINT,UINT,DTYPE);
-__global__ void cu_set(CTYPE*,UINT,UINT,UINT,DTYPE,DTYPE);
+__global__ void cu_set(DTYPE*,UINT,DTYPE);
+__global__ void cu_cset(CTYPE*,UINT,DTYPE,DTYPE);
 #endif
 
 

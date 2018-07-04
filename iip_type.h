@@ -93,23 +93,16 @@ _2,_1
 **** pre main for CUDA ****
 ***************************/
 
-/*
-//This only works in GNU
-void __attribute__ ((constructor)) premain()
-{
-
-
-}
-
-*/
-
 #if USE_CBLAS 
 #include "cblas.h"
 #endif
-#if BLAS_CU
+#if USE_CUDA
 #include "cublas_v2.h"
 #endif
 
+static cublasHandle_t handle;
+static UINT max_thread;
+static UINT max_block;
 
 
 #endif
