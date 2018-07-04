@@ -1,4 +1,9 @@
-#include "mother.h"
+#ifndef BLAS_LV1_H
+#define BLAS_LV1_H
+
+//#include "mother.h"
+#include "iip_type.h"
+
 /*********************
 **** iip_blas_lv1 ****
 **********************/
@@ -31,3 +36,4 @@ void mp_caxpy(UINT,DTYPE,CTYPE*,UINT,CTYPE*,UINT);
 void caxpy(DTYPE,CMAT*,CMAT*);
 
 
+#endif

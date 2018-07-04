@@ -1,0 +1,12 @@
+OpenBLAS-v0.2.14-Win64-int32/
+bin/
+*.suo
+*.db
+*.ipch
+*.VC*
+*.vcxproj*
+*.cmake
+*.bin
+*.obj
+*.log
+*.tlog
