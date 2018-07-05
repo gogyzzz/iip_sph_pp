@@ -98,11 +98,10 @@ _2,_1
 #endif
 #if USE_CUDA
 #include "cublas_v2.h"
+extern cublasHandle_t handle;
+extern UINT max_thread;
+extern UINT max_block;
+
 #endif
-
-static cublasHandle_t handle;
-static UINT max_thread;
-static UINT max_block;
-
 
 #endif

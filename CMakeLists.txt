@@ -62,7 +62,8 @@ if(USE_CUDA)
 		
 	# compile .c files by nvcc
 	SET_SOURCE_FILES_PROPERTIES(${COMMON_SRC} PROPERTIES LANGUAGE CUDA)
-
+	set(CUDA_NVCC_FLAGS      ${CUDA_NVCC_FLAGS} -arch=compute_20)
+	message(${CUDA_NVCC_FLAGS})
 	add_executable(out ${COMMON_SRC} ${CUDA_SRC})
 	
 	list(APPEND LINKLIBS ${CUDA_CUBLAS_LIBRARIES})
