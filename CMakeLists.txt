@@ -50,8 +50,12 @@ elseif(WIN32)
 	add_definitions(-DOS_WIN=1)
 endif()
 
+### TEST SRC
+### TEST SRc
+### TEST SRC
+list(APPEND COMMON_SRC test/test_matrix.c)
 #list(APPEND COMMON_SRC main.c)
-list(APPEND COMMON_SRC test_matrix.c)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 #Untested
 if(USE_CUDA)
