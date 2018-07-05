@@ -23,12 +23,7 @@
 *여기까지 설정해주세요
 *********************************** */
 
-/*
-INDEX
-iip_matrix
-iip_blas_lv1
-
-*/
+#define MAX_CHAR 128
 
 #define UINT uint32_t
 #define SINT int32_t

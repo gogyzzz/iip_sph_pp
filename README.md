@@ -9,10 +9,10 @@ C library for speech preprocessing.
 
 ## Requirement
 cmake 3.10 or higher  
-(OPTION)OpenBLAS
-(OPTION)intelMKL
-(OPTION)CUDA
-(OPTION)OpenMP
+(OPTION)OpenBLAS  
+(OPTION)intelMKL  
+(OPTION)CUDA  
+(OPTION)OpenMP  
 
 ## Installation
 
@@ -52,9 +52,9 @@ print
 + blas\_lv1
 axpy : y = a\*x + y
 
-## Example 1 - Declaration matrix, Accessing and Scalar addition
+## Example 1 - Declaration matrix, Accessing and Operating
 
-<details><summary>test\_matrix.c</summary>
+<details><summary>test_matrix.c</summary>
 
 ```c
 #include "mother.h"
@@ -102,6 +102,8 @@ int main()
   free_MAT(a2);
 	free_MAT(a3);
   free_MAT(sa1);
+  free_MAT(sa2);
+  free_MAT(sa3);
   
 	CMAT* ca1, *sca1;
   CMAT* ca2, *sca2;
@@ -137,14 +139,26 @@ int main()
   free_CMAT(ca2);
 	free_CMAT(ca3);
 
+	free_CMAT(sca1);
+  free_CMAT(sca2);
+	free_CMAT(sca3);
 	return 0;
 }
 
 
 
 ```
-
 </details>
+
+## Example 2 - BLAS LEVEL 1
+
+<details><summary>test_blas_lv1.c</summary>
+
+```C++
+
+```
+</details>
+
 
 ## References
 
