@@ -52,7 +52,7 @@ print
 + blas\_lv1
 axpy : y = a\*x + y
 
-## Example 1 - Declaration matrix, Accessing and Scalar addition
+## Example 1 - Declaration matrix, Accessing and Operating
 
 <details><summary>test_matrix.c</summary>
 
@@ -139,17 +139,26 @@ int main()
   free_CMAT(ca2);
 	free_CMAT(ca3);
 
-	free_CMAT(csa1);
-  free_CMAT(csa2);
-	free_CMAT(csa3);
+	free_CMAT(sca1);
+  free_CMAT(sca2);
+	free_CMAT(sca3);
 	return 0;
 }
 
 
 
 ```
-
 </details>
+
+## Example 2 - BLAS LEVEL 1
+
+<details><summary>test_blas_lv1.c</summary>
+
+```C++
+
+```
+</details>
+
 
 ## References
 

@@ -80,9 +80,9 @@ int main()
   free_CMAT(ca2);
 	free_CMAT(ca3);
 
-	free_CMAT(csa1);
-  free_CMAT(csa2);
-	free_CMAT(csa3);
+	free_CMAT(sca1);
+  free_CMAT(sca2);
+	free_CMAT(sca3);
 	return 0;
 }
 
