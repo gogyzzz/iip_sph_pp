@@ -10,9 +10,9 @@
 #include "iip_matrix.h"
 
 #if USE_CUDA
-cublasHandle_t handle;
-UINT max_thread;
-UINT max_block;
+//cublasHandle_t handle;
+//UINT max_thread;
+//UINT max_block;
 
 class cublas_setting
 {

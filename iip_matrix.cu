@@ -13,6 +13,9 @@
 #else
 #define CUDA_CALL(x) {(x);}
 #endif
+cublasHandle_t handle;
+UINT max_thread;
+UINT max_block;
 
 
 /**** allocMAT  ****/
@@ -486,48 +489,25 @@ void print_MAT(MAT* mat)
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-/*	
-  ITER k, j, i;
-	MAT* out = (MAT*)malloc(sizeof(MAT));
-	out->data = (DTYPE*)malloc(sizeof(DTYPE)*(mat->d0)*(mat->d1)*(mat->d2)); 
 
-	cudaMemcpy(out->data,mat->data,sizeof(DTYPE)*(mat->d0)*(mat->d1)*(mat->d2),cudaMemcpyDeviceToHost);
-	for(k = 0; k < mat->d2; k++)
-	{
-		for(i=0; i < mat->d0 ; i++)	
-		{
-			for(j=0; j < mat->d1;j++)
-				printf("%.3lf ",out->data[k*(mat->d1)*(mat->d0) + j*(mat->d0) + i]);
-			printf("\n");
-		}
-	printf("\n");		
-	}
-
-	free(out->data);
-	free(out);
-*/
-
-  cu_print_MAT<<<1,1>>>(mat,mat->d0,mat->d1,mat->d2);
-	cudaThreadSynchronize();
+  cu_print_MAT<<<1,1>>>(mat->data,mat->d0,mat->d1,mat->d2);
+	cudaDeviceSynchronize();
 }
 
-__global__ void cu_print_MAT(MAT* mat,UINT d0,UINT d1, UINT d2)
+__global__ void cu_print_MAT(DTYPE* data,UINT d0,UINT d1, UINT d2)
 {
 	ITER i,j,k;
 	
-	printf("cu_print_MAT %d %d %d\n",d0,d1,d2 );
 	for(k = 0; k < d2; k++)
 	{
 		for(i=0; i < d0 ; i++)	
 		{
 			for(j=0; j < d1;j++)
-				printf("%.3lf ",mat->data[k*(d1)*(d0) + j*(d0) + i]);
+				printf("%.3lf ",data[k*(d1)*(d0) + j*(d0) + i]);
 			printf("\n");
 		}
 	printf("\n");		
 	}
-
-
 }
 
 void print_CMAT(CMAT* mat)
@@ -535,31 +515,26 @@ void print_CMAT(CMAT* mat)
 #if DEBUG
 printf("%s\n",__func__);
 #endif
-  ITER k, j, i;
-/*
-	CMAT* out = (CMAT*)malloc(sizeof(CMAT));
-	out->data = (CTYPE*)malloc(sizeof(CTYPE)*(mat->d0)*(mat->d1)*(mat->d2)); 
 
-	cudaMemcpy(out->data,mat->data,sizeof(CTYPE)*(mat->d0)*(mat->d1)*(mat->d2),cudaMemcpyDeviceToHost);
-	for(k = 0; k < mat->d2; k++)
+	cu_print_CMAT<<<1,1>>>(mat->data,mat->d0,mat->d1,mat->d2);
+  cudaDeviceSynchronize();
+}
+
+__global__ void cu_print_CMAT(CTYPE*data,UINT d0,UINT d1,UINT d2)
+{
+ITER i,j,k;
+	
+	for(k = 0; k < d2; k++)
 	{
-		for(i=0; i < mat->d0 ; i++)	
+		for(i=0; i < d0 ; i++)	
 		{
-			for(j=0; j < mat->d1;j++)
-			{
-				printf("%.3lf ",out->data[k*(mat->d1)*(mat->d0) + j*(mat->d0) + i].re);
-				printf("%.3lf| ",out->data[k*(mat->d1)*(mat->d0) + j*(mat->d0) + i].im);
-			
-			}
-			printf("\n");
+			for(j=0; j < d1;j++)
+			{printf("%.3lf ",data[k*(d1)*(d0) + j*(d0) + i].re);
+				printf("%.3lf|",data[k*(d1)*(d0) + j*(d0) + i].im);
+			}printf("\n");
 		}
 	printf("\n");		
 	}
-
-	free(out->data);
-	free(out);
-*/
 }
-
 
 

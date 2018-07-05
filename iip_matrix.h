@@ -111,7 +111,8 @@ void print_MAT(MAT*);
 void print_CMAT(CMAT*);
 
 #if USE_CUDA
-__global__ void cu_print_MAT(MAT*,UINT,UINT,UINT);
+__global__ void cu_print_MAT(DTYPE*,UINT,UINT,UINT);
+__global__ void cu_print_CMAT(CTYPE*,UINT,UINT,UINT);
 #endif
 
 #endif
