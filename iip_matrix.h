@@ -4,6 +4,7 @@
 //#include "mother.h"
 #include "iip_type.h"
 
+
 /********************
  **** iip_matrix ****
  ********************/
@@ -11,8 +12,11 @@
 void fill(MAT*, DTYPE);
 void cfill(CMAT*, DTYPE,DTYPE);
 
+
+#if USE_CUDA 
 __global__ void cu_fill(DTYPE*,UINT,DTYPE,UINT);
 __global__ void cu_cfill(CTYPE*,UINT,DTYPE,DTYPE,UINT);
+#endif
 
 /*** allocMAT ***/
 #define alloc_MAT_load(_x,_3,_2,_1,...) _1
@@ -106,5 +110,8 @@ void free_CMAT(CMAT*);
 void print_MAT(MAT*);
 void print_CMAT(CMAT*);
 
+#if USE_CUDA
+__global__ void cu_print_MAT(MAT*,UINT,UINT,UINT);
+#endif
 
 #endif

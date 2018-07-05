@@ -14,9 +14,6 @@
 #define CUDA_CALL(x) {(x);}
 #endif
 
-cublasHandle_t handle;
-UINT max_thread;
-UINT max_block;
 
 /**** allocMAT  ****/
 MAT* alloc_MAT_1d(UINT d0)
@@ -272,11 +269,10 @@ void fill(MAT*mat, DTYPE val) // for real mat
 {
 #if DEBUG
   printf("%s\n",__func__);
+	printf("max thread : %d\n",max_thread);
 #endif
   UINT len = (mat->d0) * (mat->d1) * (mat->d2);
-	printf("max_thread : %d\n",max_thread);
 	UINT num_block = (UINT)(len/(UINT)max_thread)+1;
-	
 	cu_fill<<<num_block,max_thread>>>(mat->data,len-1,val,max_thread);
 	cudaThreadSynchronize();
 }
@@ -484,45 +480,86 @@ printf("%s\n",__func__);
 	free(mat);
 }
 
-/*
+
 void print_MAT(MAT* mat)
 {
-  ITER k, j, i;
 #if DEBUG
 printf("%s\n",__func__);
 #endif
+/*	
+  ITER k, j, i;
+	MAT* out = (MAT*)malloc(sizeof(MAT));
+	out->data = (DTYPE*)malloc(sizeof(DTYPE)*(mat->d0)*(mat->d1)*(mat->d2)); 
+
+	cudaMemcpy(out->data,mat->data,sizeof(DTYPE)*(mat->d0)*(mat->d1)*(mat->d2),cudaMemcpyDeviceToHost);
 	for(k = 0; k < mat->d2; k++)
 	{
 		for(i=0; i < mat->d0 ; i++)	
 		{
 			for(j=0; j < mat->d1;j++)
-				printf("%.3lf ",mat->data[k*(mat->d1)*(mat->d0) + j*(mat->d0) + i]);
+				printf("%.3lf ",out->data[k*(mat->d1)*(mat->d0) + j*(mat->d0) + i]);
 			printf("\n");
 		}
 	printf("\n");		
 	}
+
+	free(out->data);
+	free(out);
+*/
+
+  cu_print_MAT<<<1,1>>>(mat,mat->d0,mat->d1,mat->d2);
+	cudaThreadSynchronize();
+}
+
+__global__ void cu_print_MAT(MAT* mat,UINT d0,UINT d1, UINT d2)
+{
+	ITER i,j,k;
+	
+	printf("cu_print_MAT %d %d %d\n",d0,d1,d2 );
+	for(k = 0; k < d2; k++)
+	{
+		for(i=0; i < d0 ; i++)	
+		{
+			for(j=0; j < d1;j++)
+				printf("%.3lf ",mat->data[k*(d1)*(d0) + j*(d0) + i]);
+			printf("\n");
+		}
+	printf("\n");		
+	}
+
+
 }
 
 void print_CMAT(CMAT* mat)
 {
-  ITER k, j, i;
 #if DEBUG
 printf("%s\n",__func__);
 #endif
+  ITER k, j, i;
+/*
+	CMAT* out = (CMAT*)malloc(sizeof(CMAT));
+	out->data = (CTYPE*)malloc(sizeof(CTYPE)*(mat->d0)*(mat->d1)*(mat->d2)); 
+
+	cudaMemcpy(out->data,mat->data,sizeof(CTYPE)*(mat->d0)*(mat->d1)*(mat->d2),cudaMemcpyDeviceToHost);
 	for(k = 0; k < mat->d2; k++)
 	{
 		for(i=0; i < mat->d0 ; i++)	
 		{
 			for(j=0; j < mat->d1;j++)
 			{
-				printf("%.3lf ",mat->data[k*(mat->d1)*(mat->d0) + j*(mat->d0) + i].re);
-				printf("%.3lf| ",mat->data[k*(mat->d1)*(mat->d0) + j*(mat->d0) + i].im);
+				printf("%.3lf ",out->data[k*(mat->d1)*(mat->d0) + j*(mat->d0) + i].re);
+				printf("%.3lf| ",out->data[k*(mat->d1)*(mat->d0) + j*(mat->d0) + i].im);
 			
 			}
 			printf("\n");
 		}
 	printf("\n");		
 	}
+
+	free(out->data);
+	free(out);
+*/
 }
 
-*/
+
+
