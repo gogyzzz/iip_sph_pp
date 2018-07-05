@@ -9,10 +9,10 @@ C library for speech preprocessing.
 
 ## Requirement
 cmake 3.10 or higher  
-(OPTION)OpenBLAS
-(OPTION)intelMKL
-(OPTION)CUDA
-(OPTION)OpenMP
+(OPTION)OpenBLAS  
+(OPTION)intelMKL  
+(OPTION)CUDA  
+(OPTION)OpenMP  
 
 ## Installation
 
@@ -54,7 +54,7 @@ axpy : y = a\*x + y
 
 ## Example 1 - Declaration matrix, Accessing and Scalar addition
 
-<details><summary>test\_matrix.c</summary>
+<details><summary>test_matrix.c</summary>
 
 ```c
 #include "mother.h"
@@ -102,6 +102,8 @@ int main()
   free_MAT(a2);
 	free_MAT(a3);
   free_MAT(sa1);
+  free_MAT(sa2);
+  free_MAT(sa3);
   
 	CMAT* ca1, *sca1;
   CMAT* ca2, *sca2;
@@ -137,6 +139,9 @@ int main()
   free_CMAT(ca2);
 	free_CMAT(ca3);
 
+	free_CMAT(csa1);
+  free_CMAT(csa2);
+	free_CMAT(csa3);
 	return 0;
 }
 

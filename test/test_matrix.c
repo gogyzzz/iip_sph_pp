@@ -43,6 +43,8 @@ int main()
   free_MAT(a2);
 	free_MAT(a3);
   free_MAT(sa1);
+  free_MAT(sa2);
+  free_MAT(sa3);
   
 	CMAT* ca1, *sca1;
   CMAT* ca2, *sca2;
@@ -78,6 +80,9 @@ int main()
   free_CMAT(ca2);
 	free_CMAT(ca3);
 
+	free_CMAT(csa1);
+  free_CMAT(csa2);
+	free_CMAT(csa3);
 	return 0;
 }
 
