@@ -38,7 +38,7 @@ void caxpy(DTYPE,CMAT*,CMAT*);
 void mp_copy(UINT N, DTYPE* src, SINT src_inc, DTYPE* des, SINT des_inc);
 void copy(MAT* src, SINT src_increment, MAT* des, SINT des_increment);
 
-void mp_ccopy(UINT N, DTYPE* src, SINT src_inc, DTYPE* des, SINT des_inc);
+void mp_ccopy(UINT N, CTYPE* src, SINT src_inc, CTYPE* des, SINT des_inc);
 void ccopy(CMAT* src, SINT src_increment, CMAT* des, SINT des_increment);
 
 

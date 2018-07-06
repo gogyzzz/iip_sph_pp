@@ -5,12 +5,29 @@
 #include "iip_matrix.h"
 #include "iip_wav.h"
 
+void init()
+{
+
 #if USE_CUDA
+	cudaDeviceProp prop;
+	cublasCreate(&handle);
+	cudaGetDeviceProperties(&prop,0);
+	max_thread = prop.maxThreadsDim[0];
+	max_block = prop.maxGridSize[1];
+#endif
+}
+
+void finit()
+{
+#if USE_CUDA
+	cublasDestroy(handle);
+#endif
+}
+
 //cublasHandle_t handle;
 //UINT max_thread;
 //UINT max_block;
-#include "cuda_runtime.h"
-
+/*
 class cublas_setting
 {
 	cudaDeviceProp prop;
@@ -19,10 +36,8 @@ class cublas_setting
 	cublas_setting()
 	{
 	cublasCreate(&handle);
-/*
 Assume that we always use first GPU device
 What if, internal gpu and external gpu, 2 gpus exist?
-*/
 	cudaGetDeviceProperties(&prop,0);
 
 	max_thread = prop.maxThreadsDim[0];
@@ -33,11 +48,12 @@ What if, internal gpu and external gpu, 2 gpus exist?
 	~cublas_setting()
 	{
 	cublasDestroy(handle);
+
 	}
 };
 
 static cublas_setting aa;
-
+*/
 #endif
 
 

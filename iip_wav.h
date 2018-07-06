@@ -40,6 +40,7 @@ void write_WAV(WAV*,char*);
 MAT * WAV2MAT(WAV*);
 
 MAT * WAV_BUF2MAT(WAV_BUF*);
+WAV * MAT2WAV(MAT*);
 
 void free_WAV(WAV*);
 
