@@ -3,6 +3,7 @@
 
 #include "iip_blas_lv1.h"
 #include "iip_matrix.h"
+#include "iip_wav.h"
 
 #if USE_CUDA
 //cublasHandle_t handle;

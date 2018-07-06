@@ -2,8 +2,9 @@
 
 typedef struct WAV_BUF
 {
- 
+ UINT buf_size; 
  short channels;
+ //buf[buf_size * channels]
  short * buf;
 
 }WAV_BUF;
@@ -20,7 +21,7 @@ typedef struct WAV
  uint32_t fmt_size; //length of the format data;
  short fmt_type; //format type 1-PCM 3-IEEE float 6- 8bit A law, 7- 8bit ,u law
  short channels;  // no of channel
- uint32_t sample_rate  //SampleRate(blocks per second)
+ uint32_t sample_rate;  //SampleRate(blocks per second)
  uint32_t byte_rate; //ByteRate = SampleRate * NumChannels * BitsPerSample/8
  short block_align;    // NumChannels * BitsPerSample/8
  short bit_per_sample; //bits per sample, 8 - 8bits, 16-16bits etc
@@ -33,10 +34,14 @@ typedef struct WAV
 
 
 WAV * read_WAV(char*);
+
+void write_WAV(WAV*,char*);
+
 MAT * WAV2MAT(WAV*);
 
-void write_WAV(WAV*);
+MAT * WAV_BUF2MAT(WAV_BUF*);
+
 void free_WAV(WAV*);
 
-//Display parameters of WAV
+//Display header of WAV
 void print_WAV(WAV*);
