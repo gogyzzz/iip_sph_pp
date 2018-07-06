@@ -54,7 +54,6 @@ What if, internal gpu and external gpu, 2 gpus exist?
 
 static cublas_setting aa;
 */
-#endif
 
 
 
