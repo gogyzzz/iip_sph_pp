@@ -4,6 +4,7 @@
 //#include "mother.h"
 #include "iip_type.h"
 
+
 /********************
  **** iip_matrix ****
  ********************/
@@ -11,8 +12,11 @@
 void fill(MAT*, DTYPE);
 void cfill(CMAT*, DTYPE,DTYPE);
 
+
+#if USE_CUDA 
 __global__ void cu_fill(DTYPE*,UINT,DTYPE,UINT);
 __global__ void cu_cfill(CTYPE*,UINT,DTYPE,DTYPE,UINT);
+#endif
 
 /*** allocMAT ***/
 #define alloc_MAT_load(_x,_3,_2,_1,...) _1
@@ -85,6 +89,10 @@ CTYPE cget_3d(CMAT*,UINT,UINT,UINT);
 
 /**** submat overloading ****/
 
+#if USE_CUDA
+__global__ void cu_submat(DTYPE*, DTYPE*,ITER,ITER,ITER,ITER,UINT,UINT,UINT,UINT,UINT);
+__global__ void cu_csubmat(CTYPE*, CTYPE*,ITER,ITER,ITER,ITER,UINT,UINT,UINT,UINT,UINT);
+#endif
 //since arg +=2, pend _x for each function
 #define submat_load(_x1,_x2,_x3,_x4,_3,_x5,_2,_x6,_1,...) _1
 #define submat_load_(args_list) submat_load args_list
@@ -92,6 +100,8 @@ CTYPE cget_3d(CMAT*,UINT,UINT,UINT);
 void submat_1d(MAT*, MAT*, ITER,ITER);
 void submat_2d(MAT*, MAT*, ITER,ITER, ITER,ITER);
 void submat_3d(MAT*, MAT*, ITER,ITER, ITER,ITER, ITER,ITER);
+
+
 
 #define csubmat_load(_x1,_x2,_x3,_x4,_3,_x5,_2,_x6,_1,...) _1
 #define csubmat_load_(args_list) csubmat_load args_list
@@ -106,5 +116,9 @@ void free_CMAT(CMAT*);
 void print_MAT(MAT*);
 void print_CMAT(CMAT*);
 
+#if USE_CUDA
+__global__ void cu_print_MAT(DTYPE*,UINT,UINT,UINT);
+__global__ void cu_print_CMAT(CTYPE*,UINT,UINT,UINT);
+#endif
 
 #endif

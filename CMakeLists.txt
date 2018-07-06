@@ -50,8 +50,12 @@ elseif(WIN32)
 	add_definitions(-DOS_WIN=1)
 endif()
 
+### TEST SRC
+### TEST SRc
+### TEST SRC
+list(APPEND COMMON_SRC test/test_matrix.c)
 #list(APPEND COMMON_SRC main.c)
-list(APPEND COMMON_SRC test_matrix.c)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 #Untested
 if(USE_CUDA)
@@ -62,7 +66,8 @@ if(USE_CUDA)
 		
 	# compile .c files by nvcc
 	SET_SOURCE_FILES_PROPERTIES(${COMMON_SRC} PROPERTIES LANGUAGE CUDA)
-
+	set(CUDA_NVCC_FLAGS      ${CUDA_NVCC_FLAGS} -arch=compute_20)
+	message(${CUDA_NVCC_FLAGS})
 	add_executable(out ${COMMON_SRC} ${CUDA_SRC})
 	
 	list(APPEND LINKLIBS ${CUDA_CUBLAS_LIBRARIES})

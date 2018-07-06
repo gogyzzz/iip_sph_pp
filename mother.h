@@ -10,12 +10,9 @@
 #include "iip_matrix.h"
 
 #if USE_CUDA
-extern cublasHandle_t handle;
-//static UINT max_thread;
-//static UINT max_block;
-
-extern UINT max_thread;
-extern UINT max_block;
+//cublasHandle_t handle;
+//UINT max_thread;
+//UINT max_block;
 
 class cublas_setting
 {
@@ -43,6 +40,7 @@ What if, internal gpu and external gpu, 2 gpus exist?
 };
 
 static cublas_setting aa;
+
 #endif
 
 
