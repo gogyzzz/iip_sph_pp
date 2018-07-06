@@ -1,4 +1,6 @@
 #include "mother.h"
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
 
 #define PART -1
 /*
@@ -15,12 +17,12 @@ int main()
 
 	ITER i, j, k;
 
+
 #if PART == 1	
 	MAT* a1;
 	MAT* a2;
 	MAT* a3;
 	MAT* a2sub;
-
 	a1 = zeros(4);
 	a2 = zeros(3, 4);
 	a3 = zeros(2, 3, 4);
