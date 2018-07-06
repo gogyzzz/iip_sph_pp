@@ -1,5 +1,7 @@
 //#include "mother.h"
 #include "iip_matrix.h"
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
 
 #if DEBUG
 #define CUDA_CALL(x) \

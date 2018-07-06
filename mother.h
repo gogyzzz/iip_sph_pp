@@ -9,6 +9,7 @@
 //cublasHandle_t handle;
 //UINT max_thread;
 //UINT max_block;
+#include "cuda_runtime.h"
 
 class cublas_setting
 {
