@@ -15,8 +15,7 @@ WAV* read_WAV(char*file_path)
 printf("%s\n",__func__);
 #endif
  //파일 유무확인
- f = fopen(file_path,"rb");
- if(f == NULL)
+ if(!(f = fopen(file_path,"rb")))
  {
    printf("Failed to open '%s'\n",file_path);
    return NULL;
@@ -201,3 +200,27 @@ MAT * WAV2MAT(WAV* wav)
 {
   return WAV_BUF2MAT(&(wav->buffer));
 }
+/*
+WAV * MAT2WAV(MAT* mat)
+{ 
+  WAV* wav;
+
+  wav = (WAV*)malloc(sizeof(MAT));
+	wav->riff_id[0]= 'R';
+	wav->riff_id[1]= 'I';
+	wav->riff_id[2]= 'F';
+	wav->riff_id[3]= 'F';
+
+  wav->riff_size = ;
+
+	wav->wave_id[0] = 'W';
+	wav->wave_id[1] = 'A';
+	wav->wave_id[2] = 'V';
+	wav->wave_id[3] = 'E';
+ 
+  wav->fmt_id[0]='' ;
+  wav->fmt_id[0]='' ;
+  wav->fmt_id[0]='' ;
+  wav->fmt_id[0]='' ;
+}
+*/

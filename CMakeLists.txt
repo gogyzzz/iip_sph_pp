@@ -53,7 +53,8 @@ endif()
 ### TEST SRC
 ### TEST SRc
 ### TEST SRC
-list(APPEND COMMON_SRC test/test_matrix.c)
+#list(APPEND COMMON_SRC test/test_matrix.c)
+list(APPEND COMMON_SRC test/test_wav.c)
 #list(APPEND COMMON_SRC main.c)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -75,7 +76,7 @@ if(USE_CUDA)
 
 else()
 	project(${PROJECT_NAME} C)
-	list(APPEND C_SRC iip_matrix.c iip_blas_lv1.c)
+	list(APPEND C_SRC iip_matrix.c iip_blas_lv1.c iip_wav.c)
 
 	if(BLAS_OPEN)
 		find_package(BLAS REQUIRED)
