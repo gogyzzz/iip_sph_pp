@@ -53,8 +53,8 @@ endif()
 ### TEST SRC
 ### TEST SRc
 ### TEST SRC
-list(APPEND COMMON_SRC test/test_matrix.c)
-#list(APPEND COMMON_SRC main.c)
+#list(APPEND COMMON_SRC test/test_matrix.c)
+list(APPEND COMMON_SRC main.c)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 #Untested

@@ -1,4 +1,6 @@
 #include "iip_blas_lv1.h"
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
 
 #if DEBUG
 #define CUDA_CALL(x) \
@@ -26,7 +28,7 @@ UINT mat_size = src->d0 * src->d1 * src->d2;
 	UINT num_block = (UINT)(len/(UINT)max_thread)+1;
 	
 	cu_copy<<<num_block,max_thread>>>(mat->data,len-1,val,max_thread);
-	cudaThreadSynchronize();
+	CUDA_CALL(cudaThreadSynchronize())
 }
 
 __global__ void cu_copy(DTYPE* data, UINT len,DTYPE val,UINT size_block)
