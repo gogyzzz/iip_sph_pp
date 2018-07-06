@@ -1,6 +1,117 @@
 //#include "mother.h"
 #include "iip_matrix.h"
 
+/**** alloc_MAT ****/
+
+MAT* alloc_MAT_1d(UINT d0)
+{
+MAT * mat;
+#if DEBUG
+printf("%s\n",__func__);
+#endif
+
+	mat = (MAT*)malloc(sizeof(MAT));
+	mat->ndim = 0;
+	mat->d0 = d0;
+	mat->d1 = 1;
+	mat->d2 = 1;
+	
+	mat->data = (DTYPE*)malloc(sizeof(DTYPE)*d0);
+
+	return mat;
+}
+MAT* alloc_MAT_2d(UINT d0,UINT d1)
+{
+MAT * mat;
+#if DEBUG
+printf("%s\n",__func__);
+#endif
+
+	mat = (MAT*)malloc(sizeof(MAT));
+	mat->ndim = 1;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = 1;
+	
+	mat->data = (DTYPE*)malloc(sizeof(DTYPE)*d0*d1);
+
+	return mat;
+
+}
+MAT* alloc_MAT_3d(UINT d0,UINT d1,UINT d2)
+{
+MAT * mat;
+#if DEBUG
+printf("%s\n",__func__);
+#endif
+
+	mat = (MAT*)malloc(sizeof(MAT));
+	mat->ndim = 2;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = d2;
+	
+	mat->data = (DTYPE*)malloc(sizeof(DTYPE)*d0*d1*d2);
+
+	return mat;
+
+}
+
+CMAT* calloc_MAT_1d(UINT d0)
+{
+CMAT * mat;
+#if DEBUG
+printf("%s\n",__func__);
+#endif
+
+	mat = (CMAT*)malloc(sizeof(CMAT));
+	mat->ndim = 0;
+	mat->d0 = d0;
+	mat->d1 = 1;
+	mat->d2 = 1;
+	
+	mat->data = (CTYPE*)malloc(sizeof(CTYPE)*d0);
+
+	return mat;
+
+}
+CMAT* calloc_MAT_2d(UINT d0,UINT d1)
+{
+CMAT * mat;
+#if DEBUG
+printf("%s\n",__func__);
+#endif
+
+	mat = (CMAT*)malloc(sizeof(CMAT));
+	mat->ndim = 1;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = 1;
+	
+	mat->data = (CTYPE*)malloc(sizeof(CTYPE)*d0*d1);
+
+	return mat;
+
+}
+CMAT* calloc_MAT_3d(UINT d0,UINT d1,UINT d2)
+{
+CMAT * mat;
+#if DEBUG
+printf("%s\n",__func__);
+#endif
+
+	mat = (CMAT*)malloc(sizeof(CMAT));
+	mat->ndim = 2;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = d2;
+	
+	mat->data = (CTYPE*)malloc(sizeof(CTYPE)*d0);
+
+	return mat;
+
+}
+
 /**** zeros  ****/
 
 MAT* zeros_1d(UINT d0)
