@@ -6,6 +6,8 @@
 #include <string.h>
 #include <stdint.h>
 
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
 #define DEBUG 1
 
 /***********************************

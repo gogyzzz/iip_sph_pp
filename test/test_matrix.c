@@ -2,7 +2,8 @@
 
 int main()
 {
-	
+	init();
+
 	MAT* a1, *sa1;
   MAT* a2, *sa2;
 	MAT* a3, *sa3;
@@ -83,6 +84,8 @@ int main()
 	free_CMAT(sca1);
   free_CMAT(sca2);
 	free_CMAT(sca3);
+
+	finit();
 	return 0;
 }
 

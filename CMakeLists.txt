@@ -39,8 +39,8 @@ set(C_SRC)
 set(CUDA_SRC)
 
 ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  
-#list(APPEND COMMON_SRC test/test_matrix.c)
-list(APPEND COMMON_SRC test/test_wav.c)
+list(APPEND COMMON_SRC test/test_matrix.c)
+#list(APPEND COMMON_SRC test/test_wav.c)
 #list(APPEND COMMON_SRC main.c)
 ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  
 
