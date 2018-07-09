@@ -17,8 +17,9 @@ printf("%s\n",__func__);
  //파일 유무확인
  if(!(f = fopen(file_path,"rb")))
  {
-   printf("Failed to open '%s'\n",file_path);
-   return NULL;
+   printf("Failed to open '%s'\nAborting process\n",file_path);
+   exit(-1);
+	 return NULL;
  }
    
  //WAV 읽기
@@ -92,10 +93,12 @@ printf("%s\n",__func__);
 void write_WAV(WAV* wav,char *file_path)
 {
   FILE * f;
-
+  
 #if DEBUG
 printf("%s\n",__func__);
 #endif
+  
+
   f = fopen(file_path,"wb");
   if(f == NULL)
    {
@@ -185,7 +188,7 @@ printf("%s\n",__func__);
   mat->d2 = 1;
 	mat -> data =(DTYPE*)malloc(sizeof(DTYPE)*mat->d0 * mat->d1);
 
-#pragma omp for shared(mat->data,buf->buf) private(i,j)	
+#pragma omp parallel for shared(mat,buf) private(i,j)	
 	for(i=0;i<mat->d1; i++)
 	{
 			for(j=0;j<mat->d0;j++)
@@ -200,27 +203,84 @@ MAT * WAV2MAT(WAV* wav)
 {
   return WAV_BUF2MAT(&(wav->buffer));
 }
-/*
-WAV * MAT2WAV(MAT* mat)
+
+
+
+WAV * MAT2WAV(MAT* mat, UINT sample_rate)
 { 
+	ITER i;
+	UINT d0,d1;
   WAV* wav;
 
-  wav = (WAV*)malloc(sizeof(MAT));
+	d0 = mat->d0;
+	d1 = mat->d1;
+
+  wav = (WAV*)malloc(sizeof(WAV));
 	wav->riff_id[0]= 'R';
 	wav->riff_id[1]= 'I';
 	wav->riff_id[2]= 'F';
 	wav->riff_id[3]= 'F';
 
-  wav->riff_size = ;
 
 	wav->wave_id[0] = 'W';
 	wav->wave_id[1] = 'A';
 	wav->wave_id[2] = 'V';
 	wav->wave_id[3] = 'E';
  
-  wav->fmt_id[0]='' ;
-  wav->fmt_id[0]='' ;
-  wav->fmt_id[0]='' ;
-  wav->fmt_id[0]='' ;
+  wav->fmt_id[0]='f' ;
+  wav->fmt_id[1]='m' ;
+  wav->fmt_id[2]='t' ;
+  wav->fmt_id[3]=' ' ;
+
+	//short 16bit ->2 bytes
+  wav->fmt_size=16;
+	
+	//1- PCM
+	wav->fmt_type = 1;
+
+	wav->channels=d1;
+
+	//have to be Optional
+	wav->sample_rate=sample_rate;
+
+	//smaple_rate * channels * fmt_size / 8
+	wav->byte_rate = wav->sample_rate * wav->channels * wav->fmt_size / 8;
+	  
+	//bit per sample, 8 or 16. not sure
+	wav->bit_per_sample=16;
+
+	//bit_per_sample*channels /8
+  wav->block_align = wav->bit_per_sample * wav->channels / 8;
+	wav->data_id[0]='d';
+	wav->data_id[1]='a';
+	wav->data_id[2]='t';
+	wav->data_id[3]='a';
+
+	//Number of Samples * Number of Channels * Bit_per_sample / 8 
+	wav->data_size = mat->d0 * mat->d1 * wav->bit_per_sample / 8;
+
+  wav->riff_size = wav->data_size + 44;
+
+	wav->buffer.buf_size=d0;
+	wav->buffer.channels= wav->channels;
+  
+	/*
+	 * mat  1 1 1 1 1 
+	 *      2 2 2 2 2
+	 *      3 3 3 3 3
+	 *
+	 *buf   1 2 3 1 2 3 1 2 3 1 2 3 1 2 3  
+	 *
+	 * */
+	wav->buffer.buf = (short*)malloc(sizeof(short)*d0*d1);
+#pragma omp parallel for shared(wav,mat) private(i) 
+	for(i=0;i<d0*d1;i++)
+	{
+		wav->buffer.buf[i] = (short)(mat->data[i%d1*d0 + i/d1]);
+	}
+
+	return wav;
 }
-*/
+
+
+

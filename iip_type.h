@@ -6,8 +6,15 @@
 #include <string.h>
 #include <stdint.h>
 
+#if USE_CUDA
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
+#endif
+
+#if OS_WIN
+#define __func__ __FUNCTION__
+#endif
+
 #define DEBUG 1
 
 /***********************************
