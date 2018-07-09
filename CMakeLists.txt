@@ -11,7 +11,7 @@ set(PROJECT_NAME iip_sph_pp)
 ###################################################
 
 #BLAS
-option(USE_CUDA "Using CUDA"                 ON)
+option(USE_CUDA "Using CUDA"                 OFF)
 
 #option(BLAS_CU  " BLAS : cublas"             ON)
 option(BLAS_OPEN "BLAS : OpenBLAS"           OFF)
@@ -39,9 +39,12 @@ set(C_SRC)
 set(CUDA_SRC)
 
 ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  
-list(APPEND COMMON_SRC test/test_matrix.c)
+#list(APPEND COMMON_SRC test/test_matrix.c)
 #list(APPEND COMMON_SRC test/test_wav.c)
 #list(APPEND COMMON_SRC main.c)
+set(test_matrix test/test_matrix.c)
+set(test_wav test/test_wav.c)
+
 ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  
 
 if(NOT I_DID_WHAT_I_HAVE_TO_DO)
@@ -61,7 +64,7 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 message(STATUS "ENV_PATH : " $ENV{PATH})
-#Untested
+
 if(USE_CUDA)
 	project(${PROJECT_NAME} CUDA)
 	list(APPEND CUDA_SRC iip_matrix.cu iip_blas_lv1.cu)
@@ -70,10 +73,17 @@ if(USE_CUDA)
 		
 	# compile .c files by nvcc
 	SET_SOURCE_FILES_PROPERTIES(${COMMON_SRC} PROPERTIES LANGUAGE CUDA)
-	
-	add_executable(out ${COMMON_SRC} ${CUDA_SRC})	
-	list(APPEND LINKLIBS ${CUDA_CUBLAS_LIBRARIES})
-	target_link_libraries(out ${LINKLIBS} cublas)
+
+	add_executable(out_matrix ${test_matrix} ${COMMON_SRC} ${CUDA_SRC})	
+	add_executable(out_wav ${test_wav} ${COMMON_SRC ${CUDA_SRC}})	
+
+	target_link_libraries(out_matrix ${LINKLIBS} cublas)
+	target_link_libraries(out_wav ${LINKLIBS} cublas)
+	#	add_executable(out ${COMMON_SRC} ${CUDA_SRC})	
+	#	list(APPEND LINKLIBS ${CUDA_CUBLAS_LIBRARIES})
+	#	target_link_libraries(out ${LINKLIBS} cublas)
+  
+  
 
 else()
 	project(${PROJECT_NAME} C)
@@ -116,10 +126,15 @@ else()
 		list(APPEND CMAKE_EXE_LINKER_FLAGS ${OpenMP_EXE_LINKER_FLAGS})
 	endif()
 
+	add_executable(out_matrix ${test_matrix} ${COMMON_SRC} ${C_SRC})	
+	add_executable(out_wav ${test_wav} ${COMMON_SRC} ${C_SRC})	
+
+	target_link_libraries(out_matrix ${LINKLIBS})
+	target_link_libraries(out_wav ${LINKLIBS})
 
 
-	add_executable(out ${COMMON_SRC} ${C_SRC})
-  target_link_libraries(out ${LINKLIBS})
+	#add_executable(out ${COMMON_SRC} ${C_SRC})
+	#target_link_libraries(out ${LINKLIBS})
 endif()
 
 #generic function 
