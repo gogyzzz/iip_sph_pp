@@ -26,6 +26,8 @@ option(I_DID_WHAT_I_HAVE_TO_DO "SET THIS ON" ON)
 ###################################################
 ###################################################
 ###################################################
+
+
 message(STATUS "USE_CUDA   : " ${USE_CUDA})
 message(STATUS "BLAS_OPEN  : " ${BLAS_OPEN})
 message(STATUS "BLAS_MKL   : " ${BLAS_MKL})
@@ -36,8 +38,14 @@ set(COMMON_SRC)
 set(C_SRC)
 set(CUDA_SRC)
 
+### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  
+#list(APPEND COMMON_SRC test/test_matrix.c)
+list(APPEND COMMON_SRC test/test_wav.c)
+#list(APPEND COMMON_SRC main.c)
+### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  
+
 if(NOT I_DID_WHAT_I_HAVE_TO_DO)
-			message(FATAL_ERROR "*****************************************\nYOU NEED TO SET CONFIGURATION OPTIONS MANUALLY\n****************************************")
+	message(FATAL_ERROR "*****************************************\nYOU NEED TO SET CONFIGURATION OPTIONS MANUALLY\n****************************************")
 endif()
 
 #GET OS
@@ -50,29 +58,22 @@ elseif(WIN32)
 	add_definitions(-DOS_WIN=1)
 endif()
 
-### TEST SRC
-### TEST SRc
-### TEST SRC
-#list(APPEND COMMON_SRC test/test_matrix.c)
-list(APPEND COMMON_SRC test/test_wav.c)
-#list(APPEND COMMON_SRC main.c)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+message(STATUS "ENV_PATH : " $ENV{PATH})
 #Untested
 if(USE_CUDA)
 	project(${PROJECT_NAME} CUDA)
-	list(APPEND CUDA_SRC iip_matrix.cu)
+	list(APPEND CUDA_SRC iip_matrix.cu iip_blas_lv1.cu)
 	
 	add_definitions(-DUSE_CUDA=1)
 		
 	# compile .c files by nvcc
 	SET_SOURCE_FILES_PROPERTIES(${COMMON_SRC} PROPERTIES LANGUAGE CUDA)
-	set(CUDA_NVCC_FLAGS      ${CUDA_NVCC_FLAGS} -arch=compute_20)
-	message(${CUDA_NVCC_FLAGS})
-	add_executable(out ${COMMON_SRC} ${CUDA_SRC})
 	
+	add_executable(out ${COMMON_SRC} ${CUDA_SRC})	
 	list(APPEND LINKLIBS ${CUDA_CUBLAS_LIBRARIES})
-  target_link_libraries(out ${LINKLIBS} rt cublas)
+	target_link_libraries(out ${LINKLIBS} cublas)
 
 else()
 	project(${PROJECT_NAME} C)
