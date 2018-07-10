@@ -87,8 +87,15 @@ if(USE_CUDA)
 
 else()
 	project(${PROJECT_NAME} C)
+	
+	#eliminate '/W3' : D8021  invalid numeric argument error
+	string (REPLACE "/W3" "" CMAKE_C_FLAGS ${CMAKE_C_FLAGS}) 
+	
+	message(STATUS "CMAKE_C_FLAGS : " ${CMAKE_C_FLAGS})	
+	message(STATUS "CMAKE_EXE_LINKER_FLAGS : " ${CMAKE_EXE_LINKER_FLAGS})
+	
 	list(APPEND C_SRC iip_matrix.c iip_blas_lv1.c iip_wav.c)
-
+		
 	if(BLAS_OPEN)
 		find_package(BLAS REQUIRED)
 		if(NOT BLAS_FOUND)
