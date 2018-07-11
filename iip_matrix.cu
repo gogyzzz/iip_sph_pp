@@ -65,7 +65,7 @@ printf("%s\n",__func__);
 	return mat;
 }
 
-CMAT* calloc_MAT_1d(UINT d0)
+CMAT* alloc_CMAT_1d(UINT d0)
 {
 #if DEBUG
 printf("%s\n",__func__);
@@ -79,7 +79,7 @@ printf("%s\n",__func__);
 
 	return mat;
 }
-CMAT* calloc_MAT_2d(UINT d0,UINT d1)
+CMAT* alloc_CMAT_2d(UINT d0,UINT d1)
 {
 #if DEBUG
 printf("%s\n",__func__);
@@ -93,7 +93,7 @@ printf("%s\n",__func__);
 
 	return mat;
 }
-CMAT* calloc_MAT_3d(UINT d0,UINT d1,UINT d2)
+CMAT* alloc_CMAT_3d(UINT d0,UINT d1,UINT d2)
 {
 #if DEBUG
 printf("%s\n",__func__);
