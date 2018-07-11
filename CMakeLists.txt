@@ -13,7 +13,7 @@ set(PROJECT_NAME iip_sph_pp)
 option(USE_CUDA "Using CUDA"                 OFF)
 
 #option(BLAS_CU  " BLAS : cublas"             ON)
-option(USE_OPEN "BLAS : OpenBLAS"           OFF)
+option(USE_OPEN "BLAS : OpenBLAS"           ON)
 option(USE_MKL "BLAS : IntelMKL"            OFF)
 
 #OpenMP
@@ -43,6 +43,7 @@ set(CUDA_SRC)
 #list(APPEND COMMON_SRC main.c)
 set(test_matrix test/test_matrix.c)
 set(test_wav test/test_wav.c)
+set(test_blas_lv1 test/test_blas_lv1.c)
 
 ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  
 
@@ -62,6 +63,7 @@ endif()
 
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
 message(STATUS "ENV_PATH : " $ENV{PATH})
 
 if(USE_CUDA)
@@ -75,9 +77,11 @@ if(USE_CUDA)
 
 	add_executable(out_matrix ${test_matrix} ${COMMON_SRC} ${CUDA_SRC})	
 	add_executable(out_wav ${test_wav} ${COMMON_SRC ${CUDA_SRC}})	
+	add_executable(out_blas_lv1 ${test_blas_lv1} ${COMMON_SRC ${CUDA_SRC}})	
 
 	target_link_libraries(out_matrix ${LINKLIBS} cublas)
 	target_link_libraries(out_wav ${LINKLIBS} cublas)
+	target_link_libraries(out_blas_lv1 ${LINKLIBS} cublas)
 	#	add_executable(out ${COMMON_SRC} ${CUDA_SRC})	
 	#	list(APPEND LINKLIBS ${CUDA_CUBLAS_LIBRARIES})
 	#	target_link_libraries(out ${LINKLIBS} cublas)
@@ -88,7 +92,7 @@ else()
 	project(${PROJECT_NAME} C)
 	
 	#eliminate '/W3' : D8021  invalid numeric argument error
-	string (REPLACE "/W3" ";" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
+	string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
 	
 	message(STATUS "CMAKE_C_FLAGS : " ${CMAKE_C_FLAGS})	
 	message(STATUS "CMAKE_EXE_LINKER_FLAGS : " ${CMAKE_EXE_LINKER_FLAGS})
@@ -101,6 +105,8 @@ else()
 			message(FATAL_ERROR "Can't find BLAS")
 		endif()
 		add_definitions(-DUSE_OPEN=1)
+		add_definitions(-DUSE_CBLAS=1)
+	
 		message(STATUS ${BLAS_LIBRARIES})
 		list(APPEND LINKLIBS ${BLAS_LIBRARIES})
 	
@@ -119,6 +125,7 @@ else()
 	endif()	
 	
 	add_definitions(-DUSE_MKL=1)
+	add_definitions(-DUSE_CBLAS=1)
 
 	endif()
 	
@@ -134,9 +141,11 @@ else()
 
 	add_executable(out_matrix ${test_matrix} ${COMMON_SRC} ${C_SRC})	
 	add_executable(out_wav ${test_wav} ${COMMON_SRC} ${C_SRC})	
+	add_executable(out_blas_lv1 ${test_blas_lv1} ${COMMON_SRC} ${C_SRC})	
 
 	target_link_libraries(out_matrix ${LINKLIBS})
 	target_link_libraries(out_wav ${LINKLIBS})
+	target_link_libraries(out_blas_lv1 ${LINKLIBS})
 
 
 	#add_executable(out ${COMMON_SRC} ${C_SRC})
