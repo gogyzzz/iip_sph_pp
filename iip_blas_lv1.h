@@ -17,7 +17,7 @@
  * swap
  * i?amax
  * i?amin
- * copy
+ * -------copy
  * -------axpy
  * + s,d
  * dot

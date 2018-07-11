@@ -38,6 +38,10 @@
 #define SINT int32_t
 #define ITER long
 
+#define NoTran   111
+#define Tran     112
+#define CTran    113
+
 /*
 * #define AA BB
 * str(AA) -> 'AA'
@@ -45,6 +49,7 @@
 * */
 #define str(x) #x
 #define xstr(x) str(x)
+
 
 typedef struct MAT
 {
@@ -69,6 +74,7 @@ typedef struct CMAT
 	UINT d1;
 	UINT d2;
 }CMAT;
+
 
 
 /*

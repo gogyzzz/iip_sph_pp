@@ -17,7 +17,7 @@ option(USE_OPEN "BLAS : OpenBLAS"           ON)
 option(USE_MKL "BLAS : IntelMKL"            OFF)
 
 #OpenMP
-option(USE_OPENMP "Using OpenMP"             OFF)
+option(USE_OPENMP "Using OpenMP"             ON)
 
 #설정을 다 하셨다면 이 옵션을 ON 해주세요
 option(I_DID_WHAT_I_HAVE_TO_DO "SET THIS ON" ON)
@@ -44,6 +44,7 @@ set(CUDA_SRC)
 set(test_matrix test/test_matrix.c)
 set(test_wav test/test_wav.c)
 set(test_blas_lv1 test/test_blas_lv1.c)
+set(test_blas_lv2 test/test_blas_lv2.c)
 
 ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  
 
@@ -97,7 +98,7 @@ else()
 	message(STATUS "CMAKE_C_FLAGS : " ${CMAKE_C_FLAGS})	
 	message(STATUS "CMAKE_EXE_LINKER_FLAGS : " ${CMAKE_EXE_LINKER_FLAGS})
 	
-	list(APPEND C_SRC iip_matrix.c iip_blas_lv1.c iip_wav.c)
+	list(APPEND C_SRC iip_matrix.c iip_blas_lv1.c iip_wav.c iip_blas_lv2.c)
 		
 	if(USE_OPEN)
 		find_package(BLAS REQUIRED)
@@ -142,10 +143,12 @@ else()
 	add_executable(out_matrix ${test_matrix} ${COMMON_SRC} ${C_SRC})	
 	add_executable(out_wav ${test_wav} ${COMMON_SRC} ${C_SRC})	
 	add_executable(out_blas_lv1 ${test_blas_lv1} ${COMMON_SRC} ${C_SRC})	
+	add_executable(out_blas_lv2 ${test_blas_lv2} ${COMMON_SRC} ${C_SRC})	
 
 	target_link_libraries(out_matrix ${LINKLIBS})
 	target_link_libraries(out_wav ${LINKLIBS})
 	target_link_libraries(out_blas_lv1 ${LINKLIBS})
+	target_link_libraries(out_blas_lv2 ${LINKLIBS})
 
 
 	#add_executable(out ${COMMON_SRC} ${C_SRC})
