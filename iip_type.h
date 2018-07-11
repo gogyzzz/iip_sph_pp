@@ -32,7 +32,7 @@
 *여기까지 설정해주세요
 *********************************** */
 
-#define MAX_CHAR 128
+#define MAX_CHAR 256
 
 #define UINT uint32_t
 #define SINT int32_t
@@ -97,9 +97,14 @@ _2,_1
 **** pre main for CUDA ****
 ***************************/
 
-#if USE_CBLAS 
+#if USE_OPEN 
 #include "cblas.h"
 #endif
+
+#if USE_MKL
+#include "mkl.h"
+#endif
+
 #if USE_CUDA
 #include "cublas_v2.h"
 extern cublasHandle_t handle;
