@@ -10,12 +10,11 @@ set(PROJECT_NAME iip_sph_pp)
 ###################################################
 ###################################################
 
-#BLAS
 option(USE_CUDA "Using CUDA"                 OFF)
 
 #option(BLAS_CU  " BLAS : cublas"             ON)
-option(BLAS_OPEN "BLAS : OpenBLAS"           OFF)
-option(BLAS_MKL "BLAS : IntelMKL"            OFF)
+option(USE_OPEN "BLAS : OpenBLAS"           OFF)
+option(USE_MKL "BLAS : IntelMKL"            OFF)
 
 #OpenMP
 option(USE_OPENMP "Using OpenMP"             OFF)
@@ -29,8 +28,8 @@ option(I_DID_WHAT_I_HAVE_TO_DO "SET THIS ON" ON)
 
 
 message(STATUS "USE_CUDA   : " ${USE_CUDA})
-message(STATUS "BLAS_OPEN  : " ${BLAS_OPEN})
-message(STATUS "BLAS_MKL   : " ${BLAS_MKL})
+message(STATUS "USE_OPEN  : " ${USE_OPEN})
+message(STATUS "USE_MKL   : " ${USE_MKL})
 message(STATUS "USE_OPENMP : " ${USE_OPENMP})
 
 set(LINKLIBS)
@@ -89,23 +88,23 @@ else()
 	project(${PROJECT_NAME} C)
 	
 	#eliminate '/W3' : D8021  invalid numeric argument error
-	string (REPLACE "/W3" "" CMAKE_C_FLAGS ${CMAKE_C_FLAGS}) 
+	string (REPLACE "/W3" ";" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
 	
 	message(STATUS "CMAKE_C_FLAGS : " ${CMAKE_C_FLAGS})	
 	message(STATUS "CMAKE_EXE_LINKER_FLAGS : " ${CMAKE_EXE_LINKER_FLAGS})
 	
 	list(APPEND C_SRC iip_matrix.c iip_blas_lv1.c iip_wav.c)
 		
-	if(BLAS_OPEN)
+	if(USE_OPEN)
 		find_package(BLAS REQUIRED)
 		if(NOT BLAS_FOUND)
 			message(FATAL_ERROR "Can't find BLAS")
 		endif()
-		add_definitions(-DUSE_CBLAS=1)
+		add_definitions(-DUSE_OPEN=1)
 		message(STATUS ${BLAS_LIBRARIES})
 		list(APPEND LINKLIBS ${BLAS_LIBRARIES})
 	
-	elseif(BLAS_MKL)
+	elseif(USE_MKL)
 #linux 라면 mkl 사용시 컴파일 옵션을 구질구질하게 걸어줘야하는데
 #Windows VS를 쓰면 mkl 플러그인이 있어서 쓰기 편하다
 #그렇다면 Window일땐 그냥 냅두는것이?
@@ -119,7 +118,7 @@ else()
 		list(APPEND LINKLIBS ${MKL_PATH})
 	endif()	
 	
-	add_definitions(-DUSE_CBLAS=1)
+	add_definitions(-DUSE_MKL=1)
 
 	endif()
 	
