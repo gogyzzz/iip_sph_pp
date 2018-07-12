@@ -102,8 +102,8 @@ if(USE_CUDA)
 =======
 
 	add_executable(out_matrix ${test_matrix} ${COMMON_SRC} ${CUDA_SRC})	
-	add_executable(out_wav ${test_wav} ${COMMON_SRC ${CUDA_SRC}})	
-	add_executable(out_blas_lv1 ${test_blas_lv1} ${COMMON_SRC ${CUDA_SRC}})	
+	add_executable(out_wav ${test_wav} ${COMMON_SRC} ${CUDA_SRC})	
+	add_executable(out_blas_lv1 ${test_blas_lv1} ${COMMON_SRC} ${CUDA_SRC})	
 
 	target_link_libraries(out_matrix ${LINKLIBS} cublas)
 	target_link_libraries(out_wav ${LINKLIBS} cublas)
