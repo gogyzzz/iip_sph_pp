@@ -15,9 +15,8 @@ option(USE_CUDA "Using CUDA"                 OFF)
 #option(BLAS_CU  " BLAS : cublas"             ON)
 option(USE_OPEN "BLAS : OpenBLAS"           ON)
 option(USE_MKL "BLAS : IntelMKL"            OFF)
-
 #OpenMP
-option(USE_OPENMP "Using OpenMP"             ON)
+option(USE_OPENMP "Using OpenMP"             OFF)
 
 #설정을 다 하셨다면 이 옵션을 ON 해주세요
 option(I_DID_WHAT_I_HAVE_TO_DO "SET THIS ON" ON)
@@ -45,6 +44,7 @@ set(test_matrix test/test_matrix.c)
 set(test_wav test/test_wav.c)
 set(test_blas_lv1 test/test_blas_lv1.c)
 set(test_blas_lv2 test/test_blas_lv2.c)
+set(test_blas_lv2_big test/test_blas_lv2_big.c)
 
 ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  
 
@@ -144,11 +144,13 @@ else()
 	add_executable(out_wav ${test_wav} ${COMMON_SRC} ${C_SRC})	
 	add_executable(out_blas_lv1 ${test_blas_lv1} ${COMMON_SRC} ${C_SRC})	
 	add_executable(out_blas_lv2 ${test_blas_lv2} ${COMMON_SRC} ${C_SRC})	
+	add_executable(out_blas_lv2_big ${test_blas_lv2_big} ${COMMON_SRC} ${C_SRC})	
 
 	target_link_libraries(out_matrix ${LINKLIBS})
 	target_link_libraries(out_wav ${LINKLIBS})
 	target_link_libraries(out_blas_lv1 ${LINKLIBS})
 	target_link_libraries(out_blas_lv2 ${LINKLIBS})
+	target_link_libraries(out_blas_lv2_big ${LINKLIBS})
 
 
 	#add_executable(out ${COMMON_SRC} ${C_SRC})

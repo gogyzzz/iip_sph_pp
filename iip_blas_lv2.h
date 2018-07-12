@@ -5,16 +5,16 @@
 /*
  * TODO
  *
- * gbmv
+ * gemv
  *
  * */
 
-void gemv(int,DTYPE,MAT*,MAT*,DTYPE,MAT*);
+void gemv(int32_t,DTYPE,MAT*,MAT*,DTYPE,MAT*);
 void mp_gemv(int32_t,UINT,UINT,DTYPE,DTYPE*,UINT,DTYPE*,SINT,DTYPE,DTYPE*,SINT );
 
 
-void cgemv();
-void mp_cgemv();
+void cgemv(int32_t, CTYPE,CMAT*,CMAT*,CTYPE,CMAT*);
+void mp_cgemv(int32_t, UINT,UINT,CTYPE,CTYPE*,UINT,CTYPE*,SINT,CTYPE,CTYPE*,SINT);
 
 
 #endif

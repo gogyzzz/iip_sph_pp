@@ -119,4 +119,18 @@ extern UINT max_block;
 
 #endif
 
+#define cmul(Y,X)\
+	 Y.re = Y.re*X.re - Y.im*X.im;\
+	 Y.im = Y.re*X.im + Y.im*X.re;\
+
+
+#define cadd(Y,X)\
+		Y.re = Y.re+X.re;\
+		Y.im = Y.im+X.im; 
+
+#define cadd_mul(Y,A,B)\
+		Y.re += A.re*B.re - A.im*B.im;\
+		Y.im += A.re*B.im + A.im*B.re;
+
+
 #endif

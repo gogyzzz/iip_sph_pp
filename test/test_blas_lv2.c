@@ -7,6 +7,10 @@ int main()
 MAT*A,*X,*Y;
 MAT*TA,*TX,*TY;
 
+CMAT*CA,*CX,*CY;
+CMAT*TCA,*TCX,*TCY;
+CTYPE calpha,cbeta;
+
 stopwatch(0);
 
 A = zeros(5,4);
@@ -54,6 +58,60 @@ print_MAT(TY);
 free_MAT(TA);
 free_MAT(TX);
 free_MAT(TY);
+
+
+/**** COMPLEX ****/
+
+calpha.re = 5;
+calpha.im = 0;
+cbeta.re = 2;
+cbeta.im = 0;
+
+CA = czeros(4,3);
+CX = alloc_CMAT(4);
+CY = alloc_CMAT(3);
+
+cfill(CA,3,0);
+cfill(CX,-2,0);
+cfill(CY,4,-2);
+
+print_CMAT(CA);
+print_CMAT(CX);
+print_CMAT(CY);
+
+cgemv(NoTran,calpha,CA,CX,cbeta,CY);
+
+print_CMAT(CA);
+print_CMAT(CX);
+print_CMAT(CY);
+
+free_CMAT(CA);
+free_CMAT(CX);
+free_CMAT(CY);
+
+/**** TRANSPOSE  ****/
+
+TCA = czeros(3,4);
+TCX = alloc_CMAT(4);
+TCY = alloc_CMAT(3);
+
+cfill(TCA,3,0);
+cfill(TCX,-2,0);
+cfill(TCY,4,-2);
+
+print_CMAT(TCA);
+print_CMAT(TCX);
+print_CMAT(TCY);
+
+cgemv(Tran,calpha,TCA,TCX,cbeta,TCY);
+
+print_CMAT(TCA);
+print_CMAT(TCX);
+print_CMAT(TCY);
+
+free_CMAT(TCA);
+free_CMAT(TCX);
+free_CMAT(TCY);
 
 
 stopwatch(1);
