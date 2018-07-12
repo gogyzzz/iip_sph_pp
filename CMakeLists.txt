@@ -10,10 +10,10 @@ set(PROJECT_NAME iip_sph_pp)
 ###################################################
 ###################################################
 
-option(USE_CUDA "Using CUDA"                 OFF)
+option(USE_CUDA "Using CUDA"                 ON)
 
 #option(BLAS_CU  " BLAS : cublas"             ON)
-option(USE_OPEN "BLAS : OpenBLAS"           ON)
+option(USE_OPEN "BLAS : OpenBLAS"           OFF)
 option(USE_MKL "BLAS : IntelMKL"            OFF)
 #OpenMP
 option(USE_OPENMP "Using OpenMP"             OFF)
@@ -25,32 +25,32 @@ option(I_DID_WHAT_I_HAVE_TO_DO "SET THIS ON" ON)
 ###################################################
 ###################################################
 
+set(LINKLIBS)
+set(MAIN_SRC)
+set(C_SRC)
+set(CUDA_SRC)
+
+### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
+### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
+
+set(MAIN_SRC test/test_matrix.c)
+#set(MAIN_SRC test/test_wav.c)
+#set(MAIN_SRC test/test_blas_lv1.c)
+#set(MAIN_SRC test/test_blas_lv2.c)
+#set(MAIN_SRC test/test_blas_lv2_big.c)
+
+### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
+### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
+
+if(NOT I_DID_WHAT_I_HAVE_TO_DO)
+	message(FATAL_ERROR "*****************************************\nYOU NEED TO SET CONFIGURATION OPTIONS MANUALLY\n****************************************")
+endif()
+
 
 message(STATUS "USE_CUDA   : " ${USE_CUDA})
 message(STATUS "USE_OPEN  : " ${USE_OPEN})
 message(STATUS "USE_MKL   : " ${USE_MKL})
 message(STATUS "USE_OPENMP : " ${USE_OPENMP})
-
-set(LINKLIBS)
-set(COMMON_SRC)
-set(C_SRC)
-set(CUDA_SRC)
-
-### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  
-#list(APPEND COMMON_SRC test/test_matrix.c)
-#list(APPEND COMMON_SRC test/test_wav.c)
-#list(APPEND COMMON_SRC main.c)
-set(test_matrix test/test_matrix.c)
-set(test_wav test/test_wav.c)
-set(test_blas_lv1 test/test_blas_lv1.c)
-set(test_blas_lv2 test/test_blas_lv2.c)
-set(test_blas_lv2_big test/test_blas_lv2_big.c)
-
-### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  ### TEST OPTION  
-
-if(NOT I_DID_WHAT_I_HAVE_TO_DO)
-	message(FATAL_ERROR "*****************************************\nYOU NEED TO SET CONFIGURATION OPTIONS MANUALLY\n****************************************")
-endif()
 
 #GET OS
 #UNIX   TRUE for UNIX,APPLE
@@ -73,17 +73,15 @@ if(USE_CUDA)
 	add_definitions(-DUSE_CUDA=1)
 		
 	# compile .c files by nvcc
-	SET_SOURCE_FILES_PROPERTIES(${COMMON_SRC} PROPERTIES LANGUAGE CUDA)	
-	
+	#SET_SOURCE_FILES_PROPERTIES(${COMMON_SRC} PROPERTIES LANGUAGE CUDA)
+	enable_language(CXX)
+	SET_SOURCE_FILES_PROPERTIES(${MAIN_SRC} PROPERTIES LANGUAGE CXX)	
+
 	list(APPEND LINKLIBS ${CUDA_CUBLAS_LIBRARIES})  
 
-	add_executable(out_matrix ${test_matrix} ${COMMON_SRC} ${CUDA_SRC})	
-	add_executable(out_wav ${test_wav} ${COMMON_SRC} ${CUDA_SRC})	
-	add_executable(out_blas_lv1 ${test_blas_lv1} ${COMMON_SRC} ${CUDA_SRC})	
+	add_executable(out_main ${MAIN_SRC} ${CUDA_SRC})		
 
-	target_link_libraries(out_matrix ${LINKLIBS} cublas)
-	target_link_libraries(out_wav ${LINKLIBS} cublas)
-	target_link_libraries(out_blas_lv1 ${LINKLIBS} cublas)
+	target_link_libraries(out_main ${LINKLIBS} cublas)
 	#	add_executable(out ${COMMON_SRC} ${CUDA_SRC})	
 	#	list(APPEND LINKLIBS ${CUDA_CUBLAS_LIBRARIES})
 	#	target_link_libraries(out ${LINKLIBS} cublas)
@@ -140,21 +138,11 @@ else()
 		list(APPEND CMAKE_EXE_LINKER_FLAGS ${OpenMP_EXE_LINKER_FLAGS})
 	endif()
 
-	add_executable(out_matrix ${test_matrix} ${COMMON_SRC} ${C_SRC})	
-	add_executable(out_wav ${test_wav} ${COMMON_SRC} ${C_SRC})	
-	add_executable(out_blas_lv1 ${test_blas_lv1} ${COMMON_SRC} ${C_SRC})	
-	add_executable(out_blas_lv2 ${test_blas_lv2} ${COMMON_SRC} ${C_SRC})	
-	add_executable(out_blas_lv2_big ${test_blas_lv2_big} ${COMMON_SRC} ${C_SRC})	
+	add_executable(out_main ${MAIN_SRC} ${C_SRC})	
 
-	target_link_libraries(out_matrix ${LINKLIBS})
-	target_link_libraries(out_wav ${LINKLIBS})
-	target_link_libraries(out_blas_lv1 ${LINKLIBS})
-	target_link_libraries(out_blas_lv2 ${LINKLIBS})
-	target_link_libraries(out_blas_lv2_big ${LINKLIBS})
+	target_link_libraries(out_main ${LINKLIBS})
 
 
-	#add_executable(out ${COMMON_SRC} ${C_SRC})
-	#target_link_libraries(out ${LINKLIBS})
 endif()
 
 #generic function 
