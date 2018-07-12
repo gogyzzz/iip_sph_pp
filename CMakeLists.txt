@@ -62,28 +62,10 @@ elseif(WIN32)
 	add_definitions(-DOS_WIN=1)
 endif()
 
-<<<<<<< HEAD
-### TEST SRC
-### TEST SRc
-### TEST SRC
-list(APPEND COMMON_SRC test/test_matrix.c)
-#list(APPEND COMMON_SRC test/test_wav.c)
-#list(APPEND COMMON_SRC main.c)
-=======
-
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
 message(STATUS "ENV_PATH : " $ENV{PATH})
 
-<<<<<<< HEAD
-
-message(STATUS "ENV_PATH : " $ENV{PATH})
-
-
-#Untested
-=======
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
 if(USE_CUDA)
 	project(${PROJECT_NAME} CUDA)
 	list(APPEND CUDA_SRC iip_matrix.cu iip_blas_lv1.cu)
@@ -91,15 +73,9 @@ if(USE_CUDA)
 	add_definitions(-DUSE_CUDA=1)
 		
 	# compile .c files by nvcc
-	SET_SOURCE_FILES_PROPERTIES(${COMMON_SRC} PROPERTIES LANGUAGE CUDA)
-<<<<<<< HEAD
-	set(CUDA_NVCC_FLAGS      ${CUDA_NVCC_FLAGS} -arch=compute_20)
-	message(${CUDA_NVCC_FLAGS})
-	add_executable(out ${COMMON_SRC} ${CUDA_SRC})
+	SET_SOURCE_FILES_PROPERTIES(${COMMON_SRC} PROPERTIES LANGUAGE CUDA)	
 	
-	list(APPEND LINKLIBS ${CUDA_CUBLAS_LIBRARIES})
-  target_link_libraries(out ${LINKLIBS} cublas)
-=======
+	list(APPEND LINKLIBS ${CUDA_CUBLAS_LIBRARIES})  
 
 	add_executable(out_matrix ${test_matrix} ${COMMON_SRC} ${CUDA_SRC})	
 	add_executable(out_wav ${test_wav} ${COMMON_SRC} ${CUDA_SRC})	
@@ -112,8 +88,6 @@ if(USE_CUDA)
 	#	list(APPEND LINKLIBS ${CUDA_CUBLAS_LIBRARIES})
 	#	target_link_libraries(out ${LINKLIBS} cublas)
   
-  
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
 
 else()
 	project(${PROJECT_NAME} C)
