@@ -33,10 +33,10 @@ set(CUDA_SRC)
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 
-set(MAIN_SRC test/test_matrix.c)
+#set(MAIN_SRC test/test_matrix.c)
 #set(MAIN_SRC test/test_wav.c)
 #set(MAIN_SRC test/test_blas_lv1.c)
-#set(MAIN_SRC test/test_blas_lv2.c)
+set(MAIN_SRC test/test_blas_lv2.c)
 #set(MAIN_SRC test/test_blas_lv2_big.c)
 
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
@@ -68,15 +68,18 @@ message(STATUS "ENV_PATH : " $ENV{PATH})
 
 if(USE_CUDA)
 	project(${PROJECT_NAME} CUDA)
-	list(APPEND CUDA_SRC iip_matrix.cu iip_blas_lv1.cu)
+	list(APPEND CUDA_SRC iip_matrix.cu iip_blas_lv1.cu iip_blas_lv2.cu)
 	
 	add_definitions(-DUSE_CUDA=1)
 		
 	# compile .c files by nvcc
 	#SET_SOURCE_FILES_PROPERTIES(${COMMON_SRC} PROPERTIES LANGUAGE CUDA)
+	if(WIN32)
 	enable_language(CXX)
 	SET_SOURCE_FILES_PROPERTIES(${MAIN_SRC} PROPERTIES LANGUAGE CXX)	
-
+	else(WIN32)
+	SET_SOURCE_FILES_PROPERTIES(${MAIN_SRC} PROPERTIES LANGUAGE CUDA)
+	endif(WIN32)
 	list(APPEND LINKLIBS ${CUDA_CUBLAS_LIBRARIES})  
 
 	add_executable(out_main ${MAIN_SRC} ${CUDA_SRC})		

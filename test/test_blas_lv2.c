@@ -1,5 +1,5 @@
 #include "mother.h"
-#include "header_for_test.h"
+//#include "header_for_test.h"
 
 int main()
 {
@@ -10,8 +10,12 @@ int main()
 	CMAT *CA, *CX, *CY;
 	CMAT *TCA, *TCX, *TCY;
 	CTYPE calpha, cbeta;
+#if USE_CUDA
+  init();
+#endif
 
-	stopwatch(0);
+  printf("%d\n",max_thread);
+//	stopwatch(0);
 
 	A = zeros(5, 4);
 	X = alloc_MAT(5);
@@ -111,7 +115,8 @@ int main()
 	free_CMAT(TCA);
 	free_CMAT(TCX);
 	free_CMAT(TCY);
-
-	stopwatch(1);
+#if USE_CUDA
+  finit();
+#endif
 	return 0;
 }
