@@ -13,16 +13,15 @@
 
 int main()
 {
-	//printf("%s | %s\n",str(DTYPE),xstr(DTYPE));	
+	//printf("%s | %s\n",str(DTYPE),xstr(DTYPE));
 
 	ITER i, j, k;
 
-
-#if PART == 1	
-	MAT* a1;
-	MAT* a2;
-	MAT* a3;
-	MAT* a2sub;
+#if PART == 1
+	MAT *a1;
+	MAT *a2;
+	MAT *a3;
+	MAT *a2sub;
 	a1 = zeros(4);
 	a2 = zeros(3, 4);
 	a3 = zeros(2, 3, 4);
@@ -50,7 +49,7 @@ int main()
 	printf("a3\n");
 	print_MAT(a3);
 
-	MAT * b1;
+	MAT *b1;
 
 	b1 = zeros(4);
 	for (i = 0; i < b1->d0; i++)
@@ -68,7 +67,7 @@ int main()
 	printf("  get submat\n");
 	for (i = 0; i < 3; i++)
 		for (j = 0; j < 4; j++)
-			set(a2, i, j, (DTYPE)((i + 1) + a2->d0*j));
+			set(a2, i, j, (DTYPE)((i + 1) + a2->d0 * j));
 	print_MAT(a2);
 
 	// expected below
@@ -79,7 +78,6 @@ int main()
 	submat(a2, a2sub, 1, 2, 1, 3, -1, -1);
 	print_MAT(a2sub); // [5.0, 8.0] expected
 
-
 	free_MAT(a1);
 	free_MAT(a2);
 	free_MAT(a3);
@@ -87,12 +85,12 @@ int main()
 
 	free_MAT(b1);
 
-#elif PART==2 
+#elif PART == 2
 
-	CMAT* a1;
-	CMAT* a2;
-	CMAT* a3;
-	CMAT* a2sub;
+	CMAT *a1;
+	CMAT *a2;
+	CMAT *a3;
+	CMAT *a2sub;
 
 	a1 = czeros(4);
 	a2 = czeros(3, 4);
@@ -121,7 +119,7 @@ int main()
 	printf("a3\n");
 	print_CMAT(a3);
 
-	CMAT * b1;
+	CMAT *b1;
 
 	b1 = czeros(4);
 	for (i = 0; i < b1->d0; i++)
@@ -139,7 +137,7 @@ int main()
 	printf("  get csubmat\n");
 	for (i = 0; i < 3; i++)
 		for (j = 0; j < 4; j++)
-			cset(a2, i, j, (DTYPE)((i + 1) + a2->d0*j), (DTYPE)((i + 1) + a2->d0*j));
+			cset(a2, i, j, (DTYPE)((i + 1) + a2->d0 * j), (DTYPE)((i + 1) + a2->d0 * j));
 	print_CMAT(a2);
 
 	csubmat(a2, a2sub, 1, 2, 1, 3, -1, -1);
@@ -153,11 +151,11 @@ int main()
 	free_CMAT(b1);
 
 #elif PART == -1
-	MAT* a1;
-	MAT* a2;
-	MAT* a3;
-	MAT* a3_;
-	MAT* a2sub;
+	MAT *a1;
+	MAT *a2;
+	MAT *a3;
+	MAT *a3_;
+	MAT *a2sub;
 
 	a1 = zeros(4);
 	a2 = zeros(3, 4);
@@ -200,11 +198,7 @@ int main()
 	printf("a3_\n");
 	print_MAT(a3_);
 
-#endif	
+#endif
 
 	return 0;
 }
-
-
-
-

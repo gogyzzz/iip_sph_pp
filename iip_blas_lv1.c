@@ -15,152 +15,76 @@
  *
  *  y = alpha * x + y
  *  
-<<<<<<< HEAD
- *  */
-void axpy(DTYPE alpha, MAT *x, MAT *y)
-=======
  *
  *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
  * */
-void axpy(DTYPE alpha, MAT* x,MAT* y)
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
+void axpy(DTYPE alpha, MAT *x, MAT *y)
 {
-UINT size = x->d0 * x->d1 * x->d2;
+	UINT size = x->d0 * x->d1 * x->d2;
 #if DEBUG
 	printf("%s\n", __func__);
 #endif
 
 #if USE_CBLAS
-<<<<<<< HEAD
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
-//DTYPE = float
+
 #if NTYPE == 0
-	cblas_saxpy(x->d0, alpha, x->data, 1, y->data, 1);
+	cblas_saxpy(size, alpha, x->data, 1, y->data, 1);
 
-//DTYPE = double
 #elif NTYPE == 1
-	cblas_daxpy(x->d0, alpha, x->data, 1, y->data, 1);
+	cblas_daxpy(size, alpha, x->data, 1, y->data, 1);
 #endif
-=======
-
-	#if NTYPE == 0
-	cblas_saxpy(size,alpha,x->data,1,y->data,1);	
-
-	#elif NTYPE == 1
-	cblas_daxpy(size,alpha,x->data,1,y->data,1);
-	#endif
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
 
 #else
-<<<<<<< HEAD
-	mp_axpy(x->d0, alpha, x->data, 1, y->data, 1);
+	mp_axpy(size, alpha, x->data, 1, y->data, 1);
 #endif
 }
 
-void mp_axpy(UINT N, DTYPE SA, DTYPE *SX, UINT INCX, DTYPE *SY, UINT INCY)
-=======
-	mp_axpy(size, alpha, x->data,1,y->data,1);	
-#endif
-}
-
-void mp_axpy(UINT N, DTYPE alpha, DTYPE* X, UINT INCX, DTYPE* Y, UINT INCY)
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
+void mp_axpy(UINT N, DTYPE alpha, DTYPE *X, UINT INCX, DTYPE *Y, UINT INCY)
 {
-ITER i;
+	ITER i;
 
 #if DEBUG
 	printf("%s\n", __func__);
 #endif
 
-<<<<<<< HEAD
-	ITER i;
-
-#pragma omp parallel for shared(SX, SY) private(i)
+#pragma omp parallel for shared(X, Y) private(i)
 	for (i = 0; i < N; i++)
 	{
-		SY[i * INCY] = SX[i * INCX] * SA + SY[i * INCY];
-=======
-#pragma omp parallel for shared(X,Y) private(i)
-for(i=0;i<N;i++)
-	{
-		Y[i*INCY] = X[i*INCX] * alpha + Y[i*INCY];	
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
+		Y[i * INCY] = X[i * INCX] * alpha + Y[i * INCY];
 	}
 }
 
-<<<<<<< HEAD
-void caxpy(DTYPE alpha, CMAT *x, CMAT *y)
-=======
-void caxpy(CTYPE alpha, CMAT* x,CMAT* y)
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
+void caxpy(CTYPE alpha, CMAT *x, CMAT *y)
 {
-UINT size = x->d0 * x->d1 * x-> d2;
+	UINT size = x->d0 * x->d1 * x->d2;
 #if DEBUG
 	printf("%s\n", __func__);
 #endif
 #if USE_CBLAS
-<<<<<<< HEAD
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
-//DTYPE = float
 #if NTYPE == 0
-	cblas_zsaxpy(x->d0, &alpha, x->data, 1, y->data, 1);
+	cblas_caxpy(size, &alpha, x->data, 1, y->data, 1);
 
-//DTYPE = double
 #elif NTYPE == 1
-	cblas_caxpy(x->d0, &alpha, x->data, 1, y->data, 1);
+	cblas_zaxpy(size, &alpha, x->data, 1, y->data, 1);
 #endif
-=======
-	#if NTYPE == 0
-	cblas_caxpy(size,&alpha,x->data,1,y->data,1);	
-
-	#elif NTYPE == 1
-	cblas_zaxpy(size,&alpha,x->data,1,y->data,1);
-	#endif
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
 
 #else
-<<<<<<< HEAD
-	mp_caxpy(x->d0, alpha, x->data, 1, y->data, 1);
+	mp_caxpy(size, alpha, x->data, 1, y->data, 1);
 #endif
 }
 
-void mp_caxpy(UINT N, DTYPE SA, CTYPE *SX, UINT INCX, CTYPE *SY, UINT INCY)
-=======
-	mp_caxpy(size, alpha, x->data,1,y->data,1);	
-#endif
-}
-
-void mp_caxpy(UINT N, CTYPE alpha, CTYPE* X, UINT INCX, CTYPE* Y, UINT INCY)
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
+void mp_caxpy(UINT N, CTYPE alpha, CTYPE *X, UINT INCX, CTYPE *Y, UINT INCY)
 {
 #if DEBUG
 	printf("%s\n", __func__);
 #endif
 	ITER i;
 
-<<<<<<< HEAD
-#pragma omp parallel for shared(SX, SY) private(i)
+#pragma omp parallel for shared(X, Y) private(i)
 	for (i = 0; i < N; i++)
 	{
-		SY[i * INCY].re = SX[i * INCX].re * SA + SY[i * INCY].re;
-		SY[i * INCY].im = SX[i * INCX].im * SA + SY[i * INCY].im;
-	}
-}
-
-/*** Copy vector from src to des ***/
-void copy(MAT *src, SINT src_increment, MAT *des, SINT des_increment)
-{
-=======
-#pragma omp parallel for shared(X,Y) private(i)
-	for(i=0;i<N;i++)
-	{
-			Y[i*INCY].re = X[i*INCX].re * alpha.re + Y[i*INCY].re;
-			Y[i*INCY].im = X[i*INCX].im * alpha.im + Y[i*INCY].im;
-		
+		Y[i * INCY].re = X[i * INCX].re * alpha.re + Y[i * INCY].re;
+		Y[i * INCY].im = X[i * INCX].im * alpha.im + Y[i * INCY].im;
 	}
 }
 
@@ -175,8 +99,8 @@ void copy(MAT *src, SINT src_increment, MAT *des, SINT des_increment)
  *
  *  <?>acopy(integer N, DTYPE* X, intefer INCX, DTYPE* Y, integer INCY)
  * */
-void copy(MAT* src, MAT* des){
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
+void copy(MAT *src, MAT *des)
+{
 #if DEBUG
 	printf("%s\n", __func__);
 #endif
@@ -190,53 +114,31 @@ void copy(MAT* src, MAT* des){
 
 #if USE_CBLAS
 #if NTYPE == 0
-<<<<<<< HEAD
-	cblas_scopy(x->d0, &alpha, x->data, src_increment, y->data, des_increment);
-=======
-	cblas_scopy(mat_size,src->data,1,des->data,1);	
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
+	cblas_scopy(mat_size, src->data, 1, des->data, 1);
 
 #elif NTYPE == 1
-<<<<<<< HEAD
-	cblas_dcopy(x->d0, &alpha, x->data, src_increment, y->data, des_increment);
-=======
-	cblas_dcopy(mat_size,src->data,1,des->data,1);
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
+	cblas_dcopy(mat_size, src->data, 1, des->data, 1);
 #endif
 
 //USE_BLAS = 0 -> just c implement
 #else
-<<<<<<< HEAD
-	mp_copy(mat_size, src->data, src_increment, des->data, des_increment);
-=======
-	mp_copy(mat_size, src->data, 1, des->data, 1);	
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
+	mp_copy(mat_size, src->data, 1, des->data, 1);
 #endif
 }
 
 void mp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc)
 {
 	ITER iteration = 8;
-<<<<<<< HEAD
 	UINT repeat = N >> 3;
 	UINT left = N & (UINT)(iteration - 1);
-	UINT i = 0, j = 0;
-
-	i = 0;
-	for (j = 0; j < repeat; j++)
-	{
-		des[(i)*des_inc] = src[(i)*src_inc];
-=======
-	UINT repeat = N>>3;
-	UINT left = N&(UINT)(iteration-1);
 	UINT i = 0;
 	UINT j = 0;
 
-#pragma omp parallel for shared(des,src) private(j,i)
-	for(j = 0; j < repeat; j++){
-		i= j*iteration;
-		des[(i    ) * des_inc] = src[(i    ) * src_inc];
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
+#pragma omp parallel for shared(des, src) private(j, i)
+	for (j = 0; j < repeat; j++)
+	{
+		i = j * iteration;
+		des[(i)*des_inc] = src[(i)*src_inc];
 		des[(i + 1) * des_inc] = src[(i + 1) * src_inc];
 		des[(i + 2) * des_inc] = src[(i + 2) * src_inc];
 		des[(i + 3) * des_inc] = src[(i + 3) * src_inc];
@@ -244,10 +146,6 @@ void mp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc)
 		des[(i + 5) * des_inc] = src[(i + 5) * src_inc];
 		des[(i + 6) * des_inc] = src[(i + 6) * src_inc];
 		des[(i + 7) * des_inc] = src[(i + 7) * src_inc];
-<<<<<<< HEAD
-		i += iteration;
-=======
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
 	}
 
 	for (j = 0; j < left; j++)
@@ -256,12 +154,8 @@ void mp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc)
 	}
 }
 
-<<<<<<< HEAD
-void ccopy(CMAT *src, SINT src_increment, CMAT *des, SINT des_increment)
+void ccopy(CMAT *src, CMAT *des)
 {
-=======
-void ccopy(CMAT* src, CMAT* des){
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
 #if DEBUG
 	printf("%s\n", __func__);
 #endif
@@ -279,56 +173,32 @@ void ccopy(CMAT* src, CMAT* des){
  * */
 //DTYPE = float
 #if NTYPE == 0
-<<<<<<< HEAD
-	cblas_ccopy(x->d0, &alpha, x->data, src_increment, y->data, des_increment);
+	cblas_ccopy(mat_size, src->data, 1, des->data, 1);
 
 //DTYPE = double
 #elif NTYPE == 1
-	cblas_zcopy(x->d0, &alpha, x->data, src_increment, y->data, des_increment);
-=======
-	cblas_ccopy(mat_size,src->data,1,des->data,1);	
-
-//DTYPE = double
-#elif NTYPE == 1
-	cblas_zcopy(mat_size,src->data,1,des->data,1);
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
+	cblas_zcopy(mat_size, src->data, 1, des->data, 1);
 #endif
 
 //USE_BLAS = 0 -> just c implement
 #else
-<<<<<<< HEAD
-	mp_ccopy(mat_size, src->data, src_increment, des->data, des_increment);
-=======
-	mp_ccopy(mat_size, src->data, 1, des->data, 1);	
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
+	mp_ccopy(mat_size, src->data, 1, des->data, 1);
 #endif
 }
 
 void mp_ccopy(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc)
 {
 	ITER iteration = 8;
-<<<<<<< HEAD
 	UINT repeat = N >> 3;
 	UINT left = N & (UINT)(iteration - 1);
 	UINT i = 0, j = 0;
 
-	i = 0;
+#pragma omp parallel for shared(des, src) private(j, i)
 	for (j = 0; j < repeat; j++)
 	{
+		i = j * iteration;
 		des[(i)*des_inc].re = src[(i)*src_inc].re;
 		des[(i)*des_inc].im = src[(i)*src_inc].im;
-=======
-	UINT repeat = N>>3;
-	UINT left = N&(UINT)(iteration-1);
-	UINT i = 0, j=0;
-	
-
-#pragma omp parallel for shared(des,src) private(j,i)
-	for(j = 0; j < repeat; j++){
-		i= j * iteration;
-		des[(i    ) * des_inc].re = src[(i    ) * src_inc].re;
-		des[(i    ) * des_inc].im = src[(i    ) * src_inc].im;
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
 		des[(i + 1) * des_inc].re = src[(i + 1) * src_inc].re;
 		des[(i + 1) * des_inc].im = src[(i + 1) * src_inc].im;
 		des[(i + 2) * des_inc].re = src[(i + 2) * src_inc].re;
@@ -343,10 +213,6 @@ void mp_ccopy(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc)
 		des[(i + 6) * des_inc].im = src[(i + 6) * src_inc].im;
 		des[(i + 7) * des_inc].re = src[(i + 7) * src_inc].re;
 		des[(i + 7) * des_inc].im = src[(i + 7) * src_inc].im;
-<<<<<<< HEAD
-		i += iteration;
-=======
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
 	}
 
 	for (j = 0; j < left; j++)
@@ -493,7 +359,6 @@ DTYPE mp_dot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc)
 
 	return dot;
 }
-
 
 DTYPE cdot(UINT N, CMAT *src_x, UINT x_increment, CMAT *src_y, UINT y_increment);
 DTYPE mp_cdot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc);

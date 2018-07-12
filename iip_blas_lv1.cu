@@ -20,12 +20,7 @@ void copy(MAT* src, SINT src_increment, MAT* des, SINT des_increment) // for rea
 #if DEBUG
   printf("%s\n",__func__);
 #endif
-<<<<<<< HEAD
 	UINT mat_size = src->d0 * src->d1 * src->d2;
-=======
-UINT mat_size = src->d0 * src->d1 * src->d2;
-  UINT len = (src->d0) * (src->d1) * (src->d2);
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
 	printf("max_thread : %d\n",max_thread);
 	UINT num_block = (UINT)(len/(UINT)max_thread)+1;
 	

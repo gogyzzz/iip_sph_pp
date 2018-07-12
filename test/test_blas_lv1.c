@@ -2,9 +2,9 @@
 #include "header_for_test.h"
 int main()
 {
-  MAT *A,*B;
-  CMAT *CA,*CB;
-  CTYPE ctemp={5,-7};  
+	MAT *A,*B;
+	CMAT *CA,*CB;
+	CTYPE ctemp={5,-7};  
 
 	stopwatch(0);
 
@@ -12,11 +12,11 @@ int main()
 
 	A  = zeros(2,3);
 	CA = czeros(2,3);
-  
-  B  = alloc_MAT(2,3);
+	
+	B  = alloc_MAT(2,3);
 	CB = alloc_CMAT(2,3);
-  
-  printf("===== A,B ,CA,CB  =====\n");
+	
+	printf("===== A,B ,CA,CB  =====\n");
 
 	fill(B,10);
 	cfill(CB,10,10);
@@ -25,16 +25,16 @@ int main()
 	print_MAT(B);
 	print_CMAT(CA);
 	print_CMAT(CB);
-  printf("===== axpy(5,B,A) =====\n");
+	printf("===== axpy(5,B,A) =====\n");
 
-  axpy(5,B,A);
-  caxpy(ctemp,CB,CA);
+	axpy(5,B,A);
+	caxpy(ctemp,CB,CA);
 
 	printf("===== print A,CA =====\n");
 	print_MAT(A);
 	print_CMAT(CA);
-  
-  printf("===== copy(A,B) =====\n");
+	
+	printf("===== copy(A,B) =====\n");
 
 	copy(A,B);
 	ccopy(CA,CB);
@@ -51,7 +51,7 @@ int main()
 	free_CMAT(CA);
 	free_CMAT(CB);
 
-  stopwatch(1);
+	stopwatch(1);
 
 	return 0;
 }

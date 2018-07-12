@@ -6,28 +6,18 @@
 #include <string.h>
 #include <stdint.h>
 
-<<<<<<< HEAD
-#define __func__ __FUNCTION__
-
-=======
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
 #if USE_CUDA
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #endif
 
-<<<<<<< HEAD
-=======
 #if OS_WIN
 #define __func__ __FUNCTION__
 #endif
-
->>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
 #define DEBUG 1
 
 /***********************************
 * 이 부분은 직접 해주세요
-************************************/
 
 #define DTYPE double
 /*

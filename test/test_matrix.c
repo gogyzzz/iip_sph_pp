@@ -11,9 +11,9 @@ int main()
 	stopwatch(0);
 	init();
 
-  a1 = zeros(4);
-  a2 = zeros(3,4);
-	a3 = zeros(2,3,4);
+	a1 = zeros(4);
+	a2 = zeros(3, 4);
+	a3 = zeros(2, 3, 4);
 
 	sa1 = zeros(2);
 	sa2 = zeros(2, 2);
