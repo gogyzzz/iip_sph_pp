@@ -38,6 +38,10 @@
 #define SINT int32_t
 #define ITER long
 
+#define NoTran   111
+#define Tran     112
+#define CTran    113
+
 /*
 * #define AA BB
 * str(AA) -> 'AA'
@@ -45,6 +49,7 @@
 * */
 #define str(x) #x
 #define xstr(x) str(x)
+
 
 typedef struct MAT
 {
@@ -69,6 +74,7 @@ typedef struct CMAT
 	UINT d1;
 	UINT d2;
 }CMAT;
+
 
 
 /*
@@ -112,5 +118,19 @@ extern UINT max_thread;
 extern UINT max_block;
 
 #endif
+
+#define cmul(Y,X)\
+	 Y.re = Y.re*X.re - Y.im*X.im;\
+	 Y.im = Y.re*X.im + Y.im*X.re;\
+
+
+#define cadd(Y,X)\
+		Y.re = Y.re+X.re;\
+		Y.im = Y.im+X.im; 
+
+#define cadd_mul(Y,A,B)\
+		Y.re += A.re*B.re - A.im*B.im;\
+		Y.im += A.re*B.im + A.im*B.re;
+
 
 #endif
