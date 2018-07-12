@@ -6,13 +6,23 @@
 #include <string.h>
 #include <stdint.h>
 
+<<<<<<< HEAD
 #define __func__ __FUNCTION__
 
+=======
+>>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
 #if USE_CUDA
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #endif
 
+<<<<<<< HEAD
+=======
+#if OS_WIN
+#define __func__ __FUNCTION__
+#endif
+
+>>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
 #define DEBUG 1
 
 /***********************************
@@ -30,11 +40,15 @@
 *여기까지 설정해주세요
 *********************************** */
 
-#define MAX_CHAR 128
+#define MAX_CHAR 256
 
 #define UINT uint32_t
 #define SINT int32_t
 #define ITER long
+
+#define NoTran   111
+#define Tran     112
+#define CTran    113
 
 /*
 * #define AA BB
@@ -43,6 +57,7 @@
 * */
 #define str(x) #x
 #define xstr(x) str(x)
+
 
 typedef struct MAT
 {
@@ -67,6 +82,7 @@ typedef struct CMAT
 	UINT d1;
 	UINT d2;
 }CMAT;
+
 
 
 /*
@@ -95,9 +111,14 @@ _2,_1
 **** pre main for CUDA ****
 ***************************/
 
-#if USE_CBLAS 
+#if USE_OPEN 
 #include "cblas.h"
 #endif
+
+#if USE_MKL
+#include "mkl.h"
+#endif
+
 #if USE_CUDA
 #include "cublas_v2.h"
 extern cublasHandle_t handle;
@@ -105,5 +126,19 @@ extern UINT max_thread;
 extern UINT max_block;
 
 #endif
+
+#define cmul(Y,X)\
+	 Y.re = Y.re*X.re - Y.im*X.im;\
+	 Y.im = Y.re*X.im + Y.im*X.re;\
+
+
+#define cadd(Y,X)\
+		Y.re = Y.re+X.re;\
+		Y.im = Y.im+X.im; 
+
+#define cadd_mul(Y,A,B)\
+		Y.re += A.re*B.re - A.im*B.im;\
+		Y.im += A.re*B.im + A.im*B.re;
+
 
 #endif

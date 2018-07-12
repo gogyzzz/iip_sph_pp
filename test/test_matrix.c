@@ -1,4 +1,5 @@
 #include "mother.h"
+#include "header_for_test.h"
 
 int main()
 {
@@ -6,9 +7,13 @@ int main()
 	MAT* a2, *sa2;
 	MAT* a3, *sa3;
 
-	a1 = zeros(4);
-	a2 = zeros(3, 4);
-	a3 = zeros(2, 3, 4);
+
+	stopwatch(0);
+	init();
+
+  a1 = zeros(4);
+  a2 = zeros(3,4);
+	a3 = zeros(2,3,4);
 
 	sa1 = zeros(2);
 	sa2 = zeros(2, 2);
@@ -82,6 +87,9 @@ int main()
 	free_CMAT(sca1);
 	free_CMAT(sca2);
 	free_CMAT(sca3);
+
+	finit();
+	stopwatch(1);
 	return 0;
 }
 

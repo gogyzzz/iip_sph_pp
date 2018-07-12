@@ -17,7 +17,7 @@
  * swap
  * i?amax
  * i?amin
- * copy
+ * -------copy
  * -------axpy
  * + s,d
  * dot
@@ -32,14 +32,14 @@
 void mp_axpy(UINT,DTYPE,DTYPE*,UINT,DTYPE*,UINT);
 void axpy(DTYPE,MAT*,MAT*);
 
-void mp_caxpy(UINT,DTYPE,CTYPE*,UINT,CTYPE*,UINT);
-void caxpy(DTYPE,CMAT*,CMAT*);
+void mp_caxpy(UINT,CTYPE,CTYPE*,UINT,CTYPE*,UINT);
+void caxpy(CTYPE,CMAT*,CMAT*);
 
 void mp_copy(UINT N, DTYPE* src, SINT src_inc, DTYPE* des, SINT des_inc);
-void copy(MAT* src, SINT src_increment, MAT* des, SINT des_increment);
+void copy(MAT* src, MAT* des);
 
 void mp_ccopy(UINT N, CTYPE* src, SINT src_inc, CTYPE* des, SINT des_inc);
-void ccopy(CMAT* src, SINT src_increment, CMAT* des, SINT des_increment);
+void ccopy(CMAT* src, CMAT* des);
 
 DTYPE mp_asum(UINT N, DTYPE* data, UINT inc);
 DTYPE asum(UINT N, MAT *mat, UINT inc);

@@ -27,12 +27,12 @@ MAT* alloc_MAT_1d(UINT);
 MAT* alloc_MAT_2d(UINT,UINT);
 MAT* alloc_MAT_3d(UINT,UINT,UINT);
 
-#define calloc_MAT_load(_x,_3,_2,_1,...) _1
-#define calloc_MAT_load_(args_list) calloc_MAT_load args_list
-#define calloc_MAT(...) calloc_MAT_load_((__VA_ARGS__, calloc_MAT_3d,calloc_MAT_2d,calloc_MAT_1d)(__VA_ARGS__))
-CMAT* calloc_MAT_1d(UINT);
-CMAT* calloc_MAT_2d(UINT,UINT);
-CMAT* calloc_MAT_3d(UINT,UINT,UINT);
+#define alloc_CMAT_load(_x,_3,_2,_1,...) _1
+#define alloc_CMAT_load_(args_list) alloc_CMAT_load args_list
+#define alloc_CMAT(...) alloc_CMAT_load_((__VA_ARGS__, alloc_CMAT_3d,alloc_CMAT_2d,alloc_CMAT_1d)(__VA_ARGS__))
+CMAT* alloc_CMAT_1d(UINT);
+CMAT* alloc_CMAT_2d(UINT,UINT);
+CMAT* alloc_CMAT_3d(UINT,UINT,UINT);
 
 
 /**** zeros  ****/

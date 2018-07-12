@@ -1,6 +1,4 @@
 #include "iip_blas_lv1.h"
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
 
 #if DEBUG
 #define CUDA_CALL(x) \
@@ -16,13 +14,18 @@
 #endif
 
 
-
+/*
 void copy(MAT* src, SINT src_increment, MAT* des, SINT des_increment) // for real mat
 {
 #if DEBUG
   printf("%s\n",__func__);
 #endif
+<<<<<<< HEAD
 	UINT mat_size = src->d0 * src->d1 * src->d2;
+=======
+UINT mat_size = src->d0 * src->d1 * src->d2;
+  UINT len = (src->d0) * (src->d1) * (src->d2);
+>>>>>>> ec51f0053446e06a8811c5405a83b120a5d46963
 	printf("max_thread : %d\n",max_thread);
 	UINT num_block = (UINT)(len/(UINT)max_thread)+1;
 	
@@ -37,3 +40,4 @@ __global__ void cu_copy(DTYPE* data, UINT len,DTYPE val,UINT size_block)
 		return;
   data[idx]= val;
 }
+*/
