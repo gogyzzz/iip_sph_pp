@@ -1,5 +1,6 @@
 OpenBLAS-v0.2.14-Win64-int32/
 bin/
+.vscode/
 *.suo
 *.db
 *.ipch

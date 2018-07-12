@@ -53,10 +53,14 @@ endif()
 ### TEST SRC
 ### TEST SRc
 ### TEST SRC
-#list(APPEND COMMON_SRC test/test_matrix.c)
-list(APPEND COMMON_SRC test/test_wav.c)
+list(APPEND COMMON_SRC test/test_matrix.c)
+#list(APPEND COMMON_SRC test/test_wav.c)
 #list(APPEND COMMON_SRC main.c)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+
+message(STATUS "ENV_PATH : " $ENV{PATH})
+
 
 #Untested
 if(USE_CUDA)
@@ -72,7 +76,7 @@ if(USE_CUDA)
 	add_executable(out ${COMMON_SRC} ${CUDA_SRC})
 	
 	list(APPEND LINKLIBS ${CUDA_CUBLAS_LIBRARIES})
-  target_link_libraries(out ${LINKLIBS} rt cublas)
+  target_link_libraries(out ${LINKLIBS} cublas)
 
 else()
 	project(${PROJECT_NAME} C)
