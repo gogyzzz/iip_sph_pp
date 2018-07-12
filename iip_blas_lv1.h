@@ -41,5 +41,19 @@ void copy(MAT* src, SINT src_increment, MAT* des, SINT des_increment);
 void mp_ccopy(UINT N, CTYPE* src, SINT src_inc, CTYPE* des, SINT des_inc);
 void ccopy(CMAT* src, SINT src_increment, CMAT* des, SINT des_increment);
 
+DTYPE mp_asum(UINT N, DTYPE* data, UINT inc);
+DTYPE asum(UINT N, MAT *mat, UINT inc);
+
+DTYPE mp_casum(UINT N, CTYPE* data, UINT inc);
+DTYPE casum(UINT N, CMAT *mat, UINT inc);
+
+DTYPE mp_dot(UINT N, DTYPE* src_x, UINT x_inc, DTYPE* src_y, UINT y_inc);
+DTYPE dot(UINT N, MAT* src_x, UINT x_increment, MAT *src_y, UINT y_increment);
+
+DTYPE mp_sdot(UINT N, DTYPE* src_x, UINT x_inc, DTYPE* src_y, UINT y_inc);
+DTYPE sdot(UINT N, MAT* src_x, UINT x_increment, MAT *src_y, UINT y_increment);
+
+DTYPE mp_cdot(UINT N, CTYPE* src_x, UINT x_inc, CTYPE* src_y, UINT y_inc);
+DTYPE cdot(UINT N, CMAT* src_x, UINT x_increment, CMAT *src_y, UINT y_increment);
 
 #endif
