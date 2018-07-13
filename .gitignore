@@ -11,4 +11,4 @@ bin/
 *.obj
 *.log
 *.tlog
-CMakeLists.txt
+*.txt
