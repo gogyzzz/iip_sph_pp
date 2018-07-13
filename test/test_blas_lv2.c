@@ -14,7 +14,6 @@ int main()
   init();
 #endif
 
-  printf("%d\n",max_thread);
 //	stopwatch(0);
 
 	A = zeros(5, 4);
