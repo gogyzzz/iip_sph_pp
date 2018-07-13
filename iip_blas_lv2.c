@@ -2,7 +2,7 @@
 
 /****  gemv ****/
 
-void gemv(int32_t transA, DTYPE alpha, MAT *A, MAT *X, DTYPE beta, MAT *Y)
+void gemv(char transA, DTYPE alpha, MAT *A, MAT *X, DTYPE beta, MAT *Y)
 {
 	UINT m, n, lda;
 #if DEBUG
@@ -41,7 +41,7 @@ void gemv(int32_t transA, DTYPE alpha, MAT *A, MAT *X, DTYPE beta, MAT *Y)
 #endif
 }
 
-void mp_gemv(int32_t tranA, UINT m, UINT n, DTYPE alpha, DTYPE *A, UINT lda, DTYPE *X, SINT incx, DTYPE beta, DTYPE *Y, SINT incy)
+void mp_gemv(char tranA, UINT m, UINT n, DTYPE alpha, DTYPE *A, UINT lda, DTYPE *X, SINT incx, DTYPE beta, DTYPE *Y, SINT incy)
 {
 	ITER i, j;
 	DTYPE temp;
@@ -87,7 +87,7 @@ void mp_gemv(int32_t tranA, UINT m, UINT n, DTYPE alpha, DTYPE *A, UINT lda, DTY
 	}
 }
 
-void cgemv(int32_t transA, CTYPE alpha, CMAT *A, CMAT *X, CTYPE beta, CMAT *Y)
+void cgemv(char transA, CTYPE alpha, CMAT *A, CMAT *X, CTYPE beta, CMAT *Y)
 {
 	UINT m, n, lda;
 #if DEBUG
@@ -126,7 +126,7 @@ void cgemv(int32_t transA, CTYPE alpha, CMAT *A, CMAT *X, CTYPE beta, CMAT *Y)
 #endif
 }
 
-void mp_cgemv(int32_t tranA, UINT m, UINT n, CTYPE alpha, CTYPE *A, UINT lda, CTYPE *X, SINT incx, CTYPE beta, CTYPE *Y, SINT incy)
+void mp_cgemv(char tranA, UINT m, UINT n, CTYPE alpha, CTYPE *A, UINT lda, CTYPE *X, SINT incx, CTYPE beta, CTYPE *Y, SINT incy)
 {
 	ITER i, j;
 	CTYPE temp;
