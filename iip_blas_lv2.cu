@@ -30,16 +30,11 @@ lda = m;
 printf("trans : %d m : %u n: %u lda : %u\nalpha : %lf beta : %lf\n",transA,m,n,lda,alpha,beta);
 #endif
 
-#if NTYPE==0
+	#if NTYPE==0
 		cublasSgemv(handle,transA, m , n, &alpha,(A->data), lda, X->data,1,&beta,Y->data,1);
-#else
+	#else
 		cublasDgemv(handle,transA, m , n,  &alpha, (A->data), lda,(X->data),1,&beta,Y->data,1);
-#endif
-	//	mp_gemv(transA, m , n, alpha, A->data, lda, X->data,1,beta,Y->data,1);
-}
-
-void mp_gemv(cublasOperation_t tranA, UINT m, UINT n, DTYPE alpha, DTYPE*A, UINT lda, DTYPE* X, SINT incx, DTYPE beta,DTYPE*Y, SINT incy)
-{
+	#endif
 }
 
 void cgemv(cublasOperation_t transA, CTYPE alpha, CMAT* A, CMAT*X, CTYPE beta, CMAT*Y )
@@ -71,7 +66,7 @@ printf("trans : %d m : %u n: %u lda : %u\nalpha : %lf|%lf beta : %lf|%lf\n",tran
 #endif
 
 #if NTYPE==0
-	cublasCgemv(handle,transA, m , n, alpha, A->data, lda, X->data,1,beta,Y->data,1);
+	cublasCgemv(handle,transA, m , n, (cuDoubleComplex*)(void*)&alpha, (cuDoubleComplex*)(void*)(A->data), lda, (cuDoubleComplex*)(void*)(X->data),1,(cuDoubleComplex*)(void*)(&beta),(cuDoubleComplex*)(void*)(Y->data),1);
 #else
 	cublasZgemv(handle,transA, m , n,  (cuDoubleComplex*)(void*)(&alpha), (cuDoubleComplex*)(void*)(A->data), lda,(cuDoubleComplex*)(void*)(X->data),1,(cuDoubleComplex*)(void*)(&beta),(cuDoubleComplex*)(void*)(Y->data),1);
 		
@@ -79,5 +74,3 @@ printf("trans : %d m : %u n: %u lda : %u\nalpha : %lf|%lf beta : %lf|%lf\n",tran
 //		mp_cgemv(transA, m , n, alpha, A->data, lda, X->data,1,beta,Y->data,1);
 }
 
-void mp_cgemv(cublasOperation_t tranA, UINT m, UINT n, CTYPE alpha, CTYPE*A, UINT lda, CTYPE* X, SINT incx, CTYPE beta,CTYPE*Y, SINT incy)
-{}

@@ -204,6 +204,9 @@ MAT *WAV2MAT(WAV *wav)
 
 WAV *MAT2WAV(MAT *mat, UINT sample_rate)
 {
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
 	ITER i;
 	UINT d0, d1;
 	WAV *wav;
