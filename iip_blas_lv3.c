@@ -96,6 +96,69 @@ if((transA == Tran) && (transB == NoTran));
 if((transA == Tran) && (transB == Tran));
 if((transA == NoTran) && (transB == Tran));
 
-
 }
 
+void cgemm(char transA,char transB, CTYPE alpha, CMAT*A,CMAT*B, CTYPE beta, CMAT*C)
+{
+
+UINT m,n,k;
+UINT lda,ldb,ldc;
+
+#if DEBUG
+printf("%s\n",__func__);
+#endif
+
+m = A->d0;
+n = B->d1;
+k = A->d1;
+lda = A->d0;
+ldb = B->d0;
+ldc = C->d0;
+
+#if USE_CBLAS
+
+	#if NTYPE == 0
+	cblas_cgemm(CblasColMajor,transA,transB,m,n,k,&alpha,A->data,lda,B->data,ldb,&beta,C->data,ldc);
+	#else
+	cblas_zgemm(CblasColMajor,transA,transB,m,n,k,&alpha,A->data,lda,B->data,ldb,&beta,C->data,ldc);
+	#endif
+#else
+	mp_cgemm(transA,transB, m,n,k,alpha,A->data,lda,B->data,ldb,beta,C->data,ldc);
+#endif
+}
+
+void mp_cgemm(char transA, char transB, UINT m,UINT n,UINT k, CTYPE alpha,CTYPE* A,UINT lda,CTYPE*B,UINT ldb, CTYPE beta,CTYPE *C  ,UINT ldc)
+{
+ITER i,j,l;	
+CTYPE temp;
+#if DEBUG
+printf("%s\n",__func__);
+#endif
+
+if((transA == NoTran) && (transB == NoTran))
+{
+#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+	for(l=0;l<m;l++)
+	{
+		for(j=0;j<n;j++)
+		{
+			temp.re = 0;
+			temp.im = 0;
+			for(i=0;i<k;i++)
+			{
+				cadd_mul(temp,A[i*lda + l],B[i + j*k]);		
+			}
+			cmul(C[l + m*j],beta);
+			cadd(temp ,alpha);
+			cadd(C[l + m*j]  ,temp);
+		}
+	}
+	
+}
+
+
+if((transA == Tran) && (transB == NoTran));
+if((transA == Tran) && (transB == Tran));
+if((transA == NoTran) && (transB == Tran));
+
+}
