@@ -223,7 +223,7 @@ void mp_ccopy(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc)
 }
 
 /*** Get sum of the magnitudes of elements of a vector ***/
-DTYPE asum(UINT N, MAT *mat, UINT inc)
+DTYPE asum(MAT *mat, UINT inc)
 {
 #if DEBUG
 	printf("%s\n", __func__);
@@ -251,7 +251,7 @@ DTYPE asum(UINT N, MAT *mat, UINT inc)
 
 //USE_BLAS = 0 -> just c implement
 #else
-	return mp_asum(N, mat->data, inc);
+	return mp_asum(mat_size, mat->data, inc);
 #endif
 }
 DTYPE mp_asum(UINT N, DTYPE *data, UINT inc)
@@ -267,7 +267,7 @@ DTYPE mp_asum(UINT N, DTYPE *data, UINT inc)
 	return sum;
 }
 
-DTYPE casum(UINT N, CMAT *mat, UINT inc)
+DTYPE casum(CMAT *mat, UINT inc)
 {
 #if DEBUG
 	printf("%s\n", __func__);
@@ -295,7 +295,7 @@ DTYPE casum(UINT N, CMAT *mat, UINT inc)
 
 //USE_BLAS = 0 -> just c implement
 #else
-	return mp_casum(N, mat->data, inc);
+	return mp_casum(mat_size, mat->data, inc);
 #endif
 }
 
@@ -314,7 +314,7 @@ DTYPE mp_casum(UINT N, CTYPE *data, UINT inc)
 }
 
 /*** Get a vector-vector dot product ***/
-DTYPE dot(UINT N, MAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment)
+DTYPE dot(MAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment)
 {
 #if DEBUG
 	printf("%s\n", __func__);
@@ -342,7 +342,7 @@ DTYPE dot(UINT N, MAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment)
 
 //USE_BLAS = 0 -> just c implement
 #else
-	return mp_dot(N, src_x->data, x_increment, src_y->data, y_increment);
+	return mp_dot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
 #endif
 }
 
@@ -360,5 +360,5 @@ DTYPE mp_dot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc)
 	return dot;
 }
 
-DTYPE cdot(UINT N, CMAT *src_x, UINT x_increment, CMAT *src_y, UINT y_increment);
+DTYPE cdot(CMAT *src_x, UINT x_increment, CMAT *src_y, UINT y_increment);
 DTYPE mp_cdot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc);

@@ -1,12 +1,12 @@
 #include "mother.h"
-#include "header_for_test.h"
+
 int main()
 {
 	MAT *A,*B;
 	CMAT *CA,*CB;
 	CTYPE ctemp={5,-7};  
 
-	stopwatch(0);
+	init();
 
 	printf("===== init =====\nA=0,B=10\n");
 
@@ -43,15 +43,19 @@ int main()
 	print_MAT(B);
 	print_CMAT(CB);
 	
+
+	printf("===== asum(B,1) =====\n");
+	printf("asum(B,1) = %.2f\n", asum(B, 1));
+	printf("casum(CB,1) = %.2f\n", casum(CB, 1));
 	
 	
 	free_MAT(A);
 	free_MAT(B);
 
 	free_CMAT(CA);
-	free_CMAT(CB);
+	free_CMAT(CB); 
 
-	stopwatch(1);
+	finit();
 
 	return 0;
 }
