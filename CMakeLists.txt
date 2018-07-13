@@ -68,7 +68,7 @@ message(STATUS "ENV_PATH : " $ENV{PATH})
 
 if(USE_CUDA)
 	project(${PROJECT_NAME} CUDA)
-	list(APPEND CUDA_SRC iip_matrix.cu iip_blas_lv1.cu iip_blas_lv2.cu)
+	list(APPEND CUDA_SRC iip_matrix.cu iip_wav.cu iip_blas_lv1.cu iip_blas_lv2.cu)
 	
 	add_definitions(-DUSE_CUDA=1)
 		
