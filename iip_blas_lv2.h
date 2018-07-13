@@ -9,12 +9,17 @@
  *
  * */
 
-void gemv(int32_t,DTYPE,MAT*,MAT*,DTYPE,MAT*);
-void mp_gemv(int32_t,UINT,UINT,DTYPE,DTYPE*,UINT,DTYPE*,SINT,DTYPE,DTYPE*,SINT );
+#ifndef USE_CUDA
+void gemv(char,DTYPE,MAT*,MAT*,DTYPE,MAT*);
+void mp_gemv(char,UINT,UINT,DTYPE,DTYPE*,UINT,DTYPE*,SINT,DTYPE,DTYPE*,SINT );
 
+void cgemv(char, CTYPE,CMAT*,CMAT*,CTYPE,CMAT*);
+void mp_cgemv(char, UINT,UINT,CTYPE,CTYPE*,UINT,CTYPE*,SINT,CTYPE,CTYPE*,SINT);
 
-void cgemv(int32_t, CTYPE,CMAT*,CMAT*,CTYPE,CMAT*);
-void mp_cgemv(int32_t, UINT,UINT,CTYPE,CTYPE*,UINT,CTYPE*,SINT,CTYPE,CTYPE*,SINT);
+#else
+void gemv(cublasOperation_t,DTYPE,MAT*,MAT*,DTYPE,MAT*);
+void cgemv(cublasOperation_t, CTYPE,CMAT*,CMAT*,CTYPE,CMAT*);
 
+#endif
 
 #endif

@@ -36,9 +36,15 @@
 #define SINT int32_t
 #define ITER long
 
-#define NoTran   111
-#define Tran     112
-#define CTran    113
+#if USE_CUDA
+	#define NoTran CUBLAS_OP_N
+	#define Tran   CUBLAS_OP_T
+	#define CTran  CUBLAS_OP_C
+#else
+	#define NoTran   111
+	#define Tran     112
+	#define CTran    113
+#endif
 
 /*
 * #define AA BB
