@@ -1,6 +1,9 @@
 #include <time.h>
+#if OS_WIN
+#include <windows.h>
+#endif
 
-
+#if OS_UNIX
 void stopwatch(int flag)
 {
 	enum clock_unit{nano = 0, micro , milli, sec} unit;
@@ -52,3 +55,84 @@ void stopwatch(int flag)
 	}
 
 }
+#else
+
+LARGE_INTEGER getFILETIMEoffset()
+{
+SYSTEMTIME s;
+FILETIME f;
+LARGE_INTEGER t;
+s.wYear = 1970;
+s.wMonth = 1;
+s.wDay = 1;
+s.wHour = 0;
+s.wMinute = 0;
+s.wSecond = 0;
+s.wMilliseconds = 0;
+SystemTimeToFileTime(&s, &f);
+t.QuadPart = f.dwHighDateTime;
+t.QuadPart <<= 32;
+t.QuadPart |= f.dwLowDateTime;
+return (t);
+}
+
+int
+clock_gettime( struct timeval *tv)
+{
+LARGE_INTEGER           t;
+FILETIME    		        f;
+double                  microseconds;
+static LARGE_INTEGER    offset;
+static double           frequencyToMicroseconds;
+static int              initialized = 0;
+static BOOL							usePerformanceCounter = 0;
+if (!initialized)
+{
+	LARGE_INTEGER performanceFrequency;
+	initialized = 1;
+	usePerformanceCounter = QueryPerformanceFrequency(&performanceFrequency);
+	if (usePerformanceCounter)
+ 	{
+		QueryPerformanceCounter(&offset);
+		frequencyToMicroseconds = (double)performanceFrequency.QuadPart / 1000000.;
+	}
+ 	else
+ 	{
+		offset = getFILETIMEoffset();
+		frequencyToMicroseconds = 10.;
+	}
+}
+if (usePerformanceCounter)
+	QueryPerformanceCounter(&t);
+else
+{
+	GetSystemTimeAsFileTime(&f);
+	t.QuadPart = f.dwHighDateTime;
+	t.QuadPart <<= 32;
+	t.QuadPart |= f.dwLowDateTime;
+}
+t.QuadPart -= offset.QuadPart;
+microseconds = (double)t.QuadPart / frequencyToMicroseconds;
+t.QuadPart = microseconds;
+tv->tv_sec = t.QuadPart / 1000000;
+tv->tv_usec = t.QuadPart % 1000000;
+return (0);
+}
+
+void stopwatch(int flag)
+{
+	static struct timeval startTV, endTV;
+	static long long diff;
+	const long long MICRO 1000000LL;
+
+	if(flag == 0)
+		clock_gettime(&startTV);
+	else
+	{
+		clock_gettime(&endTV);
+		diff = MICRO *(endTV.tv_sec - startTV.tv_sec) + (endTV.usec - startTv.usec);
+		printf("elapsed time : %lld micro seconds\n",diff);
+	}
+
+}
+#endif
