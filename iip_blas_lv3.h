@@ -8,7 +8,7 @@ void mp_gemm(char, char, UINT,UINT,UINT,DTYPE, DTYPE*,UINT,DTYPE*,UINT,DTYPE,DTY
 
 void cgemm(char, char, CTYPE, CMAT*,CMAT*,CTYPE,CMAT*);
 void mp_cgemm(char, char, UINT,UINT,UINT,CTYPE, CTYPE*,UINT,CTYPE*,UINT,CTYPE,CTYPE*,UINT);
-	#else
+#else
 
 void gemm(cublasOperation_t, cublasOperation_t, DTYPE, MAT*,MAT*,DTYPE,MAT*);
 

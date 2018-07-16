@@ -14,7 +14,7 @@
 #if OS_WIN
 #define __func__ __FUNCTION__
 #endif
-#define DEBUG 1
+#define DEBUG 0
 
 /***********************************
 * 이 부분은 직접 해주세요
@@ -123,13 +123,13 @@ extern UINT max_block;
 
 
 //CAST CTYPE POINTER TO CUDA_COMPLEX TYPE POINTER
-#if NTYPE == 0
-#define CU_CX(x) (cuComplex*)(void*)(x)
+	#if NTYPE == 0
+	#define CU_CX(x) (cuComplex*)(void*)(x)
 
-#else
-#define CU_CX(x) (cuDoubleComplex*)(void*)(x)
+	#else
+	#define CU_CX(x) (cuDoubleComplex*)(void*)(x)
 
-#endif
+	#endif
 
 
 #endif

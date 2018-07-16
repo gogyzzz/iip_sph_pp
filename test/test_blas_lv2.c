@@ -1,6 +1,14 @@
 #include "mother.h"
 //#include "header_for_test.h"
 
+//real
+#define _A 0//N
+#define _B 0// T
+//complex
+#define _C 0// N
+#define _D 1// T
+#define _E 1// H
+
 int main()
 {
 
@@ -10,12 +18,17 @@ int main()
 	CMAT *CA, *CX, *CY;
 	CMAT *TCA, *TCX, *TCY;
 	CTYPE calpha, cbeta;
+	calpha.re = 5;
+	calpha.im = 0;
+	cbeta.re = 0;
+	cbeta.im = 0;
 #if USE_CUDA
   init();
 #endif
 
 //	stopwatch(0);
 
+#if _A 
 	A = zeros(5, 4);
 	X = alloc_MAT(5);
 	Y = alloc_MAT(4);
@@ -38,8 +51,9 @@ int main()
 	free_MAT(X);
 	free_MAT(Y);
 
+#endif
 	/**** TRANSPOSE  ****/
-
+#if _B
 	TA = zeros(4, 5);
 	TX = alloc_MAT(5);
 	TY = alloc_MAT(4);
@@ -61,13 +75,9 @@ int main()
 	free_MAT(TA);
 	free_MAT(TX);
 	free_MAT(TY);
-
+#endif
 	/**** COMPLEX ****/
-
-	calpha.re = 5;
-	calpha.im = 0;
-	cbeta.re = 2;
-	cbeta.im = 0;
+#if _C
 
 	CA = czeros(4, 3);
 	CX = alloc_CMAT(4);
@@ -90,15 +100,15 @@ int main()
 	free_CMAT(CA);
 	free_CMAT(CX);
 	free_CMAT(CY);
-
+#endif
 	/**** TRANSPOSE  ****/
-
+#if _D
 	TCA = czeros(3, 4);
 	TCX = alloc_CMAT(4);
 	TCY = alloc_CMAT(3);
 
-	cfill(TCA, 3, 0);
-	cfill(TCX, -2, 0);
+	cfill(TCA, 0, 1);
+	cfill(TCX, 1, 0);
 	cfill(TCY, 4, -2);
 
 	print_CMAT(TCA);
@@ -106,6 +116,29 @@ int main()
 	print_CMAT(TCY);
 
 	cgemv(Tran, calpha, TCA, TCX, cbeta, TCY);
+
+	print_CMAT(TCA);
+	print_CMAT(TCX);
+	print_CMAT(TCY);
+
+	free_CMAT(TCA);
+	free_CMAT(TCX);
+	free_CMAT(TCY);
+#endif
+	/**** Conjugate transpose ****/
+	TCA = czeros(3, 4);
+	TCX = alloc_CMAT(4);
+	TCY = alloc_CMAT(3);
+
+	cfill(TCA, 0, 1.0);
+	cfill(TCX, 1, 0);
+	cfill(TCY, 4, -2);
+
+	print_CMAT(TCA);
+	print_CMAT(TCX);
+	print_CMAT(TCY);
+
+	cgemv(CTran, calpha, TCA, TCX, cbeta, TCY);
 
 	print_CMAT(TCA);
 	print_CMAT(TCX);
