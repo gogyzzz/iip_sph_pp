@@ -123,14 +123,14 @@ void stopwatch(int flag)
 {
 	static struct timeval startTV, endTV;
 	static long long diff;
-	const long long MICRO 1000000LL;
+	const long long MICRO = 1000000LL;
 
 	if(flag == 0)
 		clock_gettime(&startTV);
 	else
 	{
 		clock_gettime(&endTV);
-		diff = MICRO *(endTV.tv_sec - startTV.tv_sec) + (endTV.usec - startTv.usec);
+		diff = MICRO *(endTV.tv_sec - startTV.tv_sec) + (endTV.tv_usec - startTV.tv_usec);
 		printf("elapsed time : %lld micro seconds\n",diff);
 	}
 

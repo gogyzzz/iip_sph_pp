@@ -271,10 +271,14 @@ else()
 		endif()
 
 		list(APPEND CMAKE_C_FLAGS ${OpenMP_C_FLAGS})
-
 		list(APPEND CMAKE_EXE_LINKER_FLAGS ${OpenMP_EXE_LINKER_FLAGS})
-
-	endif()
+    
+		# Visual Studio uses '/' for compile option
+		# CMAKE set -openmp option for OpenMP_FLAGS
+    if(MSVC)
+			string(REPLACE "-openmp" " /openmp" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+		endif(MSVC)
+	endif(USE_OPENMP)
 
 
 
@@ -290,6 +294,6 @@ else()
 
 endif()
 
-
+message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
 
 #generic function 
