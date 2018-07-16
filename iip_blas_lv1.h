@@ -29,6 +29,10 @@
  * dotu
  *
  * */
+
+#define ABS_CTYPE(x) (DTYPE)sqrt((double)x.re*(double)x.re + (double)x.im*(double)x.im)
+
+
 void mp_axpy(UINT,DTYPE,DTYPE*,UINT,DTYPE*,UINT);
 void axpy(DTYPE,MAT*,MAT*);
 
@@ -74,5 +78,25 @@ CTYPE udot(CMAT *src_x, UINT x_increment, CMAT *src_y, UINT y_increment);
 #if USE_CUDA
 __global__ void cu_dot(DTYPE *result, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc, UINT len, UINT block_size);
 #endif
+
+
+
+void swap(MAT* src_x, MAT* src_y);
+void swap_inc(MAT* src_x, UINT x_inc, MAT* src_y, UINT y_inc);
+void mp_swap(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc);
+
+void cswap(CMAT* src_x, CMAT* src_y);
+void cswap_inc(CMAT* src_x, UINT x_inc, CMAT* src_y, UINT y_inc);
+void mp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc);
+
+
+
+UINT amax(MAT *src);
+UINT amax_inc(MAT *src, UINT inc);
+UINT mp_amax(UINT N, DTYPE *src, UINT inc);
+
+UINT camax(CMAT *src);
+UINT camax_inc(CMAT *src, UINT inc);
+UINT mp_camax(UINT N, CTYPE *src, UINT inc);
 
 #endif
