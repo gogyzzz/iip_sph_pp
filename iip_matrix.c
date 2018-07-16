@@ -102,7 +102,7 @@ CMAT *alloc_CMAT_3d(UINT d0, UINT d1, UINT d2)
 	mat->d1 = d1;
 	mat->d2 = d2;
 
-	mat->data = (CTYPE *)malloc(sizeof(CTYPE) * d0);
+	mat->data = (CTYPE *)malloc(sizeof(CTYPE) * d0*d1*d2);
 
 	return mat;
 }
@@ -459,6 +459,9 @@ MAT* trans(MAT* mat)
 	UINT d2=mat->d2;
 	
 	MAT * t_mat;
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
 	if(mat->ndim == 0)
 	{
    t_mat = alloc_MAT(d1,d0);
@@ -501,6 +504,9 @@ CMAT* ctrans(CMAT* mat)
 	UINT d2=mat->d2;
 	
 	CMAT * t_mat;
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
 	if(mat->ndim == 0)
 	{
    t_mat = alloc_CMAT(d1,d0);
@@ -546,6 +552,9 @@ CMAT* hermit(CMAT* mat)
 	UINT d2=mat->d2;
 	
 	CMAT * t_mat;
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
 	if(mat->ndim == 0)
 	{
    t_mat = alloc_CMAT(d1,d0);

@@ -68,11 +68,12 @@ set(CUDA_SRC)
 
 
 #set(MAIN_SRC test/test_matrix.c)
+set(MAIN_SRC test/test_matrix_2.c)
 #set(MAIN_SRC test/test_wav.c)
 #set(MAIN_SRC test/test_blas_lv1.c)
 #set(MAIN_SRC test/test_blas_lv2.c)
 #set(MAIN_SRC test/test_blas_lv3.c)
-set(MAIN_SRC test/openBLAS_with_openMP.c)
+#set(MAIN_SRC test/openBLAS_with_openMP.c)
 #set(MAIN_SRC test/test_blas_lv2_big.c)
 
 
