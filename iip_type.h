@@ -121,6 +121,17 @@ extern cublasHandle_t handle;
 extern UINT max_thread;
 extern UINT max_block;
 
+
+//CAST CTYPE POINTER TO CUDA_COMPLEX TYPE POINTER
+#if NTYPE == 0
+#define CU_CX(x) (cuComplex*)(void*)(x)
+
+#else
+#define CU_CX(x) (cuDoubleComplex*)(void*)(x)
+
+#endif
+
+
 #endif
 
 // Y*=X

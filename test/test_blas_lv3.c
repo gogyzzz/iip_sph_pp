@@ -18,6 +18,11 @@ int main()
 	MAT*A,*B,*C;
 	CMAT* CA, *CB, *CC;
   CTYPE alpha,beta;
+
+#if USE_CUDA
+init();
+#endif
+
 	alpha.re=1;
 	alpha.im=1;
 	beta.re=0;
@@ -226,7 +231,9 @@ int main()
   free_CMAT(CC);
 #endif
 
-
+#if USE_CUDA
+finit();
+#endif
 
 	return 0;
 }
