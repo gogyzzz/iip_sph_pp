@@ -578,7 +578,7 @@ void mp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc)
 /*** Finds MAX_ABS_VALUE_ELEMENT's index ***/
 UINT amax(MAT *src)
 {
-	amax_inc(src, 1);
+	return amax_inc(src, 1);
 }
 UINT amax_inc(MAT *src, UINT inc)
 {
@@ -610,7 +610,7 @@ UINT amax_inc(MAT *src, UINT inc)
 
 //USE_BLAS = 0 -> just c implement
 #else
-	return mp_amax(mat_size, src, inc);
+	return mp_amax(mat_size, src->data, inc);
 #endif
 }
 UINT mp_amax(UINT N, DTYPE *src, UINT inc)
@@ -619,7 +619,7 @@ UINT mp_amax(UINT N, DTYPE *src, UINT inc)
 	UINT idx = 0;
 	DTYPE max = src[0];
 
-//#pragma omp parallel for shared(src_x, src_y) private(i)
+	//#pragma omp parallel for shared(src_x, src_y) private(i)
 	for (i = 1; i < N; i++)
 	{
 		if (max < (src[i * inc] < 0 ? -src[i * inc] : src[i * inc]))
@@ -634,7 +634,7 @@ UINT mp_amax(UINT N, DTYPE *src, UINT inc)
 
 UINT camax(CMAT *src)
 {
-	camax_inc(src, 1);
+	return camax_inc(src, 1);
 }
 UINT camax_inc(CMAT *src, UINT inc)
 {
@@ -666,7 +666,7 @@ UINT camax_inc(CMAT *src, UINT inc)
 
 //USE_BLAS = 0 -> just c implement
 #else
-	return mp_camax(mat_size, src, inc);
+	return mp_camax(mat_size, src->data, inc);
 #endif
 }
 UINT mp_camax(UINT N, CTYPE *src, UINT inc)
@@ -675,7 +675,7 @@ UINT mp_camax(UINT N, CTYPE *src, UINT inc)
 	UINT idx = 0;
 	DTYPE max = ABS_CTYPE(src[0]);
 
-//#pragma omp parallel for shared(src_x, src_y) private(i)
+	//#pragma omp parallel for shared(src_x, src_y) private(i)
 	for (i = 1; i < N; i++)
 	{
 		if (max < ABS_CTYPE(src[i]))
@@ -686,4 +686,216 @@ UINT mp_camax(UINT N, CTYPE *src, UINT inc)
 	}
 
 	return idx;
+}
+
+/*** Finds MIN_ABS_VALUE_ELEMENT's index ***/
+UINT amin(MAT *src)
+{
+	return amin_inc(src, 1);
+}
+UINT amin_inc(MAT *src, UINT inc)
+{
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+	UINT mat_size = src->d0 * src->d1 * src->d2;
+
+	if (mat_size == 0)
+	{
+		printf("Wrong MAT size!\n");
+		return;
+	}
+
+#if USE_CBLAS
+/*
+ *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
+ * */
+//DTYPE = float
+#if NTYPE == 0
+	cblas_isamin(mat_size, src->data, inc);
+	return;
+
+//DTYPE = double
+#elif NTYPE == 1
+	cblas_idamin(mat_size, src->data, inc);
+	return;
+#endif
+
+//USE_BLAS = 0 -> just c implement
+#else
+	return mp_amin(mat_size, src->data, inc);
+#endif
+}
+UINT mp_amin(UINT N, DTYPE *src, UINT inc)
+{
+	UINT i = 0;
+	UINT idx = 0;
+	DTYPE min = src[0];
+
+	//#pragma omp parallel for shared(src_x, src_y) private(i)
+	for (i = 1; i < N; i++)
+	{
+		if (min > (src[i * inc] < 0 ? -src[i * inc] : src[i * inc]))
+		{
+			idx = i;
+			min = (src[i * inc] < 0 ? -src[i * inc] : src[i * inc]);
+		}
+	}
+
+	return idx;
+}
+
+UINT camin(CMAT *src)
+{
+	return camin_inc(src, 1);
+}
+UINT camin_inc(CMAT *src, UINT inc)
+{
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+	UINT mat_size = src->d0 * src->d1 * src->d2;
+
+	if (mat_size == 0)
+	{
+		printf("Wrong MAT size!\n");
+		return;
+	}
+
+#if USE_CBLAS
+/*
+ *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
+ * */
+//DTYPE = float
+#if NTYPE == 0
+	cblas_isamin(mat_size, src->data, inc);
+	return;
+
+//DTYPE = double
+#elif NTYPE == 1
+	cblas_idamin(mat_size, src->data, inc);
+	return;
+#endif
+
+//USE_BLAS = 0 -> just c implement
+#else
+	return mp_camin(mat_size, src->data, inc);
+#endif
+}
+UINT mp_camin(UINT N, CTYPE *src, UINT inc)
+{
+	UINT i = 0;
+	UINT idx = 0;
+	DTYPE min = ABS_CTYPE(src[0]);
+
+	//#pragma omp parallel for shared(src_x, src_y) private(i)
+	for (i = 1; i < N; i++)
+	{
+		if (min > ABS_CTYPE(src[i]))
+		{
+			idx = i;
+			min = ABS_CTYPE(src[i]);
+		}
+	}
+
+	return idx;
+}
+
+/*** Get absolute value of complex number ***/
+DTYPE cabs1(CTYPE val){
+	return ABS_CTYPE(val);
+}
+
+
+
+DTYPE nrm2(MAT* src){
+	return nrm2_inc(src, 1);
+}
+DTYPE nrm2_inc(MAT* src, UINT inc){
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+	UINT mat_size = src->d0 * src->d1 * src->d2;
+
+	if (mat_size == 0)
+	{
+		printf("Wrong MAT size!\n");
+		return;
+	}
+
+#if USE_CBLAS
+/*
+ *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
+ * */
+//DTYPE = float
+#if NTYPE == 0
+	cblas_snrm2(mat_size, src->data, inc);
+	return;
+
+//DTYPE = double
+#elif NTYPE == 1
+	cblas_dnrm2(mat_size, src->data, inc);
+	return;
+#endif
+
+//USE_BLAS = 0 -> just c implement
+#else
+	return mp_nrm2(mat_size, src->data, inc);
+#endif
+}
+DTYPE mp_nrm2(UINT N, DTYPE* data, UINT inc){
+	UINT i=0;
+	DTYPE temp = 0;
+
+	for(i=0; i<N; i++){
+		temp += data[i]*data[i];
+	}
+
+	return sqrt(temp);
+}
+
+DTYPE cnrm2(CMAT* src){
+	return cnrm2_inc(src, 1);
+}
+DTYPE cnrm2_inc(CMAT* src, UINT inc){
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+	UINT mat_size = src->d0 * src->d1 * src->d2;
+
+	if (mat_size == 0)
+	{
+		printf("Wrong MAT size!\n");
+		return;
+	}
+
+#if USE_CBLAS
+/*
+ *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
+ * */
+//DTYPE = float
+#if NTYPE == 0
+	cblas_snrm2(mat_size, src->data, inc);
+	return;
+
+//DTYPE = double
+#elif NTYPE == 1
+	cblas_dnrm2(mat_size, src->data, inc);
+	return;
+#endif
+
+//USE_BLAS = 0 -> just c implement
+#else
+	return mp_cnrm2(mat_size, src->data, inc);
+#endif
+}
+DTYPE mp_cnrm2(UINT N, CTYPE* data, UINT inc){
+	UINT i=0;
+	DTYPE temp = 0;
+
+	for(i=0; i<N; i++){
+		temp += ABS_CTYPE(data[i]) * ABS_CTYPE(data[i]);
+	}
+
+	return sqrt(temp);
 }
