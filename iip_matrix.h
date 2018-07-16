@@ -110,6 +110,15 @@ void csubmat_1d(CMAT*, CMAT*, ITER,ITER);
 void csubmat_2d(CMAT*, CMAT*, ITER,ITER, ITER,ITER);
 void csubmat_3d(CMAT*, CMAT*, ITER,ITER, ITER,ITER, ITER,ITER);
 
+
+/**** transpose  ****/
+MAT* trans(MAT*);
+
+CMAT* ctrans(CMAT*);
+
+/**** hermitian ****/
+CMAT* hermit(CMAT*);
+
 /****  miscellaneous ****/ 
 void free_MAT(MAT*);
 void free_CMAT(CMAT*);
