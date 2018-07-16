@@ -360,5 +360,107 @@ DTYPE mp_dot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc)
 	return dot;
 }
 
-DTYPE cdot(CMAT *src_x, UINT x_increment, CMAT *src_y, UINT y_increment);
-DTYPE mp_cdot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc);
+CTYPE cdot(CMAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment){
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+	UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
+	CTYPE result = {0, 0};
+
+	if (mat_size == 0)
+	{
+		printf("Wrong MAT size!\n");
+		return result;
+	}
+
+#if USE_CBLAS
+/*
+ *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
+ * */
+//DTYPE = float
+#if NTYPE == 0
+	cblas_cdotc_sub (N, src_x->data, x_increment, src_y->data, y_increment, &result);
+	return result;
+
+//DTYPE = double
+#elif NTYPE == 1
+	cblas_zdotc_sub (N, src_x->data, x_increment, src_y->data, y_increment, &result);
+	return result;
+#endif
+
+//USE_BLAS = 0 -> just c implement
+#else
+	return mp_cdot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
+#endif
+}
+
+CTYPE mp_cdot(UINT N, CTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc){
+	UINT i = 0;
+	CTYPE dot;
+
+	dot.re = 0;
+	dot.im = 0;
+
+#pragma omp parallel for shared(src_x, src_y) private(i)
+	for (i = 0; i < N; i++)
+	{
+		dot.re += src_x[i * x_inc].re * src_y[i * y_inc];
+		dot.im += src_x[i * x_inc].im * src_y[i * y_inc];
+	}
+
+	return dot;
+}
+
+
+CTYPE udot(CMAT *src_x, UINT x_increment, CMAT *src_y, UINT y_increment){
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+	UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
+	CTYPE result = {0, 0};
+
+	if (mat_size == 0)
+	{
+		printf("Wrong MAT size!\n");
+		return result;
+	}
+
+#if USE_CBLAS
+/*
+ *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
+ * */
+//DTYPE = float
+#if NTYPE == 0
+	cblas_cdotu_sub (N, src_x->data, x_increment, src_y->data, y_increment, &result);
+	return result;
+
+//DTYPE = double
+#elif NTYPE == 1
+	cblas_zdotu_sub (N, src_x->data, x_increment, src_y->data, y_increment, &result);
+	return result;
+#endif
+
+//USE_BLAS = 0 -> just c implement
+#else
+	return mp_udot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
+#endif
+}
+
+CTYPE mp_udot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc){
+	UINT i = 0;
+	CTYPE dot;
+
+	dot.re = 0;
+	dot.im = 0;
+
+#pragma omp parallel for shared(src_x, src_y) private(i)
+	for (i = 0; i < N; i++)
+	{
+		dot.re += src_x[i * x_inc].re * src_y[i * y_inc].re;
+		dot.im += src_x[i * x_inc].re * src_y[i * y_inc].im;
+		dot.re -= src_x[i * x_inc].im * src_y[i * y_inc].im;
+		dot.im += src_x[i * x_inc].im * src_y[i * y_inc].re;
+	}
+
+	return dot;
+}

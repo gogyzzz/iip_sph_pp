@@ -65,10 +65,14 @@ __global__ void cu_casum(CTYPE *data, UINT inc, UINT len, UINT block_size, CTYPE
 DTYPE mp_dot(UINT N, DTYPE* src_x, UINT x_inc, DTYPE* src_y, UINT y_inc);
 DTYPE dot(MAT* src_x, UINT x_increment, MAT *src_y, UINT y_increment);
 
-DTYPE mp_sdot(UINT N, DTYPE* src_x, UINT x_inc, DTYPE* src_y, UINT y_inc);
-DTYPE sdot(MAT* src_x, UINT x_increment, MAT *src_y, UINT y_increment);
+CTYPE mp_cdot(UINT N, CTYPE* src_x, UINT x_inc, DTYPE* src_y, UINT y_inc);
+CTYPE cdot(CMAT* src_x, UINT x_increment, MAT *src_y, UINT y_increment);
 
-DTYPE mp_cdot(UINT N, CTYPE* src_x, UINT x_inc, CTYPE* src_y, UINT y_inc);
-DTYPE cdot(CMAT* src_x, UINT x_increment, CMAT *src_y, UINT y_increment);
+CTYPE mp_udot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc);
+CTYPE udot(CMAT *src_x, UINT x_increment, CMAT *src_y, UINT y_increment);
+
+#if USE_CUDA
+__global__ void cu_dot(DTYPE *result, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc, UINT len, UINT block_size);
+#endif
 
 #endif
