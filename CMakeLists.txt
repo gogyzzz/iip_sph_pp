@@ -22,7 +22,7 @@ set(PROJECT_NAME iip_sph_pp)
 
 
 
-option(USE_CUDA "Using CUDA"                 ON)
+option(USE_CUDA "Using CUDA"                 OFF)
 
 
 
@@ -34,7 +34,7 @@ option(USE_MKL "BLAS : IntelMKL"            OFF)
 
 #OpenMP
 
-option(USE_OPENMP "Using OpenMP"             OFF)
+option(USE_OPENMP "Using OpenMP"             ON)
 
 
 
@@ -70,7 +70,8 @@ set(CUDA_SRC)
 #set(MAIN_SRC test/test_matrix.c)
 #set(MAIN_SRC test/test_wav.c)
 #set(MAIN_SRC test/test_blas_lv1.c)
-set(MAIN_SRC test/test_blas_lv2.c)
+#set(MAIN_SRC test/test_blas_lv2.c)
+set(MAIN_SRC test/test_blas_lv3.c)
 
 #set(MAIN_SRC test/test_blas_lv2_big.c)
 
@@ -133,7 +134,7 @@ message(STATUS "ENV_PATH : " $ENV{PATH})
 if(USE_CUDA)
 
 	project(${PROJECT_NAME} CUDA)
-	list(APPEND CUDA_SRC iip_matrix.cu iip_wav.cu iip_blas_lv1.cu iip_blas_lv2.cu)
+	list(APPEND CUDA_SRC iip_matrix.cu iip_wav.cu iip_blas_lv2.cu iip_blas_lv3.cu)
 
 	
 
@@ -193,7 +194,7 @@ else()
 
 	
 
-	list(APPEND C_SRC iip_matrix.c iip_blas_lv1.c iip_wav.c iip_blas_lv2.c)
+	list(APPEND C_SRC iip_matrix.c iip_blas_lv1.c iip_wav.c iip_blas_lv2.c iip_blas_lv3.c)
 
 		
 

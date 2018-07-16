@@ -121,17 +121,29 @@ extern cublasHandle_t handle;
 extern UINT max_thread;
 extern UINT max_block;
 
+
+//CAST CTYPE POINTER TO CUDA_COMPLEX TYPE POINTER
+#if NTYPE == 0
+#define CU_CX(x) (cuComplex*)(void*)(x)
+
+#else
+#define CU_CX(x) (cuDoubleComplex*)(void*)(x)
+
 #endif
 
+
+#endif
+
+// Y*=X
 #define cmul(Y,X)\
 	 Y.re = Y.re*X.re - Y.im*X.im;\
 	 Y.im = Y.re*X.im + Y.im*X.re;\
 
-
+// Y+=X
 #define cadd(Y,X)\
 		Y.re = Y.re+X.re;\
 		Y.im = Y.im+X.im; 
-
+// Y+=A*B
 #define cadd_mul(Y,A,B)\
 		Y.re += A.re*B.re - A.im*B.im;\
 		Y.im += A.re*B.im + A.im*B.re;

@@ -66,9 +66,9 @@ printf("trans : %d m : %u n: %u lda : %u\nalpha : %lf|%lf beta : %lf|%lf\n",tran
 #endif
 
 #if NTYPE==0
-	cublasCgemv(handle,transA, m , n, (cuDoubleComplex*)(void*)&alpha, (cuDoubleComplex*)(void*)(A->data), lda, (cuDoubleComplex*)(void*)(X->data),1,(cuDoubleComplex*)(void*)(&beta),(cuDoubleComplex*)(void*)(Y->data),1);
+	cublasCgemv(handle,transA, m , n, CU_CX(&alpha), CU_CX(A->data), lda, CU_CX(X->data),1,CU_CX(&beta),CU_CX(Y->data),1);
 #else
-	cublasZgemv(handle,transA, m , n,  (cuDoubleComplex*)(void*)(&alpha), (cuDoubleComplex*)(void*)(A->data), lda,(cuDoubleComplex*)(void*)(X->data),1,(cuDoubleComplex*)(void*)(&beta),(cuDoubleComplex*)(void*)(Y->data),1);
+	cublasZgemv(handle,transA, m , n,  CU_CX(&alpha), CU_CX(A->data), lda,CU_CX(X->data),1,CU_CX(&beta),CU_CX(Y->data),1);
 		
 #endif
 //		mp_cgemv(transA, m , n, alpha, A->data, lda, X->data,1,beta,Y->data,1);
