@@ -43,6 +43,7 @@ UINT lda,ldb,ldc;
 printf("%s\n",__func__);
 #endif
 
+
 if(transA == NoTran)
 {
 m = A->d0;
@@ -73,9 +74,15 @@ n = B->d0;
 ldb = B ->d0;
 }
 
+if((transA == CTran) || (transB == CTran))
+{
+	printf("ERROR : can't conjugate transpose real number matrix\n");
+	return;
+}
 
+if(A->ndim == 1)
+	
 #if USE_CBLAS
-
 	#if NTYPE == 0
 	cblas_sgemm(CblasColMajor,transA,transB,m,n,k,alpha,A->data,lda,B->data,ldb,beta,C->data,ldc);
 	#else
@@ -84,7 +91,11 @@ ldb = B ->d0;
 #else
 	mp_gemm(transA,transB, m,n,k,alpha,A->data,lda,B->data,ldb,beta,C->data,ldc);
 #endif
+
+	
 }
+
+
 
 void mp_gemm(char transA, char transB, UINT m,UINT n,UINT k, DTYPE alpha,DTYPE* A,UINT lda,DTYPE*B,UINT ldb, DTYPE beta,DTYPE *C  ,UINT ldc)
 {

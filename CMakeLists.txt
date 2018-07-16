@@ -28,7 +28,7 @@ option(USE_CUDA "Using CUDA"                 OFF)
 
 #option(BLAS_CU  " BLAS : cublas"             ON)
 
-option(USE_OPEN "BLAS : OpenBLAS"           OFF)
+option(USE_OPEN "BLAS : OpenBLAS"           ON)
 
 option(USE_MKL "BLAS : IntelMKL"            OFF)
 
@@ -71,8 +71,8 @@ set(CUDA_SRC)
 #set(MAIN_SRC test/test_wav.c)
 #set(MAIN_SRC test/test_blas_lv1.c)
 #set(MAIN_SRC test/test_blas_lv2.c)
-set(MAIN_SRC test/test_blas_lv3.c)
-
+#set(MAIN_SRC test/test_blas_lv3.c)
+set(MAIN_SRC test/openBLAS_with_openMP.c)
 #set(MAIN_SRC test/test_blas_lv2_big.c)
 
 
@@ -194,7 +194,7 @@ else()
 
 	
 
-	list(APPEND C_SRC iip_matrix.c iip_blas_lv1.c iip_wav.c iip_blas_lv2.c iip_blas_lv3.c)
+	list(APPEND C_SRC iip_matrix.c iip_wav.c iip_blas_lv2.c iip_blas_lv3.c)
 
 		
 
@@ -271,10 +271,14 @@ else()
 		endif()
 
 		list(APPEND CMAKE_C_FLAGS ${OpenMP_C_FLAGS})
-
 		list(APPEND CMAKE_EXE_LINKER_FLAGS ${OpenMP_EXE_LINKER_FLAGS})
-
-	endif()
+    
+		# Visual Studio uses '/' for compile option
+		# CMAKE set -openmp option for OpenMP_FLAGS
+    if(MSVC)
+			string(REPLACE "-openmp" " /openmp" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+		endif(MSVC)
+	endif(USE_OPENMP)
 
 
 
@@ -290,6 +294,6 @@ else()
 
 endif()
 
-
+message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
 
 #generic function 
