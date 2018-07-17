@@ -169,9 +169,6 @@ void ccopy(CMAT *src, CMAT *des)
 	}
 
 #if USE_CBLAS
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
 //DTYPE = float
 #if NTYPE == 0
 	cblas_ccopy(mat_size, src->data, 1, des->data, 1);
@@ -238,9 +235,6 @@ DTYPE asum(MAT *mat, UINT inc)
 	}
 
 #if USE_CBLAS
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
 //DTYPE = float
 #if NTYPE == 0
 	return cblas_sasum(mat_size, mat->data, inc);
@@ -282,9 +276,6 @@ DTYPE casum(CMAT *mat, UINT inc)
 	}
 
 #if USE_CBLAS
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
 //DTYPE = float
 #if NTYPE == 0
 	return cblas_scasum(mat_size, mat->data, inc);
@@ -329,9 +320,6 @@ DTYPE dot(MAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment)
 	}
 
 #if USE_CBLAS
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
 //DTYPE = float
 #if NTYPE == 0
 	return cblas_sdot(N, src_x->data, x_increment, src_y->data, y_increment);
@@ -376,9 +364,6 @@ CTYPE cdot(CMAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment)
 	}
 
 #if USE_CBLAS
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
 //DTYPE = float
 #if NTYPE == 0
 	cblas_cdotc_sub(N, src_x->data, x_increment, src_y->data, y_increment, &result);
@@ -429,9 +414,6 @@ CTYPE udot(CMAT *src_x, UINT x_increment, CMAT *src_y, UINT y_increment)
 	}
 
 #if USE_CBLAS
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
 //DTYPE = float
 #if NTYPE == 0
 	cblas_cdotu_sub(mat_size, src_x->data, x_increment, src_y->data, y_increment, &result);
@@ -488,9 +470,6 @@ void swap_inc(MAT *src_x, UINT x_inc, MAT *src_y, UINT y_inc)
 	}
 
 #if USE_CBLAS
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
 //DTYPE = float
 #if NTYPE == 0
 	cblas_sswap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
@@ -539,9 +518,6 @@ void cswap_inc(CMAT *src_x, UINT x_inc, CMAT *src_y, UINT y_inc)
 	}
 
 #if USE_CBLAS
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
 //DTYPE = float
 #if NTYPE == 0
 	cblas_cswap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
@@ -594,9 +570,6 @@ UINT amax_inc(MAT *src, UINT inc)
 	}
 
 #if USE_CBLAS
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
 //DTYPE = float
 #if NTYPE == 0
 	cblas_isamax(mat_size, src->data, inc);
@@ -650,9 +623,6 @@ UINT camax_inc(CMAT *src, UINT inc)
 	}
 
 #if USE_CBLAS
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
 //DTYPE = float
 #if NTYPE == 0
 	cblas_isamax(mat_size, src->data, inc);
@@ -707,9 +677,6 @@ UINT amin_inc(MAT *src, UINT inc)
 	}
 
 #if USE_CBLAS
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
 //DTYPE = float
 #if NTYPE == 0
 	cblas_isamin(mat_size, src->data, inc);
@@ -763,9 +730,6 @@ UINT camin_inc(CMAT *src, UINT inc)
 	}
 
 #if USE_CBLAS
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
 //DTYPE = float
 #if NTYPE == 0
 	cblas_isamin(mat_size, src->data, inc);
@@ -824,9 +788,6 @@ DTYPE nrm2_inc(MAT* src, UINT inc){
 	}
 
 #if USE_CBLAS
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
 //DTYPE = float
 #if NTYPE == 0
 	cblas_snrm2(mat_size, src->data, inc);
@@ -870,9 +831,6 @@ DTYPE cnrm2_inc(CMAT* src, UINT inc){
 	}
 
 #if USE_CBLAS
-/*
- *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
- * */
 //DTYPE = float
 #if NTYPE == 0
 	cblas_snrm2(mat_size, src->data, inc);
@@ -898,4 +856,97 @@ DTYPE mp_cnrm2(UINT N, CTYPE* data, UINT inc){
 	}
 
 	return sqrt(temp);
+}
+
+/*** Performs rotation of points in the plane. ***/
+void rot(MAT* src_x, MAT* src_y, DTYPE c, DTYPE s){
+	rot_inc(src_x, 1, src_y, 1, c, s);
+}
+void rot_inc(MAT* src_x, UINT x_inc, MAT* src_y, UINT y_inc, DTYPE c, DTYPE s){
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+	UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
+
+	if (mat_size == 0)
+	{
+		printf("Wrong MAT size!\n");
+		return;
+	}
+
+#if USE_CBLAS
+//DTYPE = float
+#if NTYPE == 0
+	cblas_srot(mat_size, src_x->data, x_inc, src_y->data, y_inc, c, s);
+	return;
+
+//DTYPE = double
+#elif NTYPE == 1
+	cblas_drot(mat_size, src_x->data, x_inc, src_y->data, y_inc, c, s);
+	return;
+#endif
+
+//USE_BLAS = 0 -> just c implement
+#else
+	return mp_rot(mat_size, src_x->data, x_inc, src_y, y_inc, c, s);
+#endif
+}
+void mp_rot(UINT N, DTYPE* src_x, UINT x_inc, DTYPE* src_y, UINT y_inc, DTYPE c, DTYPE s){
+	UINT i=0;
+	DTYPE temp_x, temp_y;
+
+	for(i=0; i<N; i++){
+		temp_x = src_x[i*x_inc];
+		temp_y = src_y[i*y_inc];
+
+		src_x[i*x_inc] = c * temp_x + s * temp_y;
+		src_y[i*y_inc] = c * temp_y + s * temp_x;
+	}
+}
+
+void crot(CMAT* src_x, CMAT* src_y, DTYPE c, DTYPE s){
+	crot_inc(src_x, 1, src_y, 1, c, s);
+}
+void crot_inc(CMAT* src_x, UINT x_inc, CMAT* src_y, UINT y_inc, DTYPE c, DTYPE s){
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+	UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
+
+	if (mat_size == 0)
+	{
+		printf("Wrong MAT size!\n");
+		return;
+	}
+
+#if USE_CBLAS
+//DTYPE = float
+#if NTYPE == 0
+	cblas_snrm2(mat_size, src->data, inc);
+	return;
+
+//DTYPE = double
+#elif NTYPE == 1
+	cblas_dnrm2(mat_size, src->data, inc);
+	return;
+#endif
+
+//USE_BLAS = 0 -> just c implement
+#else
+	return mp_crot(mat_size, src_x->data, x_inc, src_y, y_inc, c, s);
+#endif
+}
+void mp_crot(UINT N, CTYPE* src_x, UINT x_inc, CTYPE* src_y, UINT y_inc, DTYPE c, DTYPE s){
+	UINT i=0;
+	CTYPE temp_x, temp_y;
+
+	for(i=0; i<N; i++){
+		temp_x = src_x[i*x_inc];
+		temp_y = src_y[i*y_inc];
+
+		src_x[i*x_inc].re = c * temp_x.re + s * temp_y.re;
+		src_x[i*x_inc].im = c * temp_x.im + s * temp_y.im;
+		src_y[i*y_inc].re = c * temp_y.re + s * temp_x.re;
+		src_y[i*y_inc].im = c * temp_y.im + s * temp_x.im;
+	}
 }

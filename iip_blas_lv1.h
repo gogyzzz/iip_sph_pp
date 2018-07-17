@@ -123,4 +123,8 @@ DTYPE cnrm2(CMAT* src);
 DTYPE cnrm2_inc(CMAT* src, UINT inc);
 DTYPE mp_cnrm2(UINT N, CTYPE* data, UINT inc);
 
+
+void rot(MAT* src_x, MAT* src_y, DTYPE c, DTYPE s);
+void rot_inc(MAT* src_x, UINT x_inc, MAT* src_y, UINT y_inc, DTYPE c, DTYPE s);
+
 #endif
