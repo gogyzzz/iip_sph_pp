@@ -23,7 +23,6 @@
 /*
 * If DTYPE = float  ->  set NTYPE = 0
 * If DTYPE = double ->  set NTYPE = 1
-*
 * */
 #define NTYPE 1
 /************************************

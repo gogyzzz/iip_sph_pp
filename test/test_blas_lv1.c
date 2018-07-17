@@ -48,6 +48,41 @@ int main()
 	printf("asum(B,1) = %.2f\n", asum(B, 1));
 	printf("casum(CB,1) = %.2f\n", casum(CB, 1));
 	
+
+	printf("===== fill(AB, 2) =====\n");
+	fill(A, 2);
+	fill(B, 4);
+	cfill(CA, 2, 1);
+	cfill(CB, 4, 2);
+	print_MAT(A);
+	print_MAT(B);
+
+	printf("===== dot(A) =====\n");
+	printf("dot(A, 1, B, 1) = %.2f\n", dot(A, 1, B, 1));
+
+	printf("===== cdot(CA, A) =====\n");
+	CTYPE temp = cdot(CA, 1, A, 1);
+	printf("cdot(CA, 1, A, 1).re = %.2f\n", temp.re);
+	printf("cdot(CA, 1, A, 1).im = %.2f\n", temp.im);
+
+	printf("===== udot(CA, CB) =====\n");
+	temp = udot(CA, 1, CB, 1);
+	printf("udot(CA, 1, CB, 1).re = %.2f\n", temp.re);
+	printf("udot(CA, 1, CB, 1).im = %.2f\n", temp.im);
+
+	printf("===== swap(A, B) =====\n");
+	swap(A, B);
+	printf("#A\n");
+	print_MAT(A);
+	printf("#B\n");
+	print_MAT(B);
+
+	printf("===== cswap(CA, CB) =====\n");
+	cswap(CA, CB);
+	printf("#CA\n");
+	print_CMAT(CA);
+	printf("#CB\n");
+	print_CMAT(CB);
 	
 	free_MAT(A);
 	free_MAT(B);
