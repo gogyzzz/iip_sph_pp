@@ -15,70 +15,41 @@ set(PROJECT_NAME iip_sph_pp)
 
 
 ###################################################
-
 ###################################################
-
 ###################################################
-
-
 
 option(USE_CUDA "Using CUDA"                 OFF)
-
-
-
-#option(BLAS_CU  " BLAS : cublas"             ON)
-
 option(USE_OPEN "BLAS : OpenBLAS"           ON)
-
 option(USE_MKL "BLAS : IntelMKL"            OFF)
 
-#OpenMP
-
 option(USE_OPENMP "Using OpenMP"             ON)
-
-
 
 #설정을 다 하셨다면 이 옵션을 ON 해주세요
 
 option(I_DID_WHAT_I_HAVE_TO_DO "SET THIS ON" ON)
 
-
-
 ###################################################
-
 ###################################################
-
 ###################################################
-
-
 
 set(LINKLIBS)
-
 set(MAIN_SRC)
-
 set(C_SRC)
-
 set(CUDA_SRC)
 
-
-
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
-
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
-
 
 #set(MAIN_SRC test/test_matrix.c)
+set(MAIN_SRC test/test_matrix_2.c)
 #set(MAIN_SRC test/test_wav.c)
 #set(MAIN_SRC test/test_blas_lv1.c)
 #set(MAIN_SRC test/test_blas_lv2.c)
 #set(MAIN_SRC test/test_blas_lv3.c)
-set(MAIN_SRC test/openBLAS_with_openMP.c)
+#set(MAIN_SRC test/openBLAS_with_openMP.c)
 #set(MAIN_SRC test/test_blas_lv2_big.c)
 
-
-
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
-
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 
 
@@ -126,6 +97,7 @@ endif()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/header)
 
 message(STATUS "ENV_PATH : " $ENV{PATH})
 
@@ -134,7 +106,12 @@ message(STATUS "ENV_PATH : " $ENV{PATH})
 if(USE_CUDA)
 
 	project(${PROJECT_NAME} CUDA)
-	list(APPEND CUDA_SRC iip_matrix.cu iip_wav.cu iip_blas_lv2.cu iip_blas_lv3.cu)
+	list(APPEND CUDA_SRC
+				 source/iip_matrix.cu
+				 source/iip_wav.cu
+				 source/iip_blas_lv1.cu
+				 source/iip_blas_lv2.cu
+				 source/iip_blas_lv3.cu)
 
 	
 
@@ -194,7 +171,12 @@ else()
 
 	
 
-	list(APPEND C_SRC iip_matrix.c iip_wav.c iip_blas_lv2.c iip_blas_lv3.c)
+	list(APPEND C_SRC 
+					source/iip_matrix.c
+				  source/iip_wav.c
+				  source/iip_blas_lv1.c
+				  source/iip_blas_lv2.c
+				  source/iip_blas_lv3.c)
 
 		
 
