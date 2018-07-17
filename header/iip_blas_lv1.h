@@ -126,5 +126,10 @@ DTYPE mp_cnrm2(UINT N, CTYPE* data, UINT inc);
 
 void rot(MAT* src_x, MAT* src_y, DTYPE c, DTYPE s);
 void rot_inc(MAT* src_x, UINT x_inc, MAT* src_y, UINT y_inc, DTYPE c, DTYPE s);
+void mp_rot(UINT N, DTYPE* src_x, UINT x_inc, DTYPE* src_y, UINT y_inc, DTYPE c, DTYPE s);
+
+void crot(CMAT* src_x, CMAT* src_y, DTYPE c, DTYPE s);
+void crot_inc(CMAT* src_x, UINT x_inc, CMAT* src_y, UINT y_inc, DTYPE c, DTYPE s);
+void mp_crot(UINT N, CTYPE* src_x, UINT x_inc, CTYPE* src_y, UINT y_inc, DTYPE c, DTYPE s);
 
 #endif
