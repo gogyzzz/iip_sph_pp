@@ -922,12 +922,12 @@ void crot_inc(CMAT* src_x, UINT x_inc, CMAT* src_y, UINT y_inc, DTYPE c, DTYPE s
 #if USE_CBLAS
 //DTYPE = float
 #if NTYPE == 0
-	cblas_snrm2(mat_size, src->data, inc);
+	cblas_csrot(mat_size, src_x->data, x_inc, src_y->data, y_inc, c, s);
 	return;
 
 //DTYPE = double
 #elif NTYPE == 1
-	cblas_dnrm2(mat_size, src->data, inc);
+	cblas_zdrot(mat_size, src_x->data, x_inc, src_y->data, y_inc, c, s);
 	return;
 #endif
 
