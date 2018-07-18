@@ -14,7 +14,7 @@
 #if OS_WIN
 #define __func__ __FUNCTION__
 #endif
-#define DEBUG 1
+#define DEBUG 0
 
 /***********************************
 * 이 부분은 직접 해주세요
@@ -134,18 +134,20 @@ extern UINT max_block;
 #endif
 
 // Y*=X
-#define cmul(Y,X)\
-	 Y.re = Y.re*X.re - Y.im*X.im;\
-	 Y.im = Y.re*X.im + Y.im*X.re;\
-
+#define cmul(Y,X,T) \
+{	T = Y.re; \
+	Y.re = Y.re*X.re - Y.im*X.im;\
+	Y.im = T*X.im + Y.im*X.re;\
+}
 // Y+=X
 #define cadd(Y,X)\
-		Y.re = Y.re+X.re;\
-		Y.im = Y.im+X.im; 
+{		Y.re = Y.re+X.re;\
+		Y.im = Y.im+X.im; \
+}
 // Y+=A*B
 #define cadd_mul(Y,A,B)\
-		Y.re += A.re*B.re - A.im*B.im;\
-		Y.im += A.re*B.im + A.im*B.re;
-
+{		(Y.re) = (Y.re) + (A.re)*(B.re) - (A.im)*(B.im);\
+		(Y.im) = (Y.im) + (A.re)*(B.im) + (A.im)*(B.re);\
+ }
 
 #endif

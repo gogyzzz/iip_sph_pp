@@ -19,7 +19,7 @@ set(PROJECT_NAME iip_sph_pp)
 ###################################################
 
 option(USE_CUDA "Using CUDA"                 OFF)
-option(USE_OPEN "BLAS : OpenBLAS"           ON)
+option(USE_OPEN "BLAS : OpenBLAS"           OFF)
 option(USE_MKL "BLAS : IntelMKL"            OFF)
 
 option(USE_OPENMP "Using OpenMP"             ON)
@@ -41,11 +41,11 @@ set(CUDA_SRC)
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 
 #set(MAIN_SRC test/test_matrix.c)
-set(MAIN_SRC test/test_matrix_2.c)
+#set(MAIN_SRC test/test_matrix_2.c)
 #set(MAIN_SRC test/test_wav.c)
 #set(MAIN_SRC test/test_blas_lv1.c)
 #set(MAIN_SRC test/test_blas_lv2.c)
-#set(MAIN_SRC test/test_blas_lv3.c)
+set(MAIN_SRC test/test_blas_lv3.c)
 #set(MAIN_SRC test/openBLAS_with_openMP.c)
 #set(MAIN_SRC test/test_blas_lv2_big.c)
 
@@ -174,7 +174,7 @@ else()
 	list(APPEND C_SRC 
 					source/iip_matrix.c
 				  source/iip_wav.c
-				  source/iip_blas_lv1.c
+					#				  source/iip_blas_lv1.c
 				  source/iip_blas_lv2.c
 				  source/iip_blas_lv3.c)
 

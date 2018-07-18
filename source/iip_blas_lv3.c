@@ -115,7 +115,7 @@ if((transA == NoTran) && (transB == NoTran))
 			temp = 0;
 			for(i=0;i<k;i++)
 			{
-				temp+= A[i*lda + l]*B[i + j*k];		
+				temp+= A[i*m + l]*B[i + j*k];		
 			}
 			C[l + m*j]*=beta;
 		
@@ -127,7 +127,7 @@ if((transA == NoTran) && (transB == NoTran))
 }
 
 
-if((transA == Tran) && (transB == NoTran))
+if((transA != NoTran) && (transB == NoTran))
 {
 
 #pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
@@ -138,7 +138,7 @@ for(l=0;l<m;l++)
 			temp = 0;
 			for(i=0;i<k;i++)
 			{
-				temp+= A[i*lda + l]*B[i + j*k];		
+				temp+= A[l*k + i]*B[i + j*k];		
 			}
 			C[l + m*j]*=beta;
 		
@@ -147,8 +147,48 @@ for(l=0;l<m;l++)
 		}
 	}
 }
-if((transA == Tran) && (transB == Tran));
-if((transA == NoTran) && (transB == Tran));
+if((transA != NoTran) && (transB != NoTran))
+{
+#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+for(l=0;l<m;l++)
+	{
+		for(j=0;j<n;j++)
+		{
+			temp = 0;
+			for(i=0;i<k;i++)
+			{
+				temp+= A[l*k + i]*B[i*n + j];		
+			}
+			C[l + m*j]*=beta;
+		
+			temp *=alpha;
+			C[l + m*j] +=temp;
+		}
+	}
+
+
+}
+if((transA == NoTran) && (transB != NoTran))
+{
+#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+for(l=0;l<m;l++)
+	{
+		for(j=0;j<n;j++)
+		{
+			temp = 0;
+			for(i=0;i<k;i++)
+			{
+				temp+= A[i*m + l]*B[i*n + j];		
+			}
+			C[l + m*j]*=beta;
+		
+			temp *=alpha;
+			C[l + m*j] +=temp;
+		}
+	}
+
+
+}
 
 }
 
@@ -206,36 +246,218 @@ ldb = B ->d0;
 
 void mp_cgemm(char transA, char transB, UINT m,UINT n,UINT k, CTYPE alpha,CTYPE* A,UINT lda,CTYPE*B,UINT ldb, CTYPE beta,CTYPE *C  ,UINT ldc)
 {
-ITER i,j,l;	
+ITER i,j,l;
+ITER adx,bdx;
 CTYPE temp;
+DTYPE temp2;
 #if DEBUG
 printf("%s\n",__func__);
 #endif
 
-if((transA == NoTran) && (transB == NoTran))
+if((transA == NoTran))
 {
-#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
-	for(l=0;l<m;l++)
+	if(transB == NoTran)
 	{
-		for(j=0;j<n;j++)
+	#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+		for(l=0;l<m;l++)
 		{
-			temp.re = 0;
-			temp.im = 0;
-			for(i=0;i<k;i++)
+			for(j=0;j<n;j++)
 			{
-				cadd_mul(temp,A[i*lda + l],B[i + j*k]);		
+				temp.im = 0;
+				temp.re = 0;
+				for(i=0;i<k;i++)
+				{
+					cadd_mul(temp,A[i*m + l],B[i + j*k]);
+				}
+				cmul(C[l + m*j],beta,temp2);
+				cmul(temp ,alpha,temp2);
+				cadd(C[l + m*j] ,temp);
 			}
-			cmul(C[l + m*j],beta);
-			cadd(temp ,alpha);
-			cadd(C[l + m*j]  ,temp);
+		}
+		
+	}
+	else if(transB == Tran)
+	{
+		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+		for(l=0;l<m;l++)
+		{
+			for(j=0;j<n;j++)
+			{
+				temp.re = 0;
+				temp.im = 0;
+				for(i=0;i<k;i++)
+				{
+					cadd_mul(temp, A[i*m + l],B[i*n + j])		
+				}
+				cmul(C[l + m*j],beta,temp2)
+				cmul(temp ,alpha,temp2)
+				cadd(C[l + m*j],temp)
+			}
 		}
 	}
-	
+	else // tranB == CTran
+	{
+	//#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)  
+		for(l=0;l<m;l++)
+		{
+			
+	#pragma omp parallel for shared(A,B,C) private(temp,i,j)  
+			for(j=0;j<n;j++)
+			{
+				temp.re = 0;
+				temp.im = 0;
+				for(i=0;i<k;i++)
+				{
+					temp.re += A[i*m +l].re*B[i*n+j].re;
+					temp.re += A[i*m+l].im*B[i*n+j].im;
+					temp.im += A[i*m+l].im*(B[i*n+j].re);
+					temp.im -= A[i*m+l].re*(B[i*n+j].im);
+				}
+				cmul(C[l + m*j],beta,temp2)
+				cmul(temp ,alpha,temp2)
+				cadd(C[l + m*j],temp)
+			}
+		}
+
+	}
+}
+else if(transA == Tran)
+{
+	if(transB == NoTran)
+	{
+		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+		for(l=0;l<m;l++)
+		{
+			for(j=0;j<n;j++)
+			{
+				temp.re = 0;
+				temp.im = 0;
+				for(i=0;i<k;i++)
+				{
+					cadd_mul(temp, A[i + l*k],B[i + j*k])		
+				}
+				cmul(C[l + m*j],beta,temp2)
+				cmul(temp ,alpha,temp2)
+				cadd(C[l + m*j] ,temp)
+			}
+		}
+
+	}
+	else if(transB == Tran)
+	{
+		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+		for(l=0;l<m;l++)
+		{
+			for(j=0;j<n;j++)
+			{
+				temp.re = 0;
+				temp.im = 0;
+				for(i=0;i<k;i++)
+				{
+					cadd_mul(temp,A[i + l*k],B[i*n + j])		
+				}
+				cmul(C[l + m*j],beta,temp2)
+				cmul(temp ,alpha,temp2)
+				cadd(C[l + m*j] ,temp)
+			}
+		}
+	}
+	else // transB == CTran
+	{
+	#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+		for(l=0;l<m;l++)
+		{
+			for(j=0;j<n;j++)
+			{
+				temp.re = 0;
+				temp.im = 0;
+				for(i=0;i<k;i++)
+				{
+					adx = i + l*k;
+					bdx = i * n + j;
+					temp.re += A[adx].re*B[bdx].re - A[adx].im*(-B[bdx].im);
+					temp.im += A[adx].re*(-B[bdx].im) + A[adx].im*(B[bdx].re);
+				}
+				cmul(C[l + m*j],beta,temp2)
+				cmul(temp ,alpha,temp2)
+				cadd(C[l + m*j] ,temp)
+			}
+		}
+	}
+}
+else // transA == CTran
+{
+  if(transB == NoTran)
+	{
+		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+		for(l=0;l<m;l++)
+		{
+			for(j=0;j<n;j++)
+			{
+				temp.re = 0;
+				temp.im = 0;
+				for(i=0;i<k;i++)
+				{
+					adx = i + l*k;
+					bdx = i + j*k;
+					temp.re += A[adx].re*B[bdx].re + A[adx].im*(B[bdx].im);
+					temp.im += A[adx].re*B[bdx].im - A[adx].im*(B[bdx].re);
+				}
+				cmul(C[l + m*j],beta,temp2)
+				cmul(temp ,alpha,temp2)
+				cadd(C[l + m*j] ,temp)
+			}
+		}
+
+	}
+	else if(transB == Tran)
+	{
+		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+		for(l=0;l<m;l++)
+		{
+			for(j=0;j<n;j++)
+			{
+				temp.re = 0;
+				temp.im = 0;
+				for(i=0;i<k;i++)
+				{
+					adx = i + l*k;
+					bdx = i*n + j;
+					temp.re += A[adx].re*B[bdx].re + (A[adx].im)*B[bdx].im;
+					temp.im += A[adx].re*B[bdx].im - A[adx].im*(B[bdx].re);
+				}
+				cmul(C[l + m*j],beta,temp2)
+				cmul(temp ,alpha,temp2)
+				cadd(C[l + m*j] ,temp)
+			}
+		}
+	}
+	else // transB == CTran
+	{
+	#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+		for(l=0;l<m;l++)
+		{
+			for(j=0;j<n;j++)
+			{
+				temp.re = 0;
+				temp.im = 0;
+				for(i=0;i<k;i++)
+				{
+					adx = i + l*k;
+					bdx = i*n + j;
+					temp.re += A[adx].re*B[bdx].re - A[adx].im*B[bdx].im;
+					temp.im -= A[adx].re*B[bdx].im + A[adx].im*B[bdx].re;
+				}
+				cmul(C[l + m*j],beta,temp2)
+				cmul(temp ,alpha,temp2)
+				cadd(C[l + m*j] ,temp)
+			}
+		}
+	}
+
 }
 
 
-if((transA == Tran) && (transB == NoTran));
-if((transA == Tran) && (transB == Tran));
-if((transA == NoTran) && (transB == Tran));
+
 
 }
