@@ -2,6 +2,27 @@
 #define BLAS_LV3_H
 #include "iip_type.h"
 
+/**** REAL ****/
+
+void aABpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C);
+void aABtpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C);
+
+void aAtBpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C);
+void aAtBtpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C);
+
+/**** COMPLEX ****/
+
+void caABpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+void caABtpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+void caABhpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+
+void caAtBpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+void caAtBtpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+void caAtBhpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+
+void caAhBpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+void caAhBtpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+void caAhBhpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
 
 
 	#ifndef USE_CUDA

@@ -1,6 +1,7 @@
 #include "mother.h"
+#include "header_for_test.h"
 
-#define _print 1 
+#define _print 1
 	
 #define _A 0  //N N
 #define _B 0  //T N
@@ -9,23 +10,26 @@
 
 #define _E 0  //N N
 #define _F 0  //N T
-#define _G 1  //N C
+#define _G 0  //N C
 #define _H 0  //T N
 #define _I 0  //T T
 #define _J 0 //T C
 #define _K 0  //C M 
 #define _L 0  //C T
-#define _M 0  //C C
+#define _M 1  //C C
 
-#define colA 3
-#define rowA 4 
-#define rowB 5
+#define colA 10
+#define rowA 10
+#define rowB 10
 int main()
 {
 	MAT*A,*B,*C;
 	CMAT* CA, *CB, *CC;
   CTYPE alpha,beta;
   ITER i;
+
+	stopwatch(0);
+
 #if USE_CUDA
 init();
 #endif
@@ -58,7 +62,8 @@ for(i=0;i<B->d0*B->d1;i++){B->data[i] = i;}
 	#if _print
 	print_MAT(C);	
 	#endif
-  free_MAT(A);
+	
+	free_MAT(A);
   free_MAT(B);
   free_MAT(C);
 #endif
@@ -382,6 +387,7 @@ for(i=0;i<CB->d0*CB->d1;i++){CB->data[i].re = i;CB->data[i].im=i;}
 #if USE_CUDA
 finit();
 #endif
+	stopwatch(1);
 
 	return 0;
 }

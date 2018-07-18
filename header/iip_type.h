@@ -79,6 +79,12 @@ typedef struct CMAT
 }CMAT;
 
 
+typedef struct RANGE
+{
+	UINT s0,e0; //d0 range
+	UINT s1,e1; //d1 range
+	UINT s2,e2; //d2 range
+}RANGE;
 
 /*
 오버로딩
@@ -102,9 +108,6 @@ _2,_1
 
 */
 
-/***************************
-**** pre main for CUDA ****
-***************************/
 
 #if USE_OPEN 
 #include "cblas.h"
@@ -133,6 +136,9 @@ extern UINT max_block;
 
 #endif
 
+/*************************************
+ **** MACRO for COMPLEX opertaion ****
+ *************************************/
 // Y*=X
 #define cmul(Y,X,T) \
 {	T = Y.re; \

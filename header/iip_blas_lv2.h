@@ -14,7 +14,7 @@ void gemv(char transA,DTYPE alpha,MAT* A,MAT* X,DTYPE beta,MAT* Y);
 void mp_gemv(char transA,UINT m,UINT n,DTYPE alpha,DTYPE* A,UINT lda,DTYPE* X,SINT incx,DTYPE beta,DTYPE* Y,SINT incy);
 
 void cgemv(char transA, CTYPE alpha, CMAT* A,CMAT* X,CTYPE beta,CMAT* Y);
-void mp_cgemv(char transA, UINT m,UINT n,CTYPE alpha,CTYPE* A,UINT lda,CTYPE* X,SINTincx,CTYPE beta,CTYPE* Y,SINT incy);
+void mp_cgemv(char transA, UINT m,UINT n,CTYPE alpha,CTYPE* A,UINT lda,CTYPE* X,SINT incx,CTYPE beta,CTYPE* Y,SINT incy);
 
 #else
 void gemv(cublasOperation_t transA,DTYPE alpha,MAT* A,MAT* X,DTYPE beta,MAT*Y);
