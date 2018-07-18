@@ -2,17 +2,40 @@
 #define BLAS_LV3_H
 #include "iip_type.h"
 
-	#ifndef USE_CUDA
-void gemm(char, char, DTYPE, MAT*,MAT*,DTYPE,MAT*);
-void mp_gemm(char, char, UINT,UINT,UINT,DTYPE, DTYPE*,UINT,DTYPE*,UINT,DTYPE,DTYPE*,UINT);
+/**** REAL ****/
 
-void cgemm(char, char, CTYPE, CMAT*,CMAT*,CTYPE,CMAT*);
-void mp_cgemm(char, char, UINT,UINT,UINT,CTYPE, CTYPE*,UINT,CTYPE*,UINT,CTYPE,CTYPE*,UINT);
+void aABpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C);
+void aABtpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C);
+
+void aAtBpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C);
+void aAtBtpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C);
+
+/**** COMPLEX ****/
+
+void caABpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+void caABtpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+void caABhpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+
+void caAtBpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+void caAtBtpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+void caAtBhpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+
+void caAhBpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+void caAhBtpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+void caAhBhpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
+
+
+	#ifndef USE_CUDA
+void gemm(char transA, char transB, DTYPE alpha, MAT* A,MAT* B,DTYPE beta,MAT* C);
+void mp_gemm(char transA, char transB, UINT m,UINT n,UINT k,DTYPE alpha, DTYPE* A,UINT lda,DTYPE* B,UINT ldb,DTYPE beta,DTYPE* C,UINT ldc);
+
+void cgemm(char transA, char transB, CTYPE alpha, CMAT* A,CMAT* B,CTYPE beta,CMAT* C);
+void mp_cgemm(char transA, char transB, UINT m,UINT n,UINT k,CTYPE alpha, CTYPE* A,UINT lda,CTYPE* B,UINT ldb,CTYPE beta,CTYPE* C,UINT ldc);
 #else
 
-void gemm(cublasOperation_t, cublasOperation_t, DTYPE, MAT*,MAT*,DTYPE,MAT*);
+void gemm(cublasOperation_t transA, cublasOperation_t transB, DTYPE alpha, MAT* A,MAT* B,DTYPE beta,MAT* C);
 
-void cgemm(cublasOperation_t,cublasOperation_t, CTYPE, CMAT*,CMAT*,CTYPE,CMAT*);
+void cgemm(cublasOperation_t transA,cublasOperation_t transB,  CTYPE alpha, CMAT* A,CMAT* B,CTYPE beta,CMAT* C);
 	#endif
 
 

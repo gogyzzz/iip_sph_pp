@@ -130,7 +130,7 @@ void mp_cgemv(char tranA, UINT m, UINT n, CTYPE alpha, CTYPE *A, UINT lda, CTYPE
 {
 	ITER i, j;
 	CTYPE temp;
-
+  DTYPE temp2;
 #if DEBUG
 	printf("%s\n", __func__);
 #endif
@@ -146,8 +146,7 @@ void mp_cgemv(char tranA, UINT m, UINT n, CTYPE alpha, CTYPE *A, UINT lda, CTYPE
 			{
 				cadd_mul(temp, A[j + i * n], X[i * incx]);
 			}
-			cmul(temp, alpha);
-
+			cmul(temp, alpha,temp2);
 			cadd_mul(temp, beta, Y[j * incy]);
 			Y[j * incy] = temp;
 		}
@@ -163,7 +162,7 @@ void mp_cgemv(char tranA, UINT m, UINT n, CTYPE alpha, CTYPE *A, UINT lda, CTYPE
 			{
 				cadd_mul(temp, A[i + n * j], X[i * incx]);
 			}
-			cmul(temp, alpha);
+			cmul(temp, alpha,temp2);
 			cadd_mul(temp, beta, Y[j * incy]);
 			Y[j * incy] = temp;
 		}

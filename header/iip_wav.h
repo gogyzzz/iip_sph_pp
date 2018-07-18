@@ -33,16 +33,16 @@ typedef struct WAV
 }WAV;
 
 
-WAV * read_WAV(char*);
+WAV * read_WAV(char* file_path);
 
-void write_WAV(WAV*,char*);
+void write_WAV(WAV* wav,char* file_path);
 
-MAT * WAV2MAT(WAV*);
+MAT * WAV2MAT(WAV* wav);
 
-MAT * WAV_BUF2MAT(WAV_BUF*);
-WAV * MAT2WAV(MAT*,UINT);
+MAT * WAV_BUF2MAT(WAV_BUF* buf);
+WAV * MAT2WAV(MAT* mat,UINT sample_rate);
 
-void free_WAV(WAV*);
+void free_WAV(WAV* wav);
 
 //Display header of WAV
-void print_WAV(WAV*);
+void print_WAV(WAV* wav);

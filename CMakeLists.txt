@@ -19,10 +19,10 @@ set(PROJECT_NAME iip_sph_pp)
 ###################################################
 
 option(USE_CUDA "Using CUDA"                 OFF)
-option(USE_OPEN "BLAS : OpenBLAS"           ON)
+option(USE_OPEN "BLAS : OpenBLAS"           OFF)
 option(USE_MKL "BLAS : IntelMKL"            OFF)
 
-option(USE_OPENMP "Using OpenMP"             ON)
+option(USE_OPENMP "Using OpenMP"             OFF)
 
 #설정을 다 하셨다면 이 옵션을 ON 해주세요
 
@@ -41,11 +41,11 @@ set(CUDA_SRC)
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 
 #set(MAIN_SRC test/test_matrix.c)
-set(MAIN_SRC test/test_matrix_2.c)
+#set(MAIN_SRC test/test_matrix_2.c)
 #set(MAIN_SRC test/test_wav.c)
 #set(MAIN_SRC test/test_blas_lv1.c)
 #set(MAIN_SRC test/test_blas_lv2.c)
-#set(MAIN_SRC test/test_blas_lv3.c)
+set(MAIN_SRC test/test_blas_lv3.c)
 #set(MAIN_SRC test/openBLAS_with_openMP.c)
 #set(MAIN_SRC test/test_blas_lv2_big.c)
 
@@ -174,7 +174,7 @@ else()
 	list(APPEND C_SRC 
 					source/iip_matrix.c
 				  source/iip_wav.c
-				  source/iip_blas_lv1.c
+					source/iip_blas_lv1.c
 				  source/iip_blas_lv2.c
 				  source/iip_blas_lv3.c)
 
@@ -253,13 +253,16 @@ else()
 		endif()
 
 		list(APPEND CMAKE_C_FLAGS ${OpenMP_C_FLAGS})
-		list(APPEND CMAKE_EXE_LINKER_FLAGS ${OpenMP_EXE_LINKER_FLAGS})
+		
+		#This Line Causes Error, ';' no such file or directory
+		#		list(APPEND CMAKE_EXE_LINKER_FLAGS ${OpenMP_EXE_LINKER_FLAGS})
     
 		# Visual Studio uses '/' for compile option
 		# CMAKE set -openmp option for OpenMP_FLAGS
     if(MSVC)
 			string(REPLACE "-openmp" " /openmp" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 		endif(MSVC)
+		add_definitions(-DUSE_OMP=1)
 	endif(USE_OPENMP)
 
 
