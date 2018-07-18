@@ -250,6 +250,8 @@ ITER i,j,l;
 ITER adx,bdx;
 CTYPE temp;
 DTYPE temp2;
+DTYPE o1,o2;
+DTYPE t_r,t_i;
 #if DEBUG
 printf("%s\n",__func__);
 #endif
@@ -258,7 +260,7 @@ if((transA == NoTran))
 {
 	if(transB == NoTran)
 	{
-	#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+	#pragma omp parallel for shared(A,B,C) private(temp,i,j,l,temp2)
 		for(l=0;l<m;l++)
 		{
 			for(j=0;j<n;j++)
@@ -278,7 +280,7 @@ if((transA == NoTran))
 	}
 	else if(transB == Tran)
 	{
-		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l,temp2)
 		for(l=0;l<m;l++)
 		{
 			for(j=0;j<n;j++)
@@ -297,11 +299,10 @@ if((transA == NoTran))
 	}
 	else // tranB == CTran
 	{
-	//#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)  
+	#pragma omp parallel for shared(A,B,C) private(temp,i,j,l,temp2)  
 		for(l=0;l<m;l++)
 		{
 			
-	#pragma omp parallel for shared(A,B,C) private(temp,i,j)  
 			for(j=0;j<n;j++)
 			{
 				temp.re = 0;
@@ -325,7 +326,7 @@ else if(transA == Tran)
 {
 	if(transB == NoTran)
 	{
-		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l,temp2)
 		for(l=0;l<m;l++)
 		{
 			for(j=0;j<n;j++)
@@ -345,7 +346,7 @@ else if(transA == Tran)
 	}
 	else if(transB == Tran)
 	{
-		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l,temp2)
 		for(l=0;l<m;l++)
 		{
 			for(j=0;j<n;j++)
@@ -364,7 +365,7 @@ else if(transA == Tran)
 	}
 	else // transB == CTran
 	{
-	#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+	#pragma omp parallel for shared(A,B,C) private(temp,i,j,l,temp2,adx,bdx)
 		for(l=0;l<m;l++)
 		{
 			for(j=0;j<n;j++)
@@ -389,7 +390,7 @@ else // transA == CTran
 {
   if(transB == NoTran)
 	{
-		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l,temp2,adx,bdx)
 		for(l=0;l<m;l++)
 		{
 			for(j=0;j<n;j++)
@@ -412,7 +413,7 @@ else // transA == CTran
 	}
 	else if(transB == Tran)
 	{
-		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l,adx,ndx,temp,temp2)
 		for(l=0;l<m;l++)
 		{
 			for(j=0;j<n;j++)
@@ -434,7 +435,8 @@ else // transA == CTran
 	}
 	else // transB == CTran
 	{
-	#pragma omp parallel for shared(A,B,C) private(temp,i,j,l)
+	
+	#pragma omp parallel for shared(A,B,C) private(i,j,l,adx,bdx,temp,temp2)
 		for(l=0;l<m;l++)
 		{
 			for(j=0;j<n;j++)
@@ -454,6 +456,7 @@ else // transA == CTran
 			}
 		}
 	}
+
 
 }
 
