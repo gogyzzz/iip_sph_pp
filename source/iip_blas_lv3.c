@@ -413,7 +413,7 @@ else // transA == CTran
 	}
 	else if(transB == Tran)
 	{
-		#pragma omp parallel for shared(A,B,C) private(temp,i,j,l,adx,ndx,temp,temp2)
+		#pragma omp parallel for shared(A,B,C) private(i,j,l,adx,bdx,temp,temp2)
 		for(l=0;l<m;l++)
 		{
 			for(j=0;j<n;j++)
@@ -456,11 +456,84 @@ else // transA == CTran
 			}
 		}
 	}
-
+	}
 
 }
 
+/**** REAL ****/
+
+void aABpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C)
+{
+	gemm(NoTran,NoTran,alpha,A,B,beta,C);
+}
+void aABtpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C)
+{
+	gemm(NoTran,Tran,alpha,A,B,beta,C);
+}
+
+void aAtBpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C)
+{
+	gemm(Tran,NoTran,alpha,A,B,beta,C);
+}
+void aAtBtpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C)
+{
+	gemm(Tran,Tran,alpha,A,B,beta,C);
+}
 
 
+void matmul(MAT*A,MAT*B,MAT*C)
+{
+	gemm(NoTran,NoTran,1,A,B,0,C);
+}
 
+/**** COMPLEX ****/
+
+void caABpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(NoTran,NoTran,alpha,A,B,beta,C);
+}
+void caABtpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(NoTran,Tran,alpha,A,B,beta,C);
+}
+void caABhpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(NoTran,CTran,alpha,A,B,beta,C);
+}
+
+void caAtBpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(Tran,NoTran,alpha,A,B,beta,C);
+}
+void caAtBtpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(Tran,Tran,alpha,A,B,beta,C);
+}
+void caAtBhpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(Tran,CTran,alpha,A,B,beta,C);
+}
+
+void caAhBpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(CTran,NoTran,alpha,A,B,beta,C);
+}
+void caAhBtpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(CTran,Tran,alpha,A,B,beta,C);
+}
+void caAhBhpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(CTran,CTran,alpha,A,B,beta,C);
+}
+
+void cmatmul(CMAT*A,CMAT*B,CMAT*C)
+{
+	CTYPE one_zero;
+	CTYPE zero_zero;
+	one_zero.re = 1;
+	one_zero.im=0;
+	zero_zero.re=0;
+	zero_zero.im=0;
+	cgemm(NoTran,NoTran,one_zero,A,B,zero_zero,C);
 }

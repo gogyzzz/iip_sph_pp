@@ -10,6 +10,8 @@ void aABtpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C);
 void aAtBpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C);
 void aAtBtpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C);
 
+void matmul(MAT* A,MAT* B,MAT* C);
+
 /**** COMPLEX ****/
 
 void caABpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
@@ -24,6 +26,7 @@ void caAhBpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
 void caAhBtpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
 void caAhBhpbC(CTYPE alpha, CMAT*A,CMAT*B,CTYPE beta,CMAT*C);
 
+void cmatmul(CMAT* A,CMAT* B,CMAT* C);
 
 	#ifndef USE_CUDA
 void gemm(char transA, char transB, DTYPE alpha, MAT* A,MAT* B,DTYPE beta,MAT* C);
