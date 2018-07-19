@@ -110,7 +110,7 @@ void copy(MAT *src, MAT *des)
 	if (mat_size == 0)
 	{
 		printf("Wrong MAT size!\n");
-		return 0;
+		return ;
 	}
 
 #if USE_CBLAS
@@ -165,7 +165,7 @@ void ccopy(CMAT *src, CMAT *des)
 	if (mat_size == 0)
 	{
 		printf("Wrong MAT size!\n");
-		return 0;
+		return ;
 	}
 
 #if USE_CBLAS
@@ -322,11 +322,11 @@ DTYPE dot(MAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment)
 #if USE_CBLAS
 //DTYPE = float
 #if NTYPE == 0
-	return cblas_sdot(N, src_x->data, x_increment, src_y->data, y_increment);
+	return cblas_sdot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
 
 //DTYPE = double
 #elif NTYPE == 1
-	return cblas_ddot(N, src_x->data, x_increment, src_y->data, y_increment);
+	return cblas_ddot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
 #endif
 
 //USE_BLAS = 0 -> just c implement
@@ -366,12 +366,12 @@ CTYPE cdot(CMAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment)
 #if USE_CBLAS
 //DTYPE = float
 #if NTYPE == 0
-	cblas_cdotc_sub(N, src_x->data, x_increment, src_y->data, y_increment, &result);
+	cblas_cdotc_sub(mat_size, src_x->data, x_increment, src_y->data, y_increment, &result);
 	return result;
 
 //DTYPE = double
 #elif NTYPE == 1
-	cblas_zdotc_sub(N, src_x->data, x_increment, src_y->data, y_increment, &result);
+	cblas_zdotc_sub(mat_size, src_x->data, x_increment, src_y->data, y_increment, &result);
 	return result;
 #endif
 
@@ -625,15 +625,14 @@ UINT camax_inc(CMAT *src, UINT inc)
 #if USE_CBLAS
 //DTYPE = float
 #if NTYPE == 0
-	cblas_isamax(mat_size, src->data, inc);
+	cblas_icamax(mat_size, src->data, inc);
 	return;
 
 //DTYPE = double
 #elif NTYPE == 1
-	cblas_idamax(mat_size, src->data, inc);
+	cblas_izamax(mat_size, src->data, inc);
 	return;
 #endif
-
 //USE_BLAS = 0 -> just c implement
 #else
 	return mp_camax(mat_size, src->data, inc);
@@ -678,6 +677,7 @@ UINT amin_inc(MAT *src, UINT inc)
 
 #if USE_CBLAS
 //DTYPE = float
+/* OpenBLAS에 없음
 #if NTYPE == 0
 	cblas_isamin(mat_size, src->data, inc);
 	return;
@@ -687,7 +687,8 @@ UINT amin_inc(MAT *src, UINT inc)
 	cblas_idamin(mat_size, src->data, inc);
 	return;
 #endif
-
+*/
+	return mp_amin(mat_size, src->data, inc);
 //USE_BLAS = 0 -> just c implement
 #else
 	return mp_amin(mat_size, src->data, inc);
@@ -731,6 +732,7 @@ UINT camin_inc(CMAT *src, UINT inc)
 
 #if USE_CBLAS
 //DTYPE = float
+/*
 #if NTYPE == 0
 	cblas_isamin(mat_size, src->data, inc);
 	return;
@@ -740,7 +742,8 @@ UINT camin_inc(CMAT *src, UINT inc)
 	cblas_idamin(mat_size, src->data, inc);
 	return;
 #endif
-
+*/
+	return mp_camin(mat_size, src->data, inc);
 //USE_BLAS = 0 -> just c implement
 #else
 	return mp_camin(mat_size, src->data, inc);
@@ -812,7 +815,7 @@ DTYPE mp_nrm2(UINT N, DTYPE* data, UINT inc){
 		temp += data[i]*data[i];
 	}
 
-	return sqrt(temp);
+	return 0;//sqrt(temp);
 }
 
 DTYPE cnrm2(CMAT* src){
@@ -855,7 +858,7 @@ DTYPE mp_cnrm2(UINT N, CTYPE* data, UINT inc){
 		temp += ABS_CTYPE(data[i]) * ABS_CTYPE(data[i]);
 	}
 
-	return sqrt(temp);
+	return 0;//sqrt(temp);
 }
 
 /*** Performs rotation of points in the plane. ***/
@@ -921,14 +924,17 @@ void crot_inc(CMAT* src_x, UINT x_inc, CMAT* src_y, UINT y_inc, DTYPE c, DTYPE s
 
 #if USE_CBLAS
 //DTYPE = float
+
+//OpenBLAS에는 csrot zdrot이 없다
 #if NTYPE == 0
-	cblas_csrot(mat_size, src_x->data, x_inc, src_y->data, y_inc, c, s);
-	return;
+	//cblas_csrot(mat_size, src_x->data, x_inc, src_y->data, y_inc, c, s);
+	return mp_crot(mat_size, src_x->data, x_inc, src_y, y_inc, c, s);
 
 //DTYPE = double
 #elif NTYPE == 1
-	cblas_zdrot(mat_size, src_x->data, x_inc, src_y->data, y_inc, c, s);
-	return;
+//	cblas_zdrot(mat_size, src_x->data, x_inc, src_y->data, y_inc, c, s);
+	return mp_crot(mat_size, src_x->data, x_inc, src_y, y_inc, c, s);
+
 #endif
 
 //USE_BLAS = 0 -> just c implement
