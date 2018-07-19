@@ -19,10 +19,10 @@ set(PROJECT_NAME iip_sph_pp)
 ###################################################
 
 option(USE_CUDA "Using CUDA"                 OFF)
-option(USE_OPEN "BLAS : OpenBLAS"           OFF)
+option(USE_OPEN "BLAS : OpenBLAS"           ON)
 option(USE_MKL "BLAS : IntelMKL"            OFF)
 
-option(USE_OPENMP "Using OpenMP"             OFF)
+option(USE_OPENMP "Using OpenMP"             ON)
 
 #설정을 다 하셨다면 이 옵션을 ON 해주세요
 
@@ -43,9 +43,12 @@ set(CUDA_SRC)
 #set(MAIN_SRC test/test_matrix.c)
 #set(MAIN_SRC test/test_matrix_2.c)
 #set(MAIN_SRC test/test_wav.c)
-#set(MAIN_SRC test/test_blas_lv1.c)
+set(MAIN_SRC test/test_blas_lv1.c)
+#set(MAIN_SRC test/test_row_col.c)
 #set(MAIN_SRC test/test_blas_lv2.c)
-set(MAIN_SRC test/test_blas_lv3.c)
+#set(MAIN_SRC test/test_blas_lv3.c)
+#set(MAIN_SRC test/test_aABpbC.c)
+#set(MAIN_SRC test/test_trans.c)
 #set(MAIN_SRC test/openBLAS_with_openMP.c)
 #set(MAIN_SRC test/test_blas_lv2_big.c)
 

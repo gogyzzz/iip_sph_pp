@@ -108,7 +108,7 @@ int main()
 
 	printf("===== camin(CA) =====\n");
 	print_MAT(A);
-	printf("CA[%u] : %lf %lf\n",amin(CA),CA->data[camin(CA)].re,CA->data[camin(CA)].im);
+	printf("CA[%u] : %lf %lf\n",camin(CA),CA->data[camin(CA)].re,CA->data[camin(CA)].im);
 	
 	printf("===== amax(A) =====\n");
 	print_MAT(A);
@@ -129,7 +129,23 @@ int main()
 	printf("===== cnrm2(CA) =====\n");
 	printf("%lf\n",cnrm2(CA));
 
+	printf("==== print(A) scal(100.1,A) print(A) ====\n");
+	print_MAT(A);
+	scal(100.1,A);
+	print_MAT(A);
 				
+	printf("==== print(CA) cscal(100.1,CA) print(CA) ====\n");
+	print_CMAT(CA);
+	cscal(100.1,CA);
+	print_CMAT(CA);
+
+	printf("==== print(CA) ccscal(-10 + 10i  ,CA) print(CA) ====\n");
+	print_CMAT(CA);
+	ctemp.re = -10;
+	ctemp.im = 10;
+	ccscal(ctemp,CA);
+	print_CMAT(CA);
+
 	free_MAT(A);
 	free_MAT(B);
 

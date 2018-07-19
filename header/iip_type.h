@@ -14,7 +14,7 @@
 #if OS_WIN
 #define __func__ __FUNCTION__
 #endif
-#define DEBUG 0
+#define DEBUG 1
 
 /***********************************
 * 이 부분은 직접 해주세요
@@ -155,5 +155,11 @@ extern UINT max_block;
 {		(Y.re) = (Y.re) + (A.re)*(B.re) - (A.im)*(B.im);\
 		(Y.im) = (Y.im) + (A.re)*(B.im) + (A.im)*(B.re);\
  }
+
+#define SWAP(x,y,t)\
+{ t = y;\
+	y = x;\
+	x = t;\
+}
 
 #endif

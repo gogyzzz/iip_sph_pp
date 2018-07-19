@@ -449,7 +449,6 @@ void csubmat_3d(CMAT *mat, CMAT *submat,
 			}
 }
 
-
 /**** transpose ****/
 MAT* create_trans(MAT* mat)
 {
@@ -544,6 +543,8 @@ CMAT* create_ctrans(CMAT* mat)
 	return t_mat;
 }
 
+/**** hermitial ****/
+
 CMAT* create_hermit(CMAT* mat)
 {
 	ITER i,j;
@@ -590,6 +591,61 @@ CMAT* create_hermit(CMAT* mat)
 		}		
 	}
 	return t_mat;
+}
+
+/**** Identity Matrix****/
+void id_MAT(MAT*mat)
+{
+ITER i,j,k;
+UINT d0,d2;
+
+if(mat->d0 != mat->d1)
+{
+	printf("ERROR : This matrix is not square matrix.\n");	
+	return;
+}
+
+if(mat->ndim == 1)
+{
+	d0 = mat->d0;
+
+#pragma omp parallel for shared(mat) private(i,j)
+	for(i=0;i<d0;i++)
+	{
+		for(j=0;j<d0;j++)
+		{
+			if(i==j)
+			{
+				mat->data[i*d0 + j] = 1;
+			}
+			else
+				mat->data[i*d0 + j] = 0;
+		}
+	}
+}
+else if(mat->ndim == 2)
+{
+	d0 = mat->d0;
+	d2 = mat->d2;
+#pragma omp parallel for shared(mat) private(i,j,k)
+	for(i=0;i<d2;i++)
+	{
+		for(j=0;j<d0;j++)
+		{
+			for(k=0;k<d0;k++)
+			{
+				if(i==j)
+				{
+				mat->data[i*d0*d0 + j*d0 + k] = 1;
+				}
+				else
+				mat->data[i*d0*d0 + j*d0 + k] = 0;
+			}
+		}
+	}
+}
+
+
 }
 
 

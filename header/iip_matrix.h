@@ -119,11 +119,17 @@ CMAT* create_ctrans(CMAT* mat);
 /**** hermitian ****/
 CMAT* create_hermit(CMAT* mat);
 
+/**** Identity Matrix ****/
+void id_MAT(MAT*mat);
+
+
 /****  miscellaneous ****/ 
 void free_MAT(MAT*);
 void free_CMAT(CMAT*);
 void print_MAT(MAT*);
 void print_CMAT(CMAT*);
+
+
 
 #if USE_CUDA
 __global__ void cu_print_MAT(DTYPE*,UINT,UINT,UINT);

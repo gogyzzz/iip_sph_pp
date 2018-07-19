@@ -464,25 +464,40 @@ else // transA == CTran
 
 void aABpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	gemm(NoTran,NoTran,alpha,A,B,beta,C);
 }
 void aABtpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	gemm(NoTran,Tran,alpha,A,B,beta,C);
 }
 
 void aAtBpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	gemm(Tran,NoTran,alpha,A,B,beta,C);
 }
 void aAtBtpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	gemm(Tran,Tran,alpha,A,B,beta,C);
 }
 
 
 void matmul(MAT*A,MAT*B,MAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	gemm(NoTran,NoTran,1,A,B,0,C);
 }
 
@@ -490,45 +505,75 @@ void matmul(MAT*A,MAT*B,MAT*C)
 
 void caABpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(NoTran,NoTran,alpha,A,B,beta,C);
 }
 void caABtpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(NoTran,Tran,alpha,A,B,beta,C);
 }
 void caABhpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(NoTran,CTran,alpha,A,B,beta,C);
 }
 
 void caAtBpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(Tran,NoTran,alpha,A,B,beta,C);
 }
 void caAtBtpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(Tran,Tran,alpha,A,B,beta,C);
 }
 void caAtBhpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(Tran,CTran,alpha,A,B,beta,C);
 }
 
 void caAhBpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(CTran,NoTran,alpha,A,B,beta,C);
 }
 void caAhBtpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(CTran,Tran,alpha,A,B,beta,C);
 }
 void caAhBhpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(CTran,CTran,alpha,A,B,beta,C);
 }
 
 void cmatmul(CMAT*A,CMAT*B,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	CTYPE one_zero;
 	CTYPE zero_zero;
 	one_zero.re = 1;
