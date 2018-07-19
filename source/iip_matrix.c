@@ -451,7 +451,7 @@ void csubmat_3d(CMAT *mat, CMAT *submat,
 
 
 /**** transpose ****/
-MAT* trans(MAT* mat)
+MAT* create_trans(MAT* mat)
 {
 	ITER i,j;
 	UINT d0=mat->d0;
@@ -496,7 +496,7 @@ MAT* trans(MAT* mat)
 	return t_mat;
 }
 
-CMAT* ctrans(CMAT* mat)
+CMAT* create_ctrans(CMAT* mat)
 {
 	ITER i,j;
 	UINT d0=mat->d0;
@@ -544,7 +544,7 @@ CMAT* ctrans(CMAT* mat)
 	return t_mat;
 }
 
-CMAT* hermit(CMAT* mat)
+CMAT* create_hermit(CMAT* mat)
 {
 	ITER i,j;
 	UINT d0=mat->d0;
@@ -591,6 +591,7 @@ CMAT* hermit(CMAT* mat)
 	}
 	return t_mat;
 }
+
 
 /**** miscellaneous  ****/
 void free_MAT(MAT *mat)
