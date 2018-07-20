@@ -9,9 +9,16 @@ int main()
 	for(i=0;i<A->d0 * A-> d1; i++)A->data[i]=1;
 	print_MAT(A);
 
-	col_scal(A,1,-40);
-	row_scal(A,2,-10);
+	col_scal(-40,A,1);
+	row_scal(10,A,2);
 
+	print_MAT(A);
+
+	add(10,A);
+	
+	print_MAT(A);
+	
+	row_add(-20,A,1);
 	print_MAT(A);
 
 	free_MAT(A);

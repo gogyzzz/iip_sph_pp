@@ -144,10 +144,10 @@ void mp_cgemv(char tranA, UINT m, UINT n, CTYPE alpha, CTYPE *A, UINT lda, CTYPE
 			temp.im = 0;
 			for (i = 0; i < m; i++)
 			{
-				cadd_mul(temp, A[j + i * n], X[i * incx]);
+				cxadd_mul(temp, A[j + i * n], X[i * incx]);
 			}
-			cmul(temp, alpha,temp2);
-			cadd_mul(temp, beta, Y[j * incy]);
+			cxmul(temp, alpha,temp2);
+			cxadd_mul(temp, beta, Y[j * incy]);
 			Y[j * incy] = temp;
 		}
 	}
@@ -160,10 +160,10 @@ void mp_cgemv(char tranA, UINT m, UINT n, CTYPE alpha, CTYPE *A, UINT lda, CTYPE
 			temp.im = 0;
 			for (i = 0; i < n; i++)
 			{
-				cadd_mul(temp, A[i + n * j], X[i * incx]);
+				cxadd_mul(temp, A[i + n * j], X[i * incx]);
 			}
-			cmul(temp, alpha,temp2);
-			cadd_mul(temp, beta, Y[j * incy]);
+			cxmul(temp, alpha,temp2);
+			cxadd_mul(temp, beta, Y[j * incy]);
 			Y[j * incy] = temp;
 		}
 	}

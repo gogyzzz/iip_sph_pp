@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include <memory.h>
+
 
 #if USE_CUDA
 #include "cuda_runtime.h"
@@ -140,18 +142,18 @@ extern UINT max_block;
  **** MACRO for COMPLEX opertaion ****
  *************************************/
 // Y*=X
-#define cmul(Y,X,T) \
+#define cxmul(Y,X,T) \
 {	T = Y.re; \
 	Y.re = Y.re*X.re - Y.im*X.im;\
 	Y.im = T*X.im + Y.im*X.re;\
 }
 // Y+=X
-#define cadd(Y,X)\
+#define cxadd(Y,X) \
 {		Y.re = Y.re+X.re;\
 		Y.im = Y.im+X.im; \
 }
 // Y+=A*B
-#define cadd_mul(Y,A,B)\
+#define cxadd_mul(Y,A,B)\
 {		(Y.re) = (Y.re) + (A.re)*(B.re) - (A.im)*(B.im);\
 		(Y.im) = (Y.im) + (A.re)*(B.im) + (A.im)*(B.re);\
  }
@@ -161,5 +163,33 @@ extern UINT max_block;
 	y = x;\
 	x = t;\
 }
+
+/*****************************
+ **** MEMORY MANAGER *********
+ *****************************/
+
+#define MAX_MEM_PAGE 64
+#define MEM_PAGE_BASIC_SIZE 4096
+#define LOG_ALLOC_UNIT 8			// 4 for float, 8 for double
+
+typedef struct USED_MEM {
+	unsigned long int frag_idx;
+	unsigned long int size;
+}USED_MEM;
+
+//메모리풀
+static void* memory_pool[MAX_MEM_PAGE];
+//
+static USED_MEM* memory_log[MAX_MEM_PAGE];
+
+//해당 페이지에 몇 덩어리가 할당 되어있나
+static unsigned long int log_cnt[MAX_MEM_PAGE];
+static unsigned int pool_cnt;
+
+void* iip_malloc(unsigned long int size);
+void iip_free(void *ptr);
+signed long int page_alloc_isable(int page_idx, unsigned long int require_size);
+void init();
+void finit();
 
 #endif

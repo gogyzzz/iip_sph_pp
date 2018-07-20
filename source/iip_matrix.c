@@ -107,14 +107,102 @@ CMAT *alloc_CMAT_3d(UINT d0, UINT d1, UINT d2)
 	return mat;
 }
 
+/**** allocate MAT in memory pool : mem_MAT ***/
+MAT * mem_MAT_1d(UINT d0)
+{
+	MAT * mat;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+	mat = iip_malloc(sizeof(MAT));
+	mat->ndim = 0;
+	mat->d0 = d0;
+	mat->d1 = 1;
+	mat->d2 = 1;
+	mat->data = iip_malloc(sizeof(DTYPE)*d0);
+	return mat;
+}
+MAT * mem_MAT_2d(UINT d0,UINT d1)
+{
+	MAT * mat;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+	mat = iip_malloc(sizeof(MAT));
+	mat->ndim = 1;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = 1;
+	mat->data = iip_malloc(sizeof(DTYPE)*d0*d1);
+	return mat;
+}
+MAT * mem_MAT_3d(UINT d0, UINT d1,UINT d2)
+{
+	MAT * mat;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+	mat = iip_malloc(sizeof(MAT));
+	mat->ndim = 2;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = d2;
+	mat->data = iip_malloc(sizeof(DTYPE)*d0*d1*d2);
+	return mat;
+}
+
+CMAT * mem_CMAT_1d(UINT d0)
+{
+	CMAT * mat;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+	mat = iip_malloc(sizeof(CMAT));
+	mat->ndim = 0;
+	mat->d0 = d0;
+	mat->d1 = 1;
+	mat->d2 = 1;
+	mat->data = iip_malloc(sizeof(CTYPE)*d0);
+	return mat;
+}
+CMAT * mem_CMAT_2d(UINT d0,UINT d1)
+{
+	CMAT * mat;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+	mat = iip_malloc(sizeof(CMAT));
+	mat->ndim = 1;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = 1;
+	mat->data = iip_malloc(sizeof(CTYPE)*d0*d1);
+	return mat;
+}
+CMAT * mem_CMAT_3d(UINT d0,UINT d1,UINT d2)
+{
+	CMAT * mat;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+	mat = iip_malloc(sizeof(CMAT));
+	mat->ndim = 2;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = d2;
+	mat->data = iip_malloc(sizeof(CTYPE)*d0*d1*d2);
+	return mat;
+	
+}
 /**** zeros  ****/
 
 MAT *zeros_1d(UINT d0)
 {
+	MAT *mat;
 #if DEBUG
 	printf("%s\n", __func__);
 #endif
-	MAT *mat = (MAT *)malloc(sizeof(MAT));
+	mat = (MAT *)malloc(sizeof(MAT));
 	mat->ndim = 0;
 	mat->d0 = d0;
 	mat->d1 = 1;
@@ -382,16 +470,13 @@ void submat_3d(MAT *mat, MAT *submat,
 		d2_st = 0;
 	if (d2_ed == -1)
 		d2_ed = mat->d2;
-
-	for (i = 0; d0_st + i < d0_ed; i++)
+#pragma omp parallel for shared(submat,mat) private(i,j,k)
+	for (i = 0; i < d0_ed - d0_st; i++)
 		for (j = 0; d1_st + j < d1_ed; j++)
 			for (k = 0; d2_st + k < d2_ed; k++)
 			{
 				submat->data[i + j * (submat->d0) + k * (submat->d0 * submat->d1)] = mat->data[(d0_st + i) + (d1_st + j) * (mat->d0) + (d2_st + k) * (mat->d0 * mat->d1)];
-				//printf("%d %d %d %d\n",i,j,k,i + j*(submat->d0) + k*(submat->d0*submat->d1));
-				//printf("%d\n",(d0_st+i) + (d1_st+j)*(mat->d0) + (d2_st+k)*(mat->d0*mat->d1));
 			}
-	//printf("%d %d %d %d %d %d\n",d0_st, d0_ed, d1_st, d1_ed, d2_st, d2_ed);
 }
 
 void csubmat_1d(CMAT *mat, CMAT *submat, ITER d0_st, ITER d0_ed)
@@ -440,7 +525,8 @@ void csubmat_3d(CMAT *mat, CMAT *submat,
 	if (d2_ed == -1)
 		d2_ed = mat->d2;
 
-	for (i = 0; d0_st + i < d0_ed; i++)
+#pragma omp parallel for shared(submat,mat) private(i,j,k)
+	for (i = 0; i < d0_ed - d0_st; i++)
 		for (j = 0; d1_st + j < d1_ed; j++)
 			for (k = 0; d2_st + k < d2_ed; k++)
 			{
@@ -449,6 +535,120 @@ void csubmat_3d(CMAT *mat, CMAT *submat,
 			}
 }
 
+/**** mem_submat ****/
+
+MAT* mem_submat_1d(MAT *mat,
+			   ITER d0_st, ITER d0_ed)
+{
+	return mem_submat_3d(mat,d0_st,d0_ed,-1,-1,-1,-1);
+}
+MAT* mem_submat_2d(MAT *mat,
+			   ITER d0_st, ITER d0_ed,
+			   ITER d1_st, ITER d1_ed)
+{
+	return mem_submat_3d(mat,d0_st,d0_ed,d1_st,d1_ed,-1,-1);
+}
+MAT* mem_submat_3d(MAT *mat,
+			   ITER d0_st, ITER d0_ed,
+			   ITER d1_st, ITER d1_ed,
+			   ITER d2_st, ITER d2_ed)
+{
+	ITER i, j, k;
+	MAT * submat;
+	
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+
+
+	if (d0_st == -1)
+		d0_st = 0;
+	if (d0_ed == -1)
+		d0_ed = mat->d0;
+	if (d1_st == -1)
+		d1_st = 0;
+	if (d1_ed == -1)
+		d1_ed = mat->d1;
+	if (d2_st == -1)
+		d2_st = 0;
+	if (d2_ed == -1)
+		d2_ed = mat->d2;
+
+	submat = mem_MAT((d0_ed-d0_st),(d1_ed-d1_st), (d2_ed-d2_st));
+	if (mat->d0 < submat->d0 || mat->d1 < submat->d1 || mat->d2 < submat->d2)
+	{
+		printf("ERROR-FALSE : mat->d0 < submat->d0 || mat->d1 < submat->d1 || mat->d2 < submat->d2\n");
+		printf("%u %u %u %u %u %u\n", mat->d0 , submat->d0 , mat->d1 , submat->d1 , mat->d2 , submat->d2);
+		iip_free(submat);
+		return;
+	}
+
+#pragma omp parallel for shared(submat,mat) private(i,j,k)
+	for (i = 0; i < d0_ed - d0_st; i++)
+		for (j = 0; d1_st + j < d1_ed; j++)
+			for (k = 0; d2_st + k < d2_ed; k++)
+			{
+				submat->data[i + j * (submat->d0) + k * (submat->d0 * submat->d1)] = mat->data[(d0_st + i) + (d1_st + j) * (mat->d0) + (d2_st + k) * (mat->d0 * mat->d1)];
+			}
+	return submat;
+}
+
+CMAT* mem_csubmat_1d(CMAT *mat,
+			   ITER d0_st, ITER d0_ed)
+{
+	return mem_csubmat_3d(mat,d0_st,d0_ed,-1,-1,-1,-1);
+}
+CMAT* mem_csubmat_2d(CMAT *Cmat,
+			   ITER d0_st, ITER d0_ed,
+			   ITER d1_st, ITER d1_ed)
+{
+	return mem_csubmat_3d(Cmat,d0_st,d0_ed,d1_st,d1_ed,-1,-1);
+}
+CMAT* mem_csubmat_3d(CMAT *mat,
+			   ITER d0_st, ITER d0_ed,
+			   ITER d1_st, ITER d1_ed,
+			   ITER d2_st, ITER d2_ed)
+{
+	ITER i, j, k;
+	CMAT * submat;
+	
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+
+
+	if (d0_st == -1)
+		d0_st = 0;
+	if (d0_ed == -1)
+		d0_ed = mat->d0;
+	if (d1_st == -1)
+		d1_st = 0;
+	if (d1_ed == -1)
+		d1_ed = mat->d1;
+	if (d2_st == -1)
+		d2_st = 0;
+	if (d2_ed == -1)
+		d2_ed = mat->d2;
+
+	submat = mem_CMAT((d0_ed-d0_st),(d1_ed-d1_st), (d2_ed-d2_st));
+	if (mat->d0 < submat->d0 || mat->d1 < submat->d1 || mat->d2 < submat->d2)
+	{
+		printf("ERROR-FALSE : mat->d0 < submat->d0 || mat->d1 < submat->d1 || mat->d2 < submat->d2\n");
+		printf("%u %u %u %u %u %u\n", mat->d0 , submat->d0 , mat->d1 , submat->d1 , mat->d2 , submat->d2);
+		iip_free(submat);
+		return;
+	}
+
+#pragma omp parallel for shared(submat,mat) private(i,j,k)
+	for (i = 0; i < d0_ed - d0_st; i++)
+		for (j = 0; d1_st + j < d1_ed; j++)
+			for (k = 0; d2_st + k < d2_ed; k++)
+			{
+				submat->data[i + j * (submat->d0) + k * (submat->d0 * submat->d1)].re = mat->data[(d0_st + i) + (d1_st + j) * (mat->d0) + (d2_st + k) * (mat->d0 * mat->d1)].re;
+				submat->data[i + j * (submat->d0) + k * (submat->d0 * submat->d1)].im = mat->data[(d0_st + i) + (d1_st + j) * (mat->d0) + (d2_st + k) * (mat->d0 * mat->d1)].im;
+			}
+	return submat;
+}
 /**** transpose ****/
 MAT* create_trans(MAT* mat)
 {
@@ -705,4 +905,16 @@ void print_CMAT(CMAT *mat)
 		}
 		printf("\n");
 	}
+}
+
+/**** free_mem_MAT ***/
+void free_mem_MAT(MAT*mat)
+{
+	iip_free(mat->data);
+	iip_free(mat);
+}
+void free_mem_CMAT(CMAT*mat)
+{
+	iip_free(mat->data);
+	iip_free(mat);
 }

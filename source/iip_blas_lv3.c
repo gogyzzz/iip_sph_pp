@@ -269,11 +269,11 @@ if((transA == NoTran))
 				temp.re = 0;
 				for(i=0;i<k;i++)
 				{
-					cadd_mul(temp,A[i*m + l],B[i + j*k]);
+					cxadd_mul(temp,A[i*m + l],B[i + j*k]);
 				}
-				cmul(C[l + m*j],beta,temp2);
-				cmul(temp ,alpha,temp2);
-				cadd(C[l + m*j] ,temp);
+				cxmul(C[l + m*j],beta,temp2);
+				cxmul(temp ,alpha,temp2);
+				cxadd(C[l + m*j] ,temp);
 			}
 		}
 		
@@ -289,11 +289,11 @@ if((transA == NoTran))
 				temp.im = 0;
 				for(i=0;i<k;i++)
 				{
-					cadd_mul(temp, A[i*m + l],B[i*n + j])		
+					cxadd_mul(temp, A[i*m + l],B[i*n + j])		
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j],temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j],temp)
 			}
 		}
 	}
@@ -314,9 +314,9 @@ if((transA == NoTran))
 					temp.im += A[i*m+l].im*(B[i*n+j].re);
 					temp.im -= A[i*m+l].re*(B[i*n+j].im);
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j],temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j],temp)
 			}
 		}
 
@@ -335,11 +335,11 @@ else if(transA == Tran)
 				temp.im = 0;
 				for(i=0;i<k;i++)
 				{
-					cadd_mul(temp, A[i + l*k],B[i + j*k])		
+					cxadd_mul(temp, A[i + l*k],B[i + j*k])		
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j] ,temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j] ,temp)
 			}
 		}
 
@@ -355,11 +355,11 @@ else if(transA == Tran)
 				temp.im = 0;
 				for(i=0;i<k;i++)
 				{
-					cadd_mul(temp,A[i + l*k],B[i*n + j])		
+					cxadd_mul(temp,A[i + l*k],B[i*n + j])		
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j] ,temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j] ,temp)
 			}
 		}
 	}
@@ -379,9 +379,9 @@ else if(transA == Tran)
 					temp.re += A[adx].re*B[bdx].re - A[adx].im*(-B[bdx].im);
 					temp.im += A[adx].re*(-B[bdx].im) + A[adx].im*(B[bdx].re);
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j] ,temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j] ,temp)
 			}
 		}
 	}
@@ -404,9 +404,9 @@ else // transA == CTran
 					temp.re += A[adx].re*B[bdx].re + A[adx].im*(B[bdx].im);
 					temp.im += A[adx].re*B[bdx].im - A[adx].im*(B[bdx].re);
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j] ,temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j] ,temp)
 			}
 		}
 
@@ -427,9 +427,9 @@ else // transA == CTran
 					temp.re += A[adx].re*B[bdx].re + (A[adx].im)*B[bdx].im;
 					temp.im += A[adx].re*B[bdx].im - A[adx].im*(B[bdx].re);
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j] ,temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j] ,temp)
 			}
 		}
 	}
@@ -450,9 +450,9 @@ else // transA == CTran
 					temp.re += A[adx].re*B[bdx].re - A[adx].im*B[bdx].im;
 					temp.im -= A[adx].re*B[bdx].im + A[adx].im*B[bdx].re;
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j] ,temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j] ,temp)
 			}
 		}
 	}

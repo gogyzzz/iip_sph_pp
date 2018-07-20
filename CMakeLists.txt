@@ -40,10 +40,12 @@ set(CUDA_SRC)
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 
+#set(MAIN_SRC test/test_memory.c)
+set(MAIN_SRC test/test_memsubmat.c)
 #set(MAIN_SRC test/test_matrix.c)
 #set(MAIN_SRC test/test_matrix_2.c)
 #set(MAIN_SRC test/test_wav.c)
-set(MAIN_SRC test/test_blas_lv1.c)
+#set(MAIN_SRC test/test_blas_lv1.c)
 #set(MAIN_SRC test/test_row_col.c)
 #set(MAIN_SRC test/test_blas_lv2.c)
 #set(MAIN_SRC test/test_blas_lv3.c)
@@ -175,11 +177,13 @@ else()
 	
 
 	list(APPEND C_SRC 
-					source/iip_matrix.c
-				  source/iip_wav.c
-					source/iip_blas_lv1.c
-				  source/iip_blas_lv2.c
-				  source/iip_blas_lv3.c)
+			source/iip_matrix.c
+			source/iip_wav.c
+			source/iip_blas_lv1.c
+			source/iip_blas_lv2.c
+			source/iip_blas_lv3.c
+			source/iip_memory.c
+			)
 
 		
 

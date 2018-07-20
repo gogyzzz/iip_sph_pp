@@ -1058,7 +1058,7 @@ DTYPE temp;
 	#pragma omp parallel for shared(X) private(i)
 	for(i=0;i<size*incx;i+=incx)
 	{
-		cmul(X[i],alpha,temp);
+		cxmul(X[i],alpha,temp);
 	}
 }
 
@@ -1068,7 +1068,7 @@ void col_scal(DTYPE alpha, MAT* X, UINT idx)
 	scal_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
 }
 
-void col_scal(DTYPE alpha, CMAT* X, UINT idx)
+void col_cscal(DTYPE alpha, CMAT* X, UINT idx)
 {
 	cscal_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
 }
@@ -1100,21 +1100,68 @@ void add(DTYPE alpha, MAT*mat)
 void add_inc(UINT size, DTYPE alpha, DTYPE*X, UINT incx)
 {
 	ITER i;
-	for(i=0;i<size*incx,i+=incx)
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+
+	for(i=0;i<size*incx;i+=incx)
 		X[i]+=alpha;
 }
 
 /** 복소수행렬 + 실수 **/
+void cadd(DTYPE alpha, CMAT*mat)
+{
+	cadd_inc(mat->d0 * mat->d1 * mat->d2, alpha,mat->data,1);
+}
+void cadd_inc(UINT size,DTYPE alpha, CTYPE *X, UINT incx)
+{
+	ITER i;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
 
+	for(i=0;i<size*incx;i+=incx)
+		X[i].re +=alpha;
+}
 /** 복소수행렬 + 복소수**/ 
+void ccadd(CTYPE alpha, CMAT*mat)
+{
+	ccadd_inc(mat->d0 * mat->d1 * mat->d2, alpha,mat->data,1);
+}
+void ccadd_inc(UINT size,CTYPE alpha, CTYPE *X, UINT incx)
+{
+	ITER i;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
 
+	for(i=0;i<size*incx;i+=incx)
+	{	cxadd(X[i],alpha);
+	}
+}
 /** 열 더하기 **/
-void col_add(MAT*X, UINT idx, DTYPE alpha)
+void col_add(DTYPE alpha, MAT*X, UINT idx)
 {
 	add_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
 }
+void col_cadd(DTYPE alpha, CMAT*X, UINT idx)
+{
+	cadd_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
+}
+void col_ccadd(CTYPE alpha, CMAT*X, UINT idx)
+{
+	ccadd_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
+}
 /** 행 더하기 **/
-void row_add(MAT*X, UINT idx, DTYPE alpha)
+void row_add(DTYPE alpha,MAT*X, UINT idx)
 {
 	add_inc(X->d1,alpha,&(X->data[idx]),X->d0);
+}
+void row_cadd(DTYPE alpha,CMAT*X, UINT idx)
+{
+	cadd_inc(X->d1,alpha,&(X->data[idx]),X->d0);
+}
+void row_ccadd(CTYPE alpha,CMAT*X, UINT idx)
+{
+	ccadd_inc(X->d1,alpha,&(X->data[idx]),X->d0);
 }

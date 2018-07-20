@@ -137,6 +137,10 @@ void ccadd_inc(UINT size, CTYPE alpha, CTYPE*X, UINT incx);
 
 /** 열 더하기 **/
 void col_add(DTYPE alpha, MAT*X, UINT idx);
+void col_cadd(DTYPE alpha, CMAT*X, UINT idx);
+void col_ccadd(CTYPE alpha, CMAT*X, UINT idx);
 /** 행 더하기 **/
 void row_add(DTYPE alpha, MAT*X, UINT idx);
+void row_cadd(DTYPE alpha, CMAT*X, UINT idx);
+void row_ccadd(CTYPE alpha, CMAT*X, UINT idx);
 #endif
