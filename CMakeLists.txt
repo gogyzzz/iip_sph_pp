@@ -40,7 +40,7 @@ set(CUDA_SRC)
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 
-#set(MAIN_SRC test/test_memory.c)
+set(MAIN_SRC test/test_memory.c)
 #set(MAIN_SRC test/test_memsubmat.c)
 #set(MAIN_SRC test/test_matrix.c)
 #set(MAIN_SRC test/test_matrix_2.c)
@@ -51,7 +51,7 @@ set(CUDA_SRC)
 #set(MAIN_SRC test/test_blas_lv3.c)
 #set(MAIN_SRC test/test_invers.c)
 #set(MAIN_SRC test/test_aABpbC.c)
-set(MAIN_SRC test/test_trans.c)
+#set(MAIN_SRC test/test_trans.c)
 #set(MAIN_SRC test/openBLAS_with_openMP.c)
 #set(MAIN_SRC test/test_blas_lv2_big.c)
 
@@ -183,7 +183,8 @@ else()
 			source/iip_blas_lv1.c
 			source/iip_blas_lv2.c
 			source/iip_blas_lv3.c
-			source/iip_memory.c
+			#			source/iip_memory.c
+			source/iip_memory_2.c
 			)
 
 		

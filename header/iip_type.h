@@ -16,7 +16,7 @@
 #if OS_WIN
 #define __func__ __FUNCTION__
 #endif
-#define DEBUG 1
+#define DEBUG 0
 
 /***********************************
 * 이 부분은 직접 해주세요
@@ -168,10 +168,30 @@ extern UINT max_block;
  **** MEMORY MANAGER *********
  *****************************/
 
-#define MAX_MEM_PAGE 64
-#define MEM_PAGE_BASIC_SIZE 4096
+#define MAX_MEM_PAGE 20
+#define MEM_PAGE_BASIC_SIZE 256
 #define LOG_ALLOC_UNIT 8			// 4 for float, 8 for double
 
+/**** MINE ****/
+#define MAX_MEM_BLOCK 16
+
+typedef struct mem_node{
+void* p;
+UINT used;
+struct mem_node * next;
+}mem_node;
+
+typedef struct memory_list{
+	UINT alloced;
+	UINT used;
+	uint64_t block_size;
+	mem_node*front;
+		
+}memory_list;
+
+static memory_list* mem_list;
+
+/*
 typedef struct USED_MEM {
 	unsigned long int frag_idx;
 	unsigned long int size;
@@ -185,11 +205,13 @@ static USED_MEM* memory_log[MAX_MEM_PAGE];
 //해당 페이지에 몇 덩어리가 할당 되어있나
 static unsigned long int log_cnt[MAX_MEM_PAGE];
 static unsigned int pool_cnt;
-
-void* iip_malloc(unsigned long int size);
-void iip_free(void *ptr);
 signed long int page_alloc_isable(int page_idx, unsigned long int require_size);
+*/
+
+/**** COMMON ****/
+void* iip_malloc(UINT size);
+void iip_free(void *ptr);
 void init();
 void finit();
-
+void show_list();
 #endif

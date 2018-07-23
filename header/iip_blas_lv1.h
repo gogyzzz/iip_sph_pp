@@ -12,7 +12,7 @@
 
 
 void mp_axpy(UINT,DTYPE,DTYPE*,UINT,DTYPE*,UINT);
-void axpy_inc(UINT size, DTPYE alpha, DTYPE*X,ITER incx,DTYPE*Y,ITER incy);
+void axpy_inc(UINT size, DTYPE alpha, DTYPE*X,ITER incx,DTYPE*Y,ITER incy);
 void axpy(DTYPE alpha, MAT *x, MAT *y);
 
 void mp_caxpy(UINT,CTYPE,CTYPE*,UINT,CTYPE*,UINT);

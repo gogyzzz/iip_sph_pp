@@ -2,17 +2,18 @@
 
 #define _print 0
 
-#define m 4
-#define n 5
-#define k 6
+#define m 400
+#define n 500
+#define k 600
 
 int main()
 {
 	MAT*A,*B,*C;
-	ITER i;
+	ITER i,j;
 	init();
 
-
+	for(j=0;j<200;j++)
+	{
 	A = iip_malloc(sizeof(MAT));
 	B = iip_malloc(sizeof(MAT));
 	C= iip_malloc(sizeof(MAT));
@@ -51,17 +52,30 @@ int main()
 	print_MAT(B);
 	print_MAT(C);
 #endif
+	iip_free(A->data);
+	iip_free(A);
 	iip_free(C->data);
 	iip_free(B->data);
-	iip_free(A->data);
 	iip_free(C);
 	iip_free(B);
+
+	A = iip_malloc(sizeof(MAT));
+	A->data = iip_malloc(sizeof(DTYPE)*20*100);
+	B = iip_malloc(sizeof(MAT));
+	C = iip_malloc(sizeof(MAT));
+	C->data = iip_malloc(sizeof(DTYPE)*24*1);
+	B->data = iip_malloc(sizeof(DTYPE)*10*133);
+	
+	iip_free(B->data);
+	iip_free(A->data);
 	iip_free(A);
+	iip_free(B);
+	iip_free(C->data);
+	iip_free(C);
+//	A = mem_MAT(10);
 
-
-	A = mem_MAT(10);
-
-	free_mem_MAT(10);
+//	free_mem_MAT(10);
+	}
 	finit();
 	return 0 ;
 }

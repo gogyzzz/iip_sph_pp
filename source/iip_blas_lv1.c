@@ -28,7 +28,7 @@ void axpy(DTYPE alpha, MAT *x, MAT *y)
 #endif
 
 }
-void axpy_inc(UINT size, DTYPE alpha, DTYPE *x, ITER incx,DTYPE *y,ITER incy)
+void axpy_inc(UINT size, DTYPE alpha, DTYPE *X, ITER incx,DTYPE *Y,ITER incy)
 {
 #if DEBUG
 	printf("%s\n", __func__);
@@ -67,7 +67,7 @@ void caxpy(CTYPE alpha,CMAT*x, CMAT*y)
 
 }
 
-void caxpy_inc(UINT size, CTYPE alpha, CTYPE *x, ITER incx, CTYPE *y, ITER incy)
+void caxpy_inc(UINT size, CTYPE alpha, CTYPE *X, ITER incx, CTYPE *Y, ITER incy)
 {
 #if DEBUG
 	printf("%s\n", __func__);
