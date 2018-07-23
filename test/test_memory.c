@@ -2,9 +2,9 @@
 
 #define _print 0
 
-#define m 16000
-#define n 5000
-#define k 4000
+#define m 4
+#define n 5
+#define k 6
 
 int main()
 {
@@ -57,6 +57,11 @@ int main()
 	iip_free(C);
 	iip_free(B);
 	iip_free(A);
+
+
+	A = mem_MAT(10);
+
+	free_mem_MAT(10);
 	finit();
 	return 0 ;
 }

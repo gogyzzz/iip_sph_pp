@@ -19,6 +19,7 @@
  *
  *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
  * */
+
 void axpy(DTYPE alpha, MAT *x, MAT *y)
 {
 	UINT size = x->d0 * x->d1 * x->d2;
@@ -26,17 +27,24 @@ void axpy(DTYPE alpha, MAT *x, MAT *y)
 	printf("%s\n", __func__);
 #endif
 
+}
+void axpy_inc(UINT size, DTYPE alpha, DTYPE *x, ITER incx,DTYPE *y,ITER incy)
+{
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+
 #if USE_CBLAS
 
 #if NTYPE == 0
-	cblas_saxpy(size, alpha, x->data, 1, y->data, 1);
+	cblas_saxpy(size, alpha, X, incx, Y, incy);
 
 #elif NTYPE == 1
-	cblas_daxpy(size, alpha, x->data, 1, y->data, 1);
+	cblas_daxpy(size, alpha, X, incx, Y, incy);
 #endif
 
 #else
-	mp_axpy(size, alpha, x->data, 1, y->data, 1);
+	mp_axpy(size, alpha, X, incx, Y, incy);
 #endif
 }
 
@@ -54,23 +62,26 @@ void mp_axpy(UINT N, DTYPE alpha, DTYPE *X, UINT INCX, DTYPE *Y, UINT INCY)
 		Y[i * INCY] = X[i * INCX] * alpha + Y[i * INCY];
 	}
 }
-
-void caxpy(CTYPE alpha, CMAT *x, CMAT *y)
+void caxpy(CTYPE alpha,CMAT*x, CMAT*y)
 {
-	UINT size = x->d0 * x->d1 * x->d2;
+
+}
+
+void caxpy_inc(UINT size, CTYPE alpha, CTYPE *x, ITER incx, CTYPE *y, ITER incy)
+{
 #if DEBUG
 	printf("%s\n", __func__);
 #endif
 #if USE_CBLAS
 #if NTYPE == 0
-	cblas_caxpy(size, &alpha, x->data, 1, y->data, 1);
+	cblas_caxpy(size, &alpha, X, incx, Y,incy);
 
 #elif NTYPE == 1
-	cblas_zaxpy(size, &alpha, x->data, 1, y->data, 1);
+	cblas_zaxpy(size, &alpha, X, incx, Y, incy);
 #endif
 
 #else
-	mp_caxpy(size, alpha, x->data, 1, y->data, 1);
+	mp_caxpy(size, alpha, X, incx, Y, incy);
 #endif
 }
 

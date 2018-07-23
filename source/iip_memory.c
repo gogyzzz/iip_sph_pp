@@ -5,6 +5,13 @@
  **** MEMORY MANAGER *********
  *****************************/
 
+/*
+void* memory_pool[MAX_MEM_PAGE];
+USED_MEM* memory_log[MAX_MEM_PAGE];
+unsigned long int log_cnt[MAX_MEM_PAGE];
+unsigned int pool_cnt;
+*/
+
 void init() {
 	int i;
 

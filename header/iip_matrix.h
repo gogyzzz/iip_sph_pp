@@ -145,13 +145,17 @@ CMAT * mem_csubmat_3d(CMAT* src, ITER s0, ITER e0,ITER s1,ITER e1,ITER s2,ITER e
 MAT* create_trans(MAT* mat);
 CMAT* create_ctrans(CMAT* mat);
 
-
+void trans(MAT*mat);
+void ctrans(CMAT*mat);
 /**** hermitian ****/
 CMAT* create_hermit(CMAT* mat);
 
+void hermit(CMAT*mat);
 /**** Identity Matrix ****/
 void id_MAT(MAT*mat);
 
+/**** Inverse Matrix ****/
+void invers(MAT *mat);
 
 /****  miscellaneous ****/ 
 void free_MAT(MAT*);

@@ -743,6 +743,113 @@ CMAT* create_ctrans(CMAT* mat)
 	return t_mat;
 }
 
+void trans(MAT*mat)
+{
+	MAT* temp;
+	ITER i,j,k;
+	UINT d0,d1,d2;
+
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+	d0 = mat->d0;
+	d1 = mat->d1;
+	d2 = mat->d2;
+	temp = mem_MAT(mat->d0,mat->d1,mat->d2);
+	if(mat->ndim == 0)
+	{
+#pragma omp parallel for shared(temp,mat) private(i)
+	for(i=0;i<d0;i++)
+		{
+	 		temp->data[i] = mat->data[i];
+		}	
+	mat->ndim = 1;
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	else if(mat->ndim == 1)
+	{
+#pragma omp parallel for shared(temp,mat) private(i)
+		for(i=0;i<d0 * d1  ; i++)
+		{
+			temp->data[i/d0 + i%d0*d1 ] = mat->data[i];
+		}
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	else
+	{
+//일단은 3차원 배열을 2차원 배열의 batch로 여기고 구현함
+#pragma omp parallel for shared(temp,mat) private(i,j)
+		for(j=0;j< d2;j++)
+		{
+			for(i=0;i<d0 * d1; i++)
+				{
+					temp->data[j*d0*d1 + i/d0 + i%d0*d1 ] = mat->data[j*d0*d1 + i];
+				}	
+		}		
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	copy(temp,mat);
+	free_mem_MAT(temp);
+}
+
+void ctrans(CMAT*mat)
+{
+	CMAT* temp;
+	ITER i,j,k;
+	UINT d0,d1,d2;
+
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+	d0 = mat->d0;
+	d1 = mat->d1;
+	d2 = mat->d2;
+	temp = mem_CMAT(mat->d0,mat->d1,mat->d2);
+	if(mat->ndim == 0)
+	{
+#pragma omp parallel for shared(temp,mat) private(i)
+	for(i=0;i<d0;i++)
+		{
+	 		temp->data[i].re = mat->data[i].re;
+	 		temp->data[i].im = mat->data[i].im;
+		}	
+	mat->ndim = 1;
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	else if(mat->ndim == 1)
+	{
+#pragma omp parallel for shared(temp,mat) private(i)
+		for(i=0;i<d0 * d1  ; i++)
+		{
+			temp->data[i/d0 + i%d0*d1 ].re = mat->data[i].re;
+			temp->data[i/d0 + i%d0*d1 ].im = mat->data[i].im;
+		}
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	else
+	{
+//일단은 3차원 배열을 2차원 배열의 batch로 여기고 구현함
+#pragma omp parallel for shared(temp,mat) private(i,j)
+		for(j=0;j< d2;j++)
+		{
+			for(i=0;i<d0 * d1; i++)
+				{
+					temp->data[j*d0*d1 + i/d0 + i%d0*d1 ].re = mat->data[j*d0*d1 + i].re;
+					temp->data[j*d0*d1 + i/d0 + i%d0*d1 ].im = mat->data[j*d0*d1 + i].im;
+				}	
+		}		
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	ccopy(temp,mat);
+	free_mem_CMAT(temp);
+}
+
 /**** hermitial ****/
 
 CMAT* create_hermit(CMAT* mat)
@@ -791,6 +898,61 @@ CMAT* create_hermit(CMAT* mat)
 		}		
 	}
 	return t_mat;
+}
+
+void hermit(CMAT*mat)
+{
+	CMAT* temp;
+	ITER i,j,k;
+	UINT d0,d1,d2;
+
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+	d0 = mat->d0;
+	d1 = mat->d1;
+	d2 = mat->d2;
+	temp = mem_CMAT(mat->d0,mat->d1,mat->d2);
+	if(mat->ndim == 0)
+	{
+#pragma omp parallel for shared(temp,mat) private(i)
+	for(i=0;i<d0;i++)
+		{
+	 		temp->data[i].re = mat->data[i].re;
+	 		temp->data[i].im = -mat->data[i].im;
+		}	
+	mat->ndim = 1;
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	else if(mat->ndim == 1)
+	{
+#pragma omp parallel for shared(temp,mat) private(i)
+		for(i=0;i<d0 * d1  ; i++)
+		{
+			temp->data[i/d0 + i%d0*d1 ].re = mat->data[i].re;
+			temp->data[i/d0 + i%d0*d1 ].im = -mat->data[i].im;
+		}
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	else
+	{
+//일단은 3차원 배열을 2차원 배열의 batch로 여기고 구현함
+#pragma omp parallel for shared(temp,mat) private(i,j)
+		for(j=0;j< d2;j++)
+		{
+			for(i=0;i<d0 * d1; i++)
+				{
+					temp->data[j*d0*d1 + i/d0 + i%d0*d1 ].re = mat->data[j*d0*d1 + i].re;
+					temp->data[j*d0*d1 + i/d0 + i%d0*d1 ].im = -mat->data[j*d0*d1 + i].im;
+				}	
+		}		
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	ccopy(temp,mat);
+	free_mem_CMAT(temp);
 }
 
 /**** Identity Matrix****/
@@ -847,6 +1009,9 @@ else if(mat->ndim == 2)
 
 
 }
+
+/**** Inverser Matrix ****/
+
 
 
 /**** miscellaneous  ****/
