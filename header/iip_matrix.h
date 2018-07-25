@@ -140,6 +140,21 @@ CMAT * mem_csubmat_1d(CMAT* src, ITER s0, ITER e0);
 CMAT * mem_csubmat_2d(CMAT* src, ITER s0, ITER e0,ITER s1,ITER e1);
 CMAT * mem_csubmat_3d(CMAT* src, ITER s0, ITER e0,ITER s1,ITER e1,ITER s2,ITER e2);
 
+/**** multiply elements - broadcasting operation ****/
+void mul_elements(MAT*A,MAT*B,MAT*C);
+void cmul_elements(CMAT*A,CMAT*B,CMAT*C);
+
+/**** divide elements - broadcasting operation ****/
+void div_elements(MAT*A,MAT*B,MAT*C);
+void cdiv_elements(CMAT*A,CMAT*B,CMAT*C);
+
+/**** inverse elements ***/
+void inv_elements(MAT*mat);
+void inv_elements_inc(UINT size, DTYPE*X,ITER incx);
+
+void cinv_elelments(CMAT*mat);
+void cinv_elelments_inc(UINT size, CTYPE*X, ITER incx);
+
 
 /**** transpose  ****/
 MAT* create_trans(MAT* mat);
@@ -154,7 +169,7 @@ void hermit(CMAT*mat);
 /**** Identity Matrix ****/
 void id_MAT(MAT*mat);
 
-/**** Inverse Matrix ****/
+/**** Inverse Matrix WIP ****/
 void invers(MAT *mat);
 
 /****  miscellaneous ****/ 

@@ -1038,14 +1038,14 @@ ITER i;
 }
 
 /** 복소수 행렬 * 복소수 **/
-void ccscal(CTYPE alpha,CMAT*mat)
+void uscal(CTYPE alpha,CMAT*mat)
 {
 #if DEBUG
 	printf("%s\n",__func__);
 #endif
-ccscal_inc((mat->d0)*(mat->d1)*(mat->d2),alpha,mat->data,1);
+uscal_inc((mat->d0)*(mat->d1)*(mat->d2),alpha,mat->data,1);
 }
-void ccscal_inc(UINT size,CTYPE alpha, CTYPE*X,UINT incx)
+void uscal_inc(UINT size,CTYPE alpha, CTYPE*X,UINT incx)
 {
 #if DEBUG
 	printf("%s\n",__func__);
@@ -1058,10 +1058,10 @@ void ccscal_inc(UINT size,CTYPE alpha, CTYPE*X,UINT incx)
 	cblas_zscal(size,&alpha,X,incx);
 	#endif
 #else
-	mp_ccscal(size,alpha,X,incx);
+	mp_uscal(size,alpha,X,incx);
 #endif
 }
-void mp_ccscal(UINT size,CTYPE alpha, CTYPE*X,UINT incx)
+void mp_uscal(UINT size,CTYPE alpha, CTYPE*X,UINT incx)
 {
 ITER i;
 DTYPE temp;
@@ -1084,9 +1084,9 @@ void col_cscal(DTYPE alpha, CMAT* X, UINT idx)
 	cscal_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
 }
 
-void col_ccscal(CTYPE alpha, CMAT* X, UINT idx)
+void col_uscal(CTYPE alpha, CMAT* X, UINT idx)
 {
-	ccscal_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
+	uscal_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
 }
 /** 행 스케일링 **/
 void row_scal(DTYPE alpha, MAT*X, UINT idx)
@@ -1099,9 +1099,9 @@ void row_cscal(DTYPE alpha, CMAT*X, UINT idx)
 	cscal_inc(X->d1,alpha,&(X->data[idx]),X->d0);
 }
 
-void row_ccscal(CTYPE alpha, CMAT*X, UINT idx)
+void row_uscal(CTYPE alpha, CMAT*X, UINT idx)
 {
-	ccscal_inc(X->d1,alpha,&(X->data[idx]),X->d0);
+	uscal_inc(X->d1,alpha,&(X->data[idx]),X->d0);
 }
 /** 실수행렬 + 실수 **/
 void add(DTYPE alpha, MAT*mat)
@@ -1135,11 +1135,11 @@ void cadd_inc(UINT size,DTYPE alpha, CTYPE *X, UINT incx)
 		X[i].re +=alpha;
 }
 /** 복소수행렬 + 복소수**/ 
-void ccadd(CTYPE alpha, CMAT*mat)
+void uadd(CTYPE alpha, CMAT*mat)
 {
-	ccadd_inc(mat->d0 * mat->d1 * mat->d2, alpha,mat->data,1);
+	uadd_inc(mat->d0 * mat->d1 * mat->d2, alpha,mat->data,1);
 }
-void ccadd_inc(UINT size,CTYPE alpha, CTYPE *X, UINT incx)
+void uadd_inc(UINT size,CTYPE alpha, CTYPE *X, UINT incx)
 {
 	ITER i;
 #if DEBUG
@@ -1159,9 +1159,9 @@ void col_cadd(DTYPE alpha, CMAT*X, UINT idx)
 {
 	cadd_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
 }
-void col_ccadd(CTYPE alpha, CMAT*X, UINT idx)
+void col_uadd(CTYPE alpha, CMAT*X, UINT idx)
 {
-	ccadd_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
+	uadd_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
 }
 /** 행 더하기 **/
 void row_add(DTYPE alpha,MAT*X, UINT idx)
@@ -1172,7 +1172,7 @@ void row_cadd(DTYPE alpha,CMAT*X, UINT idx)
 {
 	cadd_inc(X->d1,alpha,&(X->data[idx]),X->d0);
 }
-void row_ccadd(CTYPE alpha,CMAT*X, UINT idx)
+void row_uadd(CTYPE alpha,CMAT*X, UINT idx)
 {
-	ccadd_inc(X->d1,alpha,&(X->data[idx]),X->d0);
+	uadd_inc(X->d1,alpha,&(X->data[idx]),X->d0);
 }

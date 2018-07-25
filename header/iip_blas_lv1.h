@@ -112,18 +112,18 @@ void cscal(DTYPE alpha, CMAT*mat);
 void cscal_inc(UINT size,DTYPE alpha,CTYPE*X,UINT incx);
 void mp_cscal(UINT size,DTYPE alpha,CTYPE*X,UINT incx);
 /** 복소수행렬 * 복소수 **/
-void ccscal(CTYPE alpha, CMAT*mat);
-void ccscal_inc(UINT size,CTYPE alpha,CTYPE*X,UINT incx);
-void mp_ccscal(UINT size,CTYPE alpha,CTYPE*X,UINT incx);
+void uscal(CTYPE alpha, CMAT*mat);
+void uscal_inc(UINT size,CTYPE alpha,CTYPE*X,UINT incx);
+void mp_uscal(UINT size,CTYPE alpha,CTYPE*X,UINT incx);
 
 /** 열 스케일링 **/
 void col_scal(DTYPE alpha,MAT*X, UINT idx);
 void col_cscal(DTYPE alpha,CMAT*X, UINT idx);
-void col_ccscal(CTYPE alpha,CMAT*X, UINT idx);
+void col_uscal(CTYPE alpha,CMAT*X, UINT idx);
 /** 행 스케일링 **/
 void row_scal(DTYPE alpha,MAT*X, UINT idx);
 void row_cscal(DTYPE alpha,CMAT*X, UINT idx);
-void row_ccscal(CTYPE alpha,CMAT*X, UINT idx);
+void row_uscal(CTYPE alpha,CMAT*X, UINT idx);
 
 /** 실수행렬 + 실수 **/
 void add(DTYPE alpha, MAT*mat);
@@ -133,15 +133,15 @@ void cadd(DTYPE alpha, CMAT*mat);
 void cadd_inc(UINT size, DTYPE alpha, CTYPE*X, UINT incx);
 
 /** 복소수행렬 + 복소수 **/
-void ccadd(CTYPE alpha, CMAT*mat);
-void ccadd_inc(UINT size, CTYPE alpha, CTYPE*X, UINT incx);
+void uadd(CTYPE alpha, CMAT*mat);
+void uadd_inc(UINT size, CTYPE alpha, CTYPE*X, UINT incx);
 
 /** 열 더하기 **/
 void col_add(DTYPE alpha, MAT*X, UINT idx);
 void col_cadd(DTYPE alpha, CMAT*X, UINT idx);
-void col_ccadd(CTYPE alpha, CMAT*X, UINT idx);
+void col_uadd(CTYPE alpha, CMAT*X, UINT idx);
 /** 행 더하기 **/
 void row_add(DTYPE alpha, MAT*X, UINT idx);
 void row_cadd(DTYPE alpha, CMAT*X, UINT idx);
-void row_ccadd(CTYPE alpha, CMAT*X, UINT idx);
+void row_uadd(CTYPE alpha, CMAT*X, UINT idx);
 #endif
