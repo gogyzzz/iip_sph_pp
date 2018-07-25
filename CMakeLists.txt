@@ -20,6 +20,17 @@ message(STATUS "USE_OPEN  : " ${USE_OPEN})
 message(STATUS "USE_MKL   : " ${USE_MKL})
 message(STATUS "USE_OPENMP : " ${USE_OPENMP})
 
+set(CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
+
+if(NOT CUDA_ARCH)
+    message(STATUS "cuda arch wasn't provided, running feature test")
+    include(feature_test)
+else()
+    set(CUDA_GEN_CODE "-gencode arch=compute_${CUDA_ARCH},code=sm_${CUDA_ARCH}")
+endif()
+set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS}; ${CUDA_GEN_CODE}")
+
 if(WIN32 AND MSVC)
     set(BUILD_FLAGS
 	"${CMAKE_C_FLAGS} /O3 /MP")
