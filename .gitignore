@@ -1,24 +1,81 @@
-source/iip_blas_lv1.h
-source/iip_blas_lv2.h
-source/iip_blas_lv3.h
-source/mother.h
-source/iip_type.h
-source/iip_matrix.h
-source/iip_wav.h
+
+###############################################
+#       Based on github/gitignore 	      #
+# 					      #
+# https://github.com/github/gitignore?fref=gc #
+# 					      #
+# License: CC0-1.0.			      #
+###############################################
+
+## Emacs Generated Types
+*~
+\#*\#
+.\#*
+
+## Vim Generated Types
+# Swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-v][a-z]
+[._]sw[a-p]
+
+# Session
+Session.vim
+
+# Temporary
+.netrwhist
+*~
+# Auto-generated tag files
+tags
+
+# CMake Generated Types
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Build directory
+build/
+
 OpenBLAS-v0.2.14-Win64-int32/
 bin/
 build/
 .vscode/
-*.suo
-*.db
-*.ipch
-*.VC*
-*.vcxproj*
-*.cmake
-*.bin
-*.obj
-*.log
-*.tlog
-*.txt
-*.swp
-
