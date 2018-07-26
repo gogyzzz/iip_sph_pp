@@ -107,14 +107,102 @@ CMAT *alloc_CMAT_3d(UINT d0, UINT d1, UINT d2)
 	return mat;
 }
 
+/**** allocate MAT in memory pool : mem_MAT ***/
+MAT * mem_MAT_1d(UINT d0)
+{
+	MAT * mat;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+	mat = iip_malloc(sizeof(MAT));
+	mat->ndim = 0;
+	mat->d0 = d0;
+	mat->d1 = 1;
+	mat->d2 = 1;
+	mat->data = iip_malloc(sizeof(DTYPE)*d0);
+	return mat;
+}
+MAT * mem_MAT_2d(UINT d0,UINT d1)
+{
+	MAT * mat;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+	mat = iip_malloc(sizeof(MAT));
+	mat->ndim = 1;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = 1;
+	mat->data = iip_malloc(sizeof(DTYPE)*d0*d1);
+	return mat;
+}
+MAT * mem_MAT_3d(UINT d0, UINT d1,UINT d2)
+{
+	MAT * mat;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+	mat = iip_malloc(sizeof(MAT));
+	mat->ndim = 2;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = d2;
+	mat->data = iip_malloc(sizeof(DTYPE)*d0*d1*d2);
+	return mat;
+}
+
+CMAT * mem_CMAT_1d(UINT d0)
+{
+	CMAT * mat;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+	mat = iip_malloc(sizeof(CMAT));
+	mat->ndim = 0;
+	mat->d0 = d0;
+	mat->d1 = 1;
+	mat->d2 = 1;
+	mat->data = iip_malloc(sizeof(CTYPE)*d0);
+	return mat;
+}
+CMAT * mem_CMAT_2d(UINT d0,UINT d1)
+{
+	CMAT * mat;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+	mat = iip_malloc(sizeof(CMAT));
+	mat->ndim = 1;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = 1;
+	mat->data = iip_malloc(sizeof(CTYPE)*d0*d1);
+	return mat;
+}
+CMAT * mem_CMAT_3d(UINT d0,UINT d1,UINT d2)
+{
+	CMAT * mat;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+	mat = iip_malloc(sizeof(CMAT));
+	mat->ndim = 2;
+	mat->d0 = d0;
+	mat->d1 = d1;
+	mat->d2 = d2;
+	mat->data = iip_malloc(sizeof(CTYPE)*d0*d1*d2);
+	return mat;
+	
+}
 /**** zeros  ****/
 
 MAT *zeros_1d(UINT d0)
 {
+	MAT *mat;
 #if DEBUG
 	printf("%s\n", __func__);
 #endif
-	MAT *mat = (MAT *)malloc(sizeof(MAT));
+	mat = (MAT *)malloc(sizeof(MAT));
 	mat->ndim = 0;
 	mat->d0 = d0;
 	mat->d1 = 1;
@@ -382,16 +470,13 @@ void submat_3d(MAT *mat, MAT *submat,
 		d2_st = 0;
 	if (d2_ed == -1)
 		d2_ed = mat->d2;
-
-	for (i = 0; d0_st + i < d0_ed; i++)
+#pragma omp parallel for shared(submat,mat) private(i,j,k)
+	for (i = 0; i < d0_ed - d0_st; i++)
 		for (j = 0; d1_st + j < d1_ed; j++)
 			for (k = 0; d2_st + k < d2_ed; k++)
 			{
 				submat->data[i + j * (submat->d0) + k * (submat->d0 * submat->d1)] = mat->data[(d0_st + i) + (d1_st + j) * (mat->d0) + (d2_st + k) * (mat->d0 * mat->d1)];
-				//printf("%d %d %d %d\n",i,j,k,i + j*(submat->d0) + k*(submat->d0*submat->d1));
-				//printf("%d\n",(d0_st+i) + (d1_st+j)*(mat->d0) + (d2_st+k)*(mat->d0*mat->d1));
 			}
-	//printf("%d %d %d %d %d %d\n",d0_st, d0_ed, d1_st, d1_ed, d2_st, d2_ed);
 }
 
 void csubmat_1d(CMAT *mat, CMAT *submat, ITER d0_st, ITER d0_ed)
@@ -440,13 +525,745 @@ void csubmat_3d(CMAT *mat, CMAT *submat,
 	if (d2_ed == -1)
 		d2_ed = mat->d2;
 
-	for (i = 0; d0_st + i < d0_ed; i++)
+#pragma omp parallel for shared(submat,mat) private(i,j,k)
+	for (i = 0; i < d0_ed - d0_st; i++)
 		for (j = 0; d1_st + j < d1_ed; j++)
 			for (k = 0; d2_st + k < d2_ed; k++)
 			{
 				submat->data[i + j * (submat->d0) + k * (submat->d0 * submat->d1)].re = mat->data[(d0_st + i) + (d1_st + j) * (mat->d0) + (d2_st + k) * (mat->d0 * mat->d1)].re;
 				submat->data[i + j * (submat->d0) + k * (submat->d0 * submat->d1)].im = mat->data[(d0_st + i) + (d1_st + j) * (mat->d0) + (d2_st + k) * (mat->d0 * mat->d1)].im;
 			}
+}
+
+/**** mem_submat ****/
+
+MAT* mem_submat_1d(MAT *mat,
+			   ITER d0_st, ITER d0_ed)
+{
+	return mem_submat_3d(mat,d0_st,d0_ed,-1,-1,-1,-1);
+}
+MAT* mem_submat_2d(MAT *mat,
+			   ITER d0_st, ITER d0_ed,
+			   ITER d1_st, ITER d1_ed)
+{
+	return mem_submat_3d(mat,d0_st,d0_ed,d1_st,d1_ed,-1,-1);
+}
+MAT* mem_submat_3d(MAT *mat,
+			   ITER d0_st, ITER d0_ed,
+			   ITER d1_st, ITER d1_ed,
+			   ITER d2_st, ITER d2_ed)
+{
+	ITER i, j, k;
+	MAT * submat;
+	
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+
+
+	if (d0_st == -1)
+		d0_st = 0;
+	if (d0_ed == -1)
+		d0_ed = mat->d0;
+	if (d1_st == -1)
+		d1_st = 0;
+	if (d1_ed == -1)
+		d1_ed = mat->d1;
+	if (d2_st == -1)
+		d2_st = 0;
+	if (d2_ed == -1)
+		d2_ed = mat->d2;
+
+	submat = mem_MAT((d0_ed-d0_st),(d1_ed-d1_st), (d2_ed-d2_st));
+	if (mat->d0 < submat->d0 || mat->d1 < submat->d1 || mat->d2 < submat->d2)
+	{
+		printf("ERROR-FALSE : mat->d0 < submat->d0 || mat->d1 < submat->d1 || mat->d2 < submat->d2\n");
+		printf("%u %u %u %u %u %u\n", mat->d0 , submat->d0 , mat->d1 , submat->d1 , mat->d2 , submat->d2);
+		iip_free(submat);
+		return;
+	}
+
+#pragma omp parallel for shared(submat,mat) private(i,j,k)
+	for (i = 0; i < d0_ed - d0_st; i++)
+		for (j = 0; d1_st + j < d1_ed; j++)
+			for (k = 0; d2_st + k < d2_ed; k++)
+			{
+				submat->data[i + j * (submat->d0) + k * (submat->d0 * submat->d1)] = mat->data[(d0_st + i) + (d1_st + j) * (mat->d0) + (d2_st + k) * (mat->d0 * mat->d1)];
+			}
+	return submat;
+}
+
+CMAT* mem_csubmat_1d(CMAT *mat,
+			   ITER d0_st, ITER d0_ed)
+{
+	return mem_csubmat_3d(mat,d0_st,d0_ed,-1,-1,-1,-1);
+}
+CMAT* mem_csubmat_2d(CMAT *Cmat,
+			   ITER d0_st, ITER d0_ed,
+			   ITER d1_st, ITER d1_ed)
+{
+	return mem_csubmat_3d(Cmat,d0_st,d0_ed,d1_st,d1_ed,-1,-1);
+}
+CMAT* mem_csubmat_3d(CMAT *mat,
+			   ITER d0_st, ITER d0_ed,
+			   ITER d1_st, ITER d1_ed,
+			   ITER d2_st, ITER d2_ed)
+{
+	ITER i, j, k;
+	CMAT * submat;
+	
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+
+
+	if (d0_st == -1)
+		d0_st = 0;
+	if (d0_ed == -1)
+		d0_ed = mat->d0;
+	if (d1_st == -1)
+		d1_st = 0;
+	if (d1_ed == -1)
+		d1_ed = mat->d1;
+	if (d2_st == -1)
+		d2_st = 0;
+	if (d2_ed == -1)
+		d2_ed = mat->d2;
+
+	submat = mem_CMAT((d0_ed-d0_st),(d1_ed-d1_st), (d2_ed-d2_st));
+	if (mat->d0 < submat->d0 || mat->d1 < submat->d1 || mat->d2 < submat->d2)
+	{
+		printf("ERROR-FALSE : mat->d0 < submat->d0 || mat->d1 < submat->d1 || mat->d2 < submat->d2\n");
+		printf("%u %u %u %u %u %u\n", mat->d0 , submat->d0 , mat->d1 , submat->d1 , mat->d2 , submat->d2);
+		iip_free(submat);
+		return;
+	}
+
+#pragma omp parallel for shared(submat,mat) private(i,j,k)
+	for (i = 0; i < d0_ed - d0_st; i++)
+		for (j = 0; d1_st + j < d1_ed; j++)
+			for (k = 0; d2_st + k < d2_ed; k++)
+			{
+				submat->data[i + j * (submat->d0) + k * (submat->d0 * submat->d1)].re = mat->data[(d0_st + i) + (d1_st + j) * (mat->d0) + (d2_st + k) * (mat->d0 * mat->d1)].re;
+				submat->data[i + j * (submat->d0) + k * (submat->d0 * submat->d1)].im = mat->data[(d0_st + i) + (d1_st + j) * (mat->d0) + (d2_st + k) * (mat->d0 * mat->d1)].im;
+			}
+	return submat;
+}
+
+/**** mul_elements ****/
+void mul_elements(MAT*A,MAT*B,MAT*C)
+{
+	ITER i;
+	UINT a0,a1,b0,b1;
+	
+	a0 = A->d0;
+	a1 = A->d1;
+	b0 = B->d0;
+	b1 = B->d1;
+/* 12 broadcasting cases..
+ * a0 a1 b0 b1 | c0 c1
+ * 1  1  1  b1 | 1  b1
+ * 1  1  b0 1  | b0 1
+ * 1  a1 1  1  | 1  a1
+ * a0 1  1  1  | a0 1
+ *
+ * 1  1  b0 b1 | b0 b1
+ * a0 a1 1  1  | a0 a1
+ * 1  a1 b0 1  | b0 a1
+ * a0 1  1  b1 | a0 b1
+ * 
+ * 1  a1 b0 b1 | b0 a1 (a1==b1) 
+ * a0 1  b0 b1 | b0 b1 (a0==b0) 
+ * a0 a1 b0  1 | b0 a1 (a0==b0) 
+ * a0 a1 1  b1 | a0 b1 (a1==b1) 
+ */
+	//1 1 1 b1
+	if(((a0==1)&&(a1==1))&&((b0==1)&&(b1!=1)))
+	{
+		if( (C->d0!=1) ||(C->d1 !=b1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+			C->data[i]=B->data[i]*A->data[0];
+	}
+	//1 1 b0 1
+	else if(((a0==1)&&(a1==1))&&((b0!=1)&&(b1==1)))
+	{
+		if( (C->d0!=b0) ||(C->d1!=1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+			C->data[i]=B->data[i]*A->data[0];
+	}
+	//1 a1 1 1
+	else if(((a0==1)&&(a1!=1))&&((b0==1)&&(b1==1)))
+	{
+		if( (C->d0!=1) ||(C->d1!=a1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+			C->data[i]=A->data[i]*B->data[0];
+	}
+	//a0 1 1 1 
+	else if(((a0!=1)&&(a1==1))&&((b0==1)&&(b1==1)))
+	{
+		if( (C->d0!=a0) ||(C->d1!=1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+			C->data[i]=A->data[i]*B->data[0];
+	}
+	//1 1 b0 b1
+	else if(((a0==1)&&(a1==1))&&((b0!=1)&&(b1!=1)))
+	{
+		if( (C->d0!=b0) ||(C->d1!=b1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*b1;i++)
+			C->data[i]=B->data[i]*A->data[0];
+	}
+	//a0 a1 1 1
+	else if(((a0!=1)&&(a1!=1))&&((b0==1)&&(b1==1)))
+	{
+		if( (C->d0!=a0) ||(C->d1!=a1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<a0*a1;i++)
+			C->data[i]=A->data[i]*B->data[0];
+	}
+	//1 a1 b0 1
+	else if(((a0==1)&&(a1!=1))&&((b0!=1)&&(b1==1)))
+	{
+		if( (C->d0!=b0) ||(C->d1!=a1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*a1;i++)
+			C->data[i] = B->data[i%b0]*A->data[i/a1];
+	}
+	//a0 1 1 b1
+	else if(((a0!=1)&&(a1==1))&&((b0==1)&&(b1!=1)))
+	{
+		if( (C->d0!=a0) ||(C->d1!=b1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<a0*b1;i++)
+			C->data[i] = B->data[i/b1]*A->data[i%a0];
+	}
+	//1  a1 b0 b1 | b0 a1 (a1==b1) 
+	else if(((a0==1)&&(a1!=1))&&((b0!=1)&&(b1!=1)))
+	{
+		if( ( (C->d0!=b0) ||(C->d1!=a1))||(a1!=b1) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*a1;i++)
+			C->data[i] = A->data[i/b1]*B->data[i];
+	}
+	//a0 1  b0 b1 | b0 b1 (a0==b0) 
+	else if(((a0!=1)&&(a1==1))&&((b0!=1)&&(b1!=1)))
+	{
+		if( ( (C->d0!=b0) ||(C->d1!=b1))||(a0!=b0) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*b1;i++)
+			C->data[i] = A->data[i%b0]*B->data[i];
+	}
+	//a0 a1 b0  1 | b0 a1 (a0==b0) 
+	else if(((a0!=1)&&(a1!=1))&&((b0!=1)&&(b1==1)))
+	{
+		if( ( (C->d0!=b0) ||(C->d1!=a1))||(a0!=b0) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*a1;i++)
+			C->data[i] = B->data[i%a1]*A->data[i];
+	}
+	//a0 a1 1  b1 | a0 b1 (a1==b1) 
+	else if(((a0!=1)&&(a1!=1))&&((b0==1)&&(b1!=1)))
+	{
+		if( ( (C->d0!=a0) ||(C->d1!=b1))||(a1!=b1) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<a0*b1;i++)
+			C->data[i] = B->data[i/a0]*A->data[i];
+	}
+	else
+		ASSERT(DIM_INVAL)
+}
+
+void cmul_elements(CMAT*A,CMAT*B,CMAT*C)
+{
+	ITER i;
+	UINT a0,a1,b0,b1;
+
+	a0 = A->d0;
+	a1 = A->d1;
+	b0 = B->d0;
+	b1 = B->d1;
+
+	//1 1 1 b1
+	if(((a0==1)&&(a1==1))&&((b0==1)&&(b1!=1)))
+	{
+		if( (C->d0!=1) ||(C->d1 !=b1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+			cxemul(C->data[i],A->data[0],B->data[i])
+	}
+	//1 1 b0 1
+	else if(((a0==1)&&(a1==1))&&((b0!=1)&&(b1==1)))
+	{
+		if( (C->d0!=b0) ||(C->d1!=1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+			cxemul(C->data[i],A->data[0],B->data[i])
+	}
+	//1 a1 1 1
+	else if(((a0==1)&&(a1!=1))&&((b0==1)&&(b1==1)))
+	{
+		if( (C->d0!=1) ||(C->d1!=a1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+			cxemul(C->data[i],A->data[i],B->data[0])
+	}
+	//a0 1 1 1 
+	else if(((a0!=1)&&(a1==1))&&((b0==1)&&(b1==1)))
+	{
+		if( (C->d0!=a0) ||(C->d1!=1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+			cxemul(C->data[i],A->data[i],B->data[0])
+	}
+	//1 1 b0 b1
+	else if(((a0==1)&&(a1==1))&&((b0!=1)&&(b1!=1)))
+	{
+		if( (C->d0!=b0) ||(C->d1!=b1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*b1;i++)
+			cxemul(C->data[i],A->data[0],B->data[i])
+	}
+	//a0 a1 1 1
+	else if(((a0!=1)&&(a1!=1))&&((b0==1)&&(b1==1)))
+	{
+		if( (C->d0!=a0) ||(C->d1!=a1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<a0*a1;i++)
+			cxemul(C->data[i],A->data[i],B->data[0])
+	}
+	//1 a1 b0 1
+	else if(((a0==1)&&(a1!=1))&&((b0!=1)&&(b1==1)))
+	{
+		if( (C->d0!=b0) ||(C->d1!=a1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*a1;i++)
+			cxemul(C->data[i],A->data[i/a1],B->data[i%b0])
+	}
+	//a0 1 1 b1
+	else if(((a0!=1)&&(a1==1))&&((b0==1)&&(b1!=1)))
+	{
+		if( (C->d0!=a0) ||(C->d1!=b1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<a0*b1;i++)
+			cxemul(C->data[i],A->data[i%a0],B->data[i/b1])
+	}
+	//1  a1 b0 b1 | b0 a1 (a1==b1) 
+	else if(((a0==1)&&(a1!=1))&&((b0!=1)&&(b1!=1)))
+	{
+		if( ( (C->d0!=b0) ||(C->d1!=a1))||(a1!=b1) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*a1;i++)
+			cxemul(C->data[i],A->data[i/b1],B->data[i])
+	}
+	//a0 1  b0 b1 | b0 b1 (a0==b0) 
+	else if(((a0!=1)&&(a1==1))&&((b0!=1)&&(b1!=1)))
+	{
+		if( ( (C->d0!=b0) ||(C->d1!=b1))||(a0!=b0) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*b1;i++)
+			cxemul(C->data[i],A->data[i%b0],B->data[i])
+	}
+	//a0 a1 b0  1 | b0 a1 (a0==b0) 
+	else if(((a0!=1)&&(a1!=1))&&((b0!=1)&&(b1==1)))
+	{
+		if( ( (C->d0!=b0) ||(C->d1!=a1))||(a0!=b0) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*a1;i++)
+			cxemul(C->data[i],A->data[i],B->data[i%a1])
+	}
+	//a0 a1 1  b1 | a0 b1 (a1==b1) 
+	else if(((a0!=1)&&(a1!=1))&&((b0==1)&&(b1!=1)))
+	{
+		if( ( (C->d0!=a0) ||(C->d1!=b1))||(a1!=b1) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<a0*b1;i++)
+			cxemul(C->data[i],A->data[i],B->data[i/a0])
+	}
+	else
+		ASSERT(DIM_INVAL)
+}
+
+
+/**** div_elements - broadcasting operation ****/
+void div_elements(MAT*A,MAT*B,MAT*C)
+{
+	ITER i;
+	UINT a0,a1,b0,b1;
+	
+	a0 = A->d0;
+	a1 = A->d1;
+	b0 = B->d0;
+	b1 = B->d1;
+/* 12 broadcasting cases..
+ * a0 a1 b0 b1 | c0 c1
+ * 1  1  1  b1 | 1  b1
+ * 1  1  b0 1  | b0 1
+ * 1  a1 1  1  | 1  a1
+ * a0 1  1  1  | a0 1
+ *
+ * 1  1  b0 b1 | b0 b1
+ * a0 a1 1  1  | a0 a1
+ * 1  a1 b0 1  | b0 a1
+ * a0 1  1  b1 | a0 b1
+ * 
+ * 1  a1 b0 b1 | b0 a1 (a1==b1) 
+ * a0 1  b0 b1 | b0 b1 (a0==b0) 
+ * a0 a1 b0  1 | b0 a1 (a0==b0) 
+ * a0 a1 1  b1 | a0 b1 (a1==b1) 
+ */
+	//1 1 1 b1
+	if(((a0==1)&&(a1==1))&&((b0==1)&&(b1!=1)))
+	{
+		if( (C->d0!=1) ||(C->d1 !=b1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+		{
+			C->data[i]=A->data[0]/B->data[i];
+		}
+	}
+	//1 1 b0 1
+	else if(((a0==1)&&(a1==1))&&((b0!=1)&&(b1==1)))
+	{
+		if( (C->d0!=b0) ||(C->d1!=1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+		{
+			C->data[i]=A->data[0]/B->data[i];
+		}
+	}
+	//1 a1 1 1
+	else if(((a0==1)&&(a1!=1))&&((b0==1)&&(b1==1)))
+	{
+		if( (C->d0!=1) ||(C->d1!=a1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+		{
+				C->data[i]=A->data[i]/B->data[0];
+		}
+	}
+	//a0 1 1 1 
+	else if(((a0!=1)&&(a1==1))&&((b0==1)&&(b1==1)))
+	{
+		if( (C->d0!=a0) ||(C->d1!=1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+		{
+				C->data[i]=A->data[i]/B->data[0];
+		}
+	}
+	//1 1 b0 b1
+	else if(((a0==1)&&(a1==1))&&((b0!=1)&&(b1!=1)))
+	{
+		if( (C->d0!=b0) ||(C->d1!=b1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*b1;i++)
+		{
+				C->data[i]=A->data[0]/B->data[i];
+		}
+	}
+	//a0 a1 1 1
+	else if(((a0!=1)&&(a1!=1))&&((b0==1)&&(b1==1)))
+	{
+		if( (C->d0!=a0) ||(C->d1!=a1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<a0*a1;i++)
+		{
+				C->data[i]=A->data[i]/B->data[0];
+		}
+	}
+	//1 a1 b0 1
+	else if(((a0==1)&&(a1!=1))&&((b0!=1)&&(b1==1)))
+	{
+		if( (C->d0!=b0) ||(C->d1!=a1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*a1;i++)
+		{
+				C->data[i]=A->data[i/a1]/B->data[i%b0];
+		}
+	}
+	//a0 1 1 b1
+	else if(((a0!=1)&&(a1==1))&&((b0==1)&&(b1!=1)))
+	{
+		if( (C->d0!=a0) ||(C->d1!=b1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<a0*b1;i++)
+		{
+				C->data[i]=A->data[i%a0]/B->data[i/b1];
+		}
+	}
+	//1  a1 b0 b1 | b0 a1 (a1==b1) 
+	else if(((a0==1)&&(a1!=1))&&((b0!=1)&&(b1!=1)))
+	{
+		if( ( (C->d0!=b0) ||(C->d1!=a1))||(a1!=b1) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*a1;i++)
+		{
+				C->data[i]=A->data[i/b1]/B->data[i];
+		}
+	}
+	//a0 1  b0 b1 | b0 b1 (a0==b0) 
+	else if(((a0!=1)&&(a1==1))&&((b0!=1)&&(b1!=1)))
+	{
+		if( ( (C->d0!=b0) ||(C->d1!=b1))||(a0!=b0) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*b1;i++)
+		{
+				C->data[i]=A->data[i%b0]/B->data[i];
+		}
+	}
+	//a0 a1 b0  1 | b0 a1 (a0==b0) 
+	else if(((a0!=1)&&(a1!=1))&&((b0!=1)&&(b1==1)))
+	{
+		if( ( (C->d0!=b0) ||(C->d1!=a1))||(a0!=b0) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*a1;i++)
+		{
+				C->data[i]=A->data[i]/B->data[i%a1];
+		}
+	}
+	//a0 a1 1  b1 | a0 b1 (a1==b1) 
+	else if(((a0!=1)&&(a1!=1))&&((b0==1)&&(b1!=1)))
+	{
+		if( ( (C->d0!=a0) ||(C->d1!=b1))||(a1!=b1) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<a0*b1;i++)
+		{
+				C->data[i]=A->data[i]/B->data[i/a0];
+		}
+	}
+	else
+		ASSERT(DIM_INVAL)
+}
+
+void cdiv_elements(CMAT*A,CMAT*B,CMAT*C)
+{
+	ITER i;
+	UINT a0,a1,b0,b1;
+	
+	a0 = A->d0;
+	a1 = A->d1;
+	b0 = B->d0;
+	b1 = B->d1;
+/* 12 broadcasting cases..
+ * a0 a1 b0 b1 | c0 c1
+ * 1  1  1  b1 | 1  b1
+ * 1  1  b0 1  | b0 1
+ * 1  a1 1  1  | 1  a1
+ * a0 1  1  1  | a0 1
+ *
+ * 1  1  b0 b1 | b0 b1
+ * a0 a1 1  1  | a0 a1
+ * 1  a1 b0 1  | b0 a1
+ * a0 1  1  b1 | a0 b1
+ * 
+ * 1  a1 b0 b1 | b0 a1 (a1==b1) 
+ * a0 1  b0 b1 | b0 b1 (a0==b0) 
+ * a0 a1 b0  1 | b0 a1 (a0==b0) 
+ * a0 a1 1  b1 | a0 b1 (a1==b1) 
+ */
+	//1 1 1 b1
+	if(((a0==1)&&(a1==1))&&((b0==1)&&(b1!=1)))
+	{
+		if( (C->d0!=1) ||(C->d1 !=b1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+		{
+				cxediv(C->data[i],A->data[0],B->data[i])
+		}
+	}
+	//1 1 b0 1
+	else if(((a0==1)&&(a1==1))&&((b0!=1)&&(b1==1)))
+	{
+		if( (C->d0!=b0) ||(C->d1!=1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+		{
+				cxediv(C->data[i],A->data[0],B->data[i])
+		}
+	}
+	//1 a1 1 1
+	else if(((a0==1)&&(a1!=1))&&((b0==1)&&(b1==1)))
+	{
+		if( (C->d0!=1) ||(C->d1!=a1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+		{
+				cxediv(C->data[i],A->data[i],B->data[0])
+		}
+	}
+	//a0 1 1 1 
+	else if(((a0!=1)&&(a1==1))&&((b0==1)&&(b1==1)))
+	{
+		if( (C->d0!=a0) ||(C->d1!=1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b1;i++)
+		{
+			cxediv(	C->data[i],A->data[i],B->data[0])
+		}
+	}
+	//1 1 b0 b1
+	else if(((a0==1)&&(a1==1))&&((b0!=1)&&(b1!=1)))
+	{
+		if( (C->d0!=b0) ||(C->d1!=b1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*b1;i++)
+		{
+				cxediv(C->data[i],A->data[0],B->data[i])
+		}
+	}
+	//a0 a1 1 1
+	else if(((a0!=1)&&(a1!=1))&&((b0==1)&&(b1==1)))
+	{
+		if( (C->d0!=a0) ||(C->d1!=a1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<a0*a1;i++)
+		{
+			cxediv(	C->data[i],A->data[i],B->data[0])
+		}
+	}
+	//1 a1 b0 1
+	else if(((a0==1)&&(a1!=1))&&((b0!=1)&&(b1==1)))
+	{
+		if( (C->d0!=b0) ||(C->d1!=a1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*a1;i++)
+		{
+				cxediv(C->data[i],A->data[i/a1],B->data[i%b0])
+		}
+	}
+	//a0 1 1 b1
+	else if(((a0!=1)&&(a1==1))&&((b0==1)&&(b1!=1)))
+	{
+		if( (C->d0!=a0) ||(C->d1!=b1))
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<a0*b1;i++)
+		{
+			cxediv(	C->data[i],A->data[i%a0],B->data[i/b1])
+		}
+	}
+	//1  a1 b0 b1 | b0 a1 (a1==b1) 
+	else if(((a0==1)&&(a1!=1))&&((b0!=1)&&(b1!=1)))
+	{
+		if( ( (C->d0!=b0) ||(C->d1!=a1))||(a1!=b1) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*a1;i++)
+		{
+			cxediv(	C->data[i],A->data[i/b1],B->data[i])
+		}
+	}
+	//a0 1  b0 b1 | b0 b1 (a0==b0) 
+	else if(((a0!=1)&&(a1==1))&&((b0!=1)&&(b1!=1)))
+	{
+		if( ( (C->d0!=b0) ||(C->d1!=b1))||(a0!=b0) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*b1;i++)
+		{
+			cxediv(	C->data[i],A->data[i%b0],B->data[i])
+		}
+	}
+	//a0 a1 b0  1 | b0 a1 (a0==b0) 
+	else if(((a0!=1)&&(a1!=1))&&((b0!=1)&&(b1==1)))
+	{
+		if( ( (C->d0!=b0) ||(C->d1!=a1))||(a0!=b0) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<b0*a1;i++)
+		{
+				cxediv(C->data[i],A->data[i],B->data[i%a1])
+		}
+	}
+	//a0 a1 1  b1 | a0 b1 (a1==b1) 
+	else if(((a0!=1)&&(a1!=1))&&((b0==1)&&(b1!=1)))
+	{
+		if( ( (C->d0!=a0) ||(C->d1!=b1))||(a1!=b1) )
+			ASSERT(DIM_INVAL)
+#pragma omp parallel for shared(C,B,A) private(i)
+		for(i=0;i<a0*b1;i++)
+		{
+				cxediv(	C->data[i],A->data[i],B->data[i/a0])
+		}
+	}
+	else
+		ASSERT(DIM_INVAL)
+}
+/**** inverse elements ****/
+void inv_elements(MAT*mat)
+{
+	inv_elements_inc(mat->d0*mat->d1*mat->d2,mat->data,1);
+}
+
+void inv_elements_inc(UINT size,DTYPE*X,ITER incx)
+{
+	ITER i;
+#pragma omp parallel for shared(X) private(i)
+	for(i=0;i<size;i+=incx)
+		X[i]=1/X[i];
+}
+
+void cinv_elements(CMAT*mat)
+{
+	cinv_elements_inc(mat->d0*mat->d1*mat->d2,mat->data,1);
+}
+
+void cinv_elements_inc(UINT size,CTYPE*X,ITER incx)
+{
+	ITER i;
+#pragma omp parallel for shared(X) private(i)
+	for(i=0;i<size;i+=incx)
+	{
+		X[i].re = X[i].re/((X[i].re * X[i].re) +( X[i].im * X[i].im));
+		X[i].im = -X[i].im/((X[i].re * X[i].re) +( X[i].im * X[i].im));
+	}
 }
 
 
@@ -544,6 +1361,116 @@ CMAT* create_ctrans(CMAT* mat)
 	return t_mat;
 }
 
+void trans(MAT*mat)
+{
+	MAT* temp;
+	ITER i,j,k;
+	UINT d0,d1,d2;
+
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+	d0 = mat->d0;
+	d1 = mat->d1;
+	d2 = mat->d2;
+	temp = mem_MAT(mat->d0,mat->d1,mat->d2);
+	if(mat->ndim == 0)
+	{
+#pragma omp parallel for shared(temp,mat) private(i)
+	for(i=0;i<d0;i++)
+		{
+	 		temp->data[i] = mat->data[i];
+		}	
+	mat->ndim = 1;
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	else if(mat->ndim == 1)
+	{
+#pragma omp parallel for shared(temp,mat) private(i)
+		for(i=0;i<d0 * d1  ; i++)
+		{
+			temp->data[i/d0 + i%d0*d1 ] = mat->data[i];
+		}
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	else
+	{
+			//TODO 구현 덜됨
+//일단은 3차원 배열을 2차원 배열의 batch로 여기고 구현함
+#pragma omp parallel for shared(temp,mat) private(i,j)
+		for(j=0;j< d2;j++)
+		{
+			for(i=0;i<d0 * d1; i++)
+				{
+					temp->data[j*d0*d1 + i/d0 + i%d0*d1 ] = mat->data[j*d0*d1 + i];
+				}	
+		}		
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	copy(temp,mat);
+	free_mem_MAT(temp);
+}
+
+void ctrans(CMAT*mat)
+{
+	CMAT* temp;
+	ITER i,j,k;
+	UINT d0,d1,d2;
+
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+	d0 = mat->d0;
+	d1 = mat->d1;
+	d2 = mat->d2;
+	temp = mem_CMAT(mat->d0,mat->d1,mat->d2);
+	if(mat->ndim == 0)
+	{
+#pragma omp parallel for shared(temp,mat) private(i)
+	for(i=0;i<d0;i++)
+		{
+	 		temp->data[i].re = mat->data[i].re;
+	 		temp->data[i].im = mat->data[i].im;
+		}	
+	mat->ndim = 1;
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	else if(mat->ndim == 1)
+	{
+#pragma omp parallel for shared(temp,mat) private(i)
+		for(i=0;i<d0 * d1  ; i++)
+		{
+			temp->data[i/d0 + i%d0*d1 ].re = mat->data[i].re;
+			temp->data[i/d0 + i%d0*d1 ].im = mat->data[i].im;
+		}
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	else
+	{
+//일단은 3차원 배열을 2차원 배열의 batch로 여기고 구현함
+#pragma omp parallel for shared(temp,mat) private(i,j)
+		for(j=0;j< d2;j++)
+		{
+			for(i=0;i<d0 * d1; i++)
+				{
+					temp->data[j*d0*d1 + i/d0 + i%d0*d1 ].re = mat->data[j*d0*d1 + i].re;
+					temp->data[j*d0*d1 + i/d0 + i%d0*d1 ].im = mat->data[j*d0*d1 + i].im;
+				}	
+		}		
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	ccopy(temp,mat);
+	free_mem_CMAT(temp);
+}
+
+/**** hermitial ****/
+
 CMAT* create_hermit(CMAT* mat)
 {
 	ITER i,j;
@@ -592,6 +1519,119 @@ CMAT* create_hermit(CMAT* mat)
 	return t_mat;
 }
 
+void hermit(CMAT*mat)
+{
+	CMAT* temp;
+	ITER i,j,k;
+	UINT d0,d1,d2;
+
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+	d0 = mat->d0;
+	d1 = mat->d1;
+	d2 = mat->d2;
+	temp = mem_CMAT(mat->d0,mat->d1,mat->d2);
+	if(mat->ndim == 0)
+	{
+#pragma omp parallel for shared(temp,mat) private(i)
+	for(i=0;i<d0;i++)
+		{
+	 		temp->data[i].re = mat->data[i].re;
+	 		temp->data[i].im = -mat->data[i].im;
+		}	
+	mat->ndim = 1;
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	else if(mat->ndim == 1)
+	{
+#pragma omp parallel for shared(temp,mat) private(i)
+		for(i=0;i<d0 * d1  ; i++)
+		{
+			temp->data[i/d0 + i%d0*d1 ].re = mat->data[i].re;
+			temp->data[i/d0 + i%d0*d1 ].im = -mat->data[i].im;
+		}
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	else
+	{
+//일단은 3차원 배열을 2차원 배열의 batch로 여기고 구현함
+#pragma omp parallel for shared(temp,mat) private(i,j)
+		for(j=0;j< d2;j++)
+		{
+			for(i=0;i<d0 * d1; i++)
+				{
+					temp->data[j*d0*d1 + i/d0 + i%d0*d1 ].re = mat->data[j*d0*d1 + i].re;
+					temp->data[j*d0*d1 + i/d0 + i%d0*d1 ].im = -mat->data[j*d0*d1 + i].im;
+				}	
+		}		
+	mat->d0 =d1;
+	mat->d1 =d0;
+	}
+	ccopy(temp,mat);
+	free_mem_CMAT(temp);
+}
+
+/**** Identity Matrix****/
+void id_MAT(MAT*mat)
+{
+ITER i,j,k;
+UINT d0,d2;
+
+if(mat->d0 != mat->d1)
+{
+	printf("ERROR : This matrix is not square matrix.\n");	
+	return;
+}
+
+if(mat->ndim == 1)
+{
+	d0 = mat->d0;
+
+#pragma omp parallel for shared(mat) private(i,j)
+	for(i=0;i<d0;i++)
+	{
+		for(j=0;j<d0;j++)
+		{
+			if(i==j)
+			{
+				mat->data[i*d0 + j] = 1;
+			}
+			else
+				mat->data[i*d0 + j] = 0;
+		}
+	}
+}
+else if(mat->ndim == 2)
+{
+	d0 = mat->d0;
+	d2 = mat->d2;
+#pragma omp parallel for shared(mat) private(i,j,k)
+	for(i=0;i<d2;i++)
+	{
+		for(j=0;j<d0;j++)
+		{
+			for(k=0;k<d0;k++)
+			{
+				if(i==j)
+				{
+				mat->data[i*d0*d0 + j*d0 + k] = 1;
+				}
+				else
+				mat->data[i*d0*d0 + j*d0 + k] = 0;
+			}
+		}
+	}
+}
+
+
+}
+
+/**** Inverser Matrix ****/
+
+
 
 /**** miscellaneous  ****/
 void free_MAT(MAT *mat)
@@ -623,7 +1663,7 @@ void print_MAT(MAT *mat)
 		for (i = 0; i < mat->d0; i++)
 		{
 			for (j = 0; j < mat->d1; j++)
-				printf("%.3lf ", mat->data[k * (mat->d1) * (mat->d0) + j * (mat->d0) + i]);
+				printf("%+3.3lf ", mat->data[k * (mat->d1) * (mat->d0) + j * (mat->d0) + i]);
 			printf("\n");
 		}
 		printf("\n");
@@ -642,11 +1682,23 @@ void print_CMAT(CMAT *mat)
 		{
 			for (j = 0; j < mat->d1; j++)
 			{
-				printf("%.3lf ", mat->data[k * (mat->d1) * (mat->d0) + j * (mat->d0) + i].re);
-				printf("%.3lf| ", mat->data[k * (mat->d1) * (mat->d0) + j * (mat->d0) + i].im);
+				printf("%+3.3lf ", mat->data[k * (mat->d1) * (mat->d0) + j * (mat->d0) + i].re);
+				printf("%+3.3lf| ", mat->data[k * (mat->d1) * (mat->d0) + j * (mat->d0) + i].im);
 			}
 			printf("\n");
 		}
 		printf("\n");
 	}
+}
+
+/**** free_mem_MAT ***/
+void free_mem_MAT(MAT*mat)
+{
+	iip_free(mat->data);
+	iip_free(mat);
+}
+void free_mem_CMAT(CMAT*mat)
+{
+	iip_free(mat->data);
+	iip_free(mat);
 }

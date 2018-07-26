@@ -34,6 +34,20 @@ CMAT* alloc_CMAT_1d(UINT);
 CMAT* alloc_CMAT_2d(UINT,UINT);
 CMAT* alloc_CMAT_3d(UINT,UINT,UINT);
 
+/**** allocate MAT in memory pool : mem_MAT ***/
+#define mem_MAT_load(_x,_3,_2,_1,...) _1
+#define mem_MAT_load_(args_list) mem_MAT_load args_list
+#define mem_MAT(...) mem_MAT_load_((__VA_ARGS__, mem_MAT_3d,mem_MAT_2d,mem_MAT_1d)(__VA_ARGS__))
+MAT * mem_MAT_1d(UINT d0);
+MAT * mem_MAT_2d(UINT d0,UINT d1);
+MAT * mem_MAT_3d(UINT d0,UINT d1,UINT d2);
+
+#define mem_CMAT_load(_x,_3,_2,_1,...) _1
+#define mem_CMAT_load_(args_list) mem_CMAT_load args_list
+#define mem_CMAT(...) mem_CMAT_load_((__VA_ARGS__, mem_CMAT_3d,mem_CMAT_2d,mem_CMAT_1d)(__VA_ARGS__))
+CMAT * mem_CMAT_1d(UINT d0);
+CMAT * mem_CMAT_2d(UINT d0,UINT d1);
+CMAT * mem_CMAT_3d(UINT d0,UINT d1,UINT d2);
 
 /**** zeros  ****/
 #define zeros_load(_x,_3,_2,_1,...) _1
@@ -110,20 +124,64 @@ void csubmat_1d(CMAT*, CMAT*, ITER,ITER);
 void csubmat_2d(CMAT*, CMAT*, ITER,ITER, ITER,ITER);
 void csubmat_3d(CMAT*, CMAT*, ITER,ITER, ITER,ITER, ITER,ITER);
 
+/**** mem_submat overloading ****/
+
+#define mem_submat_load(_x2,_x3,_x4,_3,_x5,_2,_x6,_1,...) _1
+#define mem_submat_load_(args_list) mem_submat_load args_list
+#define mem_submat(...) mem_submat_load_((__VA_ARGS__, mem_submat_3d,_,mem_submat_2d,_,mem_submat_1d)(__VA_ARGS__))
+MAT * mem_submat_1d(MAT* src, ITER s0, ITER e0);
+MAT * mem_submat_2d(MAT* src, ITER s0, ITER e0,ITER s1,ITER e1);
+MAT * mem_submat_3d(MAT* src, ITER s0, ITER e0,ITER s1,ITER e1,ITER s2,ITER e2);
+
+#define mem_csubmat_load(_x2,_x3,_x4,_3,_x5,_2,_x6,_1,...) _1
+#define mem_csubmat_load_(args_list) mem_csubmat_load args_list
+#define mem_csubmat(...) mem_csubmat_load_((__VA_ARGS__, mem_csubmat_3d,_,mem_csubmat_2d,_,mem_csubmat_1d)(__VA_ARGS__))
+CMAT * mem_csubmat_1d(CMAT* src, ITER s0, ITER e0);
+CMAT * mem_csubmat_2d(CMAT* src, ITER s0, ITER e0,ITER s1,ITER e1);
+CMAT * mem_csubmat_3d(CMAT* src, ITER s0, ITER e0,ITER s1,ITER e1,ITER s2,ITER e2);
+
+/**** multiply elements - broadcasting operation ****/
+void mul_elements(MAT*A,MAT*B,MAT*C);
+void cmul_elements(CMAT*A,CMAT*B,CMAT*C);
+
+/**** divide elements - broadcasting operation ****/
+void div_elements(MAT*A,MAT*B,MAT*C);
+void cdiv_elements(CMAT*A,CMAT*B,CMAT*C);
+
+/**** inverse elements ***/
+void inv_elements(MAT*mat);
+void inv_elements_inc(UINT size, DTYPE*X,ITER incx);
+
+void cinv_elelments(CMAT*mat);
+void cinv_elelments_inc(UINT size, CTYPE*X, ITER incx);
+
 
 /**** transpose  ****/
 MAT* create_trans(MAT* mat);
 CMAT* create_ctrans(CMAT* mat);
 
-
+void trans(MAT*mat);
+void ctrans(CMAT*mat);
 /**** hermitian ****/
 CMAT* create_hermit(CMAT* mat);
+
+void hermit(CMAT*mat);
+/**** Identity Matrix ****/
+void id_MAT(MAT*mat);
+
+/**** Inverse Matrix WIP ****/
+void invers(MAT *mat);
 
 /****  miscellaneous ****/ 
 void free_MAT(MAT*);
 void free_CMAT(CMAT*);
+
 void print_MAT(MAT*);
 void print_CMAT(CMAT*);
+
+/**** free_mem_MAT****/
+void free_mem_MAT(MAT*mat_in_memory_pool);
+void free_mem_CMAT(CMAT*mat_in_memory_pool);
 
 #if USE_CUDA
 __global__ void cu_print_MAT(DTYPE*,UINT,UINT,UINT);

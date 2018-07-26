@@ -19,6 +19,7 @@
  *
  *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
  * */
+
 void axpy(DTYPE alpha, MAT *x, MAT *y)
 {
 	UINT size = x->d0 * x->d1 * x->d2;
@@ -26,17 +27,24 @@ void axpy(DTYPE alpha, MAT *x, MAT *y)
 	printf("%s\n", __func__);
 #endif
 
+}
+void axpy_inc(UINT size, DTYPE alpha, DTYPE *X, ITER incx,DTYPE *Y,ITER incy)
+{
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+
 #if USE_CBLAS
 
 #if NTYPE == 0
-	cblas_saxpy(size, alpha, x->data, 1, y->data, 1);
+	cblas_saxpy(size, alpha, X, incx, Y, incy);
 
 #elif NTYPE == 1
-	cblas_daxpy(size, alpha, x->data, 1, y->data, 1);
+	cblas_daxpy(size, alpha, X, incx, Y, incy);
 #endif
 
 #else
-	mp_axpy(size, alpha, x->data, 1, y->data, 1);
+	mp_axpy(size, alpha, X, incx, Y, incy);
 #endif
 }
 
@@ -54,23 +62,26 @@ void mp_axpy(UINT N, DTYPE alpha, DTYPE *X, UINT INCX, DTYPE *Y, UINT INCY)
 		Y[i * INCY] = X[i * INCX] * alpha + Y[i * INCY];
 	}
 }
-
-void caxpy(CTYPE alpha, CMAT *x, CMAT *y)
+void caxpy(CTYPE alpha,CMAT*x, CMAT*y)
 {
-	UINT size = x->d0 * x->d1 * x->d2;
+
+}
+
+void caxpy_inc(UINT size, CTYPE alpha, CTYPE *X, ITER incx, CTYPE *Y, ITER incy)
+{
 #if DEBUG
 	printf("%s\n", __func__);
 #endif
 #if USE_CBLAS
 #if NTYPE == 0
-	cblas_caxpy(size, &alpha, x->data, 1, y->data, 1);
+	cblas_caxpy(size, &alpha, X, incx, Y,incy);
 
 #elif NTYPE == 1
-	cblas_zaxpy(size, &alpha, x->data, 1, y->data, 1);
+	cblas_zaxpy(size, &alpha, X, incx, Y, incy);
 #endif
 
 #else
-	mp_caxpy(size, alpha, x->data, 1, y->data, 1);
+	mp_caxpy(size, alpha, X, incx, Y, incy);
 #endif
 }
 
@@ -955,4 +966,213 @@ void mp_crot(UINT N, CTYPE* src_x, UINT x_inc, CTYPE* src_y, UINT y_inc, DTYPE c
 		src_y[i*y_inc].re = c * temp_y.re + s * temp_x.re;
 		src_y[i*y_inc].im = c * temp_y.im + s * temp_x.im;
 	}
+}
+/** 실수행렬 * 실수 **/
+void scal(DTYPE alpha,MAT*mat)
+{
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+scal_inc((mat->d0)*(mat->d1)*(mat->d2),alpha,mat->data,1);
+}
+void scal_inc(UINT size,DTYPE alpha, DTYPE*X,UINT incx)
+{
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+
+#if USE_CBLAS
+	#if NTYPE == 0
+	cblas_sscal(size,alpha,X,incx);
+	#elif NTYPE == 1
+	cblas_dscal(size,alpha,X,incx);
+	#endif
+#else
+	mp_scal(size,alpha,X,incx);
+#endif
+}
+void mp_scal(UINT size,DTYPE alpha, DTYPE*X,UINT incx)
+{
+ITER i;
+
+	#pragma omp parallel for shared(X) private(i)
+	for(i=0;i<size*incx;i+=incx)
+	{
+		X[i]*=alpha;
+	}
+}
+/** 복소수행렬 * 실수   **/
+void cscal(DTYPE alpha,CMAT*mat)
+{
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+cscal_inc((mat->d0)*(mat->d1)*(mat->d2),alpha,mat->data,1);
+}
+void cscal_inc(UINT size,DTYPE alpha, CTYPE*X,UINT incx)
+{
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+
+#if USE_CBLAS
+	#if NTYPE == 0
+	cblas_csscal(size,alpha,X,incx);
+	#elif NTYPE == 1
+	cblas_zdscal(size,alpha,X,incx);
+	#endif
+#else
+	mp_cscal(size,alpha,X,incx);
+#endif
+}
+void mp_cscal(UINT size,DTYPE alpha, CTYPE*X,UINT incx)
+{
+ITER i;
+
+	#pragma omp parallel for shared(X) private(i)
+	for(i=0;i<size*incx;i+=incx)
+	{
+		X[i].re*=alpha;
+		X[i].im*=alpha;
+	}
+}
+
+/** 복소수 행렬 * 복소수 **/
+void uscal(CTYPE alpha,CMAT*mat)
+{
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+uscal_inc((mat->d0)*(mat->d1)*(mat->d2),alpha,mat->data,1);
+}
+void uscal_inc(UINT size,CTYPE alpha, CTYPE*X,UINT incx)
+{
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+
+#if USE_CBLAS
+	#if NTYPE == 0
+	cblas_cscal(size,&alpha,X,incx);
+	#elif NTYPE == 1
+	cblas_zscal(size,&alpha,X,incx);
+	#endif
+#else
+	mp_uscal(size,alpha,X,incx);
+#endif
+}
+void mp_uscal(UINT size,CTYPE alpha, CTYPE*X,UINT incx)
+{
+ITER i;
+DTYPE temp;
+
+	#pragma omp parallel for shared(X) private(i)
+	for(i=0;i<size*incx;i+=incx)
+	{
+		cxmul(X[i],alpha,temp);
+	}
+}
+
+/** 열 스케일링 **/
+void col_scal(DTYPE alpha, MAT* X, UINT idx)
+{
+	scal_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
+}
+
+void col_cscal(DTYPE alpha, CMAT* X, UINT idx)
+{
+	cscal_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
+}
+
+void col_uscal(CTYPE alpha, CMAT* X, UINT idx)
+{
+	uscal_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
+}
+/** 행 스케일링 **/
+void row_scal(DTYPE alpha, MAT*X, UINT idx)
+{
+	scal_inc(X->d1,alpha,&(X->data[idx]),X->d0);
+}
+
+void row_cscal(DTYPE alpha, CMAT*X, UINT idx)
+{
+	cscal_inc(X->d1,alpha,&(X->data[idx]),X->d0);
+}
+
+void row_uscal(CTYPE alpha, CMAT*X, UINT idx)
+{
+	uscal_inc(X->d1,alpha,&(X->data[idx]),X->d0);
+}
+/** 실수행렬 + 실수 **/
+void add(DTYPE alpha, MAT*mat)
+{
+	add_inc(mat->d0 * mat->d1 * mat->d2, alpha, mat->data,1);
+}
+void add_inc(UINT size, DTYPE alpha, DTYPE*X, UINT incx)
+{
+	ITER i;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+
+	for(i=0;i<size*incx;i+=incx)
+		X[i]+=alpha;
+}
+
+/** 복소수행렬 + 실수 **/
+void cadd(DTYPE alpha, CMAT*mat)
+{
+	cadd_inc(mat->d0 * mat->d1 * mat->d2, alpha,mat->data,1);
+}
+void cadd_inc(UINT size,DTYPE alpha, CTYPE *X, UINT incx)
+{
+	ITER i;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+
+	for(i=0;i<size*incx;i+=incx)
+		X[i].re +=alpha;
+}
+/** 복소수행렬 + 복소수**/ 
+void uadd(CTYPE alpha, CMAT*mat)
+{
+	uadd_inc(mat->d0 * mat->d1 * mat->d2, alpha,mat->data,1);
+}
+void uadd_inc(UINT size,CTYPE alpha, CTYPE *X, UINT incx)
+{
+	ITER i;
+#if DEBUG
+	printf("%s\n",__func__);
+#endif
+
+	for(i=0;i<size*incx;i+=incx)
+	{	cxadd(X[i],alpha);
+	}
+}
+/** 열 더하기 **/
+void col_add(DTYPE alpha, MAT*X, UINT idx)
+{
+	add_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
+}
+void col_cadd(DTYPE alpha, CMAT*X, UINT idx)
+{
+	cadd_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
+}
+void col_uadd(CTYPE alpha, CMAT*X, UINT idx)
+{
+	uadd_inc(X->d0,alpha,&(X->data[X->d0 * idx]),1);
+}
+/** 행 더하기 **/
+void row_add(DTYPE alpha,MAT*X, UINT idx)
+{
+	add_inc(X->d1,alpha,&(X->data[idx]),X->d0);
+}
+void row_cadd(DTYPE alpha,CMAT*X, UINT idx)
+{
+	cadd_inc(X->d1,alpha,&(X->data[idx]),X->d0);
+}
+void row_uadd(CTYPE alpha,CMAT*X, UINT idx)
+{
+	uadd_inc(X->d1,alpha,&(X->data[idx]),X->d0);
 }

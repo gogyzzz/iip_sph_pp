@@ -269,11 +269,11 @@ if((transA == NoTran))
 				temp.re = 0;
 				for(i=0;i<k;i++)
 				{
-					cadd_mul(temp,A[i*m + l],B[i + j*k]);
+					cxadd_mul(temp,A[i*m + l],B[i + j*k]);
 				}
-				cmul(C[l + m*j],beta,temp2);
-				cmul(temp ,alpha,temp2);
-				cadd(C[l + m*j] ,temp);
+				cxmul(C[l + m*j],beta,temp2);
+				cxmul(temp ,alpha,temp2);
+				cxadd(C[l + m*j] ,temp);
 			}
 		}
 		
@@ -289,11 +289,11 @@ if((transA == NoTran))
 				temp.im = 0;
 				for(i=0;i<k;i++)
 				{
-					cadd_mul(temp, A[i*m + l],B[i*n + j])		
+					cxadd_mul(temp, A[i*m + l],B[i*n + j])		
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j],temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j],temp)
 			}
 		}
 	}
@@ -314,9 +314,9 @@ if((transA == NoTran))
 					temp.im += A[i*m+l].im*(B[i*n+j].re);
 					temp.im -= A[i*m+l].re*(B[i*n+j].im);
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j],temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j],temp)
 			}
 		}
 
@@ -335,11 +335,11 @@ else if(transA == Tran)
 				temp.im = 0;
 				for(i=0;i<k;i++)
 				{
-					cadd_mul(temp, A[i + l*k],B[i + j*k])		
+					cxadd_mul(temp, A[i + l*k],B[i + j*k])		
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j] ,temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j] ,temp)
 			}
 		}
 
@@ -355,11 +355,11 @@ else if(transA == Tran)
 				temp.im = 0;
 				for(i=0;i<k;i++)
 				{
-					cadd_mul(temp,A[i + l*k],B[i*n + j])		
+					cxadd_mul(temp,A[i + l*k],B[i*n + j])		
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j] ,temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j] ,temp)
 			}
 		}
 	}
@@ -379,9 +379,9 @@ else if(transA == Tran)
 					temp.re += A[adx].re*B[bdx].re - A[adx].im*(-B[bdx].im);
 					temp.im += A[adx].re*(-B[bdx].im) + A[adx].im*(B[bdx].re);
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j] ,temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j] ,temp)
 			}
 		}
 	}
@@ -404,9 +404,9 @@ else // transA == CTran
 					temp.re += A[adx].re*B[bdx].re + A[adx].im*(B[bdx].im);
 					temp.im += A[adx].re*B[bdx].im - A[adx].im*(B[bdx].re);
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j] ,temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j] ,temp)
 			}
 		}
 
@@ -427,9 +427,9 @@ else // transA == CTran
 					temp.re += A[adx].re*B[bdx].re + (A[adx].im)*B[bdx].im;
 					temp.im += A[adx].re*B[bdx].im - A[adx].im*(B[bdx].re);
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j] ,temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j] ,temp)
 			}
 		}
 	}
@@ -450,9 +450,9 @@ else // transA == CTran
 					temp.re += A[adx].re*B[bdx].re - A[adx].im*B[bdx].im;
 					temp.im -= A[adx].re*B[bdx].im + A[adx].im*B[bdx].re;
 				}
-				cmul(C[l + m*j],beta,temp2)
-				cmul(temp ,alpha,temp2)
-				cadd(C[l + m*j] ,temp)
+				cxmul(C[l + m*j],beta,temp2)
+				cxmul(temp ,alpha,temp2)
+				cxadd(C[l + m*j] ,temp)
 			}
 		}
 	}
@@ -464,25 +464,40 @@ else // transA == CTran
 
 void aABpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	gemm(NoTran,NoTran,alpha,A,B,beta,C);
 }
 void aABtpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	gemm(NoTran,Tran,alpha,A,B,beta,C);
 }
 
 void aAtBpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	gemm(Tran,NoTran,alpha,A,B,beta,C);
 }
 void aAtBtpbC(DTYPE alpha, MAT*A,MAT*B,DTYPE beta, MAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	gemm(Tran,Tran,alpha,A,B,beta,C);
 }
 
 
 void matmul(MAT*A,MAT*B,MAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	gemm(NoTran,NoTran,1,A,B,0,C);
 }
 
@@ -490,45 +505,75 @@ void matmul(MAT*A,MAT*B,MAT*C)
 
 void caABpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(NoTran,NoTran,alpha,A,B,beta,C);
 }
 void caABtpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(NoTran,Tran,alpha,A,B,beta,C);
 }
 void caABhpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(NoTran,CTran,alpha,A,B,beta,C);
 }
 
 void caAtBpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(Tran,NoTran,alpha,A,B,beta,C);
 }
 void caAtBtpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(Tran,Tran,alpha,A,B,beta,C);
 }
 void caAtBhpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(Tran,CTran,alpha,A,B,beta,C);
 }
 
 void caAhBpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(CTran,NoTran,alpha,A,B,beta,C);
 }
 void caAhBtpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(CTran,Tran,alpha,A,B,beta,C);
 }
 void caAhBhpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	cgemm(CTran,CTran,alpha,A,B,beta,C);
 }
 
 void cmatmul(CMAT*A,CMAT*B,CMAT*C)
 {
+#if DEBUG
+printf("%s\n",__func__);
+#endif
 	CTYPE one_zero;
 	CTYPE zero_zero;
 	one_zero.re = 1;
