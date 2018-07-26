@@ -1,6 +1,4 @@
 #include "iip_math.h"
-
-
 /**** SQUARE ROOT ****/
 void sqrt_mat(MAT*mat)
 {
@@ -168,7 +166,7 @@ void randu_inc(UINT size, DTYPE*X,DTYPE a,DTYPE b, ITER incx)
 #if DEBUG
 	printf("%s\n",__func__);
 #endif
-	srand(time(NULL));
+	srand(get_micro_sec());
 
 #pragma omp parallel for shared(X) private(i)
 	for(i=0;i<size;i+=incx)
@@ -192,7 +190,7 @@ void crandu_inc(UINT size, CTYPE*X,DTYPE ra,DTYPE rb,DTYPE ia,DTYPE ib, ITER inc
 #if DEBUG
 	printf("%s\n",__func__);
 #endif
-	srand(time(NULL));
+	srand(get_micro_sec());
 #pragma omp parallel for shared(X) private(i)
 	for(i=0;i<size;i+=incx)
 	{
@@ -222,7 +220,7 @@ void randn_inc(UINT size,DTYPE*X,DTYPE mean,DTYPE std,ITER incx)
 	printf("%s\n",__func__);
 #endif
 
-	srand(time(NULL));
+	srand(get_micro_sec());
 #pragma omp parallel for shared(X) private(i,u,v,s)
 	for(i=0;i<size;i+=incx)
 	{
@@ -257,7 +255,7 @@ void crandn_inc(UINT size,CTYPE*X,CTYPE mean,CTYPE std,ITER incx)
 	printf("%s\n",__func__);
 #endif
 
-	srand(time(NULL));
+	srand(get_micro_sec());
 #pragma omp parallel for shared(X) private(i,u,v,s)
 	for(i=0;i<size;i+=incx)
 	{
@@ -407,6 +405,7 @@ void log_mat_inc(UINT size, DTYPE*X,ITER incx)
 #pragma omp parallel for shared(X) private(i)
 	for(i=0;i<size;i+=incx)
 	{
+	
 #if NTYPE == 0
 		X[i]=logf(X[i]);
 #elif NTYPE == 1
@@ -461,10 +460,18 @@ void log2_cmat_inc(UINT size, CTYPE*X,ITER incx)
 #pragma omp parallel for shared(X) private(i)
 	for(i=0;i<size;i+=incx)
 	{
+/*	There is no clog2
+ *	But clog2(cx) = clog(cx)/log(2)
+ *
+ * */
 #if NTYPE == 0
-		CXF(X[i])=clog2f( CXF(X[i]) );
+		CXF(X[i])=clogf( CXF(X[i]) );
+		X[i].re = X[i].re / logf(2.);
+		X[i].im = X[i].im / logf(2.);
 #elif NTYPE == 1
-		CXD(X[i])=clog2f( CXD(X[i]) );
+		CXD(X[i])=clog( CXD(X[i]) );
+		X[i].re = X[i].re / log(2.);
+		X[i].im = X[i].im / log(2.);
 #endif
 	}
 }
@@ -500,7 +507,7 @@ void log10_cmat_inc(UINT size, CTYPE*X,ITER incx)
 #if NTYPE == 0
 		CXF(X[i])=clog10f( CXF(X[i]) );
 #elif NTYPE == 1
-		CXD(X[i])=clog10f( CXD(X[i]) );
+		CXD(X[i])=clog10( CXD(X[i]) );
 #endif
 	}
 }
@@ -536,10 +543,44 @@ void exp_cmat_inc(UINT size, CTYPE*X,ITER incx)
 #if NTYPE == 0
 		CXF(X[i])=cexpf( CXF(X[i]) );
 #elif NTYPE == 1
-		CXD(X[i])=cexpf( CXD(X[i]) );
+		CXD(X[i])=cexp( CXD(X[i]) );
 #endif
 	}
 }
 /**** abs ****/
+void abs_mat(MAT*mat)
+{
+	abs_mat_inc(mat->d0*mat->d1*mat->d2,mat->data,1);
+}
+void abs_mat_inc(UINT size, DTYPE*X,ITER incx)
+{
+	ITER i;
+#pragma omp parallel for shared(X) private(i)
+	for(i=0;i<size;i+=incx)
+	{
+#if NTYPE == 0
+		X[i]=fabsf(X[i]);
+#elif NTYPE == 1
+		X[i]=fabs(X[i]);
+#endif
+	}
+}
 
+void abs_cmat(CMAT*mat)
+{
+	abs_cmat_inc(mat->d0*mat->d1*mat->d2,mat->data,1);
+}
+void abs_cmat_inc(UINT size, CTYPE*X,ITER incx)
+{
+	ITER i;
+#pragma omp parallel for shared(X) private(i)
+	for(i=0;i<size;i+=incx)
+	{
+#if NTYPE == 0
+		CXF(X[i])=cabsf( CXF(X[i]) );
+#elif NTYPE == 1
+		CXD(X[i])=cabs( CXD(X[i]) );
+#endif
+	}
+}
 

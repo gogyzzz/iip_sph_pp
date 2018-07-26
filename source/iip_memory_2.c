@@ -20,7 +20,6 @@ static memory_list *mem_list
 
     void
     init() {
-
   ITER i;
 
   //크게 만들어서 코스트가 크기 않으므로 MAX_MEM_PAGE 개 할당
@@ -83,8 +82,7 @@ void *iip_malloc(UINT size) {
       temp_node->next = NULL;
       //	printf("point %u\n",(UINT)temp_node->p);
       cur_node = mem_list[list_idx].front;
-      while ((cur_node->next) != NULL)
-        cur_node = cur_node->next;
+      while ((cur_node->next) != NULL) cur_node = cur_node->next;
       cur_node->next = temp_node;
       mem_list[list_idx].alloced++;
       mem_list[list_idx].used++;
@@ -95,8 +93,7 @@ void *iip_malloc(UINT size) {
     else if (mem_list[list_idx].alloced > mem_list[list_idx].used) {
       printf("get empty node of list[%d] : %u\n", list_idx, size);
       cur_node = mem_list[list_idx].front;
-      while (cur_node->used == 1)
-        cur_node = cur_node->next;
+      while (cur_node->used == 1) cur_node = cur_node->next;
       mem_list[list_idx].used++;
       cur_node->used = 1;
       show_list();
@@ -152,8 +149,7 @@ void iip_free(void *p) {
           bef_node = cur_node;
           cur_node = cur_node->next;
         }
-        if (cur_node == NULL)
-          continue;
+        if (cur_node == NULL) continue;
         //	printf("found %u\n",(UINT)cur_node->p);
         // cur_node 를 해제함
         temp_node = cur_node;
@@ -184,8 +180,7 @@ void iip_free(void *p) {
   printf("freed list[%d] \n", i);
   show_list();
 
-  if (found == 0)
-    printf("WARNING : free-operaton wasn't done completly\n");
+  if (found == 0) printf("WARNING : free-operaton wasn't done completly\n");
 }
 
 void finit() {
@@ -213,8 +208,7 @@ void show_list() {
   for (i = 0; i < MAX_MEM_PAGE; i++) {
     cur = mem_list[i].front;
     cnt = 0;
-    if (mem_list[i].alloced == 0)
-      continue;
+    if (mem_list[i].alloced == 0) continue;
     printf("== list[%d] == alloced : %u | used : %u\n", i, mem_list[i].alloced,
            mem_list[i].used);
     while (cur != NULL) {
