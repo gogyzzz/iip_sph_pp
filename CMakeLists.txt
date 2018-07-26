@@ -15,6 +15,34 @@ option(USE_CUDA    "Using CUDA"      OFF)
 option(USE_OPEN    "Using BLAS"      OFF)
 option(USE_OPENMP  "Using OpenMP"    ON)
 
+### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
+### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
+
+#set(MAIN_SRC test/test_matrix.c)
+#set(MAIN_SRC test/test_matrix_2.c)
+#set(MAIN_SRC test/test_wav.c)
+#set(MAIN_SRC test/test_blas_lv1.c)
+#set(MAIN_SRC test/test_blas_lv2.c)
+#set(MAIN_SRC test/test_blas_lv3.c)
+#set(MAIN_SRC test/test_memory.c)
+#set(MAIN_SRC test/test_aABpbC.c)
+#set(MAIN_SRC test/test_broad.c)
+set(MAIN_SRC test/test_dim.c)
+#set(MAIN_SRC test/test_invelem.c)
+#set(MAIN_SRC test/test_invers.c)
+#set(MAIN_SRC test/test_row_col.c)
+#set(MAIN_SRC test/test_rand.c)
+#set(MAIN_SRC test/test_math.c)
+#set(MAIN_SRC test/test_trans.c)
+#set(MAIN_SRC test/openBLAS_with_openMP.c)
+#set(MAIN_SRC test/test_blas_lv2_big.c)
+
+### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
+### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
+
+
+
+
 message(STATUS "USE_CUDA   : " ${USE_CUDA})
 message(STATUS "USE_OPEN  : " ${USE_OPEN})
 message(STATUS "USE_MKL   : " ${USE_MKL})
@@ -75,15 +103,15 @@ if(USE_OPENMP)
     if(NOT(OpenMP_FOUND))
 		message(SEND_ERROR "USE_OPENMP is set ON but OpenMP not found")
 		set(USE_OPENMP OFF)
-		set(BUILD_FLAGS ${BUILD_FLAGS} ${OpenMP_C_FLAGS})
 
+    else()
+	message(STATUS "OpenMP found")
+	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS})
 	if(MSVC)
 	    # Visual Studio uses '/' for compile option
 	    # CMAKE set -openmp option for OpenMP_FLAGS
 	    string(REPLACE "-openmp" " /openmp" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 	endif(MSVC)
-    else()
-	message(STATUS "OpenMP found")
     endif()
 endif()
 
@@ -94,34 +122,6 @@ option(I_DID_WHAT_I_HAVE_TO_DO "SET THIS ON" ON)
 ###################################################
 ###################################################
 ###################################################
-
-set(LINKLIBS)
-set(MAIN_SRC)
-set(C_SRC)
-set(CUDA_SRC)
-
-### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
-### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
-
-#set(MAIN_SRC test/test_matrix.c)
-#set(MAIN_SRC test/test_matrix_2.c)
-#set(MAIN_SRC test/test_wav.c)
-#set(MAIN_SRC test/test_blas_lv1.c)
-#set(MAIN_SRC test/test_blas_lv2.c)
-#set(MAIN_SRC test/test_blas_lv3.c)
-#set(MAIN_SRC test/test_memory.c)
-#set(MAIN_SRC test/test_aABpbC.c)
-#set(MAIN_SRC test/test_broad.c)
-#set(MAIN_SRC test/test_invelem.c)
-#set(MAIN_SRC test/test_invers.c)
-#set(MAIN_SRC test/test_row_col.c)
-set(MAIN_SRC test/test_rand.c)
-#set(MAIN_SRC test/test_trans.c)
-#set(MAIN_SRC test/openBLAS_with_openMP.c)
-#set(MAIN_SRC test/test_blas_lv2_big.c)
-
-### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
-### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 
 
 if(NOT I_DID_WHAT_I_HAVE_TO_DO)
@@ -195,7 +195,9 @@ set(C_SOURCE
     source/iip_blas_lv2.c
     source/iip_blas_lv3.c
     source/iip_math.c
-    source/iip_memory.c)
+    source/iip_memory.c
+    source/iip_time.c
+	)
 display_elements("Source files for C build" "${C_SOURCE}")
 
 if(USE_OPEN OR USE_MKL )
@@ -213,7 +215,7 @@ if(USE_OPEN OR USE_MKL )
     if(USE_OPEN)
 	message(STATUS ${BLAS_LIBRARIES})
 	target_link_libraries(${BLAS_TARGET_NAME}
-	    cblas m)
+	    openblas m)
 	target_include_directories(${BLAS_TARGET_NAME}
 	    PUBLIC
 	    ${CMAKE_CURRENT_SOURCE_DIR}/header)
@@ -242,9 +244,7 @@ if(USE_OPEN OR USE_MKL )
 	    PRIVATE
 	    USE_MKL=1)
     endif()
-endif()
-
-if(USE_OPENMP)
+elseif(USE_OPENMP)
     set(OPENMP_TARGET_NAME "${PROJECT_NAME}_openmp")
     list(APPEND CMAKE_C_FLAGS )
 
@@ -261,6 +261,13 @@ if(USE_OPENMP)
     target_link_libraries(${OPENMP_TARGET_NAME}
 	m)
     target_include_directories(${OPENMP_TARGET_NAME}
+	PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}/header)
+else()
+	set(NATIVE_TARGET_NAME "${PROJECT_NAME}_native")
+	add_executable(${NATIVE_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})	
+	target_link_libraries(${NATIVE_TARGET_NAME} m)
+	target_include_directories(${NATIVE_TARGET_NAME}
 	PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/header)
 endif()
