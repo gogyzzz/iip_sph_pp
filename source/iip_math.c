@@ -118,7 +118,7 @@ void cpow_cmat_inc(UINT size, CTYPE* X, CTYPE n, ITER incx) {
 #if NTYPE == 0
     *(_Fcomplex*)(&X[i]) = cpowf(*(_Fcomplex*)(&X[i]), *(_Fcomplex*)(&n));
 #elif NTYPE == 1
-    *(_Dcomplex*)(&X[i]) = pow(*(_Dcomplex*)(&X[i]), *(_Dcomplex*)(&n));
+    *(_Dcomplex*)(&X[i]) = cpow(*(_Dcomplex*)(&X[i]), *(_Dcomplex*)(&n));
 #endif
 #elif OS_UNIX
 #if NTYPE == 0
@@ -542,9 +542,11 @@ void abs_cmat_inc(UINT size, CTYPE* X, ITER incx) {
 #pragma omp parallel for shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
-    CXF(X[i]) = cabsf(CXF(X[i]));
+    X[i].re = cabsf(CXF(X[i]));
+    X[i].im = 0;
 #elif NTYPE == 1
-    CXD(X[i]) = cabs(CXD(X[i]));
+    X[i].re = cabs(CXD(X[i]));
+    X[i].im = 0;
 #endif
   }
 }
@@ -638,7 +640,7 @@ DTYPE amax_cmat(CMAT* mat, DIM* dim) {
 #if NTYPE == 0
   max = cabsf(CXF(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (cabsf(mat->data[i]) > max) {
+    if (cabsf(CXF(mat->data[i])) > max) {
         max = cabsf(CXF(mat->data[i]));
         max_idx = i;
       }
@@ -646,7 +648,7 @@ DTYPE amax_cmat(CMAT* mat, DIM* dim) {
 #elif NTYPE == 1
   max = cabs(CXD(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (cabs(mat->data[i]) > max) {
+    if (cabs(CXD(mat->data[i])) > max) {
           max = cabs(CXD(mat->data[i]));
           max_idx = i;
     }
@@ -747,7 +749,7 @@ DTYPE amin_cmat(CMAT* mat, DIM* dim) {
 #if NTYPE == 0
   min = cabsf(CXF(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (fabsf(mat->data[i]) < min) {
+    if (cabsf(CXF(mat->data[i])) < min) {
          min = cabsf(CXF(mat->data[i]));
           min_idx = i;
     }
@@ -755,7 +757,7 @@ DTYPE amin_cmat(CMAT* mat, DIM* dim) {
 #elif NTYPE == 1
   min = cabs(CXD(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (fabs(mat->data[i]) < min) {
+    if (cabs(CXD(mat->data[i])) < min) {
           min = cabs(CXD(mat->data[i]));
           min_idx = i;
     }

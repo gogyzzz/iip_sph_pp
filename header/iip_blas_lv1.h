@@ -16,6 +16,7 @@ void axpy(DTYPE alpha, MAT *x, MAT *y);
 
 void mp_caxpy(UINT, CTYPE, CTYPE *, UINT, CTYPE *, UINT);
 void caxpy(CTYPE alpha, CMAT *x, CMAT *y);
+void caxpy_inc(UINT size,CTYPE alpha,CTYPE *X, ITER incx,CTYPE *Y, ITER incy);
 
 #if USE_CUDA
 __global__ void cu_axpy(DTYPE alpha, DTYPE *X, UINT INCX, DTYPE *Y, UINT INCY,

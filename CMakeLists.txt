@@ -219,8 +219,12 @@ if(USE_OPEN OR USE_MKL )
 
     if(USE_OPEN)
 	message(STATUS ${BLAS_LIBRARIES})
+  if(NOT MSVC)  
+    target_link_libraries(${BLAS_TARGET_NAME}
+  	m)
+  endif(NOT MSVC)
 	target_link_libraries(${BLAS_TARGET_NAME}
-	    openblas m)
+	    openblas)
 	target_include_directories(${BLAS_TARGET_NAME}
 	    PUBLIC
 	    ${CMAKE_CURRENT_SOURCE_DIR}/header)
@@ -265,9 +269,11 @@ elseif(USE_OPENMP)
   #PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}"
   #     CXX_STANDARD 14
   #      CXX_STANDARD_REQUIRED ON)
-    target_link_libraries(${OPENMP_TARGET_NAME}
+  if(NOT MSVC)  
+  target_link_libraries(${OPENMP_TARGET_NAME}
 	m)
-    target_include_directories(${OPENMP_TARGET_NAME}
+  endif(NOT MSVC)
+  target_include_directories(${OPENMP_TARGET_NAME}
 	PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/header)
 else()

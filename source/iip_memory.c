@@ -22,12 +22,10 @@ void init() {
   }
 
   memory_pool[0] = (void*)malloc(MEM_PAGE_BASIC_SIZE);
-  // memory_log[0] = (USED_MEM*)malloc(sizeof(USED_MEM) * (MEM_PAGE_BASIC_SIZE /
-  // LOG_ALLOC_UNIT));
-  // memset(memory_log[0], 0, sizeof(USED_MEM) * (MEM_PAGE_BASIC_SIZE /
-  // LOG_ALLOC_UNIT));
-  memory_log[0] = (USED_MEM*)malloc(sizeof(USED_MEM) * MAX_MEM_PAGE);
-  memset(memory_log[0], 0, sizeof(USED_MEM) * MAX_MEM_PAGE);
+   memory_log[0] = (USED_MEM*)malloc(sizeof(USED_MEM) * (MEM_PAGE_BASIC_SIZE /
+   LOG_ALLOC_UNIT));
+   memset(memory_log[0], 0, sizeof(USED_MEM) * (MEM_PAGE_BASIC_SIZE /
+   LOG_ALLOC_UNIT));
   pool_cnt = 1;
 }
 
@@ -82,12 +80,10 @@ void* iip_malloc(unsigned long int size) {
       page_size *= 2;
     }
     memory_pool[pool_cnt] = (void*)malloc(page_size);
-    // memory_log[pool_cnt] = (USED_MEM*)malloc(sizeof(USED_MEM) * (page_size /
-    // LOG_ALLOC_UNIT));
-    // memset(memory_log[pool_cnt], 0, sizeof(USED_MEM) * (page_size /
-    // LOG_ALLOC_UNIT));
-    memory_log[pool_cnt] = (USED_MEM*)malloc(sizeof(USED_MEM) * MAX_MEM_PAGE);
-    memset(memory_log[pool_cnt], 0, sizeof(USED_MEM) * MAX_MEM_PAGE);
+     memory_log[pool_cnt] = (USED_MEM*)malloc(sizeof(USED_MEM) * (page_size /
+     LOG_ALLOC_UNIT));
+     memset(memory_log[pool_cnt], 0, sizeof(USED_MEM) * (page_size /
+     LOG_ALLOC_UNIT));
     pool_cnt++;
   } while (page_alloc_isable(pool_cnt - 1, size) == -1);
 
