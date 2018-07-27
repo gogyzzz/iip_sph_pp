@@ -28,8 +28,8 @@ option(USE_OPENMP  "Using OpenMP"    ON)
 #set(MAIN_SRC test/test_aABpbC.c)
 #set(MAIN_SRC test/test_broad.c)
 #set(MAIN_SRC test/test_dim.c)
-#set(MAIN_SRC test/test_permute.c)
-set(MAIN_SRC test/test_bin.c)
+set(MAIN_SRC test/test_permute.c)
+#set(MAIN_SRC test/test_bin.c)
 #set(MAIN_SRC test/test_invelem.c)
 #set(MAIN_SRC test/test_invers.c)
 #set(MAIN_SRC test/test_row_col.c)
@@ -210,6 +210,7 @@ if(USE_OPEN OR USE_MKL )
     message(STATUS "CMAKE_C_FLAGS : " ${CMAKE_C_FLAGS})	
     message(STATUS "CMAKE_EXE_LINKER_FLAGS : " ${CMAKE_EXE_LINKER_FLAGS})
 
+    string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
 	add_executable(${BLAS_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
     set_target_properties(${BLAS_TARGET_NAME}
 	PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}"
@@ -250,18 +251,20 @@ if(USE_OPEN OR USE_MKL )
     endif()
 elseif(USE_OPENMP)
     set(OPENMP_TARGET_NAME "${PROJECT_NAME}_openmp")
-    list(APPEND CMAKE_C_FLAGS )
+    #    list(APPEND CMAKE_C_FLAGS )
 
     #This Line Causes Error, ';' no such file or directory
     #		list(APPEND CMAKE_EXE_LINKER_FLAGS ${OpenMP_EXE_LINKER_FLAGS})
     
     add_definitions(-DUSE_OMP=1)
+    string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
+    string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
 	add_executable(${OPENMP_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})	
 
-    set_target_properties(${OPENMP_TARGET_NAME}
-	PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}"
-        CXX_STANDARD 14
-        CXX_STANDARD_REQUIRED ON)
+  #  set_target_properties(${OPENMP_TARGET_NAME}
+  #PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}"
+  #     CXX_STANDARD 14
+  #      CXX_STANDARD_REQUIRED ON)
     target_link_libraries(${OPENMP_TARGET_NAME}
 	m)
     target_include_directories(${OPENMP_TARGET_NAME}

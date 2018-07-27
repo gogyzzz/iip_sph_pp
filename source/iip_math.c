@@ -67,7 +67,6 @@ void pow_mat_inc(UINT size, DTYPE* X, DTYPE n, ITER incx) {
 #elif NTYPE == 1
     X[i] = pow(X[i], n);
 #endif
-#endif
   }
 }
 void pow_cmat(CMAT* mat, DTYPE n) {
@@ -601,24 +600,24 @@ DTYPE amax_mat(MAT* mat, DIM* dim) {
   ITER i;
   UINT max_idx = 0;
 #if NTYPE == 0
-  DTYPE max = absf(mat->data[0]);
+  DTYPE max = fabsf(mat->data[0]);
 #if DEBUG
   printf("%s\n", __func__);
 #endif
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (absf(mat->data[i]) > max) {
-      max = absf(mat->data[i]);
+    if (fabsf(mat->data[i]) > max) {
+      max = fabsf(mat->data[i]);
       max_idx = i;
     }
   }
 #elif NTYPE == 1
-  DTYPE max = abs(mat->data[0]);
+  DTYPE max = fabs(mat->data[0]);
 #if DEBUG
   printf("%s\n", __func__);
 #endif
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (abs(mat->data[i]) > max) {
-      max = abs(mat->data[i]);
+    if (fabs(mat->data[i]) > max) {
+      max = fabs(mat->data[i]);
       max_idx = i;
     }
   }
@@ -639,15 +638,15 @@ DTYPE amax_cmat(CMAT* mat, DIM* dim) {
 #if NTYPE == 0
   max = cabsf(CXF(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (absf(mat->data[i]) > max) {
+    if (cabsf(mat->data[i]) > max) {
         max = cabsf(CXF(mat->data[i]));
         max_idx = i;
       }
   }
 #elif NTYPE == 1
-  CXD(max) = cabs(CXD(mat->data[0]));
+  max = cabs(CXD(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (abs(mat->data[i]) >= max) {
+    if (cabs(mat->data[i]) > max) {
           max = cabs(CXD(mat->data[i]));
           max_idx = i;
     }
@@ -746,18 +745,18 @@ DTYPE amin_cmat(CMAT* mat, DIM* dim) {
   printf("%s\n", __func__);
 #endif
 #if NTYPE == 0
-  CXF(min) = cabsf(CXF(mat->data[0]));
+  min = cabsf(CXF(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (absf(mat->data[i]) <= min) {
+    if (fabsf(mat->data[i]) < min) {
          min = cabsf(CXF(mat->data[i]));
           min_idx = i;
     }
   }
 #elif NTYPE == 1
-  CXD(min) = cabs(CXD(mat->data[0]));
+  min = cabs(CXD(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (abs(mat->data[i]) < min.re) {
-          CXD(min) = cabs(CXD(mat->data[i]));
+    if (fabs(mat->data[i]) < min) {
+          min = cabs(CXD(mat->data[i]));
           min_idx = i;
     }
   }

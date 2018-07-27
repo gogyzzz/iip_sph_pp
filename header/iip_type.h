@@ -204,8 +204,6 @@ extern UINT max_block;
   {                     \
     Y.re = A.re + B.re; \
     Y.im = A.im + B.im; \
-    \	
-                 \
   }
 
 #define SWAP(x, y, t) \
