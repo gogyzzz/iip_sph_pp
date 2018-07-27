@@ -25,7 +25,7 @@ typedef struct WAV {
   short bit_per_sample;  // bits per sample, 8 - 8bits, 16-16bits etc
   char data_id[4];       // DATA string or FLLR string
   uint32_t data_size;    // NumSamples * NumChannels * BitsPerSample/8 - size of
-                       // the nex chunk that will be read
+                         // the nex chunk that will be read
 
   WAV_BUF buffer;
 

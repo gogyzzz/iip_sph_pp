@@ -118,14 +118,12 @@ void stopwatch(int flag) {
 }
 #endif
 
-long long get_micro_sec()
-{
-	struct timeval utime;
+long long get_micro_sec() {
+  struct timeval utime;
 #if OS_UNIX
-    clock_gettime(CLOCK_MONOTONIC, &utime);
+  clock_gettime(CLOCK_MONOTONIC, &utime);
 #elif OS_WIN
-	clock_gettime(&utime);
+  clock_gettime(&utime);
 #endif
-	return utime.tv_usec;
+  return utime.tv_usec;
 }
-

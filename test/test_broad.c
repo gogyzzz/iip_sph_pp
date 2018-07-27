@@ -84,9 +84,9 @@ int main() {
   free_MAT(B), free_MAT(C);
 
   printf("==== %d =====\n", cnt++);
-  A = zeros(3, 1,3);
+  A = zeros(3, 1, 3);
   B = zeros(3, 3);
-  C = zeros(3, 3,3);
+  C = zeros(3, 3, 3);
   for (i = 0; i < 9; i++) B->data[i] = i + 1;
   for (i = 0; i < 9; i++) A->data[i] = i + 1;
   mul_elements(A, B, C);
@@ -95,7 +95,6 @@ int main() {
   print_MAT(C);
   free_MAT(A);
   free_MAT(B), free_MAT(C);
-
 
   /**** COMPLEX ****/
 
@@ -137,10 +136,10 @@ int main() {
   free_CMAT(CA);
   free_CMAT(CB), free_CMAT(CC);
 
-   printf("==== %d =====\n", cnt++);
-  CA = czeros(4, 1,2);
+  printf("==== %d =====\n", cnt++);
+  CA = czeros(4, 1, 2);
   CB = czeros(4, 4);
-  CC = czeros(4, 4,2);
+  CC = czeros(4, 4, 2);
   for (i = 0; i < 16; i++) {
     CB->data[i].re = i + 1;
     CB->data[i].im = i + 3;
@@ -155,7 +154,6 @@ int main() {
   print_CMAT(CC);
   free_CMAT(CA);
   free_CMAT(CB), free_CMAT(CC);
-
 
   return 0;
 }

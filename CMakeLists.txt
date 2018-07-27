@@ -27,7 +27,9 @@ option(USE_OPENMP  "Using OpenMP"    ON)
 #set(MAIN_SRC test/test_memory.c)
 #set(MAIN_SRC test/test_aABpbC.c)
 #set(MAIN_SRC test/test_broad.c)
-set(MAIN_SRC test/test_dim.c)
+#set(MAIN_SRC test/test_dim.c)
+#set(MAIN_SRC test/test_permute.c)
+set(MAIN_SRC test/test_bin.c)
 #set(MAIN_SRC test/test_invelem.c)
 #set(MAIN_SRC test/test_invers.c)
 #set(MAIN_SRC test/test_row_col.c)
@@ -197,7 +199,9 @@ set(C_SOURCE
     source/iip_math.c
     source/iip_memory.c
     source/iip_time.c
-	)
+    source/iip_io.c
+
+    )
 display_elements("Source files for C build" "${C_SOURCE}")
 
 if(USE_OPEN OR USE_MKL )
