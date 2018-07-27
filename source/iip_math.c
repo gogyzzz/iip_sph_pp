@@ -62,17 +62,10 @@ void pow_mat_inc(UINT size, DTYPE* X, DTYPE n, ITER incx) {
 
 #pragma omp parallel for shared(X) private(i)
   for (i = 0; i < size; i += incx) {
-#if OS_WIN
 #if NTYPE == 0
-    *(_Fcomplex*)(&X[i]) = powf(*(_Fcomplex*)(&X[i]), n);
+    X[i] = powf(X[i], n);
 #elif NTYPE == 1
-    *(_Dcomplex*)(&X[i]) = pow(*(_Dcomplex*)(&X[i]), n);
-#endif
-#elif OS_UNIX
-#if NTYPE == 0
-    *(complex float*)(&X[i]) = powf(*(complex float*)(&X[i]), n);
-#elif NTYPE == 1
-    *(complex double*)(&X[i]) = pow(*(complex double*)(&X[i]), n);
+    X[i] = pow(X[i], n);
 #endif
 #endif
   }
@@ -134,7 +127,7 @@ void cpow_cmat_inc(UINT size, CTYPE* X, CTYPE n, ITER incx) {
         cpowf(*(complex float*)(&X[i]), *(complex float*)(&n));
 #elif NTYPE == 1
     *(complex double*)(&X[i]) =
-        pow(*(complex double*)(&X[i]), *(complex double*)(&n));
+        cpow(*(complex double*)(&X[i]), *(complex double*)(&n));
 
 #endif
 #endif
@@ -400,7 +393,7 @@ void log_cmat_inc(UINT size, CTYPE* X, ITER incx) {
 #if NTYPE == 0
     CXF(X[i]) = clogf(CXF(X[i]));
 #elif NTYPE == 1
-    CXD(X[i]) = clogf(CXD(X[i]));
+    CXD(X[i]) = clog(CXD(X[i]));
 #endif
   }
 }
@@ -636,41 +629,27 @@ DTYPE amax_mat(MAT* mat, DIM* dim) {
   return max;
 }
 
-CTYPE amax_cmat(CMAT* mat, DIM* dim) {
+DTYPE amax_cmat(CMAT* mat, DIM* dim) {
   ITER i;
   UINT max_idx = 0;
-  CTYPE max;
+  DTYPE max;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
 #if NTYPE == 0
-  CXF(max) = cabsf(CXF(mat->data[0]));
+  max = cabsf(CXF(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (absf(mat->data[i].re) >= max.re) {
-      if (absf(mat->data[i].re == max.re)) {
-        if (absf(mat->data[i].im > max.im)) {
-          CXF(max) = cabsf(CXF(mat->data[i]));
-          max_idx = i;
-        }
-      } else {
-        CXF(max) = cabsf(CXF(mat->data[i]));
+    if (absf(mat->data[i]) > max) {
+        max = cabsf(CXF(mat->data[i]));
         max_idx = i;
       }
-    }
   }
 #elif NTYPE == 1
   CXD(max) = cabs(CXD(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (abs(mat->data[i].re) >= max.re) {
-      if (abs(mat->data[i].re == max.re)) {
-        if (abs(mat->data[i].im > max.im)) {
-          CXD(max) = cabs(CXD(mat->data[i]));
+    if (abs(mat->data[i]) >= max) {
+          max = cabs(CXD(mat->data[i]));
           max_idx = i;
-        }
-      } else {
-        CXD(max) = cabs(CXD(mat->data[i]));
-        max_idx = i;
-      }
     }
   }
 #endif
@@ -759,41 +738,27 @@ DTYPE amin_mat(MAT* mat, DIM* dim) {
   return min;
 }
 
-CTYPE amin_cmat(CMAT* mat, DIM* dim) {
+DTYPE amin_cmat(CMAT* mat, DIM* dim) {
   ITER i;
   UINT min_idx = 0;
-  CTYPE min;
+  DTYPE min;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
 #if NTYPE == 0
   CXF(min) = cabsf(CXF(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (absf(mat->data[i].re) <= min.re) {
-      if (absf(mat->data[i].re == min.re)) {
-        if (absf(mat->data[i].im < min.im)) {
-          CXF(min) = cabsf(CXF(mat->data[i]));
+    if (absf(mat->data[i]) <= min) {
+         min = cabsf(CXF(mat->data[i]));
           min_idx = i;
-        }
-      } else {
-        CXF(min) = cabsf(CXF(mat->data[i]));
-        min_idx = i;
-      }
     }
   }
 #elif NTYPE == 1
   CXD(min) = cabs(CXD(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (abs(mat->data[i].re) <= min.re) {
-      if (abs(mat->data[i].re == min.re)) {
-        if (abs(mat->data[i].im < min.im)) {
+    if (abs(mat->data[i]) < min.re) {
           CXD(min) = cabs(CXD(mat->data[i]));
           min_idx = i;
-        }
-      } else {
-        CXD(min) = cabs(CXD(mat->data[i]));
-        min_idx = i;
-      }
     }
   }
 #endif
