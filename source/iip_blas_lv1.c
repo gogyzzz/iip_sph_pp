@@ -21,10 +21,22 @@
  * */
 
 void axpy(DTYPE alpha, MAT *x, MAT *y) {
-  UINT size = x->d0 * x->d1 * x->d2;
+  UINT size;
+  ITER i;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
+  if(y->d2 == x-> d2)
+  {
+    size = x->d0 * x->d1 * x->d2;
+    axpy_inc(size,alpha,x->data,1,y->data,1);
+  }
+  else if(y->d2 != 1 && x->d2 == 1)
+  {
+    for(i=0;i<y->d2;i++)
+      axpy_inc(x->d0*x->d1,alpha,x->data,1,&(y->data[i*y->d0*y->d1]),1);
+  }
+  else ASSERT(DIM_INVAL)
 }
 void axpy_inc(UINT size, DTYPE alpha, DTYPE *X, ITER incx, DTYPE *Y,
               ITER incy) {
@@ -58,7 +70,26 @@ void mp_axpy(UINT N, DTYPE alpha, DTYPE *X, UINT INCX, DTYPE *Y, UINT INCY) {
     Y[i * INCY] = X[i * INCX] * alpha + Y[i * INCY];
   }
 }
-void caxpy(CTYPE alpha, CMAT *x, CMAT *y) {}
+void caxpy(CTYPE alpha, CMAT *x, CMAT *y){
+  UINT size;
+  ITER i;
+#if DEBUG
+  printf("%s\n", __func__);
+#endif
+  if(y->d2 == x-> d2)
+  {
+    size = x->d0 * x->d1 * x->d2;
+    caxpy_inc(size,alpha,x->data,1,y->data,1);
+  }
+  else if(y->d2 != 1 && x->d2 == 1)
+  {
+    for(i=0;i<y->d2;i++)
+      caxpy_inc(x->d0*x->d1,alpha,x->data,1,&(y->data[i*y->d0*y->d1]),1);
+  }
+  else ASSERT(DIM_INVAL)
+
+
+}
 
 void caxpy_inc(UINT size, CTYPE alpha, CTYPE *X, ITER incx, CTYPE *Y,
                ITER incy) {
@@ -128,36 +159,35 @@ void copy(MAT *src, MAT *des) {
 }
 
 void mp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
-
-ITER i;
-#pragma omp parallel for shared(des,src) private(i)
-for(i=0;i<N;i++){
-des[i*des_inc]=src[i*src_inc];
-}
-/*		
-  ITER iteration = 8;
-  UINT repeat = N >> 3;
-  UINT left = N & (UINT)(iteration - 1);
-  UINT i = 0;
-  UINT j = 0;
-
-#pragma omp parallel for shared(des, src) private(j, i)
-  for (j = 0; j < repeat; j++) {
-    i = j * iteration;
-    des[(i)*des_inc] = src[(i)*src_inc];
-    des[(i + 1) * des_inc] = src[(i + 1) * src_inc];
-    des[(i + 2) * des_inc] = src[(i + 2) * src_inc];
-    des[(i + 3) * des_inc] = src[(i + 3) * src_inc];
-    des[(i + 4) * des_inc] = src[(i + 4) * src_inc];
-    des[(i + 5) * des_inc] = src[(i + 5) * src_inc];
-    des[(i + 6) * des_inc] = src[(i + 6) * src_inc];
-    des[(i + 7) * des_inc] = src[(i + 7) * src_inc];
+  ITER i;
+#pragma omp parallel for shared(des, src) private(i)
+  for (i = 0; i < N; i++) {
+    des[i * des_inc] = src[i * src_inc];
   }
+  /*
+    ITER iteration = 8;
+    UINT repeat = N >> 3;
+    UINT left = N & (UINT)(iteration - 1);
+    UINT i = 0;
+    UINT j = 0;
 
-  for (j = 0; j < left; j++) {
-    des[(i + j) * des_inc] = src[(i + j) * src_inc];
-  }
-*/
+  #pragma omp parallel for shared(des, src) private(j, i)
+    for (j = 0; j < repeat; j++) {
+      i = j * iteration;
+      des[(i)*des_inc] = src[(i)*src_inc];
+      des[(i + 1) * des_inc] = src[(i + 1) * src_inc];
+      des[(i + 2) * des_inc] = src[(i + 2) * src_inc];
+      des[(i + 3) * des_inc] = src[(i + 3) * src_inc];
+      des[(i + 4) * des_inc] = src[(i + 4) * src_inc];
+      des[(i + 5) * des_inc] = src[(i + 5) * src_inc];
+      des[(i + 6) * des_inc] = src[(i + 6) * src_inc];
+      des[(i + 7) * des_inc] = src[(i + 7) * src_inc];
+    }
+
+    for (j = 0; j < left; j++) {
+      des[(i + j) * des_inc] = src[(i + j) * src_inc];
+    }
+  */
 }
 
 void ccopy(CMAT *src, CMAT *des) {
@@ -169,8 +199,7 @@ void ccopy(CMAT *src, CMAT *des) {
   if (mat_size == 0) {
     printf("Wrong MAT size!\n");
     return;
- 
-}
+  }
 
 #if USE_CBLAS
 // DTYPE = float
@@ -189,44 +218,44 @@ void ccopy(CMAT *src, CMAT *des) {
 }
 
 void mp_ccopy(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc) {
-ITER i;
-#pragma omp parallel for shared(des,src) private(i)
-for(i=0;i<N;i++){
-des[i*des_inc].re=src[i*src_inc].re;
-des[i*des_inc].im=src[i*src_inc].im;
-}
-/*
-ITER iteration = 8;
-  UINT repeat = N >> 3;
-  UINT left = N & (UINT)(iteration - 1);
-  UINT i = 0, j = 0;
-
-#pragma omp parallel for shared(des, src) private(j, i)
-  for (j = 0; j < repeat; j++) {
-    i = j * iteration;
-    des[(i)*des_inc].re = src[(i)*src_inc].re;
-    des[(i)*des_inc].im = src[(i)*src_inc].im;
-    des[(i + 1) * des_inc].re = src[(i + 1) * src_inc].re;
-    des[(i + 1) * des_inc].im = src[(i + 1) * src_inc].im;
-    des[(i + 2) * des_inc].re = src[(i + 2) * src_inc].re;
-    des[(i + 2) * des_inc].im = src[(i + 2) * src_inc].im;
-    des[(i + 3) * des_inc].re = src[(i + 3) * src_inc].re;
-    des[(i + 3) * des_inc].im = src[(i + 3) * src_inc].im;
-    des[(i + 4) * des_inc].re = src[(i + 4) * src_inc].re;
-    des[(i + 4) * des_inc].im = src[(i + 4) * src_inc].im;
-    des[(i + 5) * des_inc].re = src[(i + 5) * src_inc].re;
-    des[(i + 5) * des_inc].im = src[(i + 5) * src_inc].im;
-    des[(i + 6) * des_inc].re = src[(i + 6) * src_inc].re;
-    des[(i + 6) * des_inc].im = src[(i + 6) * src_inc].im;
-    des[(i + 7) * des_inc].re = src[(i + 7) * src_inc].re;
-    des[(i + 7) * des_inc].im = src[(i + 7) * src_inc].im;
+  ITER i;
+#pragma omp parallel for shared(des, src) private(i)
+  for (i = 0; i < N; i++) {
+    des[i * des_inc].re = src[i * src_inc].re;
+    des[i * des_inc].im = src[i * src_inc].im;
   }
+  /*
+  ITER iteration = 8;
+    UINT repeat = N >> 3;
+    UINT left = N & (UINT)(iteration - 1);
+    UINT i = 0, j = 0;
 
-  for (j = 0; j < left; j++) {
-    des[(i + j) * des_inc].re = src[(i + j) * src_inc].re;
-    des[(i + j) * des_inc].im = src[(i + j) * src_inc].im;
-  }
-*/
+  #pragma omp parallel for shared(des, src) private(j, i)
+    for (j = 0; j < repeat; j++) {
+      i = j * iteration;
+      des[(i)*des_inc].re = src[(i)*src_inc].re;
+      des[(i)*des_inc].im = src[(i)*src_inc].im;
+      des[(i + 1) * des_inc].re = src[(i + 1) * src_inc].re;
+      des[(i + 1) * des_inc].im = src[(i + 1) * src_inc].im;
+      des[(i + 2) * des_inc].re = src[(i + 2) * src_inc].re;
+      des[(i + 2) * des_inc].im = src[(i + 2) * src_inc].im;
+      des[(i + 3) * des_inc].re = src[(i + 3) * src_inc].re;
+      des[(i + 3) * des_inc].im = src[(i + 3) * src_inc].im;
+      des[(i + 4) * des_inc].re = src[(i + 4) * src_inc].re;
+      des[(i + 4) * des_inc].im = src[(i + 4) * src_inc].im;
+      des[(i + 5) * des_inc].re = src[(i + 5) * src_inc].re;
+      des[(i + 5) * des_inc].im = src[(i + 5) * src_inc].im;
+      des[(i + 6) * des_inc].re = src[(i + 6) * src_inc].re;
+      des[(i + 6) * des_inc].im = src[(i + 6) * src_inc].im;
+      des[(i + 7) * des_inc].re = src[(i + 7) * src_inc].re;
+      des[(i + 7) * des_inc].im = src[(i + 7) * src_inc].im;
+    }
+
+    for (j = 0; j < left; j++) {
+      des[(i + j) * des_inc].re = src[(i + j) * src_inc].re;
+      des[(i + j) * des_inc].im = src[(i + j) * src_inc].im;
+    }
+  */
 }
 
 /*** Get sum of the magnitudes of elements of a vector ***/

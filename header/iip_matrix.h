@@ -158,9 +158,19 @@ CMAT* mem_csubmat_2d(CMAT* src, ITER s0, ITER e0, ITER s1, ITER e1);
 CMAT* mem_csubmat_3d(CMAT* src, ITER s0, ITER e0, ITER s1, ITER e1, ITER s2,
                      ITER e2);
 
+/**** DIM allocator ***/
+DIM* new_dim();
+
+/**** element operation by DIM ***/
+DTYPE getbydim(MAT* mat, DIM* dim);
+CTYPE cgetbydim(CMAT* mat, DIM* dim);
+
+void setbydim(MAT* mat, DIM* dim, DTYPE val);
+void csetbydim(CMAT* mat, DIM* dim, CTYPE val);
+
 /**** add elements - broadcasting operation ****/
-void add_elements(MAT*A, MAT*B,MAT*C);
-void cadd_elements(CMAT*A, CMAT*B,CMAT*C);
+void add_elements(MAT* A, MAT* B, MAT* C);
+void cadd_elements(CMAT* A, CMAT* B, CMAT* C);
 
 /**** multiply elements - broadcasting operation ****/
 void mul_elements(MAT* A, MAT* B, MAT* C);
@@ -178,27 +188,26 @@ void cinv_elelments(CMAT* mat);
 void cinv_elelments_inc(UINT size, CTYPE* X, ITER incx);
 
 /**** repeat matrix****/
-void repmat(MAT*mat, DIM*dim);
-void crepmat(CMAT*mat, DIM*dim);
+void repmat(MAT* mat, DIM* dim);
+void crepmat(CMAT* mat, DIM* dim);
 
 /**** reshape matrix ****/
-void reshape(MAT*mat, DIM*dim);
-void creshape(CMAT*mat, DIM*dim);
+void reshape(MAT* mat, DIM* dim);
+void creshape(CMAT* mat, DIM* dim);
 
 /**** shift dimension ****/
-void shiftdim(MAT*mat, SINT n);
-void shiftdim_p1(MAT*mat);
+void shiftdim(MAT* mat, SINT n);
+void cshiftdim(CMAT* mat, SINT n);
 
-void cshiftdim(CMAT*mat, SINT n);
-void cshiftdim_p1(CMAT*mat);
 /**** permute matrix ****/
-
+void permute(MAT* mat, UINT seq);
+void cpermute(CMAT* mat, UINT seq);
 
 /**** transpose  ****/
 MAT* create_trans(MAT* mat);
 CMAT* create_ctrans(CMAT* mat);
 
-void trans(MAT* mat);//with memory pool
+void trans(MAT* mat);  // with memory pool
 void ctrans(CMAT* mat);
 /**** hermitian ****/
 CMAT* create_hermit(CMAT* mat);
@@ -210,14 +219,15 @@ void id_MAT(MAT* mat);
 /**** Inverse Matrix WIP ****/
 void invers(MAT* mat);
 
-/****  miscellaneous ****/
+/****  free memory of MAT ****/
 void free_MAT(MAT*);
 void free_CMAT(CMAT*);
 
+/****  print MAT ****/
 void print_MAT(MAT*);
 void print_CMAT(CMAT*);
 
-/**** free_mem_MAT****/
+/**** free_MAT in memory pool****/
 void free_mem_MAT(MAT* mat_in_memory_pool);
 void free_mem_CMAT(CMAT* mat_in_memory_pool);
 

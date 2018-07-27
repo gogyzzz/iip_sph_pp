@@ -200,10 +200,13 @@ extern UINT max_block;
            (((B.re) * (B.re)) + ((B.im) * (B.im))); \
   }
 
-#define cxeadd(Y, A, B) {\
- Y.re = A.re + B.re;     \
- Y.im = A.im + B.im;      \	
- }
+#define cxeadd(Y, A, B) \
+  {                     \
+    Y.re = A.re + B.re; \
+    Y.im = A.im + B.im; \
+    \	
+                 \
+  }
 
 #define SWAP(x, y, t) \
   {                   \
@@ -215,14 +218,20 @@ extern UINT max_block;
 /**** ASSERT MACRO ****/
 #define DIM_INVAL 1
 #define ARG_INVAL 2
+#define NO_FILE 3
 /**** ASSERT FUNCTION ****/
-#define ASSERT(x) {                                          \
-    if (x == 1) {                                            \
-      printf("WARNING(%s) : invalid dimension\n", __func__); \
-      return;      	                                         \
-    }else if(x == 2){	                                     \
-      printf("WARNING(%s) : invalid argument\n"__func__);    \
-      return;}                                               \
+#define ASSERT(x)                                              \
+  {                                                            \
+    if (x == 1) {                                              \
+      printf("WARNING(%s) : invalid dimension\n", __func__);   \
+      return;                                                  \
+    } else if (x == 2) {                                       \
+      printf("WARNING(%s) : invalid argument\n", __func__);    \
+      return;                                                  \
+    } else if (x == 3) {                                       \
+      printf("ERROR(%s)   : no such file exits \n", __func__); \
+      exit(-1);                                                \
+    }                                                          \
   }
 
 /*****************************

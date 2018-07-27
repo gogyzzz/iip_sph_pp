@@ -37,7 +37,7 @@ void gemm(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
           MAT* C) {
   UINT m, n, k;
   UINT lda, ldb, ldc;
-
+  ITER i;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -71,20 +71,66 @@ void gemm(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
     return;
   }
 
-  if (A->ndim == 1)
-
+  /** BATCH OPERATION **/
+  if (A->d2 == B->d2) {
+    for (i = 0; i < A->d2; i++) {
 #if USE_CBLAS
 #if NTYPE == 0
-    cblas_sgemm(CblasColMajor, transA, transB, m, n, k, alpha, A->data, lda,
-                B->data, ldb, beta, C->data, ldc);
+      cblas_sgemm(CblasColMajor, transA, transB, m, n, k, alpha,
+                  &(A->data[i * (A->d0 * A->d1)]), lda,
+                  &(B->data[i * B->d0 * B->d1]), ldb, beta,
+                  &(C->data[i * C->d0 * C->d1]), ldc);
 #else
-    cblas_dgemm(CblasColMajor, transA, transB, m, n, k, alpha, A->data, lda,
-                B->data, ldb, beta, C->data, ldc);
+      cblas_dgemm(CblasColMajor, transA, transB, m, n, k, alpha,
+                  &(A->data[i * A->d0 * A->d1]), lda,
+                  &(B->data[i * B->d0 * B->d1]), ldb, beta,
+                  &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
 #else
-    mp_gemm(transA, transB, m, n, k, alpha, A->data, lda, B->data, ldb, beta,
-            C->data, ldc);
+      mp_gemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
+              lda, &(B->data[i * B->d0 * B->d1]), ldb, beta,
+              &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
+    }
+  } else if (A->d2 == 1 && B->d2 != 1) {
+    if(C->d2 != B->d2)ASSERT(DIM_INVAL)
+    for (i = 0; i < B->d2; i++) {
+#if USE_CBLAS
+#if NTYPE == 0
+      cblas_sgemm(CblasColMajor, transA, transB, m, n, k, alpha, A->data, lda,
+                  &(B->data[i * B->d0 * B->d1]), ldb, beta,
+                  &(C->data[i * C->d0 * C->d1]), ldc);
+#else
+      cblas_dgemm(CblasColMajor, transA, transB, m, n, k, alpha, A->data, lda,
+                  &(B->data[i * B->d0 * B->d1]), ldb, beta,
+                  &(C->data[i * C->d0 * C->d1]), ldc);
+#endif
+#else
+      mp_gemm(transA, transB, m, n, k, alpha, A->data, lda,
+              &(B->data[i * B->d0 * B->d1]), ldb, beta,
+              &(C->data[i * C->d0 * C->d1]), ldc);
+#endif
+    }
+  } else if (A->d2 != 1 && B->d2 == 1) {
+    if(C->d2 != A->d2)ASSERT(DIM_INVAL)
+    for (i = 0; i < A->d2; i++) {
+#if USE_CBLAS
+#if NTYPE == 0
+      cblas_sgemm(CblasColMajor, transA, transB, m, n, k, alpha,
+                  &(A->data[i * A->d0 * A->d1]), lda, B->data, ldb, beta,
+                  &(C->data[i * C->d0 * C->d1]), ldc);
+#else
+      cblas_dgemm(CblasColMajor, transA, transB, m, n, k, alpha,
+                  &(A->data[i * A->d0 * A->d1]), lda, B->data, ldb, beta,
+                  &(C->data[i * C->d0 * C->d1]), ldc);
+#endif
+#else
+      mp_gemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
+              lda, B->data, ldb, beta, &(C->data[i * C->d0 * C->d1]), ldc);
+#endif
+    }
+  } else
+    ASSERT(DIM_INVAL)
 }
 
 void mp_gemm(char transA, char transB, UINT m, UINT n, UINT k, DTYPE alpha,
@@ -163,7 +209,7 @@ void cgemm(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
            CMAT* C) {
   UINT m, n, k;
   UINT lda, ldb, ldc;
-
+  ITER i;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -192,19 +238,65 @@ void cgemm(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
     ldb = B->d0;
   }
 
+  if (A->d2 == B->d2) {
+    for (i = 0; i < A->d2; i++) {
 #if USE_CBLAS
-
 #if NTYPE == 0
-  cblas_cgemm(CblasColMajor, transA, transB, m, n, k, &alpha, A->data, lda,
-              B->data, ldb, &beta, C->data, ldc);
+      cblas_cgemm(CblasColMajor, transA, transB, m, n, k, &alpha,
+                  &(A->data[i * (A->d0 * A->d1)]), lda,
+                  &(B->data[i * B->d0 * B->d1]), ldb, &beta,
+                  &(C->data[i * C->d0 * C->d1]), ldc);
 #else
-  cblas_zgemm(CblasColMajor, transA, transB, m, n, k, &alpha, A->data, lda,
-              B->data, ldb, &beta, C->data, ldc);
+      cblas_zgemm(CblasColMajor, transA, transB, m, n, k, &alpha,
+                  &(A->data[i * A->d0 * A->d1]), lda,
+                  &(B->data[i * B->d0 * B->d1]), ldb, &beta,
+                  &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
 #else
-  mp_cgemm(transA, transB, m, n, k, alpha, A->data, lda, B->data, ldb, beta,
-           C->data, ldc);
+      mp_cgemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
+               lda, &(B->data[i * B->d0 * B->d1]), ldb, beta,
+               &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
+    }
+  } else if (A->d2 == 1 && B->d2 != 1) {
+    for (i = 0; i < B->d2; i++) {
+    if(C->d2 != B->d2)ASSERT(DIM_INVAL)
+#if USE_CBLAS
+#if NTYPE == 0
+      cblas_cgemm(CblasColMajor, transA, transB, m, n, k, &alpha, A->data, lda,
+                  &(B->data[i * B->d0 * B->d1]), ldb, &beta,
+                  &(C->data[i * C->d0 * C->d1]), ldc);
+#else
+      cblas_zgemm(CblasColMajor, transA, transB, m, n, k, &alpha, A->data, lda,
+                  &(B->data[i * B->d0 * B->d1]), ldb, &beta,
+                  &(C->data[i * C->d0 * C->d1]), ldc);
+#endif
+#else
+      mp_cgemm(transA, transB, m, n, k, alpha, A->data, lda,
+               &(B->data[i * B->d0 * B->d1]), ldb, beta,
+               &(C->data[i * C->d0 * C->d1]), ldc);
+#endif
+    }
+  } else if (A->d2 != 1 && B->d2 == 1) {
+    for (i = 0; i < A->d2; i++) {
+    if(C->d2 != A->d2)ASSERT(DIM_INVAL)
+#if USE_CBLAS
+#if NTYPE == 0
+      cblas_cgemm(CblasColMajor, transA, transB, m, n, k, &alpha,
+                  &(A->data[i * A->d0 * A->d1]), lda, B->data, ldb, &beta,
+                  &(C->data[i * C->d0 * C->d1]), ldc);
+#else
+      cblas_zgemm(CblasColMajor, transA, transB, m, n, k, &alpha,
+                  &(A->data[i * A->d0 * A->d1]), lda, B->data, ldb, &beta,
+                  &(C->data[i * C->d0 * C->d1]), ldc);
+#endif
+#else
+      mp_cgemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
+               lda, B->data, ldb, beta, &(C->data[i * C->d0 * C->d1]), ldc);
+#endif
+    }
+  } else
+    ASSERT(DIM_INVAL)
 }
 
 void mp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,

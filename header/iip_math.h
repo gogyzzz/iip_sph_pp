@@ -1,8 +1,8 @@
 #ifndef IIP_MATH_H
 #define IIP_MATH_H
 
-#include "iip_type.h"
 #include "iip_time.h"
+#include "iip_type.h"
 
 /**** SQUARE ROOT ****/
 void sqrt_mat(MAT* mat);
@@ -84,10 +84,23 @@ void exp_cmat(CMAT* mat);
 void exp_cmat_inc(UINT size, CTYPE* X, ITER incx);
 
 /**** abs ****/
-void abs_mat(MAT*mat);
-void abs_mat_inc(UINT size,DTYPE*X,ITER incx);
+void abs_mat(MAT* mat);
+void abs_mat_inc(UINT size, DTYPE* X, ITER incx);
 
-void abs_cmat(CMAT*mat);
-void abs_cmat_inc(UINT size,CTYPE*X,ITER incx);
+void abs_cmat(CMAT* mat);
+void abs_cmat_inc(UINT size, CTYPE* X, ITER incx);
+
+/**** max ****/
+DTYPE max_mat(MAT* mat, DIM* dim);
+CTYPE max_cmat(CMAT* mat, DIM* dim);
+
+DTYPE amax_mat(MAT* mat, DIM* dim);
+CTYPE amax_cmat(CMAT* mat, DIM* dim);
+/**** min ****/
+DTYPE min_mat(MAT* mat, DIM* dim);
+CTYPE min_cmat(CMAT* mat, DIM* dim);
+
+DTYPE amin_mat(MAT* mat, DIM* dim);
+CTYPE amin_cmat(CMAT* mat, DIM* dim);
 
 #endif
