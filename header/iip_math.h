@@ -95,12 +95,12 @@ DTYPE max_mat(MAT* mat, DIM* dim);
 CTYPE max_cmat(CMAT* mat, DIM* dim);
 
 DTYPE amax_mat(MAT* mat, DIM* dim);
-CTYPE amax_cmat(CMAT* mat, DIM* dim);
+DTYPE amax_cmat(CMAT* mat, DIM* dim);
 /**** min ****/
 DTYPE min_mat(MAT* mat, DIM* dim);
 CTYPE min_cmat(CMAT* mat, DIM* dim);
 
 DTYPE amin_mat(MAT* mat, DIM* dim);
-CTYPE amin_cmat(CMAT* mat, DIM* dim);
+DTYPE amin_cmat(CMAT* mat, DIM* dim);
 
 #endif

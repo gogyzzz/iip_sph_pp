@@ -286,7 +286,7 @@ DTYPE asum(MAT *mat, UINT inc) {
 #endif
 }
 DTYPE mp_asum(UINT N, DTYPE *data, UINT inc) {
-  UINT i = 0;
+  ITER i = 0;
   DTYPE sum = 0;
 
   for (i = 0; i < N; i++) {
@@ -324,7 +324,7 @@ DTYPE casum(CMAT *mat, UINT inc) {
 }
 
 DTYPE mp_casum(UINT N, CTYPE *data, UINT inc) {
-  UINT i = 0;
+  ITER i = 0;
   DTYPE sum = 0;
 
   for (i = 0; i < N; i++) {
@@ -366,7 +366,7 @@ DTYPE dot(MAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment) {
 }
 
 DTYPE mp_dot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
-  UINT i = 0;
+  ITER i = 0;
   DTYPE dot = 0;
 
 #pragma omp parallel for shared(src_x, src_y) private(i)
@@ -410,7 +410,7 @@ CTYPE cdot(CMAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment) {
 }
 
 CTYPE mp_cdot(UINT N, CTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
-  UINT i = 0;
+  ITER i = 0;
   CTYPE dot;
 
   dot.re = 0;
@@ -458,7 +458,7 @@ CTYPE udot(CMAT *src_x, UINT x_increment, CMAT *src_y, UINT y_increment) {
 }
 
 CTYPE mp_udot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
-  UINT i = 0;
+  ITER i = 0;
   CTYPE dot;
 
   dot.re = 0;
@@ -506,7 +506,7 @@ void swap_inc(MAT *src_x, UINT x_inc, MAT *src_y, UINT y_inc) {
 #endif
 }
 void mp_swap(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
-  UINT i = 0;
+  ITER i = 0;
   DTYPE temp = 0;
 
 #pragma omp parallel for shared(src_x, src_y) private(i)
@@ -547,7 +547,7 @@ void cswap_inc(CMAT *src_x, UINT x_inc, CMAT *src_y, UINT y_inc) {
 #endif
 }
 void mp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
-  UINT i = 0;
+  ITER i = 0;
   CTYPE temp = {0, 0};
 
 #pragma omp parallel for shared(src_x, src_y) private(i, temp)
@@ -592,7 +592,7 @@ UINT amax_inc(MAT *src, UINT inc) {
 #endif
 }
 UINT mp_amax(UINT N, DTYPE *src, UINT inc) {
-  UINT i = 0;
+  ITER i = 0;
   UINT idx = 0;
   DTYPE max = src[0];
 
@@ -636,7 +636,7 @@ UINT camax_inc(CMAT *src, UINT inc) {
 #endif
 }
 UINT mp_camax(UINT N, CTYPE *src, UINT inc) {
-  UINT i = 0;
+  ITER i = 0;
   UINT idx = 0;
   DTYPE max = ABS_CTYPE(src[0]);
 
@@ -684,7 +684,7 @@ UINT amin_inc(MAT *src, UINT inc) {
 #endif
 }
 UINT mp_amin(UINT N, DTYPE *src, UINT inc) {
-  UINT i = 0;
+  ITER i = 0;
   UINT idx = 0;
   DTYPE min = src[0];
 
@@ -731,7 +731,7 @@ UINT camin_inc(CMAT *src, UINT inc) {
 #endif
 }
 UINT mp_camin(UINT N, CTYPE *src, UINT inc) {
-  UINT i = 0;
+  ITER i = 0;
   UINT idx = 0;
   DTYPE min = ABS_CTYPE(src[0]);
 
@@ -779,7 +779,7 @@ DTYPE nrm2_inc(MAT *src, UINT inc) {
 #endif
 }
 DTYPE mp_nrm2(UINT N, DTYPE *data, UINT inc) {
-  UINT i = 0;
+  ITER i = 0;
   DTYPE temp = 0;
 
   for (i = 0; i < N; i++) {
@@ -819,7 +819,7 @@ DTYPE cnrm2_inc(CMAT *src, UINT inc) {
 #endif
 }
 DTYPE mp_cnrm2(UINT N, CTYPE *data, UINT inc) {
-  UINT i = 0;
+  ITER i = 0;
   DTYPE temp = 0;
 
   for (i = 0; i < N; i++) {
@@ -863,7 +863,7 @@ void rot_inc(MAT *src_x, UINT x_inc, MAT *src_y, UINT y_inc, DTYPE c, DTYPE s) {
 }
 void mp_rot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc, DTYPE c,
             DTYPE s) {
-  UINT i = 0;
+  ITER i = 0;
   DTYPE temp_x, temp_y;
 
   for (i = 0; i < N; i++) {
@@ -912,7 +912,7 @@ void crot_inc(CMAT *src_x, UINT x_inc, CMAT *src_y, UINT y_inc, DTYPE c,
 }
 void mp_crot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc,
              DTYPE c, DTYPE s) {
-  UINT i = 0;
+  ITER i = 0;
   CTYPE temp_x, temp_y;
 
   for (i = 0; i < N; i++) {
