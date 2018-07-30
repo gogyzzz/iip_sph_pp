@@ -322,11 +322,11 @@ DTYPE dot(MAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment)
 #if USE_CBLAS
 //DTYPE = float
 #if NTYPE == 0
-	return cblas_sdot(N, src_x->data, x_increment, src_y->data, y_increment);
+	return cblas_sdot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
 
 //DTYPE = double
 #elif NTYPE == 1
-	return cblas_ddot(N, src_x->data, x_increment, src_y->data, y_increment);
+	return cblas_ddot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
 #endif
 
 //USE_BLAS = 0 -> just c implement
@@ -366,12 +366,12 @@ CTYPE cdot(CMAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment)
 #if USE_CBLAS
 //DTYPE = float
 #if NTYPE == 0
-	cblas_cdotc_sub(N, src_x->data, x_increment, src_y->data, y_increment, &result);
+	cblas_cdotc_sub(mat_size, src_x->data, x_increment, src_y->data, y_increment, &result);
 	return result;
 
 //DTYPE = double
 #elif NTYPE == 1
-	cblas_zdotc_sub(N, src_x->data, x_increment, src_y->data, y_increment, &result);
+	cblas_zdotc_sub(mat_size, src_x->data, x_increment, src_y->data, y_increment, &result);
 	return result;
 #endif
 
@@ -767,7 +767,24 @@ UINT mp_camin(UINT N, CTYPE *src, UINT inc)
 
 /*** Get absolute value of complex number ***/
 DTYPE cabs1(CTYPE val){
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+
+#if USE_CBLAS
+//DTYPE = float
+#if NTYPE == 0
+	return cblas_scabs1 (&val);
+
+//DTYPE = double
+#elif NTYPE == 1
+	return cblas_dcabs1 (&val);
+#endif
+
+//USE_BLAS = 0 -> just c implement
+#else
 	return ABS_CTYPE(val);
+#endif
 }
 
 
@@ -833,12 +850,12 @@ DTYPE cnrm2_inc(CMAT* src, UINT inc){
 #if USE_CBLAS
 //DTYPE = float
 #if NTYPE == 0
-	cblas_snrm2(mat_size, src->data, inc);
+	cblas_scnrm2(mat_size, src->data, inc);
 	return;
 
 //DTYPE = double
 #elif NTYPE == 1
-	cblas_dnrm2(mat_size, src->data, inc);
+	cblas_dznrm2(mat_size, src->data, inc);
 	return;
 #endif
 
@@ -852,7 +869,8 @@ DTYPE mp_cnrm2(UINT N, CTYPE* data, UINT inc){
 	DTYPE temp = 0;
 
 	for(i=0; i<N; i++){
-		temp += ABS_CTYPE(data[i]) * ABS_CTYPE(data[i]);
+		temp += data[i].re * data[i].re;	// - data[i].im * data[i].im);
+		temp += data[i].im * data[i].im;	// * 2.0);
 	}
 
 	return sqrt(temp);
@@ -949,4 +967,120 @@ void mp_crot(UINT N, CTYPE* src_x, UINT x_inc, CTYPE* src_y, UINT y_inc, DTYPE c
 		src_y[i*y_inc].re = c * temp_y.re + s * temp_x.re;
 		src_y[i*y_inc].im = c * temp_y.im + s * temp_x.im;
 	}
+}
+
+/*** Computes the parameters for a Givens rotation. ***/
+void rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s){
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+
+#if USE_CBLAS
+//DTYPE = float
+#if NTYPE == 0
+	cblas_srotg(a, b, c, s);
+	return;
+
+//DTYPE = double
+#elif NTYPE == 1
+	cblas_drotg(a, b, c, s);
+	return;
+#endif
+
+//USE_BLAS = 0 -> just c implement
+#else
+	return mp_rotg(a, b, c, s);
+#endif
+}
+void mp_rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s)
+{
+	DTYPE a_ = *a;
+	DTYPE b_ = *b;
+	DTYPE r_, z_;
+
+	r_ = (*c) * (*a) + (*b) * (*s);
+
+	if ((*b) * (*c) - (*a) * (*s) != 0)
+	{
+		printf("Wrong data!\n");
+		return;
+	}
+
+	a_ = a_ < 0 ? -a_ : a_;
+	b_ = b_ < 0 ? -b_ : b_;
+
+	if (a_ > b_)
+	{
+		z_ = *s;
+	}
+	else if (*c != 0)
+	{
+		z_ = 1 / (*c);
+	}
+	else
+	{
+		z_ = 1;
+	}
+
+	(*a) = r_;
+	(*b) = z_;
+}
+
+void crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s){
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+
+#if USE_CBLAS
+//DTYPE = float
+#if NTYPE == 0
+	cblas_crotg(a, b, c, s);
+	return;
+
+//DTYPE = double
+#elif NTYPE == 1
+	cblas_zrotg(a, b, c, s);
+	return;
+#endif
+
+//USE_BLAS = 0 -> just c implement
+#else
+	return mp_crotg(a, b, c, s);
+#endif
+}
+void mp_crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s){
+	CTYPE a_ = *a;
+	CTYPE b_ = *b;
+	CTYPE r_, z_;
+	DTYPE factor = 0;
+
+	r_.re = (*c) * (*a).re;
+	r_.re += (*b).re * (*s).re - (*b).im * (*s).im;
+	r_.im = (*c) * (*a).im;
+	r_.im += (*b).re * (*s).im + (*b).im * (*s).re;
+
+	// for exception handle.... later....
+	/*if ((*b) * (*c) - (*a) * (*s) != 0)
+	{
+		printf("Wrong data!\n");
+		return;
+	}*/
+
+	if (ABS_CTYPE(a_) > ABS_CTYPE(b_))
+	{
+		z_ = (*s);
+	}
+	else if (*c != 0)
+	{
+		z_.re = 1 / (*c);
+		z_.im = 0;
+	}
+	else
+	{
+		z_.re = 1;
+		z_.im = 0;
+	}
+
+	(*a) = r_;
+	(*b) = z_;
 }

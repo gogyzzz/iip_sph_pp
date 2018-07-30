@@ -83,6 +83,30 @@ int main()
 	print_CMAT(CA);
 	printf("#CB\n");
 	print_CMAT(CB);
+
+	for (int i = 0; i < 6; i++){
+		A->data[i] = i;
+		CA->data[i].re = i;
+		CA->data[i].im = i*2 + 1;
+	}
+
+	printf("# A, CA reset!\n");
+	print_MAT(A);
+	print_CMAT(CA);
+
+	printf("amax(A)   : %d\n", amax(A));
+	printf("camax(CA) : %d\n", camax(CA));
+	printf("amin(A)   : %d\n", amin(A));
+	printf("camin(CA) : %d\n", camin(CA));
+	CTYPE tt;
+	tt.re = 3;
+	tt.im = -4;
+
+	printf("cabs1(3-4i) : %lf\n", cabs1(tt));
+	printf("nrm2(A) : %lf\n", nrm2(A));
+	printf("cnrm2(CA) : %lf\n", cnrm2(CA));
+
+
 	
 	free_MAT(A);
 	free_MAT(B);

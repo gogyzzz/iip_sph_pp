@@ -30,7 +30,7 @@
  *
  * */
 
-#define ABS_CTYPE(x) ((DTYPE)fabs((double)x.re)+(DTYPE)fabs((double)x.im))
+#define ABS_CTYPE(x) ((DTYPE)fabs(x.re)+(DTYPE)fabs(x.im))
 
 
 void mp_axpy(UINT,DTYPE,DTYPE*,UINT,DTYPE*,UINT);
@@ -131,5 +131,12 @@ void mp_rot(UINT N, DTYPE* src_x, UINT x_inc, DTYPE* src_y, UINT y_inc, DTYPE c,
 void crot(CMAT* src_x, CMAT* src_y, DTYPE c, DTYPE s);
 void crot_inc(CMAT* src_x, UINT x_inc, CMAT* src_y, UINT y_inc, DTYPE c, DTYPE s);
 void mp_crot(UINT N, CTYPE* src_x, UINT x_inc, CTYPE* src_y, UINT y_inc, DTYPE c, DTYPE s);
+
+
+
+void rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s);
+void mp_rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s);
+void crotg(CTYPE *a, CTYPE *b, CTYPE *c, CTYPE *s);
+void mp_crotg(CTYPE *a, CTYPE *b, CTYPE *c, CTYPE *s);
 
 #endif
