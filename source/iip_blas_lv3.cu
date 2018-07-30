@@ -1,5 +1,6 @@
 #include "iip_blas_lv3.h"
 
+
 /*
  **  cblas_?gemm(layout,transA,transB,m,n,k,alpha,A,lda,B,ldb,beta,C,ldc)
  **
@@ -73,6 +74,11 @@ n = B->d0;
 ldb = B ->d0;
 }
 
+if((transA == CTran)||(transB == CTran ) )
+{
+	printf("ERROR : can't conjugate transpose real number matirx\n");
+	return;
+}
 
 
 	#if NTYPE == 0
@@ -129,4 +135,80 @@ ldb = B ->d0;
 	#else
 	cublasZgemm(handle,transA,transB,m,n,k,CU_CX(&alpha),CU_CX(A->data),lda,CU_CX(B->data),ldb,CU_CX(&beta),CU_CX(C->data),ldc);
 	#endif
+}
+
+
+/**** REAL ****/
+void aABpbC(DTYPE alpha,MAT*A,MAT*B,DTYPE beta,MAT*C)
+{
+	gemm(NoTran,NoTran,alpha,A,B,beta,C);
+}
+void aABtpbC(DTYPE alpha,MAT*A,MAT*B,DTYPE beta,MAT*C)
+{
+	gemm(NoTran,Tran,alpha,A,B,beta,C);
+}
+void aAtBpbC(DTYPE alpha,MAT*A,MAT*B,DTYPE beta,MAT*C)
+{
+	gemm(Tran,NoTran,alpha,A,B,beta,C);
+}
+void aAtBtpbC(DTYPE alpha,MAT*A,MAT*B,DTYPE beta,MAT*C)
+{
+	gemm(Tran,Tran,alpha,A,B,beta,C);
+}
+
+void matmul(MAT*A,MAT*B,MAT*C)
+{
+	gemm(NoTran,NoTran,1,A,B,0,C);
+}
+
+/**** COMPLEX ****/
+void caABpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(NoTran,NoTran,alpha,A,B,beta,C);
+}
+void caABtpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(NoTran,Tran,alpha,A,B,beta,C);
+}
+void caABjpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(NoTran,CTran,alpha,A,B,beta,C);
+}
+
+
+void caAtBpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(Tran,NoTran,alpha,A,B,beta,C);
+}
+void caAtBtpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(Tran,Tran,alpha,A,B,beta,C);
+}
+void caAtBhpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(Tran,CTran,alpha,A,B,beta,C);
+}
+
+void caAhBpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(CTran,NoTran,alpha,A,B,beta,C);
+}
+void caAhBtpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(CTran,Tran,alpha,A,B,beta,C);
+}
+void caAhBhpbC(CTYPE alpha,CMAT*A,CMAT*B,CTYPE beta,CMAT*C)
+{
+	cgemm(CTran,CTran,alpha,A,B,beta,C);
+}
+
+void cmatmul(CMAT*A,CMAT*B,CMAT*C)
+{
+CTYPE one_zero;
+CTYPE zero_zero;
+one_zero.re=1;
+one_zero.im=0;
+zero_zero.re=0;
+zero_zero.im=0;
+	cgemm(NoTran,NoTran,alpha,A,B,beta,C);
 }

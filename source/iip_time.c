@@ -1,7 +1,4 @@
-#include <time.h>
-#if OS_WIN
-#include <windows.h>
-#endif
+#include "iip_time.h"
 
 #if OS_UNIX
 void stopwatch(int flag) {
@@ -35,7 +32,7 @@ void stopwatch(int flag) {
         printf("elapsed time : % lld nano sec\n", diff);
         break;
       case micro:
-        printf("elapsed time : % lld micro sec\n", diff / 1000);
+        printf("elapsed time : % lld micro seconds\n", diff / 1000);
         break;
       case sec:
         printf("elapsed time : % lld sec\n", diff / 1000000000);
@@ -122,7 +119,7 @@ void stopwatch(int flag) {
 #endif
 
 long long get_micro_sec() {
-  struct utime;
+  struct timeval utime;
 #if OS_UNIX
   clock_gettime(CLOCK_MONOTONIC, &utime);
 #elif OS_WIN
