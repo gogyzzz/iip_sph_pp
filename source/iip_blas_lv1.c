@@ -826,7 +826,7 @@ DTYPE mp_cnrm2(UINT N, CTYPE *data, UINT inc) {
     temp += ABS_CTYPE(data[i]) * ABS_CTYPE(data[i]);
   }
 
-  return 0;  // sqrt(temp);
+  return sqrt(temp);
 }
 
 /*** Performs rotation of points in the plane. ***/
@@ -1101,4 +1101,120 @@ void row_cadd(DTYPE alpha, CMAT *X, UINT idx) {
 }
 void row_uadd(CTYPE alpha, CMAT *X, UINT idx) {
   uadd_inc(X->d1, alpha, &(X->data[idx]), X->d0);
+}
+
+/*** Computes the parameters for a Givens rotation. ***/
+void rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s){
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+
+#if USE_CBLAS
+//DTYPE = float
+#if NTYPE == 0
+	cblas_srotg(a, b, c, s);
+	return;
+
+//DTYPE = double
+#elif NTYPE == 1
+	cblas_drotg(a, b, c, s);
+	return;
+#endif
+
+//USE_BLAS = 0 -> just c implement
+#else
+	return mp_rotg(a, b, c, s);
+#endif
+}
+void mp_rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s)
+{
+	DTYPE a_ = *a;
+	DTYPE b_ = *b;
+	DTYPE r_, z_;
+
+	r_ = (*c) * (*a) + (*b) * (*s);
+
+	if ((*b) * (*c) - (*a) * (*s) != 0)
+	{
+		printf("Wrong data!\n");
+		return;
+	}
+
+	a_ = a_ < 0 ? -a_ : a_;
+	b_ = b_ < 0 ? -b_ : b_;
+
+	if (a_ > b_)
+	{
+		z_ = *s;
+	}
+	else if (*c != 0)
+	{
+		z_ = 1 / (*c);
+	}
+	else
+	{
+		z_ = 1;
+	}
+
+	(*a) = r_;
+	(*b) = z_;
+}
+
+void crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s){
+#if DEBUG
+	printf("%s\n", __func__);
+#endif
+
+#if USE_CBLAS
+//DTYPE = float
+#if NTYPE == 0
+	cblas_crotg(a, b, c, s);
+	return;
+
+//DTYPE = double
+#elif NTYPE == 1
+	cblas_zrotg(a, b, c, s);
+	return;
+#endif
+
+//USE_BLAS = 0 -> just c implement
+#else
+	return mp_crotg(a, b, c, s);
+#endif
+}
+void mp_crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s){
+	CTYPE a_ = *a;
+	CTYPE b_ = *b;
+	CTYPE r_, z_;
+	DTYPE factor = 0;
+
+	r_.re = (*c) * (*a).re;
+	r_.re += (*b).re * (*s).re - (*b).im * (*s).im;
+	r_.im = (*c) * (*a).im;
+	r_.im += (*b).re * (*s).im + (*b).im * (*s).re;
+
+	// for exception handle.... later....
+	/*if ((*b) * (*c) - (*a) * (*s) != 0)
+	{
+		printf("Wrong data!\n");
+		return;
+	}*/
+
+	if (ABS_CTYPE(a_) > ABS_CTYPE(b_))
+	{
+		z_ = (*s);
+	}
+	else if (*c != 0)
+	{
+		z_.re = 1 / (*c);
+		z_.im = 0;
+	}
+	else
+	{
+		z_.re = 1;
+		z_.im = 0;
+	}
+
+	(*a) = r_;
+	(*b) = z_;
 }

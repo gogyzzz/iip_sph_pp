@@ -91,6 +91,13 @@ UINT mp_camin(UINT N, CTYPE *src, UINT inc);
 
 DTYPE cabs1(CTYPE val);
 
+
+
+void rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s);
+void mp_rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s);
+void crotg(CTYPE *a, CTYPE *b, CTYPE *c, CTYPE *s);
+void mp_crotg(CTYPE *a, CTYPE *b, CTYPE *c, CTYPE *s);
+
 DTYPE nrm2(MAT *src);
 DTYPE nrm2_inc(MAT *src, UINT inc);
 DTYPE mp_nrm2(UINT N, DTYPE *data, UINT inc);
@@ -151,4 +158,5 @@ void col_uadd(CTYPE alpha, CMAT *X, UINT idx);
 void row_add(DTYPE alpha, MAT *X, UINT idx);
 void row_cadd(DTYPE alpha, CMAT *X, UINT idx);
 void row_uadd(CTYPE alpha, CMAT *X, UINT idx);
+
 #endif
