@@ -27,8 +27,11 @@ set(MAIN_SRC test/test_blas_lv1.c)
 #set(MAIN_SRC test/test_memory.c)
 #set(MAIN_SRC test/test_aABpbC.c)
 #set(MAIN_SRC test/test_broad.c)
+#set(MAIN_SRC test/test_broad_matmul.c)
+#set(MAIN_SRC test/test_dia_tr.c)
+set(MAIN_SRC test/test_invert.c)
 #set(MAIN_SRC test/test_dim.c)
-set(MAIN_SRC test/test_permute.c)
+#set(MAIN_SRC test/test_permute.c)
 #set(MAIN_SRC test/test_bin.c)
 #set(MAIN_SRC test/test_invelem.c)
 #set(MAIN_SRC test/test_invers.c)
@@ -200,7 +203,7 @@ set(C_SOURCE
     source/iip_memory.c
     source/iip_time.c
     source/iip_io.c
-
+    source/iip_invert.c
     )
 display_elements("Source files for C build" "${C_SOURCE}")
 
