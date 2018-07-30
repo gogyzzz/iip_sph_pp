@@ -217,19 +217,29 @@ extern UINT max_block;
 #define DIM_INVAL 1
 #define ARG_INVAL 2
 #define NO_FILE 3
+#define NOT_SQUARE 4
+#define DET_FAIL 5
+
 /**** ASSERT FUNCTION ****/
-#define ASSERT(x)                                              \
-  {                                                            \
-    if (x == 1) {                                              \
-      printf("WARNING(%s) : invalid dimension\n", __func__);   \
-      return;                                                  \
-    } else if (x == 2) {                                       \
-      printf("WARNING(%s) : invalid argument\n", __func__);    \
-      return;                                                  \
-    } else if (x == 3) {                                       \
-      printf("ERROR(%s)   : no such file exits \n", __func__); \
-      exit(-1);                                                \
-    }                                                          \
+#define ASSERT(x)                                                             \
+  {                                                                           \
+    if (x == 1) {                                                             \
+      printf("WARNING(%s) : invalid dimension\n", __func__);                  \
+      return;                                                                 \
+    } else if (x == 2) {                                                      \
+      printf("WARNING(%s) : invalid argument\n", __func__);                   \
+      return;                                                                 \
+    } else if (x == 3) {                                                      \
+      printf("ERROR(%s)   : no such file exits \n", __func__);                \
+      exit(-1);                                                               \
+    } else if (x == 4) {                                                      \
+      printf("WARNING(%s) : This function requires SQAURE MATRIX \n",         \
+             __func__);                                                       \
+      return;                                                                 \
+    } else if (x == 5) {                                                      \
+      printf("WARNING(%s) : Matrix is singular, |det| < FEZRO \n", __func__); \
+      return;                                                                 \
+    }                                                                         \
   }
 
 /*****************************
