@@ -93,7 +93,7 @@ void gemm(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
 #endif
     }
   } else if (A->d2 == 1 && B->d2 != 1) {
-    if(C->d2 != B->d2)ASSERT(DIM_INVAL)
+    if (C->d2 != B->d2) ASSERT(DIM_INVAL)
     for (i = 0; i < B->d2; i++) {
 #if USE_CBLAS
 #if NTYPE == 0
@@ -112,7 +112,7 @@ void gemm(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
 #endif
     }
   } else if (A->d2 != 1 && B->d2 == 1) {
-    if(C->d2 != A->d2)ASSERT(DIM_INVAL)
+    if (C->d2 != A->d2) ASSERT(DIM_INVAL)
     for (i = 0; i < A->d2; i++) {
 #if USE_CBLAS
 #if NTYPE == 0
@@ -260,7 +260,7 @@ void cgemm(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
     }
   } else if (A->d2 == 1 && B->d2 != 1) {
     for (i = 0; i < B->d2; i++) {
-    if(C->d2 != B->d2)ASSERT(DIM_INVAL)
+      if (C->d2 != B->d2) ASSERT(DIM_INVAL)
 #if USE_CBLAS
 #if NTYPE == 0
       cblas_cgemm(CblasColMajor, transA, transB, m, n, k, &alpha, A->data, lda,
@@ -279,7 +279,7 @@ void cgemm(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
     }
   } else if (A->d2 != 1 && B->d2 == 1) {
     for (i = 0; i < A->d2; i++) {
-    if(C->d2 != A->d2)ASSERT(DIM_INVAL)
+      if (C->d2 != A->d2) ASSERT(DIM_INVAL)
 #if USE_CBLAS
 #if NTYPE == 0
       cblas_cgemm(CblasColMajor, transA, transB, m, n, k, &alpha,

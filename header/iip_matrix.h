@@ -209,11 +209,45 @@ CMAT* create_ctrans(CMAT* mat);
 
 void trans(MAT* mat);  // with memory pool
 void ctrans(CMAT* mat);
+
+/**** get Diagonal of Matrix ****/
+/* ex
+ * mat = | 1 3 |
+ *       | 2 4 |
+ *
+ *       | 5 7 |
+ *       | 6 8 |
+ * =================
+ * dia = | 1 |
+ *       | 4 |
+ *
+ *       | 5 |
+ *       | 8 |
+ */
+void diagonal(MAT* mat, MAT* dia);
+void cdiagonal(CMAT* mat, CMAT* dia);
+
+/**** get trace of Matrix ****/
+/* ex
+ * mat = | 1 3 |
+ *       | 2 4 |
+ *
+ *       | 5 7 |
+ *       | 6 8 |
+ * =================
+ * tr =  | 5  |(= 1 + 4 )
+ *
+ *       | 13 |(= 5 + 8 )
+ */
+void trace(MAT* mat, MAT* tr);
+void ctrace(CMAT* mat, CMAT* tr);
+
 /**** hermitian ****/
 CMAT* create_hermit(CMAT* mat);
 
 void hermit(CMAT* mat);
-/**** Identity Matrix ****/
+
+/**** set Identity Matrix ****/
 void id_MAT(MAT* mat);
 
 /**** Inverse Matrix WIP ****/

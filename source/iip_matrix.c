@@ -2099,7 +2099,115 @@ void ctrans(CMAT *mat) {
   free_mem_CMAT(temp);
 }
 
-/**** hermitial ****/
+/* ex
+ * mat = | 1 3 |
+ *       | 2 4 |
+ *
+ *       | 5 7 |
+ *       | 6 8 |
+ *
+ * =================
+ *
+ * dia = | 1 |
+ *       | 4 |
+ *
+ *       | 5 |
+ *       | 8 |
+ */
+
+/**** get Diagonal of Matrix ****/
+void diagonal(MAT *mat, MAT *dia) {
+  ITER i, j, k;
+#if DEBUG
+  printf("%s\n", __func__);
+#endif
+
+  if (mat->d2 != dia->d2) ASSERT(DIM_INVAL)
+  if (dia->d1 != 1) ASSERT(DIM_INVAL)
+  if (mat->d0 != dia->d0) ASSERT(DIM_INVAL)
+  if (mat->d0 != mat->d1) ASSERT(NOT_SQUARE)
+
+  for (k = 0; k < mat->d2; k++)
+    for (i = 0; i < mat->d0; i++) {
+      dia->data[k * (dia->d0) + i] =
+          mat->data[k * (mat->d0 * mat->d1) + i * mat->d0 + i];
+    }
+}
+
+void cdiagonal(CMAT *mat, CMAT *dia) {
+  ITER i, j, k;
+#if DEBUG
+  printf("%s\n", __func__);
+#endif
+
+  if (mat->d2 != dia->d2) ASSERT(DIM_INVAL)
+  if (dia->d1 != 1) ASSERT(DIM_INVAL)
+  if (mat->d0 != dia->d0) ASSERT(DIM_INVAL)
+  if (mat->d0 != mat->d1) ASSERT(NOT_SQUARE)
+
+  for (k = 0; k < mat->d2; k++)
+    for (i = 0; i < mat->d0; i++) {
+      dia->data[k * (dia->d0) + i] =
+          mat->data[k * (mat->d0 * mat->d1) + i * mat->d0 + i];
+    }
+}
+
+/* ex
+ * mat = | 1 3 |
+ *       | 2 4 |
+ *
+ *       | 5 7 |
+ *       | 6 8 |
+ *
+ * =================
+ *
+ * tr =  | 5  |(= 1 + 4 )
+ *
+ *       | 13 |(= 5 + 8 )
+ */
+
+/**** get trace of Matrix ****/
+void trace(MAT *mat, MAT *tr) {
+  ITER i, j, k;
+  DTYPE temp = 0;
+#if DEBUG
+  printf("%s\n", __func__);
+#endif
+
+  if (mat->d2 != tr->d2) ASSERT(DIM_INVAL)
+  if (tr->d1 != 1) ASSERT(DIM_INVAL)
+  if (tr->d0 != 1) ASSERT(DIM_INVAL)
+  if (mat->d0 != mat->d1) ASSERT(NOT_SQUARE)
+
+  for (k = 0; k < mat->d2; k++) {
+    temp = 0;
+    for (i = 0; i < mat->d0; i++)
+      temp += mat->data[k * (mat->d0 * mat->d1) + i * mat->d0 + i];
+    tr->data[k] = temp;
+  }
+}
+
+void ctrace(CMAT *mat, CMAT *tr) {
+  ITER i, j, k;
+  CTYPE temp;
+#if DEBUG
+  printf("%s\n", __func__);
+#endif
+
+  if (mat->d2 != tr->d2) ASSERT(DIM_INVAL)
+  if (tr->d1 != 1) ASSERT(DIM_INVAL)
+  if (tr->d0 != 1) ASSERT(DIM_INVAL)
+  if (mat->d0 != mat->d1) ASSERT(NOT_SQUARE)
+
+  for (k = 0; k < mat->d2; k++) {
+    temp.re = 0;
+    temp.im = 0;
+    for (i = 0; i < mat->d0; i++)
+      cxadd(temp, mat->data[k * (mat->d0 * mat->d1) + i * mat->d0 + i])
+          tr->data[k] = temp;
+  }
+}
+/**** hermitian ****/
 
 CMAT *create_hermit(CMAT *mat) {
   ITER i, j;
@@ -2254,7 +2362,7 @@ void print_MAT(MAT *mat) {
   for (k = 0; k < mat->d2; k++) {
     for (i = 0; i < mat->d0; i++) {
       for (j = 0; j < mat->d1; j++)
-        printf("%+3.3lf ",
+        printf("%+4.4lf ",
                mat->data[k * (mat->d1) * (mat->d0) + j * (mat->d0) + i]);
       printf("\n");
     }
