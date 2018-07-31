@@ -159,17 +159,17 @@ void copy(MAT *src, MAT *des) {
 }
 
 void mp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
-  ITER i;
-#pragma omp parallel for shared(des, src) private(i)
-  for (i = 0; i < N; i++) {
-    des[i * des_inc] = src[i * src_inc];
-  }
-  /*
+//  ITER i;
+//#pragma omp parallel for shared(des, src) private(i)
+//  for (i = 0; i < N; i++) {
+//    des[i * des_inc] = src[i * src_inc];
+//  }
+  
     ITER iteration = 8;
     UINT repeat = N >> 3;
     UINT left = N & (UINT)(iteration - 1);
-    UINT i = 0;
-    UINT j = 0;
+    ITER i = 0;
+    ITER j = 0;
 
   #pragma omp parallel for shared(des, src) private(j, i)
     for (j = 0; j < repeat; j++) {
@@ -184,10 +184,11 @@ void mp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
       des[(i + 7) * des_inc] = src[(i + 7) * src_inc];
     }
 
+	i = repeat * iteration;
+
     for (j = 0; j < left; j++) {
       des[(i + j) * des_inc] = src[(i + j) * src_inc];
     }
-  */
 }
 
 void ccopy(CMAT *src, CMAT *des) {

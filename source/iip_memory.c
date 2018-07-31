@@ -22,10 +22,8 @@ void init(UINT mem_pool_size) {
 	}
 
 	memory_pool[0] = (void*)malloc(MEM_PAGE_BASIC_SIZE);
-	memory_log[0] = (USED_MEM*)malloc(sizeof(USED_MEM) *
-																		(MEM_PAGE_BASIC_SIZE / LOG_ALLOC_UNIT));
-	memset(memory_log[0], 0,
-				 sizeof(USED_MEM) * (MEM_PAGE_BASIC_SIZE / LOG_ALLOC_UNIT));
+	memory_log[0] = (USED_MEM*)malloc(sizeof(USED_MEM) * (MEM_PAGE_BASIC_SIZE / LOG_ALLOC_UNIT));
+	memset(memory_log[0], 0, sizeof(USED_MEM) * (MEM_PAGE_BASIC_SIZE / LOG_ALLOC_UNIT));
 	pool_cnt = 1;
 
 	//if (mem_pool_size > 0) iip_free(iip_malloc(mem_pool_size));

@@ -146,11 +146,11 @@ int main() {
   cscal(100.1, CA);
   print_CMAT(CA);
 
-  printf("==== print(CA) ccscal(-10 + 10i  ,CA) print(CA) ====\n");
+  printf("==== print(CA) uscal(-10 + 10i  ,CA) print(CA) ====\n");
   print_CMAT(CA);
   ctemp.re = -10;
   ctemp.im = 10;
-  ccscal(ctemp, CA);
+  uscal(ctemp, CA);
   print_CMAT(CA);
 
   free_MAT(A);
