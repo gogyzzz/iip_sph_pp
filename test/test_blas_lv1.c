@@ -5,7 +5,7 @@ int main() {
   CMAT *CA, *CB;
   CTYPE ctemp = {5, -7};
   int i, j;
-  init();
+  init(0);
 
   printf("===== init =====\n");
 

@@ -7,7 +7,7 @@ int main() {
 
   printf("permute seq : %d\n", seq);
 
-  init();
+  init(0);
   A = zeros(4, 3, 2);
   for (i = 0; i < 24; i++) A->data[i] = i;
   print_MAT(A);
@@ -27,6 +27,9 @@ int main() {
   print_MAT(A);
   permute(A, seq);
   print_MAT(A);
+  free_MAT(A);
+
+  A = zeros(50, 50, 50);
   free_MAT(A);
 
   finit();

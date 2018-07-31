@@ -9,9 +9,9 @@
 int main() {
   MAT *A, *B, *C;
   ITER i, j;
-  init();
+  init(16776960);
 
-  for (j = 0; j < 200; j++) {
+  for (j = 0; j < 10; j++) {
     A = iip_malloc(sizeof(MAT));
     B = iip_malloc(sizeof(MAT));
     C = iip_malloc(sizeof(MAT));

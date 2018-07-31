@@ -5,7 +5,7 @@ int main() {
   MAT *a2, *sa2;
   MAT *a3, *sa3;
 
-  init();
+  init(0);
 
   a1 = zeros(4);
   a2 = zeros(3, 4);
