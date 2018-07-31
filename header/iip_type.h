@@ -240,8 +240,8 @@ extern UINT max_block;
 #define LOG_ALLOC_UNIT 8  // 4 for float, 8 for double
 
 typedef struct USED_MEM {
-  unsigned long int frag_idx;
-  unsigned long int size;
+  unsigned long long int frag_idx;
+  unsigned long long int size;
 } USED_MEM;
 
 //메모리풀
@@ -250,11 +250,11 @@ static void* memory_pool[MAX_MEM_PAGE];
 static USED_MEM* memory_log[MAX_MEM_PAGE];
 
 //해당 페이지에 몇 덩어리가 할당 되어있나
-static unsigned long int log_cnt[MAX_MEM_PAGE];
+static unsigned long long int log_cnt[MAX_MEM_PAGE];
 static unsigned int pool_cnt;
-signed long int page_alloc_isable(int page_idx, unsigned long int require_size);
-void* iip_malloc(unsigned long int size);
+signed long long int page_alloc_isable(int page_idx, unsigned long long int require_size);
+void* iip_malloc(unsigned long long int size);
 void iip_free(void* ptr);
-void init();
+void init(UINT mem_pool_size);
 void finit();
 #endif

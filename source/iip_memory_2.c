@@ -6,7 +6,8 @@
 
 typedef struct mem_node {
   void *p;
-  UINT usedl struct mem_node *next;
+  UINT used;
+  struct mem_node *next;
 } mem_node;
 
 typedef struct memory_list {
@@ -16,7 +17,7 @@ typedef struct memory_list {
   mem_node *front;
 } memory_list;
 
-static memory_list *mem_list
+static memory_list *mem_list;
 
     void
     init() {

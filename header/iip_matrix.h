@@ -184,8 +184,8 @@ void cdiv_elements(CMAT* A, CMAT* B, CMAT* C);
 void inv_elements(MAT* mat);
 void inv_elements_inc(UINT size, DTYPE* X, ITER incx);
 
-void cinv_elelments(CMAT* mat);
-void cinv_elelments_inc(UINT size, CTYPE* X, ITER incx);
+void cinv_elements(CMAT* mat);
+void cinv_elements_inc(UINT size, CTYPE* X, ITER incx);
 
 /**** repeat matrix****/
 void repmat(MAT* mat, DIM* dim);
