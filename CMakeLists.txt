@@ -14,6 +14,7 @@ project(iip_sph_pp)
 option(USE_CUDA    "Using CUDA"      OFF)
 option(USE_OPEN    "Using BLAS"      OFF)
 option(USE_OPENMP  "Using OpenMP"    ON)
+option(USE_LAPACK  "Using LAPACK"    ON)
 
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
@@ -44,9 +45,6 @@ set(MAIN_SRC test/test_invert.c)
 
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
-
-
-
 
 message(STATUS "USE_CUDA   : " ${USE_CUDA})
 message(STATUS "USE_OPEN  : " ${USE_OPEN})
@@ -119,6 +117,13 @@ if(USE_OPENMP)
 	endif(MSVC)
     endif()
 endif()
+
+if(USE_LAPACK)
+  find_package(LAPACK)
+  if(LAPACK_FOUND) 
+    add_definitions(-DUSE_LAPACK=1)
+  endif(LAPACK_FOUND)
+endif(USE_LAPACK)  
 
 #설정을 다 하셨다면 이 옵션을 ON 해주세요
 
@@ -266,7 +271,11 @@ elseif(USE_OPENMP)
     add_definitions(-DUSE_OMP=1)
     string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
     string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
+  
+    list(APPEND CMAKE_EXE_LINKER_FLAGS -llapack)
+
 	add_executable(${OPENMP_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})	
+    target_link_libraries(${OPENMP_TARGET_NAME} lapack)
 
   #  set_target_properties(${OPENMP_TARGET_NAME}
   #PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}"
@@ -279,6 +288,15 @@ elseif(USE_OPENMP)
   target_include_directories(${OPENMP_TARGET_NAME}
 	PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/header)
+
+  #LAPACK
+  message(STATUS "LAPACK FOUND : "  ${LAPACK_FOUND})
+  message(STATUS "LAPACK FLAGS : "  ${LAPACK_LINKER_FLAGS})
+  message(STATUS "LAPACK LIBS  : "  ${LAPACK_LIBRARIES})
+  message(STATUS "LAPACK95 LIBS  : "  ${LAPACK95_LIBRARIES})
+
+
+  #Fully native C
 else()
 	set(NATIVE_TARGET_NAME "${PROJECT_NAME}_native")
 	add_executable(${NATIVE_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})	
@@ -286,6 +304,9 @@ else()
 	target_include_directories(${NATIVE_TARGET_NAME}
 	PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/header)
+
+
+
 endif()
 
 message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
