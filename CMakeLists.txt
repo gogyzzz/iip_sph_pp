@@ -12,9 +12,8 @@ project(iip_sph_pp)
 ###################################################
 
 option(USE_CUDA    "Using CUDA"      OFF)
-option(USE_OPEN    "Using BLAS"      OFF)
+option(USE_OPEN    "Using BLAS"      ON)
 option(USE_OPENMP  "Using OpenMP"    ON)
-option(USE_LAPACK  "Using LAPACK"    ON)
 
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
@@ -117,13 +116,6 @@ if(USE_OPENMP)
 	endif(MSVC)
     endif()
 endif()
-
-if(USE_LAPACK)
-  find_package(LAPACK)
-  if(LAPACK_FOUND) 
-    add_definitions(-DUSE_LAPACK=1)
-  endif(LAPACK_FOUND)
-endif(USE_LAPACK)  
 
 #설정을 다 하셨다면 이 옵션을 ON 해주세요
 
@@ -289,11 +281,6 @@ elseif(USE_OPENMP)
 	PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/header)
 
-  #LAPACK
-  message(STATUS "LAPACK FOUND : "  ${LAPACK_FOUND})
-  message(STATUS "LAPACK FLAGS : "  ${LAPACK_LINKER_FLAGS})
-  message(STATUS "LAPACK LIBS  : "  ${LAPACK_LIBRARIES})
-  message(STATUS "LAPACK95 LIBS  : "  ${LAPACK95_LIBRARIES})
 
 
   #Fully native C

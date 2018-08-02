@@ -50,20 +50,6 @@ DTYPE det_nbyn(MAT* mat);
 CTYPE cdet_nbyn(CMAT* mat);
 
 /**** LU ****/
-void lu_decomposition(DTYPE* X, UINT n, UINT* idx);
-
-void lu_backwardsubstitution(DTYPE* lu, UINT n, UINT* idx, DTYPE* B);
-
-void lu_invert(MAT* X, MAT* Y);
-
-DTYPE lu_det(MAT* X);
-
-void cig_lu(DTYPE* A, int n);
-
-void cig_lusolve(DTYPE* LU, DTYPE* b, int n);
-
-void lu_dcmp(DTYPE* X, UINT n);
-
 void wiki_invert(DTYPE* X, UINT n, UINT* idx, DTYPE* Y);
 
 void wiki_dcmp(DTYPE* X, UINT n, UINT* idx);
