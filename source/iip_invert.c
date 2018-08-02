@@ -4663,87 +4663,52 @@ CTYPE cdet_6by6(CTYPE*X) {
 /**** LAPACK *aq***/
 void invert_nbyn(MAT* mat, MAT* inv) {
   UINT n;
-  UINT lwork, info;
   UINT* idx;
-  DTYPE* work;
 
 #if DEBUG
   printf("%s\n", __func__);
 #endif
   n = mat->d0;
-  lwork = n * n;
-#if USE_LAPACK
-  work = iip_malloc(sizeof(DTYPE) * n);
+#if USE_CBLAS
   idx = iip_malloc(sizeof(UINT) * n);
   copy(mat,inv);
 #if NTYPE == 0
-  LAPACK_sgetrf(&n, &n, inv->data, &n, idx, &info);
-  LAPACK_sgetri(&n, inv->data, &n, idx, work, &lwork, &info);
+  LAPACKE_sgetrf(LAPACK_COL_MAJOR, n,n,inv->data,n,idx;
+  LAPACKE_sgetri(LAPACK_COL_MAJOR,n,inv->data,n,idx);
 #elif NTYPE == 1
-  LAPACK_dgetrf(&n, &n, inv->data, &n, idx, &info);
-  LAPACK_dgetri(&n, inv->data, &n, idx, work, &lwork, &info);
-#endif
-  iip_free(idx);
-  iip_free(work);
-
-#elif USE_MKL
-  idx = iip_malloc(sizeof(UINT) * n);
-  copy(mat,inv);
-#if NTYPE == 0
-  LAPACK_sgetrf(LAPACK_COL_MAJOR, &n,&n,inv->data,&n,idx;
-  LAPACK_sgetri(LAPACK_COL_MAJOR,&n,inv->data,&n,idx);
-#elif NTYPE == 1
-  LAPACK_dgetrf(LAPACK_COL_MAJOR, &n, &n, inv->data, &n, idx);
-  LAPACK_dgetri(LAPACK_COL_MAJOR, &n, inv->data, &n, idx);
+  LAPACKE_dgetrf(LAPACK_COL_MAJOR, n, n, inv->data, n, idx);
+  LAPACKE_dgetri(LAPACK_COL_MAJOR, n, inv->data, n, idx);
 #endif
   iip_free(idx);
 
 #else
-  printf("ERROR : iou need to use 'LAPACK' or 'intel MKL'\n");
+  printf("ERROR : 'OpenBLAS' or 'INTEL MKL' is required for this operation\n");
   return;
 #endif
 }
 
 void cinvert_nbyn(CMAT* mat, CMAT* inv) {
   UINT n;
-  UINT lwork, info;
   UINT* idx;
-  CTYPE* work;
 
 #if DEBUG
   printf("%s\n", __func__);
 #endif
   n = mat->d0;
-  lwork = n * n;
-
-#if USE_LAPACK
-  work = iip_malloc(sizeof(CTYPE) * n);
+#if USE_CBLAS
   idx = iip_malloc(sizeof(UINT) * n);
   copy(mat,inv);
 #if NTYPE == 0
-  LAPACK_cgetrf(&n, &n, inv->data, &n, idx, &info);
-  LAPACK_cgetri(&n, inv->data, &n, idx, work, &lwork, &info);
+  LAPACKE_cgetrf(LAPACK_COL_MAJOR, n,n,inv->data,n,idx;
+  LAPACKE_cgetri(LAPACK_COL_MAJOR,n,inv->data,n,idx);
 #elif NTYPE == 1
-  LAPACK_zgetrf(&n, &n, inv->data, &n, idx, &info);
-  LAPACK_zgetri(&n, inv->data, &n, idx, work, &lwork, &info);
-#endif
-  iip_free(idx);
-  iip_free(work);
-
-#elif USE_MKL
-  idx = iip_malloc(sizeof(UINT) * n);
-  copy(mat,inv);
-#if NTYPE == 0
-  LAPACK_cgetrf(LAPACK_COL_MAJOR, &n,&n,inv->data,&n,idx;
-  LAPACK_cgetri(LAPACK_COL_MAJOR,&n,inv->data,&n,idx);
-#elif NTYPE == 1
-  LAPACK_zgetrf(LAPACK_COL_MAJOR, &n, &n, inv->data, &n, idx);
-  LAPACK_zgetri(LAPACK_COL_MAJOR, &n, inv->data, &n, idx);
+  LAPACKE_zgetrf(LAPACK_COL_MAJOR, n, n, inv->data, n, idx);
+  LAPACKE_zgetri(LAPACK_COL_MAJOR, n, inv->data, n, idx);
 #endif
   iip_free(idx);
 
 #else
-  printf("ERROR : iou need to use 'LAPACK' or 'intel MKL'\n");
+  printf("ERROR : 'OpenBLAS' or 'INTEL MKL' is required for this operation\n");
   return;
 #endif
 }
@@ -4752,35 +4717,26 @@ void cinvert_nbyn(CMAT* mat, CMAT* inv) {
 DTYPE det_nbyn(MAT* mat) {
   ITER i;
   DTYPE det;
-  UINT info;
   UINT n;
   UINT* idx;
-  MAT *t;
+  MAT *tmat;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
   n = mat->d0;
-#if USE_LAPACK
+#if USE_CBLAS
   idx = iip_malloc(sizeof(UINT) * n);
-  t= mem_MAT(mat->d0,mat->d1,mat->d2);
+  tmat = mem_MAT(mat->d0,mat->d1,mat->d2);
+  copy(mat,tmat);
 #if NTYPE == 0
-  LAPACK_sgetrf(&n, &n, mat->data, &n, idx, &info);
+  LAPACKE_sgetrf(LAPACK_COL_MAJOR, n, n, mat->data, n, idx);
 #elif NTYPE == 1
-  LAPACK_dgetrf(&n, &n, mat->data, &n, idx, &info);
-#endif
-
-#elif USE_MKL
-  idx = iip_malloc(sizeof(UINT) * n);
-
-#if NTYPE == 0
-  LAPACK_sgetrf(LAPACK_COL_MAJOR, &n, &n, mat->data, &n, idx);
-#elif NTYPE == 1
-  LAPACK_dgetrf(LAPACK_COL_MAJOR, &n, &n, mat->data, &n, idx);
+  LAPACKE_dgetrf(LAPACK_COL_MAJOR, n, n, mat->data, n, idx);
 #endif
 
 #else
 
-  printf("ERROR : iou need to use 'LAPACK' or 'intel MKL'\n");
+  printf("ERROR : 'OpenBLAS' or 'INTEL MKL' is required for this operation\n");
   return -1;
 #endif
   det = 1;
@@ -4791,6 +4747,7 @@ DTYPE det_nbyn(MAT* mat) {
       det *= mat->data[i * n + i];
   }
   iip_free(idx);
+  free_mem_MAT(tmat);
   return det;
 }
 
@@ -4798,35 +4755,26 @@ CTYPE cdet_nbyn(CMAT* mat) {
   ITER i;
   CTYPE det;
   DTYPE t;
-  UINT info;
   UINT n;
   UINT* idx;
+  CMAT*tmat;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
   n = mat->d0;
-
-#if USE_LAPACK
+#if USE_CBLAS
   idx = iip_malloc(sizeof(UINT) * n);
-   
+  tmat = mem_CMAT(mat->d0,mat->d1,mat->d2);
+  ccopy(mat,tmat);
 #if NTYPE == 0
-  LAPACK_sgetrf(&n, &n, mat->data, &n, idx, &info);
+  LAPACKE_sgetrf(LAPACK_COL_MAJOR, n, n, mat->data, n, idx);
 #elif NTYPE == 1
-  LAPACK_dgetrf(&n, &n, mat->data, &n, idx, &info);
-#endif
-
-#elif USE_MKL
-  idx = iip_malloc(sizeof(UINT) * n);
-
-#if NTYPE == 0
-  LAPACK_sgetrf(LAPACK_COL_MAJOR, &n, &n, mat->data, &n, idx);
-#elif NTYPE == 1
-  LAPACK_dgetrf(LAPACK_COL_MAJOR, &n, &n, mat->data, &n, idx);
+  LAPACKE_dgetrf(LAPACK_COL_MAJOR, n, n, mat->data, n, idx);
 #endif
 
 #else
 
-  printf("ERROR : iou need to use 'LAPACK' or 'intel MKL'\n");
+  printf("ERROR : 'OpenBLAS' or 'INTEL MKL' is required for this operation\n");
   return -1;
 #endif
   det.re = 1.0;
@@ -4837,190 +4785,14 @@ CTYPE cdet_nbyn(CMAT* mat) {
       cxmul(det ,mat->data[i * n + i],t)
   }
   iip_free(idx);
+  free_mem_CMAT(tmat);
   return det;
 }
 
 /**** LU ****/
-void lu_decomposition(DTYPE* X, UINT n, UINT* idx) {
-  ITER i, j, k, imax, t;
-  DTYPE byg, dum, sum, temp;
-  DTYPE* v;
-  v = iip_malloc(sizeof(DTYPE) * (n));
-
-  for (i = 0; i < n; i++) idx[i] = i;
-
-  for (j = 0; j < n; j++) {
-    byg = 0.0;
-    for (i = 0; i < n; i++)
-      if ((temp = fabs(X[i + n * j])) > byg) byg = temp;
-    v[j] = 1. / byg;
-  }
-
-  for (j = 0; j < n; j++) {
-    for (i = 0; i < j; i++) {
-      sum = X[i + n * j];
-      for (k = 0; k < i; k++) sum -= X[i + n * k] * X[k + n * j];
-      X[i + n * j] = sum;
-    }
-    byg = 0.0;
-    for (i = j; i < n; i++) {
-      sum = X[i + n * j];
-      for (k = 0; k < j; k++) sum -= X[i + n * k] * X[k + n * j];
-      X[i + n * j] = sum;
-      if ((dum = v[i] * fabs(sum)) >= byg) {
-        byg = dum;
-        imax = i;
-      }
-    }
-
-    if (j != imax) {
-      for (k = 0; k < n; k++) {
-        dum = X[imax + n * k];
-        X[imax + n * k] = X[j + n * k];
-        X[j + n * k] = dum;
-      }
-      v[imax] = v[j];
-    }
-    t = idx[j];
-    idx[j] = imax;
-    idx[imax] = t;
-    printf("idx[%d] = %d\nidx[%d] = %d\n", j, imax, imax, t);
-    if (X[j + n * j] == 0.0) X[j + n * j] = FZERO;
-    if ((j + 1) != n) {
-      dum = 1.0 / X[j + n * j];
-      for (i = j + 1; i < n; i++) X[i + n * j] *= dum;
-    }
-  }
-
-  iip_free(v);
-}
-
-void lu_backwardsubstitution(DTYPE* lu, UINT n, UINT* idx, DTYPE* B) {
-  ITER i, ii, ip, j;
-  DTYPE sum;
-
-  ii = -1;
-  for (i = 0; i < n; i++) {
-    ip = idx[i];
-    sum = B[ip];
-    B[ip] = B[i];
-    if (ii >= 0)
-      for (j = ii; j <= i - 1; j++) sum -= lu[i + n * j] * B[j];
-    else if (sum)
-      ii = i;
-    B[i] = sum;
-  }
-  for (i = n - 1; i >= 0; i--) {
-    sum = B[i];
-    for (j = i + 1; j < n; j++) sum -= lu[i + n * j] * B[j];
-    B[i] = sum / lu[i + n * i];
-  }
-}
-
-void lu_invert(MAT* X, MAT* Y) {
-  UINT* idx;
-  ITER i, j, k;
-  DTYPE* col;
-  UINT n, t = 0;
-
-  n = X->d0;
-
-  idx = iip_malloc(sizeof(UINT) * n);
-  for (i = 0; i < n; i++) idx[i] = i;
-  col = iip_malloc(sizeof(DTYPE) * n);
-
-  lu_decomposition(X->data, n, idx);
-  printf("==== DECOMPOSiTON ====\n");
-  for (i = 0; i < n; i++) printf("%u ", idx[i]);
-  printf("\nLU MATRiX : \n");
-  print_MAT(X);
-  /*
-    for (j = 0; j < n; j++) {
-      for (i = 0; i < n; i++) col[i] = 0.0;
-      col[j] = 1.0;
-
-      for (k = 0; k < n; k++) printf("%lf ", col[k]);printf("\n");
-
-      lu_backwardsubstitution(X->data, n, idx, col);
-      for (i = 0; i < n; i++) i->data[i + n * j] = col[i];
-    }
-  */
-  wiki_invert(X->data, n, idx, Y->data);
-  iip_free(idx);
-  iip_free(col);
-}
-
-void cig_lu(DTYPE* A, int n) {
-  DTYPE s;
-  ITER i, j, k;
-  for (i = 0; i < n; i++) {
-    for (j = 0; j < n; j++) {
-      if (j >= i) {  // U
-        s = 0;
-        for (k = 0; k < i; k++) s += A[k + j * n] * A[i + k * n];
-        A[i + j * n] -= s;
-      } else {  // L
-        s = 0;
-        for (k = 0; k < j; k++) s += A[k + j * n] * A[i + k * n];
-        A[i + j * n] = (A[i + j * n] - s) / A[j + j * n];
-      }
-    }
-  }
-}
-
-void cig_lusolve(DTYPE* LU, DTYPE* b, int n) {
-  // Solve Li = b
-  ITER i, j;
-  for (j = 0; j < n; j++) {
-    for (i = j + 1; i < n; i++) b[i] -= LU[i + j * n] * b[j];
-  }
-  // Solve Ux = i
-  for (i = n - 1; j >= 0; j--) {
-    b[j] /= LU[j + j * n];
-    for (i = 0; i < j; i++) b[i] -= LU[i + j * n] * b[j];
-  }
-}
-
-void lu_dcmp(DTYPE* X, UINT n) {
-  ITER i, j, k;
-  for (i = 1; i < n; i++) {
-    for (j = 0; j < n; j++) {
-      if (i > j) {
-        for (k = 0; k < j; k++) X[j * n + i] -= X[k * n + i] * X[j * n + k];
-        X[j * n + i] /= X[j * n + j];
-      } else {
-        for (k = 0; k < i; k++) {
-          X[j * n + i] -= X[k * n + i] * X[j * n + k];
-        }
-      }
-    }
-  }
-}
 
 void wiki_invert(DTYPE* X, UINT n, UINT* idx, DTYPE* Y) {
   ITER i, j, k;
-  /*
-  X[0] = 5;
-  X[1] = 0;
-  X[2] = -0.2;
-  X[3] = 0.2;
-  X[4] = 4;
-  X[5] = 1;
-  X[6] = -.2;
-  X[7] = .2;
-  X[8] = 2;
-  X[9] = -1;
-  X[10] = 3.2;
-  X[11] = -0.375;
-  X[12] = 1;
-  X[13] = -1;
-  X[14] = 0;
-  X[15] = 2;
-  idx[0]=0;
-  idx[1]=1;
-  idx[2]=2;
-  idx[3]=3;
-  */
   for (j = 0; j < n; j++) {
     for (i = 0; i < n; i++) {
       if (idx[i] == j)
@@ -5041,9 +4813,9 @@ void wiki_invert(DTYPE* X, UINT n, UINT* idx, DTYPE* Y) {
   }
 }
 
-void wiki_dcmp(DTYPE* X, UINT n, UINT* idx) {
+void my_dcmp(DTYPE* X, UINT n, UINT* idx) {
   ITER i, j, k, imax;
-  DTYPE maxA, *ptr, absA;
+  DTYPE max, cur;
   DTYPE t;
   for (i = 0; i < n; i++)
     idx[i] = i;  // Unit permutation matrix, P[N] initialized with N
@@ -5052,17 +4824,16 @@ void wiki_dcmp(DTYPE* X, UINT n, UINT* idx) {
     ;
 
   for (i = 0; i < n; i++) {
-    maxA = 0.0;
+    max = .0;
     imax = i;
     for (k = 0; k < n; k++)
-      if ((absA = fabs(X[idx[k] + n * i])) > maxA) {
-        maxA = absA;
+      if ((cur = fabs(X[idx[k] + n * i])) > max) {
+        max = cur;
         t = X[idx[k] + n * i];
         imax = idx[k];
       }
-    if (maxA < FZERO) {
+    if (max < FZERO) {
       printf("FAiL\n");
-      return;
     }  // failure, matrix is degenerate
 
     if (imax != i) {
@@ -5073,15 +4844,6 @@ void wiki_dcmp(DTYPE* X, UINT n, UINT* idx) {
       printf("%lf : %d <->  %d\n", t, idx[imax], idx[i]);
     }
   }
-
-  /*
-         for (j = i + 1; j < n; j++) {
-             X[idx[j] + n*i] /= X[idx[i] + n*i];
-
-             for (k = i + 1; k < n; k++)
-                 X[idx[j] +n*k] -= X[idx[j] + n*i] * X[idx[i] + n*k];
-         }
-   */
 
   for (i = 0; i < n; i++) {
     for (j = 0; j < n; j++) {
@@ -5097,7 +4859,7 @@ void wiki_dcmp(DTYPE* X, UINT n, UINT* idx) {
   }
 }
 
-void wiki(MAT* X, MAT* Y) {
+void my_invert(MAT* X, MAT* Y) {
   UINT* idx;
   ITER i, j, k;
   UINT n, t = 0;
@@ -5106,7 +4868,7 @@ void wiki(MAT* X, MAT* Y) {
 
   idx = iip_malloc(sizeof(UINT) * n);
 
-  wiki_dcmp(X->data, n, idx);
+  my_dcmp(X->data, n, idx);
   printf("==== DECOMPOSiTON ====\n");
   for (i = 0; i < n; i++) printf("%u ", idx[i]);
   printf("\nLU MATRiX : \n");
