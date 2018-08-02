@@ -9,4 +9,5 @@
 #include "iip_matrix.h"
 #include "iip_time.h"
 #include "iip_wav.h"
+#include "iip_invert.h"
 #endif
