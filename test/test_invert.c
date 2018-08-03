@@ -301,22 +301,9 @@ int main() {
 
   matmul(A7, B7, C7);
   print_MAT(C7);
-/*
   printf("LAPACK : \n");
-  idx = (int *)malloc(sizeof(int) * 8);
-  LAPACK_dgetrf(&(seven), &(seven), (A7->data), &(seven), idx, &info);
-  printf("getrf info : %d\n", info);
-  print_MAT(A7);
-  for (i = 0; i < 7; i++) printf("%d ", idx[i]);
-  printf("\n");
-  work = 7 * 7;
-  fill(B7, 0);
-  LAPACK_dgetri(&(seven), A7->data, &(seven), idx, B7->data, &work, &info);
-  printf("getri work : %d info :%d\n", work, info);
-//  print_MAT(A7);
-//  print_MAT(B7);
-
-  copy(A7, B7);
+  
+  invert_nbyn(A7,B7);
   A7->data[0] = -8;
   A7->data[1] = 4;
   A7->data[2] = -50;
@@ -373,7 +360,6 @@ int main() {
   fill(C7, 0);
   matmul(A7, B7, C7);
   print_MAT(C7);
-  */
   
   free_MAT(A2);
   free_MAT(B2);
