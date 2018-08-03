@@ -11,4 +11,5 @@
 #include "iip_time.h"
 #include "iip_wav.h"
 #include "iip_invert.h"
+#include "iip_test.h"
 #endif

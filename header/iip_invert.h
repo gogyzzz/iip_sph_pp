@@ -43,8 +43,8 @@ DTYPE det_6by6(DTYPE*X);
 CTYPE cdet_6by6(CTYPE*X);
 
 /**** LAPACK ****/
-void invert_nbyn(MAT* mat, MAT* inv);
-void cinvert_nbyn(CMAT* mat, CMAT* inv);
+void invert_nbyn(DTYPE* X, DTYPE* Y,UINT n);
+void cinvert_nbyn(CTYPE* X, CTYPE* Y,UINT n);
 
 DTYPE det_nbyn(MAT* mat);
 CTYPE cdet_nbyn(CMAT* mat);

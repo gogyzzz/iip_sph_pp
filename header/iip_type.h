@@ -224,6 +224,10 @@ _2,_1
     x = t;            \
   }
 
+/****************
+**** ASSERT *****
+*****************/
+
 /**** ASSERT MACRO ****/
 #define DIM_INVAL 1
 #define ARG_INVAL 2
