@@ -7,6 +7,7 @@
 #include "iip_invert.h"
 #include "iip_io.h"
 #include "iip_matrix.h"
+#include "iip_math.h"
 #include "iip_time.h"
 #include "iip_wav.h"
 #include "iip_invert.h"

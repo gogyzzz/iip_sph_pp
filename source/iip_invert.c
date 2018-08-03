@@ -3,22 +3,23 @@
 /**** get inverse of matrix ****/
 
 void invert(MAT*mat,MAT*inv){
+  ITER i;
   if(mat->d0 != mat-> d1)ASSERT(NOT_SQUARE)
   if(inv->d0 != inv->d1)ASSERT(NOT_SQUARE)
   if(mat->d0 != inv->d0)ASSERT(DIM_INVAL)
-
+ 
   if(mat->d0 == 2)invert_2by2(mat->data,inv->data);
   else if(mat->d0 == 3)invert_3by3(mat->data,inv->data);
   else if(mat->d0 == 4)invert_4by4(mat->data,inv->data);
   else if(mat->d0 == 5)invert_5by5(mat->data,inv->data);
   else if(mat->d0 == 6)invert_6by6(mat->data,inv->data);
-  else if(mat->d0 > 6)invert_nbyn(mat->data,inv->data);
-  
-  ASSERT(DIM_INVAL)
+  else if(mat->d0 > 6)invert_nbyn(mat,inv);
+  else  ASSERT(DIM_INVAL)
 }
 
 void cinvert(CMAT*mat,CMAT*inv){
-if(mat->d0 != mat-> d1)ASSERT(NOT_SQUARE)
+  ITER i;
+  if(mat->d0 != mat-> d1)ASSERT(NOT_SQUARE)
   if(inv->d0 != inv->d1)ASSERT(NOT_SQUARE)
   if(mat->d0 != inv->d0)ASSERT(DIM_INVAL)
 
@@ -27,9 +28,8 @@ if(mat->d0 != mat-> d1)ASSERT(NOT_SQUARE)
   else if(mat->d0 == 4)cinvert_4by4(mat->data,inv->data);
   else if(mat->d0 == 5)cinvert_5by5(mat->data,inv->data);
   else if(mat->d0 == 6)cinvert_6by6(mat->data,inv->data);
-  else if(mat->d0 > 6)cinvert_nbyn(mat->data,inv->data);
-  
-  ASSERT(DIM_INVAL)
+  else if(mat->d0 > 6)cinvert_nbyn(mat,inv);
+  else ASSERT(DIM_INVAL)
 
 }
 
@@ -51,6 +51,7 @@ void invert_2by2(DTYPE*X,DTYPE*Y) {
 
 void cinvert_2by2(CTYPE*X,CTYPE*Y) {
   CTYPE det;
+  DTYPE t;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -67,8 +68,9 @@ void cinvert_2by2(CTYPE*X,CTYPE*Y) {
 #elif NTYPE == 1
   if (cabs(CXD(det)) < FZERO) ASSERT(DET_FAIL)
 #endif
+  t = det.re;
   det.re = (det.re) / (det.re * det.re + det.im * det.im);
-  det.im = -(det.im) / (det.re * det.re + det.im * det.im);
+  det.im = -(det.im) / (t *t + det.im * det.im);
   Y[0].re = (X[3].re * det.re - X[3].im * det.im);
   Y[0].im = (X[3].re * det.im + X[3].im * det.re);
 
@@ -118,6 +120,7 @@ void invert_3by3(DTYPE*X,DTYPE*Y) {
 
 void cinvert_3by3(CTYPE*X,CTYPE*Y) {
   CTYPE det;
+  DTYPE t;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -127,7 +130,6 @@ void cinvert_3by3(CTYPE*X,CTYPE*Y) {
   Y[0].im =
       (X[4].re * X[8].im + X[4].im * X[8].re) -
       (X[7].re * X[5].im + X[7].im * X[5].re);
-
   Y[1].re =
       (X[7].re * X[2].re - X[7].im * X[2].im) -
       (X[1].re * X[8].re - X[1].im * X[8].im);
@@ -141,7 +143,6 @@ void cinvert_3by3(CTYPE*X,CTYPE*Y) {
   Y[2].im =
       (X[1].re * X[5].im + X[1].im * X[5].re) -
       (X[4].re * X[2].im + X[4].im * X[2].re);
-
   det.re =
       (X[0].re * Y[0].re - X[0].im * Y[0].im) +
       (X[3].re * Y[1].re - X[3].im * Y[1].im) +
@@ -165,12 +166,11 @@ void cinvert_3by3(CTYPE*X,CTYPE*Y) {
       (X[3].re * X[8].im + X[3].im * X[8].re);
 
   Y[4].re =
-      (X[0].re * X[6].re - X[0].im * X[6].im) -
+      (X[0].re * X[8].re - X[0].im * X[8].im) -
       (X[6].re * X[2].re - X[6].im * X[2].im);
   Y[4].im =
-      (X[0].re * X[6].im + X[0].im * X[6].re) -
+      (X[0].re * X[8].im + X[0].im * X[8].re) -
       (X[6].re * X[2].im + X[6].im * X[2].re);
-
   Y[5].re =
       (X[3].re * X[2].re - X[3].im * X[2].im) -
       (X[0].re * X[5].re - X[0].im * X[5].im);
@@ -199,34 +199,45 @@ void cinvert_3by3(CTYPE*X,CTYPE*Y) {
       (X[0].re * X[4].im + X[0].im * X[4].re) -
       (X[3].re * X[1].im + X[3].im * X[1].re);
 
+  t = det.re;
   det.re = (det.re) / (det.re * det.re + det.im * det.im);
-  det.im = -(det.im) / (det.re * det.re + det.im * det.im);
+  det.im = -(det.im) / (t *t + det.im * det.im);
+ 
+  t = Y[0].re; 
   Y[0].re = (Y[0].re * det.re - Y[0].im * det.im);
-  Y[0].im = (Y[0].re * det.im + Y[0].im * det.re);
+  Y[0].im = (t * det.im + Y[0].im * det.re);
 
+  t = Y[1].re; 
   Y[1].re = (Y[1].re * det.re - Y[1].im * det.im);
-  Y[1].im = (Y[1].re * det.im + Y[1].im * det.re);
+  Y[1].im = (t * det.im + Y[1].im * det.re);
 
+  t = Y[2].re; 
   Y[2].re = (Y[2].re * det.re - Y[2].im * det.im);
-  Y[2].im = (Y[2].re * det.im + Y[2].im * det.re);
+  Y[2].im = (t * det.im + Y[2].im * det.re);
 
+  t = Y[3].re; 
   Y[3].re = (Y[3].re * det.re - Y[3].im * det.im);
-  Y[3].im = (Y[3].re * det.im + Y[3].im * det.re);
+  Y[3].im = (t * det.im + Y[3].im * det.re);
 
+  t = Y[4].re;
   Y[4].re = (Y[4].re * det.re - Y[4].im * det.im);
-  Y[4].im = (Y[4].re * det.im + Y[4].im * det.re);
+  Y[4].im = (t * det.im + Y[4].im * det.re);
 
+  t = Y[5].re; 
   Y[5].re = (Y[5].re * det.re - Y[5].im * det.im);
-  Y[5].im = (Y[5].re * det.im + Y[5].im * det.re);
+  Y[5].im = (t * det.im + Y[5].im * det.re);
 
+  t = Y[6].re; 
   Y[6].re = (Y[6].re * det.re - Y[6].im * det.im);
-  Y[6].im = (Y[6].re * det.im + Y[6].im * det.re);
+  Y[6].im = (t * det.im + Y[6].im * det.re);
 
+  t = Y[7].re; 
   Y[7].re = (Y[7].re * det.re - Y[7].im * det.im);
-  Y[7].im = (Y[7].re * det.im + Y[7].im * det.re);
+  Y[7].im = (t * det.im + Y[7].im * det.re);
 
+  t = Y[8].re; 
   Y[8].re = (Y[8].re * det.re - Y[8].im * det.im);
-  Y[8].im = (Y[8].re * det.im + Y[8].im * det.re);
+  Y[8].im = (t * det.im + Y[8].im * det.re);
 }
 
 void invert_4by4(DTYPE*X,DTYPE*Y) {
@@ -304,6 +315,7 @@ void invert_4by4(DTYPE*X,DTYPE*Y) {
 void cinvert_4by4(CTYPE*X,CTYPE*Y) {
   CTYPE det;
   CTYPE t1, t2, t3, t4, t5;
+  DTYPE t;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -408,7 +420,7 @@ void cinvert_4by4(CTYPE*X,CTYPE*Y) {
   Y[3].im = (X[5].re * t5.im + X[5].im * t5.re) -
                     (X[1].re * t3.im + X[1].im * t3.re) -
                     (X[9].re * t1.im + X[9].im * t1.re);
-
+  
   det.re =
       (X[0].re * Y[0].re - X[0].im * Y[0].im) +
       (X[4].re * Y[1].re - X[4].im * Y[1].im) +
@@ -425,7 +437,8 @@ void cinvert_4by4(CTYPE*X,CTYPE*Y) {
 #elif NTYPE == 1
   if (cabs(CXD(det)) < FZERO) ASSERT(DET_FAIL)
 #endif
-  Y[7].re = (X[0].re * t3.re - X[0].im * t3.im) -
+ 
+    Y[7].re = (X[0].re * t3.re - X[0].im * t3.im) -
                     (X[4].re * t5.re - X[4].im * t5.im) +
                     (X[8].re * t1.re - X[8].im * t1.im);
   Y[7].im = (X[0].re * t3.im + X[0].im * t3.re) -
@@ -535,56 +548,73 @@ void cinvert_4by4(CTYPE*X,CTYPE*Y) {
   Y[15].im = (X[2].re * t3.im + X[2].im * t3.re) -
                      (X[6].re * t5.im + X[6].im * t5.re) +
                      (X[10].re * t1.im + X[10].im * t1.re);
-
+  t = det.re;
   det.re = (det.re) / (det.re * det.re + det.im * det.im);
-  det.im = -(det.im) / (det.re * det.re + det.im * det.im);
+  det.im = -(det.im) / (t * t + det.im * det.im);
+  
+  t = Y[0].re; 
   Y[0].re = (Y[0].re * det.re - Y[0].im * det.im);
-  Y[0].im = (Y[0].re * det.im + Y[0].im * det.re);
+  Y[0].im = (t * det.im + Y[0].im * det.re);
 
+  t = Y[1].re; 
   Y[1].re = (Y[1].re * det.re - Y[1].im * det.im);
-  Y[1].im = (Y[1].re * det.im + Y[1].im * det.re);
+  Y[1].im = (t * det.im + Y[1].im * det.re);
 
+  t = Y[2].re; 
   Y[2].re = (Y[2].re * det.re - Y[2].im * det.im);
-  Y[2].im = (Y[2].re * det.im + Y[2].im * det.re);
+  Y[2].im = (t * det.im + Y[2].im * det.re);
 
+  t = Y[3].re; 
   Y[3].re = (Y[3].re * det.re - Y[3].im * det.im);
-  Y[3].im = (Y[3].re * det.im + Y[3].im * det.re);
+  Y[3].im = (t * det.im + Y[3].im * det.re);
 
+  t = Y[4].re;
   Y[4].re = (Y[4].re * det.re - Y[4].im * det.im);
-  Y[4].im = (Y[4].re * det.im + Y[4].im * det.re);
+  Y[4].im = (t * det.im + Y[4].im * det.re);
 
+  t = Y[5].re; 
   Y[5].re = (Y[5].re * det.re - Y[5].im * det.im);
-  Y[5].im = (Y[5].re * det.im + Y[5].im * det.re);
+  Y[5].im = (t * det.im + Y[5].im * det.re);
 
+  t = Y[6].re; 
   Y[6].re = (Y[6].re * det.re - Y[6].im * det.im);
-  Y[6].im = (Y[6].re * det.im + Y[6].im * det.re);
+  Y[6].im = (t * det.im + Y[6].im * det.re);
 
+  t = Y[7].re; 
   Y[7].re = (Y[7].re * det.re - Y[7].im * det.im);
-  Y[7].im = (Y[7].re * det.im + Y[7].im * det.re);
+  Y[7].im = (t * det.im + Y[7].im * det.re);
 
+  t = Y[8].re; 
   Y[8].re = (Y[8].re * det.re - Y[8].im * det.im);
-  Y[8].im = (Y[8].re * det.im + Y[8].im * det.re);
+  Y[8].im = (t * det.im + Y[8].im * det.re);
 
+  t = Y[9].re; 
   Y[9].re = (Y[9].re * det.re - Y[9].im * det.im);
-  Y[9].im = (Y[9].re * det.im + Y[9].im * det.re);
+  Y[9].im = (t * det.im + Y[9].im * det.re);
 
+  t = Y[10].re; 
   Y[10].re = (Y[10].re * det.re - Y[10].im * det.im);
-  Y[10].im = (Y[10].re * det.im + Y[10].im * det.re);
+  Y[10].im = (t * det.im + Y[10].im * det.re);
 
+  t = Y[11].re; 
   Y[11].re = (Y[11].re * det.re - Y[11].im * det.im);
-  Y[11].im = (Y[11].re * det.im + Y[11].im * det.re);
+  Y[11].im = (t* det.im + Y[11].im * det.re);
 
+  t = Y[12].re; 
   Y[12].re = (Y[12].re * det.re - Y[12].im * det.im);
-  Y[12].im = (Y[12].re * det.im + Y[12].im * det.re);
+  Y[12].im = (t * det.im + Y[12].im * det.re);
 
+  t = Y[13].re; 
   Y[13].re = (Y[13].re * det.re - Y[13].im * det.im);
-  Y[13].im = (Y[13].re * det.im + Y[13].im * det.re);
+  Y[13].im = (t* det.im + Y[13].im * det.re);
 
+  t = Y[14].re; 
   Y[14].re = (Y[14].re * det.re - Y[14].im * det.im);
-  Y[14].im = (Y[14].re * det.im + Y[14].im * det.re);
+  Y[14].im = (t * det.im + Y[14].im * det.re);
 
+  t = Y[15].re; 
   Y[15].re = (Y[15].re * det.re - Y[15].im * det.im);
-  Y[15].im = (Y[15].re * det.im + Y[15].im * det.re);
+  Y[15].im = (t* det.im + Y[15].im * det.re);
 }
 
 void invert_5by5(DTYPE*X,DTYPE*Y) {
@@ -750,6 +780,7 @@ void invert_5by5(DTYPE*X,DTYPE*Y) {
 
 void cinvert_5by5(CTYPE*X,CTYPE*Y) {
   CTYPE det;
+  DTYPE t;
   CTYPE t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16,
       t17, t18, t19, t20;
 #if DEBUG
@@ -1434,80 +1465,106 @@ void cinvert_5by5(CTYPE*X,CTYPE*Y) {
 
   det.re = (det.re) / (det.re * det.re + det.im * det.im);
   det.im = -(det.im) / (det.re * det.re + det.im * det.im);
+  
+  t=Y[0].re;
   Y[0].re = (Y[0].re * det.re - Y[0].im * det.im);
-  Y[0].im = (Y[0].re * det.im + Y[0].im * det.re);
+  Y[0].im = (t * det.im + Y[0].im * det.re);
 
+  t=Y[1].re;
   Y[1].re = (Y[1].re * det.re - Y[1].im * det.im);
-  Y[1].im = (Y[1].re * det.im + Y[1].im * det.re);
+  Y[1].im = (t* det.im + Y[1].im * det.re);
 
+  t=Y[2].re;
   Y[2].re = (Y[2].re * det.re - Y[2].im * det.im);
-  Y[2].im = (Y[2].re * det.im + Y[2].im * det.re);
+  Y[2].im = (t* det.im + Y[2].im * det.re);
 
+  t=Y[3].re;
   Y[3].re = (Y[3].re * det.re - Y[3].im * det.im);
-  Y[3].im = (Y[3].re * det.im + Y[3].im * det.re);
+  Y[3].im = (t* det.im + Y[3].im * det.re);
 
+  t=Y[4].re;
   Y[4].re = (Y[4].re * det.re - Y[4].im * det.im);
-  Y[4].im = (Y[4].re * det.im + Y[4].im * det.re);
+  Y[4].im = (t* det.im + Y[4].im * det.re);
 
+  t=Y[5].re;
   Y[5].re = (Y[5].re * det.re - Y[5].im * det.im);
-  Y[5].im = (Y[5].re * det.im + Y[5].im * det.re);
+  Y[5].im = (t* det.im + Y[5].im * det.re);
 
+  t=Y[6].re;
   Y[6].re = (Y[6].re * det.re - Y[6].im * det.im);
-  Y[6].im = (Y[6].re * det.im + Y[6].im * det.re);
+  Y[6].im = (t* det.im + Y[6].im * det.re);
 
+  t=Y[7].re;
   Y[7].re = (Y[7].re * det.re - Y[7].im * det.im);
-  Y[7].im = (Y[7].re * det.im + Y[7].im * det.re);
+  Y[7].im = (t * det.im + Y[7].im * det.re);
 
+  t=Y[8].re;
   Y[8].re = (Y[8].re * det.re - Y[8].im * det.im);
-  Y[8].im = (Y[8].re * det.im + Y[8].im * det.re);
+  Y[8].im = (t * det.im + Y[8].im * det.re);
 
+  t=Y[9].re;
   Y[9].re = (Y[9].re * det.re - Y[9].im * det.im);
-  Y[9].im = (Y[9].re * det.im + Y[9].im * det.re);
+  Y[9].im = (t * det.im + Y[9].im * det.re);
 
+  t=Y[10].re;
   Y[10].re = (Y[10].re * det.re - Y[10].im * det.im);
-  Y[10].im = (Y[10].re * det.im + Y[10].im * det.re);
+  Y[10].im = (t* det.im + Y[10].im * det.re);
 
+  t=Y[11].re;
   Y[11].re = (Y[11].re * det.re - Y[11].im * det.im);
-  Y[11].im = (Y[11].re * det.im + Y[11].im * det.re);
+  Y[11].im = (t* det.im + Y[11].im * det.re);
 
+  t=Y[12].re;
   Y[12].re = (Y[12].re * det.re - Y[12].im * det.im);
-  Y[12].im = (Y[12].re * det.im + Y[12].im * det.re);
+  Y[12].im = (t* det.im + Y[12].im * det.re);
 
+  t=Y[13].re;
   Y[13].re = (Y[13].re * det.re - Y[13].im * det.im);
-  Y[13].im = (Y[13].re * det.im + Y[13].im * det.re);
+  Y[13].im = (t* det.im + Y[13].im * det.re);
 
+  t=Y[14].re;
   Y[14].re = (Y[14].re * det.re - Y[14].im * det.im);
-  Y[14].im = (Y[14].re * det.im + Y[14].im * det.re);
+  Y[14].im = (t* det.im + Y[14].im * det.re);
 
+  t=Y[15].re;
   Y[15].re = (Y[15].re * det.re - Y[15].im * det.im);
-  Y[15].im = (Y[15].re * det.im + Y[15].im * det.re);
+  Y[15].im = (t* det.im + Y[15].im * det.re);
 
+  t=Y[16].re;
   Y[16].re = (Y[16].re * det.re - Y[16].im * det.im);
-  Y[16].im = (Y[16].re * det.im + Y[16].im * det.re);
+  Y[16].im = (t* det.im + Y[16].im * det.re);
 
+  t=Y[17].re;
   Y[17].re = (Y[17].re * det.re - Y[17].im * det.im);
-  Y[17].im = (Y[17].re * det.im + Y[17].im * det.re);
+  Y[17].im = (t* det.im + Y[17].im * det.re);
 
+  t=Y[18].re;
   Y[18].re = (Y[18].re * det.re - Y[18].im * det.im);
-  Y[18].im = (Y[18].re * det.im + Y[18].im * det.re);
+  Y[18].im = (t* det.im + Y[18].im * det.re);
 
+  t=Y[19].re;
   Y[19].re = (Y[19].re * det.re - Y[19].im * det.im);
-  Y[19].im = (Y[19].re * det.im + Y[19].im * det.re);
+  Y[19].im = (t* det.im + Y[19].im * det.re);
 
+  t=Y[20].re;
   Y[20].re = (Y[20].re * det.re - Y[20].im * det.im);
-  Y[20].im = (Y[20].re * det.im + Y[20].im * det.re);
+  Y[20].im = (t* det.im + Y[20].im * det.re);
 
+  t=Y[21].re;
   Y[21].re = (Y[21].re * det.re - Y[21].im * det.im);
-  Y[21].im = (Y[21].re * det.im + Y[21].im * det.re);
+  Y[21].im = (t* det.im + Y[21].im * det.re);
 
+  t=Y[22].re;
   Y[22].re = (Y[22].re * det.re - Y[22].im * det.im);
-  Y[22].im = (Y[22].re * det.im + Y[22].im * det.re);
+  Y[22].im = (t* det.im + Y[22].im * det.re);
 
+  t=Y[23].re;
   Y[23].re = (Y[23].re * det.re - Y[23].im * det.im);
-  Y[23].im = (Y[23].re * det.im + Y[23].im * det.re);
+  Y[23].im = (t* det.im + Y[23].im * det.re);
 
+  t=Y[24].re;
   Y[24].re = (Y[24].re * det.re - Y[24].im * det.im);
-  Y[24].im = (Y[24].re * det.im + Y[24].im * det.re);
+  Y[24].im = (t* det.im + Y[24].im * det.re);
 }
 
 void invert_6by6(DTYPE*X,DTYPE*Y) {
@@ -1884,6 +1941,7 @@ void invert_6by6(DTYPE*X,DTYPE*Y) {
 
 void cinvert_6by6(CTYPE*X,CTYPE*Y) {
   CTYPE det;
+  DTYPE t;
   CTYPE t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16,
       t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28, t29, t30, t31,
       t32, t33, t34, t35, t36, t37, t38, t39, t40, t41, t42, t43, t44, t45, t46,
@@ -3405,113 +3463,150 @@ void cinvert_6by6(CTYPE*X,CTYPE*Y) {
 
   det.re = (det.re) / (det.re * det.re + det.im * det.im);
   det.im = -(det.im) / (det.re * det.re + det.im * det.im);
+  
+  t=Y[0].re;
   Y[0].re = (Y[0].re * det.re - Y[0].im * det.im);
-  Y[0].im = (Y[0].re * det.im + Y[0].im * det.re);
+  Y[0].im = (t* det.im + Y[0].im * det.re);
 
+  t=Y[1].re;
   Y[1].re = (Y[1].re * det.re - Y[1].im * det.im);
-  Y[1].im = (Y[1].re * det.im + Y[1].im * det.re);
+  Y[1].im = (t* det.im + Y[1].im * det.re);
 
+  t=Y[2].re;
   Y[2].re = (Y[2].re * det.re - Y[2].im * det.im);
-  Y[2].im = (Y[2].re * det.im + Y[2].im * det.re);
+  Y[2].im = (t* det.im + Y[2].im * det.re);
 
+  t=Y[3].re;
   Y[3].re = (Y[3].re * det.re - Y[3].im * det.im);
-  Y[3].im = (Y[3].re * det.im + Y[3].im * det.re);
+  Y[3].im = (t* det.im + Y[3].im * det.re);
 
+  t=Y[4].re;
   Y[4].re = (Y[4].re * det.re - Y[4].im * det.im);
-  Y[4].im = (Y[4].re * det.im + Y[4].im * det.re);
+  Y[4].im = (t* det.im + Y[4].im * det.re);
 
+  t=Y[5].re;
   Y[5].re = (Y[5].re * det.re - Y[5].im * det.im);
-  Y[5].im = (Y[5].re * det.im + Y[5].im * det.re);
+  Y[5].im = (t* det.im + Y[5].im * det.re);
 
+  t=Y[6].re;
   Y[6].re = (Y[6].re * det.re - Y[6].im * det.im);
-  Y[6].im = (Y[6].re * det.im + Y[6].im * det.re);
+  Y[6].im = (t* det.im + Y[6].im * det.re);
 
+  t=Y[7].re;
   Y[7].re = (Y[7].re * det.re - Y[7].im * det.im);
-  Y[7].im = (Y[7].re * det.im + Y[7].im * det.re);
+  Y[7].im = (t* det.im + Y[7].im * det.re);
 
+  t=Y[8].re;
   Y[8].re = (Y[8].re * det.re - Y[8].im * det.im);
-  Y[8].im = (Y[8].re * det.im + Y[8].im * det.re);
+  Y[8].im = (t* det.im + Y[8].im * det.re);
 
+  t=Y[9].re;
   Y[9].re = (Y[9].re * det.re - Y[9].im * det.im);
-  Y[9].im = (Y[9].re * det.im + Y[9].im * det.re);
+  Y[9].im = (t* det.im + Y[9].im * det.re);
 
+  t=Y[10].re;
   Y[10].re = (Y[10].re * det.re - Y[10].im * det.im);
-  Y[10].im = (Y[10].re * det.im + Y[10].im * det.re);
+  Y[10].im = (t* det.im + Y[10].im * det.re);
 
+  t=Y[11].re;
   Y[11].re = (Y[11].re * det.re - Y[11].im * det.im);
-  Y[11].im = (Y[11].re * det.im + Y[11].im * det.re);
+  Y[11].im = (t* det.im + Y[11].im * det.re);
 
+  t=Y[12].re;
   Y[12].re = (Y[12].re * det.re - Y[12].im * det.im);
-  Y[12].im = (Y[12].re * det.im + Y[12].im * det.re);
+  Y[12].im = (t* det.im + Y[12].im * det.re);
 
+  t=Y[13].re;
   Y[13].re = (Y[13].re * det.re - Y[13].im * det.im);
-  Y[13].im = (Y[13].re * det.im + Y[13].im * det.re);
+  Y[13].im = (t* det.im + Y[13].im * det.re);
 
+  t=Y[14].re;
   Y[14].re = (Y[14].re * det.re - Y[14].im * det.im);
-  Y[14].im = (Y[14].re * det.im + Y[14].im * det.re);
+  Y[14].im = (t* det.im + Y[14].im * det.re);
 
+  t=Y[15].re;
   Y[15].re = (Y[15].re * det.re - Y[15].im * det.im);
-  Y[15].im = (Y[15].re * det.im + Y[15].im * det.re);
+  Y[15].im = (t* det.im + Y[15].im * det.re);
 
+  t=Y[16].re;
   Y[16].re = (Y[16].re * det.re - Y[16].im * det.im);
-  Y[16].im = (Y[16].re * det.im + Y[16].im * det.re);
+  Y[16].im = (t* det.im + Y[16].im * det.re);
 
+  t=Y[17].re;
   Y[17].re = (Y[17].re * det.re - Y[17].im * det.im);
-  Y[17].im = (Y[17].re * det.im + Y[17].im * det.re);
+  Y[17].im = (t* det.im + Y[17].im * det.re);
 
+  t=Y[18].re;
   Y[18].re = (Y[18].re * det.re - Y[18].im * det.im);
-  Y[18].im = (Y[18].re * det.im + Y[18].im * det.re);
+  Y[18].im = (t* det.im + Y[18].im * det.re);
 
+  t=Y[19].re;
   Y[19].re = (Y[19].re * det.re - Y[19].im * det.im);
-  Y[19].im = (Y[19].re * det.im + Y[19].im * det.re);
+  Y[19].im = (t* det.im + Y[19].im * det.re);
 
+  t=Y[20].re;
   Y[20].re = (Y[20].re * det.re - Y[20].im * det.im);
-  Y[20].im = (Y[20].re * det.im + Y[20].im * det.re);
+  Y[20].im = (t* det.im + Y[20].im * det.re);
 
+  t=Y[21].re;
   Y[21].re = (Y[21].re * det.re - Y[21].im * det.im);
-  Y[21].im = (Y[21].re * det.im + Y[21].im * det.re);
+  Y[21].im = (t* det.im + Y[21].im * det.re);
 
+  t=Y[22].re;
   Y[22].re = (Y[22].re * det.re - Y[22].im * det.im);
-  Y[22].im = (Y[22].re * det.im + Y[22].im * det.re);
+  Y[22].im = (t* det.im + Y[22].im * det.re);
 
+  t=Y[23].re;
   Y[23].re = (Y[23].re * det.re - Y[23].im * det.im);
-  Y[23].im = (Y[23].re * det.im + Y[23].im * det.re);
+  Y[23].im = (t* det.im + Y[23].im * det.re);
 
+  t=Y[24].re;
   Y[24].re = (Y[24].re * det.re - Y[24].im * det.im);
-  Y[24].im = (Y[24].re * det.im + Y[24].im * det.re);
+  Y[24].im = (t* det.im + Y[24].im * det.re);
 
+  t=Y[25].re;
   Y[25].re = (Y[25].re * det.re - Y[25].im * det.im);
-  Y[25].im = (Y[25].re * det.im + Y[25].im * det.re);
+  Y[25].im = (t* det.im + Y[25].im * det.re);
 
+  t=Y[26].re;
   Y[26].re = (Y[26].re * det.re - Y[26].im * det.im);
-  Y[26].im = (Y[26].re * det.im + Y[26].im * det.re);
+  Y[26].im = (t* det.im + Y[26].im * det.re);
 
+  t=Y[27].re;
   Y[27].re = (Y[27].re * det.re - Y[27].im * det.im);
-  Y[27].im = (Y[27].re * det.im + Y[27].im * det.re);
+  Y[27].im = (t* det.im + Y[27].im * det.re);
 
+  t=Y[28].re;
   Y[28].re = (Y[28].re * det.re - Y[28].im * det.im);
-  Y[28].im = (Y[28].re * det.im + Y[28].im * det.re);
+  Y[28].im = (t* det.im + Y[28].im * det.re);
 
+  t=Y[29].re;
   Y[29].re = (Y[29].re * det.re - Y[29].im * det.im);
-  Y[29].im = (Y[29].re * det.im + Y[29].im * det.re);
+  Y[29].im = (t* det.im + Y[29].im * det.re);
 
+  t=Y[30].re;
   Y[30].re = (Y[30].re * det.re - Y[30].im * det.im);
-  Y[30].im = (Y[30].re * det.im + Y[30].im * det.re);
+  Y[30].im = (t* det.im + Y[30].im * det.re);
 
+  t=Y[31].re;
   Y[31].re = (Y[31].re * det.re - Y[31].im * det.im);
-  Y[31].im = (Y[31].re * det.im + Y[31].im * det.re);
+  Y[31].im = (t* det.im + Y[31].im * det.re);
 
+  t=Y[32].re;
   Y[32].re = (Y[32].re * det.re - Y[32].im * det.im);
-  Y[32].im = (Y[32].re * det.im + Y[32].im * det.re);
+  Y[32].im = (t* det.im + Y[32].im * det.re);
 
+  t=Y[33].re;
   Y[33].re = (Y[33].re * det.re - Y[33].im * det.im);
-  Y[33].im = (Y[33].re * det.im + Y[33].im * det.re);
+  Y[33].im = (t* det.im + Y[33].im * det.re);
 
+  t=Y[34].re;
   Y[34].re = (Y[34].re * det.re - Y[34].im * det.im);
-  Y[34].im = (Y[34].re * det.im + Y[34].im * det.re);
+  Y[34].im = (t* det.im + Y[34].im * det.re);
 
+  t=Y[35].re;
   Y[35].re = (Y[35].re * det.re - Y[35].im * det.im);
-  Y[35].im = (Y[35].re * det.im + Y[35].im * det.re);
+  Y[35].im = (t* det.im + Y[35].im * det.re);
 }
 
 /**** get determinant of matrix ****/
@@ -4767,9 +4862,9 @@ CTYPE cdet_nbyn(CMAT* mat) {
   tmat = mem_CMAT(mat->d0,mat->d1,mat->d2);
   ccopy(mat,tmat);
 #if NTYPE == 0
-  LAPACKE_sgetrf(LAPACK_COL_MAJOR, n, n, mat->data, n, idx);
+  LAPACKE_cgetrf(LAPACK_COL_MAJOR, n, n, mat->data, n, idx);
 #elif NTYPE == 1
-  LAPACKE_dgetrf(LAPACK_COL_MAJOR, n, n, mat->data, n, idx);
+  LAPACKE_zgetrf(LAPACK_COL_MAJOR, n, n, mat->data, n, idx);
 #endif
 
 #else

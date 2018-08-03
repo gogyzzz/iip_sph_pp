@@ -13,20 +13,8 @@
 // DBL_MAX, FLT_MAX
 #include <float.h>
 
-#if USE_CUDA
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
-#endif
-
-#if OS_WIN
-#include <windows.h>
-#define __func__ __FUNCTION__
-#endif
 #define DEBUG 0
 
-#if USE_LAPACK
-#include <lapacke.h>
-#endif
 
 /***********************************
 * 이 부분은 직접 해주세요
@@ -63,6 +51,38 @@
 #define Tran 112
 #define CTran 113
 #endif
+
+/**** LIBRARY SETTING ****/
+
+#if USE_CUDA
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
+#endif
+
+#if OS_WIN
+#include <windows.h>
+#endif
+
+#if USE_OPEN
+#include "cblas.h"
+#endif
+
+#if USE_MKL
+#include "mkl.h"
+#endif
+
+#if USE_CBLAS
+#include "lapacke.h"
+#endif
+
+#if USE_CUDA
+#include "cublas_v2.h"
+extern cublasHandle_t handle;
+extern UINT max_thread;
+extern UINT max_block;
+
+#endif
+
 
 /*
 * #define AA BB
@@ -106,6 +126,10 @@ typedef struct DIM {
   UINT d2;
 } DIM;
 
+/**** MACRO FOR MACRO ****/
+#if OS_WIN
+#define __func__ __FUNCTION__
+#endif
 /*
 오버로딩
 #define 오버로딩매크로(_x(함수중 가장 인자가 적은수의 인자수만큼), 함수 수만큼,
@@ -129,22 +153,6 @@ _2,_1
 
 */
 
-/**** LIBRARY SETTING ****/
-
-#if USE_OPEN
-#include "cblas.h"
-#endif
-
-#if USE_MKL
-#include "mkl.h"
-#endif
-
-#if USE_CUDA
-#include "cublas_v2.h"
-extern cublasHandle_t handle;
-extern UINT max_thread;
-extern UINT max_block;
-
 // CAST CTYPE POINTER TO CUDA_COMPLEX TYPE POINTER
 #if NTYPE == 0
 #define CU_CX(x) (cuComplex*)(void*)(x)
@@ -152,7 +160,6 @@ extern UINT max_block;
 #elif NTYPE == 1
 #define CU_CX(x) (cuDoubleComplex*)(void*)(x)
 
-#endif
 #endif
 
 /*******************************
