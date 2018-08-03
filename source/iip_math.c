@@ -641,16 +641,16 @@ DTYPE amax_cmat(CMAT* mat, DIM* dim) {
   max = cabsf(CXF(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
     if (cabsf(CXF(mat->data[i])) > max) {
-        max = cabsf(CXF(mat->data[i]));
-        max_idx = i;
-      }
+      max = cabsf(CXF(mat->data[i]));
+      max_idx = i;
+    }
   }
 #elif NTYPE == 1
   max = cabs(CXD(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
     if (cabs(CXD(mat->data[i])) > max) {
-          max = cabs(CXD(mat->data[i]));
-          max_idx = i;
+      max = cabs(CXD(mat->data[i]));
+      max_idx = i;
     }
   }
 #endif
@@ -750,16 +750,16 @@ DTYPE amin_cmat(CMAT* mat, DIM* dim) {
   min = cabsf(CXF(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
     if (cabsf(CXF(mat->data[i])) < min) {
-         min = cabsf(CXF(mat->data[i]));
-          min_idx = i;
+      min = cabsf(CXF(mat->data[i]));
+      min_idx = i;
     }
   }
 #elif NTYPE == 1
   min = cabs(CXD(mat->data[0]));
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
     if (cabs(CXD(mat->data[i])) < min) {
-          min = cabs(CXD(mat->data[i]));
-          min_idx = i;
+      min = cabs(CXD(mat->data[i]));
+      min_idx = i;
     }
   }
 #endif
@@ -767,4 +767,12 @@ DTYPE amin_cmat(CMAT* mat, DIM* dim) {
   dim->d1 = (min_idx % (mat->d0 * mat->d1)) / mat->d0;
   dim->d0 = min_idx % mat->d0;
   return min;
+}
+
+/**** misc****/
+CTYPE CX(DTYPE r,DTYPE i){
+CTYPE t;
+t.re = r;
+t.im = i;
+return t;
 }

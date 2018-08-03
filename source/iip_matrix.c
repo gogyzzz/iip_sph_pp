@@ -2378,9 +2378,9 @@ void print_CMAT(CMAT *mat) {
   for (k = 0; k < mat->d2; k++) {
     for (i = 0; i < mat->d0; i++) {
       for (j = 0; j < mat->d1; j++) {
-        printf("%+3.3lf ",
+        printf("%+4.4lf ",
                mat->data[k * (mat->d1) * (mat->d0) + j * (mat->d0) + i].re);
-        printf("%+3.3lf| ",
+        printf("%+4.4lf| ",
                mat->data[k * (mat->d1) * (mat->d0) + j * (mat->d0) + i].im);
       }
       printf("\n");

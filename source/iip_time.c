@@ -29,16 +29,16 @@ void stopwatch(int flag) {
 
     switch (unit) {
       case nano:
-        printf("elapsed time : % lld nano sec\n", diff);
+        printf("% lld nano sec\n", diff);
         break;
       case micro:
-        printf("elapsed time : % lld micro seconds\n", diff / 1000);
+        printf("% lld micro seconds\n", diff / 1000);
         break;
       case sec:
-        printf("elapsed time : % lld sec\n", diff / 1000000000);
+        printf("% lld sec\n", diff / 1000000000);
         break;
       default:
-        printf("elapsed time : % lld milli sec\n", diff / 100000);
+        printf("% lld milli sec\n", diff / 100000);
         break;
     }
   } else {
@@ -113,7 +113,7 @@ void stopwatch(int flag) {
     clock_gettime(&endTV);
     diff = MICRO * (endTV.tv_sec - startTV.tv_sec) +
            (endTV.tv_usec - startTV.tv_usec);
-    printf("elapsed time : %lld micro seconds\n", diff);
+    printf("%lld micro seconds\n", diff);
   }
 }
 #endif

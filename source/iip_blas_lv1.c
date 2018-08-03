@@ -1165,23 +1165,23 @@ void crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s){
 #if DEBUG
 	printf("%s\n", __func__);
 #endif
-
+/*
 #if USE_CBLAS
 //DTYPE = float
 #if NTYPE == 0
 	cblas_crotg(a, b, c, s);
 	return;
-
 //DTYPE = double
 #elif NTYPE == 1
 	cblas_zrotg(a, b, c, s);
-	return;
+  return;
 #endif
 
 //USE_BLAS = 0 -> just c implement
 #else
+  */
 	return mp_crotg(a, b, c, s);
-#endif
+//#endif
 }
 void mp_crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s){
 	CTYPE a_ = *a;

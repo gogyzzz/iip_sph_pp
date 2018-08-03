@@ -4,33 +4,41 @@
 
 void invert(MAT*mat,MAT*inv){
   ITER i;
+  UINT size;
   if(mat->d0 != mat-> d1)ASSERT(NOT_SQUARE)
   if(inv->d0 != inv->d1)ASSERT(NOT_SQUARE)
   if(mat->d0 != inv->d0)ASSERT(DIM_INVAL)
- 
-  if(mat->d0 == 2)invert_2by2(mat->data,inv->data);
-  else if(mat->d0 == 3)invert_3by3(mat->data,inv->data);
-  else if(mat->d0 == 4)invert_4by4(mat->data,inv->data);
-  else if(mat->d0 == 5)invert_5by5(mat->data,inv->data);
-  else if(mat->d0 == 6)invert_6by6(mat->data,inv->data);
-  else if(mat->d0 > 6)invert_nbyn(mat,inv);
-  else  ASSERT(DIM_INVAL)
+
+  size = mat->d0 *mat->d1;
+  /*모양이 굉장히 마음에 안들지만 일단 넘긴다*/
+  for(i=0;i<mat->d2;i++){ 
+    if(mat->d0 == 2)invert_2by2(&(mat->data[i*size]),&(inv->data[i*size]));
+    else if(mat->d0 == 3)invert_3by3(&(mat->data[i*size]),&(inv->data[i*size]));
+    else if(mat->d0 == 4)invert_4by4(&(mat->data[i*size]),&(inv->data[i*size]));
+    else if(mat->d0 == 5)invert_5by5(&(mat->data[i*size]),&(inv->data[i*size]));
+    else if(mat->d0 == 6)invert_6by6(&(mat->data[i*size]),&(inv->data[i*size]));
+    else if(mat->d0 > 6)invert_nbyn(&(mat->data[i*size]),&(inv->data[i*size]),mat->d0);
+    else  ASSERT(DIM_INVAL)
+  }
 }
 
 void cinvert(CMAT*mat,CMAT*inv){
   ITER i;
+  UINT size;
   if(mat->d0 != mat-> d1)ASSERT(NOT_SQUARE)
   if(inv->d0 != inv->d1)ASSERT(NOT_SQUARE)
   if(mat->d0 != inv->d0)ASSERT(DIM_INVAL)
-
-  if(mat->d0 == 2)cinvert_2by2(mat->data,inv->data);
-  else if(mat->d0 == 3)cinvert_3by3(mat->data,inv->data);
-  else if(mat->d0 == 4)cinvert_4by4(mat->data,inv->data);
-  else if(mat->d0 == 5)cinvert_5by5(mat->data,inv->data);
-  else if(mat->d0 == 6)cinvert_6by6(mat->data,inv->data);
-  else if(mat->d0 > 6)cinvert_nbyn(mat,inv);
-  else ASSERT(DIM_INVAL)
-
+  
+  size = mat->d0 *mat->d1;
+  for(i=0;i<mat->d2;i++){
+   if(mat->d0 == 2)cinvert_2by2(&(mat->data[i*size]),&(inv->data[i*size]));
+   else if(mat->d0 == 3)cinvert_3by3(&(mat->data[i*size]),&(inv->data[i*size]));
+   else if(mat->d0 == 4)cinvert_4by4(&(mat->data[i*size]),&(inv->data[i*size]));
+   else if(mat->d0 == 5)cinvert_5by5(&(mat->data[i*size]),&(inv->data[i*size]));
+   else if(mat->d0 == 6)cinvert_6by6(&(mat->data[i*size]),&(inv->data[i*size]));
+   else if(mat->d0 > 6)cinvert_nbyn(&(mat->data[i*size]),&(inv->data[i*size]),mat->d0);
+   else ASSERT(DIM_INVAL)
+  }
 }
 
 void invert_2by2(DTYPE*X,DTYPE*Y) {
@@ -39,14 +47,14 @@ void invert_2by2(DTYPE*X,DTYPE*Y) {
   printf("%s\n", __func__);
 #endif
 
-  det = X[0] * X[3] - X[1] * X[2];
+  det = X[0] * X[3] - X[2] * X[1];
 
   if (det > -FZERO && det < FZERO) ASSERT(DET_FAIL)
   det = 1 / det;
   Y[0] = X[3] * det;
   Y[3] = X[0] * det;
-  Y[1] = -X[2] * det;
-  Y[2] = -X[1] * det;
+  Y[1] = -X[1] * det;
+  Y[2] = -X[2] * det;
 }
 
 void cinvert_2by2(CTYPE*X,CTYPE*Y) {
@@ -58,10 +66,10 @@ void cinvert_2by2(CTYPE*X,CTYPE*Y) {
 
   det.re =
       (X[0].re * X[3].re - X[0].im * X[3].im) -
-      (X[1].re * X[2].re - X[1].im * X[2].im);
+      (X[2].re * X[1].re - X[2].im * X[1].im);
   det.im =
       (X[0].re * X[3].im + X[0].im * X[3].re) -
-      (X[1].re * X[2].im + X[1].im * X[2].re);
+      (X[2].re * X[1].im + X[2].im * X[1].re);
 
 #if NTYPE == 0
   if (cabsf(CXF(det)) < FZERO) ASSERT(DET_FAIL)
@@ -77,11 +85,11 @@ void cinvert_2by2(CTYPE*X,CTYPE*Y) {
   Y[3].re = (X[0].re * det.re - X[0].im * det.im);
   Y[3].im = (X[0].re * det.im + X[0].im * det.re);
 
-  Y[1].re = -(X[2].re * det.re - X[2].im * det.im);
-  Y[1].im = -(X[2].re * det.im + X[2].im * det.re);
+  Y[1].re = -(X[1].re * det.re - X[1].im * det.im);
+  Y[1].im = -(X[1].re * det.im + X[1].im * det.re);
 
-  Y[2].re = -(X[1].re * det.re - X[1].im * det.im);
-  Y[2].im = -(X[1].re * det.im + X[1].im * det.re);
+  Y[2].re = -(X[2].re * det.re - X[2].im * det.im);
+  Y[2].im = -(X[2].re * det.im + X[2].im * det.re);
 }
 
 void invert_3by3(DTYPE*X,DTYPE*Y) {
@@ -100,7 +108,7 @@ void invert_3by3(DTYPE*X,DTYPE*Y) {
   if (det > -FZERO && det < FZERO) ASSERT(DET_FAIL)
 
   Y[3] = X[6] * X[5] - X[3] * X[8];
-  Y[4] = X[0] * X[6] - X[6] * X[2];
+  Y[4] = X[0] * X[8] - X[6] * X[2];
   Y[5] = X[3] * X[2] - X[0] * X[5];
   Y[6] = X[3] * X[7] - X[6] * X[4];
   Y[7] = X[6] * X[1] - X[0] * X[7];
@@ -4756,23 +4764,24 @@ CTYPE cdet_6by6(CTYPE*X) {
 
 
 /**** LAPACK *aq***/
-void invert_nbyn(MAT* mat, MAT* inv) {
-  UINT n;
+void invert_nbyn(DTYPE*X, DTYPE* Y,UINT n) {
   UINT* idx;
-
+  ITER i;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  n = mat->d0;
 #if USE_CBLAS
   idx = iip_malloc(sizeof(UINT) * n);
-  copy(mat,inv);
+
+#pragma omp parallel for shared(X,Y) private(i)
+  for(i=0;i<n*n;i++)Y[i]=X[i];
+
 #if NTYPE == 0
-  LAPACKE_sgetrf(LAPACK_COL_MAJOR, n,n,inv->data,n,idx;
-  LAPACKE_sgetri(LAPACK_COL_MAJOR,n,inv->data,n,idx);
+  LAPACKE_sgetrf(LAPACK_COL_MAJOR, n,n,Y,n,idx;
+  LAPACKE_sgetri(LAPACK_COL_MAJOR,n,Y,n,idx);
 #elif NTYPE == 1
-  LAPACKE_dgetrf(LAPACK_COL_MAJOR, n, n, inv->data, n, idx);
-  LAPACKE_dgetri(LAPACK_COL_MAJOR, n, inv->data, n, idx);
+  LAPACKE_dgetrf(LAPACK_COL_MAJOR, n, n, Y, n, idx);
+  LAPACKE_dgetri(LAPACK_COL_MAJOR, n, Y, n, idx);
 #endif
   iip_free(idx);
 
@@ -4782,23 +4791,22 @@ void invert_nbyn(MAT* mat, MAT* inv) {
 #endif
 }
 
-void cinvert_nbyn(CMAT* mat, CMAT* inv) {
-  UINT n;
+void cinvert_nbyn(CTYPE *X,CTYPE*Y,UINT n) {
   UINT* idx;
-
+  ITER i;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  n = mat->d0;
 #if USE_CBLAS
   idx = iip_malloc(sizeof(UINT) * n);
-  copy(mat,inv);
+#pragma omp parallel for shared(X,Y) private(i)
+  for(i=0;i<n;i++){Y[i].re=X[i].re;Y[i].im=X[i].im;}
 #if NTYPE == 0
-  LAPACKE_cgetrf(LAPACK_COL_MAJOR, n,n,inv->data,n,idx;
-  LAPACKE_cgetri(LAPACK_COL_MAJOR,n,inv->data,n,idx);
+  LAPACKE_cgetrf(LAPACK_COL_MAJOR, n,n,Y,n,idx;
+  LAPACKE_cgetri(LAPACK_COL_MAJOR,n,Y,n,idx);
 #elif NTYPE == 1
-  LAPACKE_zgetrf(LAPACK_COL_MAJOR, n, n, inv->data, n, idx);
-  LAPACKE_zgetri(LAPACK_COL_MAJOR, n, inv->data, n, idx);
+  LAPACKE_zgetrf(LAPACK_COL_MAJOR, n, n,Y,n, idx);
+  LAPACKE_zgetri(LAPACK_COL_MAJOR, n, Y, n, idx);
 #endif
   iip_free(idx);
 
