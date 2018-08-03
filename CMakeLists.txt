@@ -12,7 +12,8 @@ project(iip_sph_pp)
 ###################################################
 
 option(USE_CUDA    "Using CUDA"      OFF)
-option(USE_OPEN    "Using BLAS"      ON)
+option(USE_BLAS    "Using BLAS"      ON)
+
 option(USE_OPENMP  "Using OpenMP"    ON)
 
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
@@ -21,7 +22,7 @@ option(USE_OPENMP  "Using OpenMP"    ON)
 #set(MAIN_SRC test/test_matrix.c)
 #set(MAIN_SRC test/test_matrix_2.c)
 #set(MAIN_SRC test/test_wav.c)
-set(MAIN_SRC test/test_blas_lv1.c)
+#set(MAIN_SRC test/test_blas_lv1.c)
 #set(MAIN_SRC test/test_blas_lv2.c)
 #set(MAIN_SRC test/test_blas_lv3.c)
 #set(MAIN_SRC test/test_memory.c)
@@ -29,7 +30,8 @@ set(MAIN_SRC test/test_blas_lv1.c)
 #set(MAIN_SRC test/test_broad.c)
 #set(MAIN_SRC test/test_broad_matmul.c)
 #set(MAIN_SRC test/test_dia_tr.c)
-set(MAIN_SRC test/test_invert.c)
+#set(MAIN_SRC test/test_invert.c)
+set(MAIN_SRC test/test_cinvert.c)
 #set(MAIN_SRC test/test_dim.c)
 #set(MAIN_SRC test/test_permute.c)
 #set(MAIN_SRC test/test_bin.c)
@@ -90,7 +92,7 @@ if(USE_BLAS)
     set(BLA_VENDOR "OpenBLAS")
     find_package(BLAS)
 	if(BLAS_FOUND)
-			message(STATUS "found OpenBLAS")
+    message(STATUS "Found OpenBLAS : " ${BLAS_LIBRARIES})
 	set(USE_OPEN ON)
 	set(USE_MKL  OFF)
     else()
@@ -154,6 +156,7 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/header)
 include_directories()
 message(STATUS "ENV_PATH : " $ENV{PATH})
 
@@ -212,16 +215,13 @@ if(USE_OPEN OR USE_MKL )
 
     string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
 	add_executable(${BLAS_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
-    set_target_properties(${BLAS_TARGET_NAME}
-	PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}"
-        CXX_STANDARD 14
-        CXX_STANDARD_REQUIRED ON)
 
     if(USE_OPEN)
 	message(STATUS ${BLAS_LIBRARIES})
   if(NOT MSVC)  
     target_link_libraries(${BLAS_TARGET_NAME}
-  	m)
+  	m
+    )
   endif(NOT MSVC)
 	target_link_libraries(${BLAS_TARGET_NAME}
 	    openblas)
@@ -240,6 +240,7 @@ if(USE_OPEN OR USE_MKL )
 
 	#	if(UNIX)
 	#   #MKL 은 원래도 수동으로 경로를 잡아서 cmake가 해줄순 없다
+  #   할 수 는 있겠지만... 할 일의 양이..
 	#    set(MKL_PATH)
 	#    if("${MKL_PATH}" STREQUAL "")
 	#		message(FATAL_ERROR "ADD AN ARGUMENT '-DMKL_PATH=<ALL REQUIRED MKL libs>'")
@@ -264,10 +265,10 @@ elseif(USE_OPENMP)
     string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
     string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
   
-    list(APPEND CMAKE_EXE_LINKER_FLAGS -llapack)
+    list(APPEND CMAKE_EXE_LINKER_FLAGS )
 
 	add_executable(${OPENMP_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})	
-    target_link_libraries(${OPENMP_TARGET_NAME} lapack)
+    target_link_libraries(${OPENMP_TARGET_NAME} )
 
   #  set_target_properties(${OPENMP_TARGET_NAME}
   #PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}"

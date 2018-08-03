@@ -95,8 +95,8 @@ DTYPE cabs1(CTYPE val);
 
 void rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s);
 void mp_rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s);
-void crotg(CTYPE *a, CTYPE *b, CTYPE *c, CTYPE *s);
-void mp_crotg(CTYPE *a, CTYPE *b, CTYPE *c, CTYPE *s);
+void crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s);
+void mp_crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s);
 
 DTYPE nrm2(MAT *src);
 DTYPE nrm2_inc(MAT *src, UINT inc);
