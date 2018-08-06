@@ -320,11 +320,11 @@ void mp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
           temp.im = 0;
           temp.re = 0;
           for (i = 0; i < k; i++) {
-            cxadd_mul(temp, A[i * m + l], B[i + j * k]);
+            CXADD_mul(temp, A[i * m + l], B[i + j * k]);
           }
-          cxmul(C[l + m * j], beta, temp2);
-          cxmul(temp, alpha, temp2);
-          cxadd(C[l + m * j], temp);
+          CXMUL(C[l + m * j], beta, temp2);
+          CXMUL(temp, alpha, temp2);
+          CXADD(C[l + m * j], temp);
         }
       }
 
@@ -335,10 +335,10 @@ void mp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
           temp.re = 0;
           temp.im = 0;
           for (i = 0; i < k; i++) {
-            cxadd_mul(temp, A[i * m + l], B[i * n + j])
+            CXADD_mul(temp, A[i * m + l], B[i * n + j])
           }
-          cxmul(C[l + m * j], beta, temp2) cxmul(temp, alpha, temp2)
-              cxadd(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
+              CXADD(C[l + m * j], temp)
         }
       }
     } else  // tranB == CTran
@@ -354,8 +354,8 @@ void mp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
             temp.im += A[i * m + l].im * (B[i * n + j].re);
             temp.im -= A[i * m + l].re * (B[i * n + j].im);
           }
-          cxmul(C[l + m * j], beta, temp2) cxmul(temp, alpha, temp2)
-              cxadd(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
+              CXADD(C[l + m * j], temp)
         }
       }
     }
@@ -367,10 +367,10 @@ void mp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
           temp.re = 0;
           temp.im = 0;
           for (i = 0; i < k; i++) {
-            cxadd_mul(temp, A[i + l * k], B[i + j * k])
+            CXADD_mul(temp, A[i + l * k], B[i + j * k])
           }
-          cxmul(C[l + m * j], beta, temp2) cxmul(temp, alpha, temp2)
-              cxadd(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
+              CXADD(C[l + m * j], temp)
         }
       }
 
@@ -381,10 +381,10 @@ void mp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
           temp.re = 0;
           temp.im = 0;
           for (i = 0; i < k; i++) {
-            cxadd_mul(temp, A[i + l * k], B[i * n + j])
+            CXADD_mul(temp, A[i + l * k], B[i * n + j])
           }
-          cxmul(C[l + m * j], beta, temp2) cxmul(temp, alpha, temp2)
-              cxadd(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
+              CXADD(C[l + m * j], temp)
         }
       }
     } else  // transB == CTran
@@ -400,8 +400,8 @@ void mp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
             temp.re += A[adx].re * B[bdx].re - A[adx].im * (-B[bdx].im);
             temp.im += A[adx].re * (-B[bdx].im) + A[adx].im * (B[bdx].re);
           }
-          cxmul(C[l + m * j], beta, temp2) cxmul(temp, alpha, temp2)
-              cxadd(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
+              CXADD(C[l + m * j], temp)
         }
       }
     }
@@ -419,8 +419,8 @@ void mp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
             temp.re += A[adx].re * B[bdx].re + A[adx].im * (B[bdx].im);
             temp.im += A[adx].re * B[bdx].im - A[adx].im * (B[bdx].re);
           }
-          cxmul(C[l + m * j], beta, temp2) cxmul(temp, alpha, temp2)
-              cxadd(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
+              CXADD(C[l + m * j], temp)
         }
       }
 
@@ -436,8 +436,8 @@ void mp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
             temp.re += A[adx].re * B[bdx].re + (A[adx].im) * B[bdx].im;
             temp.im += A[adx].re * B[bdx].im - A[adx].im * (B[bdx].re);
           }
-          cxmul(C[l + m * j], beta, temp2) cxmul(temp, alpha, temp2)
-              cxadd(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
+              CXADD(C[l + m * j], temp)
         }
       }
     } else  // transB == CTran
@@ -453,8 +453,8 @@ void mp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
             temp.re += A[adx].re * B[bdx].re - A[adx].im * B[bdx].im;
             temp.im -= A[adx].re * B[bdx].im + A[adx].im * B[bdx].re;
           }
-          cxmul(C[l + m * j], beta, temp2) cxmul(temp, alpha, temp2)
-              cxadd(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
+              CXADD(C[l + m * j], temp)
         }
       }
     }

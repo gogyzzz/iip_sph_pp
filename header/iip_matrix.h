@@ -17,42 +17,42 @@ __global__ void cu_cfill(CTYPE*, UINT, DTYPE, DTYPE, UINT);
 #endif
 
 /*** allocMAT ***/
-#define alloc_MAT_load(_x, _3, _2, _1, ...) _1
-#define alloc_MAT_load_(args_list) alloc_MAT_load args_list
-#define alloc_MAT(...) \
-  alloc_MAT_load_(     \
-      (__VA_ARGS__, alloc_MAT_3d, alloc_MAT_2d, alloc_MAT_1d)(__VA_ARGS__))
+#define alloc_mat_load(_x, _3, _2, _1, ...) _1
+#define alloc_mat_load_(args_list) alloc_mat_load args_list
+#define alloc_mat(...) \
+  alloc_mat_load_(     \
+      (__VA_ARGS__, alloc_mat_3d, alloc_mat_2d, alloc_mat_1d)(__VA_ARGS__))
 
-MAT* alloc_MAT_1d(UINT);
-MAT* alloc_MAT_2d(UINT, UINT);
-MAT* alloc_MAT_3d(UINT, UINT, UINT);
+MAT* alloc_mat_1d(UINT);
+MAT* alloc_mat_2d(UINT, UINT);
+MAT* alloc_mat_3d(UINT, UINT, UINT);
 
-#define alloc_CMAT_load(_x, _3, _2, _1, ...) _1
-#define alloc_CMAT_load_(args_list) alloc_CMAT_load args_list
-#define alloc_CMAT(...) \
-  alloc_CMAT_load_(     \
-      (__VA_ARGS__, alloc_CMAT_3d, alloc_CMAT_2d, alloc_CMAT_1d)(__VA_ARGS__))
-CMAT* alloc_CMAT_1d(UINT);
-CMAT* alloc_CMAT_2d(UINT, UINT);
-CMAT* alloc_CMAT_3d(UINT, UINT, UINT);
+#define alloc_cmat_load(_x, _3, _2, _1, ...) _1
+#define alloc_cmat_load_(args_list) alloc_cmat_load args_list
+#define alloc_cmat(...) \
+  alloc_cmat_load_(     \
+      (__VA_ARGS__, alloc_cmat_3d, alloc_cmat_2d, alloc_cmat_1d)(__VA_ARGS__))
+CMAT* alloc_cmat_1d(UINT);
+CMAT* alloc_cmat_2d(UINT, UINT);
+CMAT* alloc_cmat_3d(UINT, UINT, UINT);
 
-/**** allocate MAT in memory pool : mem_MAT ***/
-#define mem_MAT_load(_x, _3, _2, _1, ...) _1
-#define mem_MAT_load_(args_list) mem_MAT_load args_list
-#define mem_MAT(...) \
-  mem_MAT_load_((__VA_ARGS__, mem_MAT_3d, mem_MAT_2d, mem_MAT_1d)(__VA_ARGS__))
-MAT* mem_MAT_1d(UINT d0);
-MAT* mem_MAT_2d(UINT d0, UINT d1);
-MAT* mem_MAT_3d(UINT d0, UINT d1, UINT d2);
+/**** allocate MAT in memory pool : mpalloc_mat ***/
+#define mpalloc_mat_load(_x, _3, _2, _1, ...) _1
+#define mpalloc_mat_load_(args_list) mpalloc_mat_load args_list
+#define mpalloc_mat(...) \
+  mpalloc_mat_load_((__VA_ARGS__, mpalloc_mat_3d, mpalloc_mat_2d, mpalloc_mat_1d)(__VA_ARGS__))
+MAT* mpalloc_mat_1d(UINT d0);
+MAT* mpalloc_mat_2d(UINT d0, UINT d1);
+MAT* mpalloc_mat_3d(UINT d0, UINT d1, UINT d2);
 
-#define mem_CMAT_load(_x, _3, _2, _1, ...) _1
-#define mem_CMAT_load_(args_list) mem_CMAT_load args_list
-#define mem_CMAT(...) \
-  mem_CMAT_load_(     \
-      (__VA_ARGS__, mem_CMAT_3d, mem_CMAT_2d, mem_CMAT_1d)(__VA_ARGS__))
-CMAT* mem_CMAT_1d(UINT d0);
-CMAT* mem_CMAT_2d(UINT d0, UINT d1);
-CMAT* mem_CMAT_3d(UINT d0, UINT d1, UINT d2);
+#define mpalloc_cmat_load(_x, _3, _2, _1, ...) _1
+#define mpalloc_cmat_load_(args_list) mpalloc_cmat_load args_list
+#define mpalloc_cmat(...) \
+  mpalloc_cmat_load_(     \
+      (__VA_ARGS__, mpalloc_cmat_3d, mpalloc_cmat_2d, mpalloc_cmat_1d)(__VA_ARGS__))
+CMAT* mpalloc_cmat_1d(UINT d0);
+CMAT* mpalloc_cmat_2d(UINT d0, UINT d1);
+CMAT* mpalloc_cmat_3d(UINT d0, UINT d1, UINT d2);
 
 /**** zeros  ****/
 #define zeros_load(_x, _3, _2, _1, ...) _1
@@ -136,16 +136,16 @@ void csubmat_1d(CMAT*, CMAT*, ITER, ITER);
 void csubmat_2d(CMAT*, CMAT*, ITER, ITER, ITER, ITER);
 void csubmat_3d(CMAT*, CMAT*, ITER, ITER, ITER, ITER, ITER, ITER);
 
-/**** mem_submat overloading ****/
+/**** mpsubmat overloading ****/
 
-#define mem_submat_load(_x2, _x3, _x4, _3, _x5, _2, _x6, _1, ...) _1
-#define mem_submat_load_(args_list) mem_submat_load args_list
-#define mem_submat(...)                                              \
-  mem_submat_load_((__VA_ARGS__, mem_submat_3d, _, mem_submat_2d, _, \
-                    mem_submat_1d)(__VA_ARGS__))
-MAT* mem_submat_1d(MAT* src, ITER s0, ITER e0);
-MAT* mem_submat_2d(MAT* src, ITER s0, ITER e0, ITER s1, ITER e1);
-MAT* mem_submat_3d(MAT* src, ITER s0, ITER e0, ITER s1, ITER e1, ITER s2,
+#define mpsubmat_load(_x2, _x3, _x4, _3, _x5, _2, _x6, _1, ...) _1
+#define mpsubmat_load_(args_list) mpsubmat_load args_list
+#define mpsubmat(...)                                              \
+  mpsubmat_load_((__VA_ARGS__, mpsubmat_3d, _, mpsubmat_2d, _, \
+                    mpsubmat_1d)(__VA_ARGS__))
+MAT* mpsubmat_1d(MAT* src, ITER s0, ITER e0);
+MAT* mpsubmat_2d(MAT* src, ITER s0, ITER e0, ITER s1, ITER e1);
+MAT* mpsubmat_3d(MAT* src, ITER s0, ITER e0, ITER s1, ITER e1, ITER s2,
                    ITER e2);
 
 #define mem_csubmat_load(_x2, _x3, _x4, _3, _x5, _2, _x6, _1, ...) _1
@@ -162,8 +162,8 @@ CMAT* mem_csubmat_3d(CMAT* src, ITER s0, ITER e0, ITER s1, ITER e1, ITER s2,
 DIM* new_dim();
 
 /**** element operation by DIM ***/
-DTYPE getbydim(MAT* mat, DIM* dim);
-CTYPE cgetbydim(CMAT* mat, DIM* dim);
+DTYPE get_by_dim(MAT* mat, DIM* dim);
+CTYPE cget_by_dim(CMAT* mat, DIM* dim);
 
 void setbydim(MAT* mat, DIM* dim, DTYPE val);
 void csetbydim(CMAT* mat, DIM* dim, CTYPE val);
@@ -248,26 +248,26 @@ CMAT* create_hermit(CMAT* mat);
 void hermit(CMAT* mat);
 
 /**** set Identity Matrix ****/
-void id_MAT(MAT* mat);
+void ident_mat(MAT* mat);
 
 /**** Inverse Matrix WIP ****/
 void invers(MAT* mat);
 
 /****  free memory of MAT ****/
-void free_MAT(MAT*);
-void free_CMAT(CMAT*);
+void free_mat(MAT*);
+void free_cmat(CMAT*);
 
 /****  print MAT ****/
-void print_MAT(MAT*);
-void print_CMAT(CMAT*);
+void print_mat(MAT*);
+void print_cmat(CMAT*);
 
-/**** free_MAT in memory pool****/
-void free_mem_MAT(MAT* mat_in_memory_pool);
-void free_mem_CMAT(CMAT* mat_in_memory_pool);
+/**** free_mat in memory pool****/
+void free_mpalloc_mat(MAT* mat_in_memory_pool);
+void free_mpalloc_cmat(CMAT* mat_in_memory_pool);
 
 #if USE_CUDA
-__global__ void cu_print_MAT(DTYPE*, UINT, UINT, UINT);
-__global__ void cu_print_CMAT(CTYPE*, UINT, UINT, UINT);
+__global__ void cu_print_mat(DTYPE*, UINT, UINT, UINT);
+__global__ void cu_print_cmat(CTYPE*, UINT, UINT, UINT);
 #endif
 
 #endif

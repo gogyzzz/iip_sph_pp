@@ -39,9 +39,9 @@ int main() {
   stopwatch(1);
 
   for (i = 0; i < BATCH_SIZE; i++) {
-    free_MAT(A[i]);
-    free_MAT(B[i]);
-    free_MAT(C[i]);
+    free_mat(A[i]);
+    free_mat(B[i]);
+    free_mat(C[i]);
   }
   free(A);
   free(B);

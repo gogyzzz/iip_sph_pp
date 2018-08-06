@@ -104,5 +104,5 @@ DTYPE amin_mat(MAT* mat, DIM* dim);
 DTYPE amin_cmat(CMAT* mat, DIM* dim);
 
 /**** misc ****/
-CTYPE CX(DTYPE r,DTYPE i);
+CTYPE CX(DTYPE r, DTYPE i);
 #endif

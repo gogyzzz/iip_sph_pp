@@ -770,9 +770,9 @@ DTYPE amin_cmat(CMAT* mat, DIM* dim) {
 }
 
 /**** misc****/
-CTYPE CX(DTYPE r,DTYPE i){
-CTYPE t;
-t.re = r;
-t.im = i;
-return t;
+CTYPE CX(DTYPE r, DTYPE i) {
+  CTYPE t;
+  t.re = r;
+  t.im = i;
+  return t;
 }

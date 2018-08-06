@@ -8,35 +8,35 @@ int main() {
   MAT* NV;
   ITER i;
 
-  A = alloc_MAT(2, 2, 2);
+  A = alloc_mat(2, 2, 2);
   CA = czeros(2, 2, 2);
 
-  dia = alloc_MAT(2, 1, 2);
-  cdia = alloc_CMAT(2, 1, 2);
+  dia = alloc_mat(2, 1, 2);
+  cdia = alloc_cmat(2, 1, 2);
 
-  tr = alloc_MAT(1, 1, 2);
-  ctr = alloc_CMAT(1, 1, 2);
+  tr = alloc_mat(1, 1, 2);
+  ctr = alloc_cmat(1, 1, 2);
 
-  NV = alloc_MAT(3, 2, 2);
+  NV = alloc_mat(3, 2, 2);
 
   for (i = 0; i < 8; i++) A->data[i] = i + 1;
   for (i = 0; i < 8; i++) CA->data[i].re = i + 1;
 
-  print_MAT(A);
+  print_mat(A);
   diagonal(A, dia);
   diagonal(A, NV);
   trace(A, NV);
   trace(A, tr);
 
-  print_MAT(dia);
-  print_MAT(tr);
+  print_mat(dia);
+  print_mat(tr);
 
   crandu(CA, 0., 10., 0., 10.);
 
-  print_CMAT(CA);
+  print_cmat(CA);
   cdiagonal(CA, cdia);
   ctrace(CA, ctr);
-  print_CMAT(cdia);
-  print_CMAT(ctr);
+  print_cmat(cdia);
+  print_cmat(ctr);
   return 0;
 }

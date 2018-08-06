@@ -132,10 +132,10 @@ void mp_cgemv(char tranA, UINT m, UINT n, CTYPE alpha, CTYPE *A, UINT lda,
       temp.re = 0;
       temp.im = 0;
       for (i = 0; i < m; i++) {
-        cxadd_mul(temp, A[j + i * n], X[i * incx]);
+        CXADD_mul(temp, A[j + i * n], X[i * incx]);
       }
-      cxmul(temp, alpha, temp2);
-      cxadd_mul(temp, beta, Y[j * incy]);
+      CXMUL(temp, alpha, temp2);
+      CXADD_mul(temp, beta, Y[j * incy]);
       Y[j * incy] = temp;
     }
   } else if (tranA == NoTran) {
@@ -144,10 +144,10 @@ void mp_cgemv(char tranA, UINT m, UINT n, CTYPE alpha, CTYPE *A, UINT lda,
       temp.re = 0;
       temp.im = 0;
       for (i = 0; i < n; i++) {
-        cxadd_mul(temp, A[i + n * j], X[i * incx]);
+        CXADD_mul(temp, A[i + n * j], X[i * incx]);
       }
-      cxmul(temp, alpha, temp2);
-      cxadd_mul(temp, beta, Y[j * incy]);
+      CXMUL(temp, alpha, temp2);
+      CXADD_mul(temp, beta, Y[j * incy]);
       Y[j * incy] = temp;
     }
   } else {

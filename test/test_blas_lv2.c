@@ -28,123 +28,123 @@ int main() {
 
 #if _A
   A = zeros(5, 4);
-  X = alloc_MAT(5);
-  Y = alloc_MAT(4);
+  X = alloc_mat(5);
+  Y = alloc_mat(4);
 
   fill(A, 2);
   fill(X, 1);
   fill(Y, -1);
 
-  print_MAT(A);
-  print_MAT(X);
-  print_MAT(Y);
+  print_mat(A);
+  print_mat(X);
+  print_mat(Y);
 
   gemv(NoTran, 10, A, X, 3, Y);
 
-  print_MAT(A);
-  print_MAT(X);
-  print_MAT(Y);
+  print_mat(A);
+  print_mat(X);
+  print_mat(Y);
 
-  free_MAT(A);
-  free_MAT(X);
-  free_MAT(Y);
+  free_mat(A);
+  free_mat(X);
+  free_mat(Y);
 
 #endif
 /**** TRANSPOSE  ****/
 #if _B
   TA = zeros(4, 5);
-  TX = alloc_MAT(5);
-  TY = alloc_MAT(4);
+  TX = alloc_mat(5);
+  TY = alloc_mat(4);
 
   fill(TA, 2);
   fill(TX, 1);
   fill(TY, -1);
 
-  print_MAT(TA);
-  print_MAT(TX);
-  print_MAT(TY);
+  print_mat(TA);
+  print_mat(TX);
+  print_mat(TY);
 
   gemv(Tran, 10, TA, TX, 3, TY);
 
-  print_MAT(TA);
-  print_MAT(TX);
-  print_MAT(TY);
+  print_mat(TA);
+  print_mat(TX);
+  print_mat(TY);
 
-  free_MAT(TA);
-  free_MAT(TX);
-  free_MAT(TY);
+  free_mat(TA);
+  free_mat(TX);
+  free_mat(TY);
 #endif
 /**** COMPLEX ****/
 #if _C
 
   CA = czeros(4, 3);
-  CX = alloc_CMAT(4);
-  CY = alloc_CMAT(3);
+  CX = alloc_cmat(4);
+  CY = alloc_cmat(3);
 
   cfill(CA, 3, 0);
   cfill(CX, -2, 0);
   cfill(CY, 4, -2);
 
-  print_CMAT(CA);
-  print_CMAT(CX);
-  print_CMAT(CY);
+  print_cmat(CA);
+  print_cmat(CX);
+  print_cmat(CY);
 
   cgemv(NoTran, calpha, CA, CX, cbeta, CY);
 
-  print_CMAT(CA);
-  print_CMAT(CX);
-  print_CMAT(CY);
+  print_cmat(CA);
+  print_cmat(CX);
+  print_cmat(CY);
 
-  free_CMAT(CA);
-  free_CMAT(CX);
-  free_CMAT(CY);
+  free_cmat(CA);
+  free_cmat(CX);
+  free_cmat(CY);
 #endif
 /**** TRANSPOSE  ****/
 #if _D
   TCA = czeros(3, 4);
-  TCX = alloc_CMAT(4);
-  TCY = alloc_CMAT(3);
+  TCX = alloc_cmat(4);
+  TCY = alloc_cmat(3);
 
   cfill(TCA, 0, 1);
   cfill(TCX, 1, 0);
   cfill(TCY, 4, -2);
 
-  print_CMAT(TCA);
-  print_CMAT(TCX);
-  print_CMAT(TCY);
+  print_cmat(TCA);
+  print_cmat(TCX);
+  print_cmat(TCY);
 
   cgemv(Tran, calpha, TCA, TCX, cbeta, TCY);
 
-  print_CMAT(TCA);
-  print_CMAT(TCX);
-  print_CMAT(TCY);
+  print_cmat(TCA);
+  print_cmat(TCX);
+  print_cmat(TCY);
 
-  free_CMAT(TCA);
-  free_CMAT(TCX);
-  free_CMAT(TCY);
+  free_cmat(TCA);
+  free_cmat(TCX);
+  free_cmat(TCY);
 #endif
   /**** Conjugate transpose ****/
   TCA = czeros(3, 4);
-  TCX = alloc_CMAT(4);
-  TCY = alloc_CMAT(3);
+  TCX = alloc_cmat(4);
+  TCY = alloc_cmat(3);
 
   cfill(TCA, 0, 1.0);
   cfill(TCX, 1, 0);
   cfill(TCY, 4, -2);
 
-  print_CMAT(TCA);
-  print_CMAT(TCX);
-  print_CMAT(TCY);
+  print_cmat(TCA);
+  print_cmat(TCX);
+  print_cmat(TCY);
 
   cgemv(CTran, calpha, TCA, TCX, cbeta, TCY);
 
-  print_CMAT(TCA);
-  print_CMAT(TCX);
-  print_CMAT(TCY);
+  print_cmat(TCA);
+  print_cmat(TCX);
+  print_cmat(TCY);
 
-  free_CMAT(TCA);
-  free_CMAT(TCX);
-  free_CMAT(TCY);
+  free_cmat(TCA);
+  free_cmat(TCX);
+  free_cmat(TCY);
 #if USE_CUDA
   finit();
 #endif

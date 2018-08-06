@@ -8,20 +8,20 @@ int main() {
   MAT* A;
   MAT* subA;
 
-  A = mem_MAT(m, n);
+  A = mpalloc_mat(m, n);
 
   fill(A, 1);
 
   row_add(-10, A, 1);
   col_scal(3, A, 1);
 
-  print_MAT(A);
+  print_mat(A);
 
-  subA = mem_submat(A, -1, -1, 0, 3);
+  subA = mpsubmat(A, -1, -1, 0, 3);
 
-  print_MAT(subA);
+  print_mat(subA);
 
-  free_mem_MAT(subA);
-  free_mem_MAT(A);
+  free_mpalloc_mat(subA);
+  free_mpalloc_mat(A);
   return 0;
 }

@@ -40,9 +40,9 @@ int main() {
 /**** REAL MATRIX ****/
 
 #if _A
-  A = alloc_MAT(colA, rowA);
-  B = alloc_MAT(rowA, rowB);
-  C = alloc_MAT(colA, rowB);
+  A = alloc_mat(colA, rowA);
+  B = alloc_mat(rowA, rowB);
+  C = alloc_mat(colA, rowB);
 
   fill(A, 1.0);
   fill(B, 3.0);
@@ -55,26 +55,26 @@ int main() {
   }
 
 #if _print
-  print_MAT(A);
-  print_MAT(B);
-  print_MAT(C);
+  print_mat(A);
+  print_mat(B);
+  print_mat(C);
 #endif
 
   gemm(NoTran, NoTran, 1, A, B, 0, C);
 
 #if _print
-  print_MAT(C);
+  print_mat(C);
 #endif
 
-  free_MAT(A);
-  free_MAT(B);
-  free_MAT(C);
+  free_mat(A);
+  free_mat(B);
+  free_mat(C);
 #endif
 
 #if _B
-  A = alloc_MAT(rowA, colA);
-  B = alloc_MAT(rowA, rowB);
-  C = alloc_MAT(colA, rowB);
+  A = alloc_mat(rowA, colA);
+  B = alloc_mat(rowA, rowB);
+  C = alloc_mat(colA, rowB);
 
   fill(A, 1.0);
   fill(B, 3.0);
@@ -87,25 +87,25 @@ int main() {
   }
 
 #if _print
-  print_MAT(A);
-  print_MAT(B);
-  print_MAT(C);
+  print_mat(A);
+  print_mat(B);
+  print_mat(C);
 #endif
 
   gemm(Tran, NoTran, 1, A, B, 0, C);
 
 #if _print
-  print_MAT(C);
+  print_mat(C);
 #endif
-  free_MAT(A);
-  free_MAT(B);
-  free_MAT(C);
+  free_mat(A);
+  free_mat(B);
+  free_mat(C);
 #endif
 
 #if _C
-  A = alloc_MAT(rowA, colA);
-  B = alloc_MAT(rowB, rowA);
-  C = alloc_MAT(colA, rowB);
+  A = alloc_mat(rowA, colA);
+  B = alloc_mat(rowB, rowA);
+  C = alloc_mat(colA, rowB);
 
   fill(A, 1.0);
   fill(B, 3.0);
@@ -118,25 +118,25 @@ int main() {
   }
 
 #if _print
-  print_MAT(A);
-  print_MAT(B);
-  print_MAT(C);
+  print_mat(A);
+  print_mat(B);
+  print_mat(C);
 #endif
 
   gemm(Tran, Tran, 1, A, B, 0, C);
 
 #if _print
-  print_MAT(C);
+  print_mat(C);
 #endif
-  free_MAT(A);
-  free_MAT(B);
-  free_MAT(C);
+  free_mat(A);
+  free_mat(B);
+  free_mat(C);
 #endif
 
 #if _D
-  A = alloc_MAT(colA, rowA);
-  B = alloc_MAT(rowB, rowA);
-  C = alloc_MAT(colA, rowB);
+  A = alloc_mat(colA, rowA);
+  B = alloc_mat(rowB, rowA);
+  C = alloc_mat(colA, rowB);
 
   fill(A, 1.0);
   fill(B, 3.0);
@@ -149,27 +149,27 @@ int main() {
   }
 
 #if _print
-  print_MAT(A);
-  print_MAT(B);
-  print_MAT(C);
+  print_mat(A);
+  print_mat(B);
+  print_mat(C);
 #endif
 
   gemm(NoTran, Tran, 1, A, B, 0, C);
 
 #if _print
-  print_MAT(C);
+  print_mat(C);
 #endif
-  free_MAT(A);
-  free_MAT(B);
-  free_MAT(C);
+  free_mat(A);
+  free_mat(B);
+  free_mat(C);
 #endif
 
 /**** COMPLEX MATRIX ****/
 
 #if _E
-  CA = alloc_CMAT(colA, rowA);
-  CB = alloc_CMAT(rowA, rowB);
-  CC = alloc_CMAT(colA, rowB);
+  CA = alloc_cmat(colA, rowA);
+  CB = alloc_cmat(rowA, rowB);
+  CC = alloc_cmat(colA, rowB);
 
   cfill(CA, 1.0, 1);
   cfill(CB, 3.0, 3);
@@ -184,24 +184,24 @@ int main() {
     CB->data[i].im = i;
   }
 #if _print
-  print_CMAT(CA);
-  print_CMAT(CB);
-  print_CMAT(CC);
+  print_cmat(CA);
+  print_cmat(CB);
+  print_cmat(CC);
 #endif
 
   cgemm(NoTran, NoTran, alpha, CA, CB, beta, CC);
 
 #if _print
-  print_CMAT(CC);
+  print_cmat(CC);
 #endif
-  free_CMAT(CA);
-  free_CMAT(CB);
-  free_CMAT(CC);
+  free_cmat(CA);
+  free_cmat(CB);
+  free_cmat(CC);
 #endif
 #if _F
-  CA = alloc_CMAT(colA, rowA);
-  CB = alloc_CMAT(rowB, rowA);
-  CC = alloc_CMAT(colA, rowB);
+  CA = alloc_cmat(colA, rowA);
+  CB = alloc_cmat(rowB, rowA);
+  CC = alloc_cmat(colA, rowB);
 
   cfill(CA, 1.0, 1);
   cfill(CB, 3.0, 3);
@@ -216,25 +216,25 @@ int main() {
   }
 
 #if _print
-  print_CMAT(CA);
-  print_CMAT(CB);
-  print_CMAT(CC);
+  print_cmat(CA);
+  print_cmat(CB);
+  print_cmat(CC);
 #endif
 
   cgemm(NoTran, Tran, alpha, CA, CB, beta, CC);
 
 #if _print
-  print_CMAT(CC);
+  print_cmat(CC);
 #endif
-  free_CMAT(CA);
-  free_CMAT(CB);
-  free_CMAT(CC);
+  free_cmat(CA);
+  free_cmat(CB);
+  free_cmat(CC);
 #endif
 
 #if _G
-  CA = alloc_CMAT(colA, rowA);
-  CB = alloc_CMAT(rowB, rowA);
-  CC = alloc_CMAT(colA, rowB);
+  CA = alloc_cmat(colA, rowA);
+  CB = alloc_cmat(rowB, rowA);
+  CC = alloc_cmat(colA, rowB);
 
   cfill(CA, 1.0, 1);
   cfill(CB, 3.0, -3);
@@ -249,24 +249,24 @@ int main() {
   }
 
 #if _print
-  print_CMAT(CA);
-  print_CMAT(CB);
-  print_CMAT(CC);
+  print_cmat(CA);
+  print_cmat(CB);
+  print_cmat(CC);
 #endif
 
   cgemm(NoTran, CTran, alpha, CA, CB, beta, CC);
 
 #if _print
-  print_CMAT(CC);
+  print_cmat(CC);
 #endif
-  free_CMAT(CA);
-  free_CMAT(CB);
-  free_CMAT(CC);
+  free_cmat(CA);
+  free_cmat(CB);
+  free_cmat(CC);
 #endif
 #if _H
-  CA = alloc_CMAT(rowA, colA);
-  CB = alloc_CMAT(rowA, rowB);
-  CC = alloc_CMAT(colA, rowB);
+  CA = alloc_cmat(rowA, colA);
+  CB = alloc_cmat(rowA, rowB);
+  CC = alloc_cmat(colA, rowB);
 
   cfill(CA, 1.0, 1);
   cfill(CB, 3.0, 3);
@@ -280,24 +280,24 @@ int main() {
     CB->data[i].im = i;
   }
 #if _print
-  print_CMAT(CA);
-  print_CMAT(CB);
-  print_CMAT(CC);
+  print_cmat(CA);
+  print_cmat(CB);
+  print_cmat(CC);
 #endif
 
   cgemm(Tran, NoTran, alpha, CA, CB, beta, CC);
 
 #if _print
-  print_CMAT(CC);
+  print_cmat(CC);
 #endif
-  free_CMAT(CA);
-  free_CMAT(CB);
-  free_CMAT(CC);
+  free_cmat(CA);
+  free_cmat(CB);
+  free_cmat(CC);
 #endif
 #if _I
-  CA = alloc_CMAT(rowA, colA);
-  CB = alloc_CMAT(rowB, rowA);
-  CC = alloc_CMAT(colA, rowB);
+  CA = alloc_cmat(rowA, colA);
+  CB = alloc_cmat(rowB, rowA);
+  CC = alloc_cmat(colA, rowB);
 
   cfill(CA, 1.0, 1);
   cfill(CB, 3.0, 3);
@@ -311,24 +311,24 @@ int main() {
     CB->data[i].im = i;
   }
 #if _print
-  print_CMAT(CA);
-  print_CMAT(CB);
-  print_CMAT(CC);
+  print_cmat(CA);
+  print_cmat(CB);
+  print_cmat(CC);
 #endif
 
   cgemm(Tran, Tran, alpha, CA, CB, beta, CC);
 
 #if _print
-  print_CMAT(CC);
+  print_cmat(CC);
 #endif
-  free_CMAT(CA);
-  free_CMAT(CB);
-  free_CMAT(CC);
+  free_cmat(CA);
+  free_cmat(CB);
+  free_cmat(CC);
 #endif
 #if _J
-  CA = alloc_CMAT(rowA, colA);
-  CB = alloc_CMAT(rowB, rowA);
-  CC = alloc_CMAT(colA, rowB);
+  CA = alloc_cmat(rowA, colA);
+  CB = alloc_cmat(rowB, rowA);
+  CC = alloc_cmat(colA, rowB);
 
   cfill(CA, 1.0, 1);
   cfill(CB, 3.0, -3);
@@ -343,24 +343,24 @@ int main() {
   }
 
 #if _print
-  print_CMAT(CA);
-  print_CMAT(CB);
-  print_CMAT(CC);
+  print_cmat(CA);
+  print_cmat(CB);
+  print_cmat(CC);
 #endif
 
   cgemm(Tran, CTran, alpha, CA, CB, beta, CC);
 
 #if _print
-  print_CMAT(CC);
+  print_cmat(CC);
 #endif
-  free_CMAT(CA);
-  free_CMAT(CB);
-  free_CMAT(CC);
+  free_cmat(CA);
+  free_cmat(CB);
+  free_cmat(CC);
 #endif
 #if _K
-  CA = alloc_CMAT(rowA, colA);
-  CB = alloc_CMAT(rowA, rowB);
-  CC = alloc_CMAT(colA, rowB);
+  CA = alloc_cmat(rowA, colA);
+  CB = alloc_cmat(rowA, rowB);
+  CC = alloc_cmat(colA, rowB);
 
   cfill(CA, 1.0, -1);
   cfill(CB, 1.0, 1);
@@ -374,24 +374,24 @@ int main() {
     CB->data[i].im = i;
   }
 #if _print
-  print_CMAT(CA);
-  print_CMAT(CB);
-  print_CMAT(CC);
+  print_cmat(CA);
+  print_cmat(CB);
+  print_cmat(CC);
 #endif
 
   cgemm(CTran, NoTran, alpha, CA, CB, beta, CC);
 
 #if _print
-  print_CMAT(CC);
+  print_cmat(CC);
 #endif
-  free_CMAT(CA);
-  free_CMAT(CB);
-  free_CMAT(CC);
+  free_cmat(CA);
+  free_cmat(CB);
+  free_cmat(CC);
 #endif
 #if _L
-  CA = alloc_CMAT(rowA, colA);
-  CB = alloc_CMAT(rowB, rowA);
-  CC = alloc_CMAT(colA, rowB);
+  CA = alloc_cmat(rowA, colA);
+  CB = alloc_cmat(rowB, rowA);
+  CC = alloc_cmat(colA, rowB);
 
   cfill(CA, 1.0, -1);
   cfill(CB, 1.0, 1);
@@ -406,24 +406,24 @@ int main() {
   }
 
 #if _print
-  print_CMAT(CA);
-  print_CMAT(CB);
-  print_CMAT(CC);
+  print_cmat(CA);
+  print_cmat(CB);
+  print_cmat(CC);
 #endif
 
   cgemm(CTran, Tran, alpha, CA, CB, beta, CC);
 
 #if _print
-  print_CMAT(CC);
+  print_cmat(CC);
 #endif
-  free_CMAT(CA);
-  free_CMAT(CB);
-  free_CMAT(CC);
+  free_cmat(CA);
+  free_cmat(CB);
+  free_cmat(CC);
 #endif
 #if _M
-  CA = alloc_CMAT(rowA, colA);
-  CB = alloc_CMAT(rowB, rowA);
-  CC = alloc_CMAT(colA, rowB);
+  CA = alloc_cmat(rowA, colA);
+  CB = alloc_cmat(rowB, rowA);
+  CC = alloc_cmat(colA, rowB);
 
   cfill(CA, 1.0, -1);
   cfill(CB, 1.0, -1);
@@ -439,19 +439,19 @@ int main() {
   }
 
 #if _print
-  print_CMAT(CA);
-  print_CMAT(CB);
-  print_CMAT(CC);
+  print_cmat(CA);
+  print_cmat(CB);
+  print_cmat(CC);
 #endif
 
   cgemm(CTran, CTran, alpha, CA, CB, beta, CC);
 
 #if _print
-  print_CMAT(CC);
+  print_cmat(CC);
 #endif
-  free_CMAT(CA);
-  free_CMAT(CB);
-  free_CMAT(CC);
+  free_cmat(CA);
+  free_cmat(CB);
+  free_cmat(CC);
 #endif
 #if USE_CUDA
   finit();

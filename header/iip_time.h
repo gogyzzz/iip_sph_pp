@@ -7,7 +7,7 @@
 void stopwatch(int flag);
 #else
 
-LARGE_INTEGER getFILETIMEoffset();
+LARGE_INTEGER get_filetime_offset();
 int clock_gettime(struct timeval *tv);
 void stopwatch(int flag);
 

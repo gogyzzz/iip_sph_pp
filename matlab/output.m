@@ -6,8 +6,19 @@ test = fopen('test.txt','r');
 %% FOR each test file
 while ~feof(test)
     %% RUN functions
-        filename = fgetl(test);
-        A = read_mat(filename);     
+        test_op  = fscanf(test,'%s',1);
+        datatype = fscanf(test,'%c',1);
+        d0       = fscanf(test,'%d',1);
+        d1       = fscanf(test,'%d',1);
+        d2       = fscanf(test,'%d',1);
+        %filename = fgetl(test);
+        infile = fscanf(test,'%s',1);
+        outfile = fscanf(test,'%s',1); 
+        A = read_mat(filename); 
+        
+        
+        
+        %{
     %% SAVE output files    
         %% IsIt SQAURE ?        
         if size(A,1) == size(A,2)
@@ -31,7 +42,7 @@ while ~feof(test)
           
           %% Permute
           % Tese all cases? 
-          
+          %}
 end
 fclose(test);
 

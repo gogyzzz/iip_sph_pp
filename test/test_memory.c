@@ -12,13 +12,13 @@ int main() {
   init(16776960);
 
   for (j = 0; j < 10; j++) {
-    A = iip_malloc(sizeof(MAT));
-    B = iip_malloc(sizeof(MAT));
-    C = iip_malloc(sizeof(MAT));
+    A = mpalloc(sizeof(MAT));
+    B = mpalloc(sizeof(MAT));
+    C = mpalloc(sizeof(MAT));
 
-    A->data = iip_malloc(sizeof(DTYPE) * m * n);
-    B->data = iip_malloc(sizeof(DTYPE) * n * k);
-    C->data = iip_malloc(sizeof(DTYPE) * m * k);
+    A->data = mpalloc(sizeof(DTYPE) * m * n);
+    B->data = mpalloc(sizeof(DTYPE) * n * k);
+    C->data = mpalloc(sizeof(DTYPE) * m * k);
 
     A->ndim = 1;
     B->ndim = 1;
@@ -39,40 +39,40 @@ int main() {
     fill(B, 2);
     fill(C, 0);
 #if _print
-    print_MAT(A);
-    print_MAT(B);
-    print_MAT(C);
+    print_mat(A);
+    print_mat(B);
+    print_mat(C);
 #endif
     printf("[%d X %d] = [%d X %d] * [%d X %d]\n", m, k, m, n, n, k);
     matmul(A, B, C);
 #if _print
-    print_MAT(A);
-    print_MAT(B);
-    print_MAT(C);
+    print_mat(A);
+    print_mat(B);
+    print_mat(C);
 #endif
-    iip_free(A->data);
-    iip_free(A);
-    iip_free(C->data);
-    iip_free(B->data);
-    iip_free(C);
-    iip_free(B);
+    mpfree(A->data);
+    mpfree(A);
+    mpfree(C->data);
+    mpfree(B->data);
+    mpfree(C);
+    mpfree(B);
 
-    A = iip_malloc(sizeof(MAT));
-    A->data = iip_malloc(sizeof(DTYPE) * 20 * 100);
-    B = iip_malloc(sizeof(MAT));
-    C = iip_malloc(sizeof(MAT));
-    C->data = iip_malloc(sizeof(DTYPE) * 24 * 1);
-    B->data = iip_malloc(sizeof(DTYPE) * 10 * 133);
+    A = mpalloc(sizeof(MAT));
+    A->data = mpalloc(sizeof(DTYPE) * 20 * 100);
+    B = mpalloc(sizeof(MAT));
+    C = mpalloc(sizeof(MAT));
+    C->data = mpalloc(sizeof(DTYPE) * 24 * 1);
+    B->data = mpalloc(sizeof(DTYPE) * 10 * 133);
 
-    iip_free(B->data);
-    iip_free(A->data);
-    iip_free(A);
-    iip_free(B);
-    iip_free(C->data);
-    iip_free(C);
-    //	A = mem_MAT(10);
+    mpfree(B->data);
+    mpfree(A->data);
+    mpfree(A);
+    mpfree(B);
+    mpfree(C->data);
+    mpfree(C);
+    //	A = mpalloc_mat(10);
 
-    //	free_mem_MAT(10);
+    //	free_mpalloc_mat(10);
   }
   finit();
   return 0;
