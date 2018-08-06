@@ -17,13 +17,13 @@ int main() {
 
   for (i = 0; i < rowB * rowA * 4; i++) B->data[i] = i;
 
-  print_MAT(A);
-  print_MAT(B);
+  print_mat(A);
+  print_mat(B);
   matmul(A, B, C);
-  print_MAT(C);
+  print_mat(C);
 
-  free_MAT(A);
-  free_MAT(B);
-  free_MAT(C);
+  free_mat(A);
+  free_mat(B);
+  free_mat(C);
   return 0;
 }

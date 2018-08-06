@@ -4,20 +4,20 @@ int main() {
   MAT *A;
   CMAT *CA;
 
-  A = alloc_MAT(20, 5);
+  A = alloc_mat(20, 5);
   randu(A, -10., 10.);
-  print_MAT(A);
+  print_mat(A);
 
   randn(A, 0., 1.);
-  print_MAT(A);
+  print_mat(A);
 
-  free_MAT(A);
+  free_mat(A);
 
-  CA = alloc_CMAT(20, 5);
+  CA = alloc_cmat(20, 5);
   crandn(CA, 5., -5., 10., 100.);
 
-  print_CMAT(CA);
-  free_CMAT(CA);
+  print_cmat(CA);
+  free_cmat(CA);
 
   return 0;
 }

@@ -15,7 +15,6 @@
 
 #define DEBUG 0
 
-
 /***********************************
 * 이 부분은 직접 해주세요
 *********************************** */
@@ -82,7 +81,6 @@ extern UINT max_thread;
 extern UINT max_block;
 
 #endif
-
 
 /*
 * #define AA BB
@@ -177,33 +175,33 @@ _2,_1
  **** MACRO FUNCTIONS ****
  *************************************/
 // Y*=X
-#define cxmul(Y, X, T)                \
+#define CXMUL(Y, X, T)                \
   {                                   \
     T = Y.re;                         \
     Y.re = Y.re * X.re - Y.im * X.im; \
     Y.im = T * X.im + Y.im * X.re;    \
   }
 // Y+=X
-#define cxadd(Y, X)     \
+#define CXADD(Y, X)     \
   {                     \
     Y.re = Y.re + X.re; \
     Y.im = Y.im + X.im; \
   }
 // Y+=A*B
-#define cxadd_mul(Y, A, B)                               \
+#define CXADD_mul(Y, A, B)                               \
   {                                                      \
     (Y.re) = (Y.re) + (A.re) * (B.re) - (A.im) * (B.im); \
     (Y.im) = (Y.im) + (A.re) * (B.im) + (A.im) * (B.re); \
   }
 // Y = A*B
-#define cxemul(Y, A, B)                       \
+#define CXEMUL(Y, A, B)                       \
   {                                           \
     Y.re = (A.re) * (B.re) - (A.im) * (B.im); \
     Y.im = (A.re) * (B.im) + (A.im) + (B.re); \
   }
 
 // Y = A/B
-#define cxediv(Y, A, B)                             \
+#define CXEDIV(Y, A, B)                             \
   {                                                 \
     Y.re = ((A.re) * (B.re) + (A.im) * (B.im)) /    \
            (((B.re) * (B.re)) + ((B.im) * (B.im))); \
@@ -211,7 +209,7 @@ _2,_1
            (((B.re) * (B.re)) + ((B.im) * (B.im))); \
   }
 
-#define cxeadd(Y, A, B) \
+#define CXEADD(Y, A, B) \
   {                     \
     Y.re = A.re + B.re; \
     Y.im = A.im + B.im; \
@@ -277,9 +275,10 @@ static USED_MEM* memory_log[MAX_MEM_PAGE];
 //해당 페이지에 몇 덩어리가 할당 되어있나
 static unsigned long long int log_cnt[MAX_MEM_PAGE];
 static unsigned int pool_cnt;
-signed long long int page_alloc_isable(int page_idx, unsigned long long int require_size);
-void* iip_malloc(unsigned long long int size);
-void iip_free(void* ptr);
+signed long long int page_alloc_isable(int page_idx,
+                                       unsigned long long int require_size);
+void* mpalloc(unsigned long long int size);
+void mpfree(void* ptr);
 void init(UINT mem_pool_size);
 void finit();
 #endif

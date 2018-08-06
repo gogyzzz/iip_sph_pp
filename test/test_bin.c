@@ -7,15 +7,15 @@ int main() {
   CA = czeros(4, 3);
   CB = czeros(4, 3);
   read_cmat("complex.bin", CA);
-  print_CMAT(CA);
+  print_cmat(CA);
 
   write_cmat("sec.bin", CA);
   read_cmat("sec.bin", CB);
-  print_CMAT(CB);
+  print_cmat(CB);
 
-  free_CMAT(CB);
+  free_cmat(CB);
 
-  free_CMAT(CA);
+  free_cmat(CA);
 
   return 0;
 }

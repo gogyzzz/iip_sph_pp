@@ -10,17 +10,17 @@ int main() {
   CMAT *CA, *TCA, *CB, *TCB, *CC;
   int i;
 
-  A = alloc_MAT(colA, rowA);
-  TA = alloc_MAT(rowA, colA);
-  B = alloc_MAT(rowA, rowB);
-  TB = alloc_MAT(rowB, rowA);
-  C = alloc_MAT(colA, rowB);
+  A = alloc_mat(colA, rowA);
+  TA = alloc_mat(rowA, colA);
+  B = alloc_mat(rowA, rowB);
+  TB = alloc_mat(rowB, rowA);
+  C = alloc_mat(colA, rowB);
 
-  CA = alloc_CMAT(colA, rowA);
-  TCA = alloc_CMAT(rowA, colA);
-  CB = alloc_CMAT(rowA, rowB);
-  TCB = alloc_CMAT(rowB, rowA);
-  CC = alloc_CMAT(colA, rowB);
+  CA = alloc_cmat(colA, rowA);
+  TCA = alloc_cmat(rowA, colA);
+  CB = alloc_cmat(rowA, rowB);
+  TCB = alloc_cmat(rowB, rowA);
+  CC = alloc_cmat(colA, rowB);
 
   for (i = 0; i < colA * rowA; i++) A->data[i] = 1;
   for (i = 0; i < colA * rowA; i++) TA->data[i] = 1;
@@ -52,19 +52,19 @@ int main() {
   /**** REAL ****/
 
   aABpbC(1, A, B, 0, C);
-  print_MAT(C);
+  print_mat(C);
 
   aABtpbC(1, A, TB, 0, C);
-  print_MAT(C);
+  print_mat(C);
 
   aAtBpbC(1, TA, B, 0, C);
-  print_MAT(C);
+  print_mat(C);
 
   aAtBpbC(1, TA, B, 0, C);
-  print_MAT(C);
+  print_mat(C);
 
   matmul(A, B, C);
-  print_MAT(C);
+  print_mat(C);
 
   /**** COMPLEX ****/
 
@@ -74,40 +74,40 @@ int main() {
   beta.im = 0;
 
   caABpbC(alpha, CA, CB, beta, CC);
-  print_CMAT(CC);
+  print_cmat(CC);
   caABtpbC(alpha, CA, TCB, beta, CC);
-  print_CMAT(CC);
+  print_cmat(CC);
   caABhpbC(alpha, CA, TCB, beta, CC);
-  print_CMAT(CC);
+  print_cmat(CC);
 
   caAtBpbC(alpha, TCA, CB, beta, CC);
-  print_CMAT(CC);
+  print_cmat(CC);
   caAtBtpbC(alpha, TCA, TCB, beta, CC);
-  print_CMAT(CC);
+  print_cmat(CC);
   caAtBhpbC(alpha, TCA, TCB, beta, CC);
-  print_CMAT(CC);
+  print_cmat(CC);
 
   caAhBpbC(alpha, TCA, CB, beta, CC);
-  print_CMAT(CC);
+  print_cmat(CC);
   caAhBtpbC(alpha, TCA, TCB, beta, CC);
-  print_CMAT(CC);
+  print_cmat(CC);
   caAhBhpbC(alpha, TCA, TCB, beta, CC);
-  print_CMAT(CC);
+  print_cmat(CC);
 
   cmatmul(CA, CB, CC);
-  print_CMAT(CC);
+  print_cmat(CC);
 
-  free_MAT(A);
-  free_MAT(B);
-  free_MAT(TA);
-  free_MAT(TB);
-  free_MAT(C);
+  free_mat(A);
+  free_mat(B);
+  free_mat(TA);
+  free_mat(TB);
+  free_mat(C);
 
-  free_CMAT(CA);
-  free_CMAT(CB);
-  free_CMAT(TCA);
-  free_CMAT(TCB);
-  free_CMAT(CC);
+  free_cmat(CA);
+  free_cmat(CB);
+  free_cmat(TCA);
+  free_cmat(TCB);
+  free_cmat(CC);
 
   return 0;
 }

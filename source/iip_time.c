@@ -47,7 +47,7 @@ void stopwatch(int flag) {
 }
 #else
 
-LARGE_INTEGER getFILETIMEoffset() {
+LARGE_INTEGER get_filetime_offset() {
   SYSTEMTIME s;
   FILETIME f;
   LARGE_INTEGER t;
@@ -82,7 +82,7 @@ int clock_gettime(struct timeval *tv) {
       frequencyToMicroseconds =
           (double)performanceFrequency.QuadPart / 1000000.;
     } else {
-      offset = getFILETIMEoffset();
+      offset = get_filetime_offset();
       frequencyToMicroseconds = 10.;
     }
   }

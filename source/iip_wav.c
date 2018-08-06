@@ -1,6 +1,6 @@
 #include "iip_wav.h"
 
-WAV *read_WAV(char *file_path) {
+WAV *read_wav(char *file_path) {
   WAV *wav;
   FILE *f;
   uint32_t read = 0;
@@ -95,7 +95,7 @@ WAV *read_WAV(char *file_path) {
   return wav;
 }
 
-void write_WAV(WAV *wav, char *file_path) {
+void write_wav(WAV *wav, char *file_path) {
   FILE *f;
 
 #if DEBUG
@@ -129,9 +129,9 @@ void write_WAV(WAV *wav, char *file_path) {
   fclose(f);
 }
 /*
-MAT* WAV2MAT(WAV*){}
+MAT* wav2mat(WAV*){}
 */
-void free_WAV(WAV *wav) {
+void free_wav(WAV *wav) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -139,7 +139,7 @@ void free_WAV(WAV *wav) {
   free(wav);
 }
 
-void print_WAV(WAV *wav) {
+void print_wav(WAV *wav) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -178,7 +178,7 @@ void print_WAV(WAV *wav) {
   printf("data_size      : %u\n", wav->data_size);
 }
 
-MAT *WAV_BUF2MAT(WAV_BUF *buf) {
+MAT *wav_buf2MAT(WAV_BUF *buf) {
   MAT *mat;
   ITER i, j;
 #if DEBUG
@@ -200,9 +200,9 @@ MAT *WAV_BUF2MAT(WAV_BUF *buf) {
   return mat;
 }
 
-MAT *WAV2MAT(WAV *wav) { return WAV_BUF2MAT(&(wav->buffer)); }
+MAT *wav2mat(WAV *wav) { return wav_buf2MAT(&(wav->buffer)); }
 
-WAV *MAT2WAV(MAT *mat, UINT sample_rate) {
+WAV *mat2wav(MAT *mat, UINT sample_rate) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif

@@ -12,11 +12,11 @@ int main() {
   fill(A, 2);
   for (i = 0; i < 3; i++) B->data[i] = i + 1;
   mul_elements(A, B, C);
-  print_MAT(A);
-  print_MAT(B);
-  print_MAT(C);
-  free_MAT(A);
-  free_MAT(B), free_MAT(C);
+  print_mat(A);
+  print_mat(B);
+  print_mat(C);
+  free_mat(A);
+  free_mat(B), free_mat(C);
 
   printf("==== %d =====\n", cnt++);
   A = zeros(1, 1);
@@ -25,11 +25,11 @@ int main() {
   fill(A, 2);
   for (i = 0; i < 9; i++) B->data[i] = i + 1;
   mul_elements(A, B, C);
-  print_MAT(A);
-  print_MAT(B);
-  print_MAT(C);
-  free_MAT(A);
-  free_MAT(B), free_MAT(C);
+  print_mat(A);
+  print_mat(B);
+  print_mat(C);
+  free_mat(A);
+  free_mat(B), free_mat(C);
 
   printf("==== %d =====\n", cnt++);
   A = zeros(1, 3);
@@ -38,11 +38,11 @@ int main() {
   for (i = 0; i < 3; i++) B->data[i] = i + 1;
   for (i = 0; i < 3; i++) A->data[i] = i + 1;
   mul_elements(A, B, C);
-  print_MAT(A);
-  print_MAT(B);
-  print_MAT(C);
-  free_MAT(A);
-  free_MAT(B), free_MAT(C);
+  print_mat(A);
+  print_mat(B);
+  print_mat(C);
+  free_mat(A);
+  free_mat(B), free_mat(C);
 
   printf("==== %d =====\n", cnt++);
   A = zeros(3, 1);
@@ -51,11 +51,11 @@ int main() {
   for (i = 0; i < 3; i++) B->data[i] = i + 1;
   for (i = 0; i < 3; i++) A->data[i] = i + 1;
   mul_elements(A, B, C);
-  print_MAT(A);
-  print_MAT(B);
-  print_MAT(C);
-  free_MAT(A);
-  free_MAT(B), free_MAT(C);
+  print_mat(A);
+  print_mat(B);
+  print_mat(C);
+  free_mat(A);
+  free_mat(B), free_mat(C);
 
   printf("==== %d =====\n", cnt++);
   A = zeros(3, 3);
@@ -64,11 +64,11 @@ int main() {
   for (i = 0; i < 3; i++) B->data[i] = i + 1;
   for (i = 0; i < 9; i++) A->data[i] = i + 1;
   mul_elements(A, B, C);
-  print_MAT(A);
-  print_MAT(B);
-  print_MAT(C);
-  free_MAT(A);
-  free_MAT(B), free_MAT(C);
+  print_mat(A);
+  print_mat(B);
+  print_mat(C);
+  free_mat(A);
+  free_mat(B), free_mat(C);
 
   printf("==== %d =====\n", cnt++);
   A = zeros(3, 1);
@@ -77,11 +77,11 @@ int main() {
   for (i = 0; i < 9; i++) B->data[i] = i + 1;
   for (i = 0; i < 3; i++) A->data[i] = i + 1;
   mul_elements(A, B, C);
-  print_MAT(A);
-  print_MAT(B);
-  print_MAT(C);
-  free_MAT(A);
-  free_MAT(B), free_MAT(C);
+  print_mat(A);
+  print_mat(B);
+  print_mat(C);
+  free_mat(A);
+  free_mat(B), free_mat(C);
 
   printf("==== %d =====\n", cnt++);
   A = zeros(3, 1, 3);
@@ -90,11 +90,11 @@ int main() {
   for (i = 0; i < 9; i++) B->data[i] = i + 1;
   for (i = 0; i < 9; i++) A->data[i] = i + 1;
   mul_elements(A, B, C);
-  print_MAT(A);
-  print_MAT(B);
-  print_MAT(C);
-  free_MAT(A);
-  free_MAT(B), free_MAT(C);
+  print_mat(A);
+  print_mat(B);
+  print_mat(C);
+  free_mat(A);
+  free_mat(B), free_mat(C);
 
   /**** COMPLEX ****/
 
@@ -111,11 +111,11 @@ int main() {
     CA->data[i].im = i + 3;
   };
   cmul_elements(CA, CB, CC);
-  print_CMAT(CA);
-  print_CMAT(CB);
-  print_CMAT(CC);
-  free_CMAT(CA);
-  free_CMAT(CB), free_CMAT(CC);
+  print_cmat(CA);
+  print_cmat(CB);
+  print_cmat(CC);
+  free_cmat(CA);
+  free_cmat(CB), free_cmat(CC);
 
   printf("==== %d =====\n", cnt++);
   CA = czeros(3, 3);
@@ -130,11 +130,11 @@ int main() {
     CA->data[i].im = i + 3;
   };
   cmul_elements(CA, CB, CC);
-  print_CMAT(CA);
-  print_CMAT(CB);
-  print_CMAT(CC);
-  free_CMAT(CA);
-  free_CMAT(CB), free_CMAT(CC);
+  print_cmat(CA);
+  print_cmat(CB);
+  print_cmat(CC);
+  free_cmat(CA);
+  free_cmat(CB), free_cmat(CC);
 
   printf("==== %d =====\n", cnt++);
   CA = czeros(4, 1, 2);
@@ -149,11 +149,11 @@ int main() {
     CA->data[i].im = i + 3;
   };
   cadd_elements(CA, CB, CC);
-  print_CMAT(CA);
-  print_CMAT(CB);
-  print_CMAT(CC);
-  free_CMAT(CA);
-  free_CMAT(CB), free_CMAT(CC);
+  print_cmat(CA);
+  print_cmat(CB);
+  print_cmat(CC);
+  free_cmat(CA);
+  free_cmat(CB), free_cmat(CC);
 
   return 0;
 }

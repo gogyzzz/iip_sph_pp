@@ -1,4 +1,4 @@
-function y = read_mat(f)
+function y = read_mat(f,d0,d1,d2)
 
 
 if exist(f,'file') 
@@ -6,7 +6,8 @@ if exist(f,'file')
     msg = f;
     msg = strcat(msg,' : reading');
     disp(msg);
-    
+      
+%{
     c = strtok(f,'.');
     [c,rc] = strtok(c,'_');
     [d0,rc] = strtok(rc,'_');
@@ -15,6 +16,7 @@ if exist(f,'file')
     d0 = str2num(d0);
     d1 = str2num(d1);
     d2 = str2num(d2);    
+%}
     
     %mat = zeros(d0,d1,d2);
     mat = fread(bin,'double');

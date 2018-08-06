@@ -1,6 +1,6 @@
 #include "mother.h"
 
-int main(){
+int main() {
   perform_test();
 
   return 0;

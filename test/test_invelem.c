@@ -18,10 +18,10 @@ int main() {
   inv_elements(A);
   cinv_elements(CA);
 
-  print_MAT(A);
-  free_MAT(A);
+  print_mat(A);
+  free_mat(A);
 
-  print_CMAT(CA);
-  free_CMAT(CA);
+  print_cmat(CA);
+  free_cmat(CA);
   return 0;
 }

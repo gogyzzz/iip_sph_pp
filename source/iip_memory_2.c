@@ -19,8 +19,7 @@ typedef struct memory_list {
 
 static memory_list *mem_list;
 
-    void
-    init() {
+void init() {
   ITER i;
 
   //크게 만들어서 코스트가 크기 않으므로 MAX_MEM_PAGE 개 할당
@@ -37,7 +36,7 @@ static memory_list *mem_list;
   }
 }
 
-void *iip_malloc(UINT size) {
+void *mpalloc(UINT size) {
   UINT list_idx, temp_num;
   mem_node *temp_node;
   mem_node *cur_node;
@@ -106,7 +105,7 @@ void *iip_malloc(UINT size) {
   }
 }
 
-void iip_free(void *p) {
+void mpfree(void *p) {
   mem_node *cur_node;
   mem_node *bef_node;
   mem_node *temp_node;

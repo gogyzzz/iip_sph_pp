@@ -26,17 +26,15 @@ void axpy(DTYPE alpha, MAT *x, MAT *y) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  if(y->d2 == x-> d2)
-  {
+  if (y->d2 == x->d2) {
     size = x->d0 * x->d1 * x->d2;
-    axpy_inc(size,alpha,x->data,1,y->data,1);
-  }
-  else if(y->d2 != 1 && x->d2 == 1)
-  {
-    for(i=0;i<y->d2;i++)
-      axpy_inc(x->d0*x->d1,alpha,x->data,1,&(y->data[i*y->d0*y->d1]),1);
-  }
-  else ASSERT(DIM_INVAL)
+    axpy_inc(size, alpha, x->data, 1, y->data, 1);
+  } else if (y->d2 != 1 && x->d2 == 1) {
+    for (i = 0; i < y->d2; i++)
+      axpy_inc(x->d0 * x->d1, alpha, x->data, 1, &(y->data[i * y->d0 * y->d1]),
+               1);
+  } else
+    ASSERT(DIM_INVAL)
 }
 void axpy_inc(UINT size, DTYPE alpha, DTYPE *X, ITER incx, DTYPE *Y,
               ITER incy) {
@@ -70,25 +68,21 @@ void mp_axpy(UINT N, DTYPE alpha, DTYPE *X, UINT INCX, DTYPE *Y, UINT INCY) {
     Y[i * INCY] = X[i * INCX] * alpha + Y[i * INCY];
   }
 }
-void caxpy(CTYPE alpha, CMAT *x, CMAT *y){
+void caxpy(CTYPE alpha, CMAT *x, CMAT *y) {
   UINT size;
   ITER i;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  if(y->d2 == x-> d2)
-  {
+  if (y->d2 == x->d2) {
     size = x->d0 * x->d1 * x->d2;
-    caxpy_inc(size,alpha,x->data,1,y->data,1);
-  }
-  else if(y->d2 != 1 && x->d2 == 1)
-  {
-    for(i=0;i<y->d2;i++)
-      caxpy_inc(x->d0*x->d1,alpha,x->data,1,&(y->data[i*y->d0*y->d1]),1);
-  }
-  else ASSERT(DIM_INVAL)
-
-
+    caxpy_inc(size, alpha, x->data, 1, y->data, 1);
+  } else if (y->d2 != 1 && x->d2 == 1) {
+    for (i = 0; i < y->d2; i++)
+      caxpy_inc(x->d0 * x->d1, alpha, x->data, 1, &(y->data[i * y->d0 * y->d1]),
+                1);
+  } else
+    ASSERT(DIM_INVAL)
 }
 
 void caxpy_inc(UINT size, CTYPE alpha, CTYPE *X, ITER incx, CTYPE *Y,
@@ -159,36 +153,36 @@ void copy(MAT *src, MAT *des) {
 }
 
 void mp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
-//  ITER i;
-//#pragma omp parallel for shared(des, src) private(i)
-//  for (i = 0; i < N; i++) {
-//    des[i * des_inc] = src[i * src_inc];
-//  }
-  
-    ITER iteration = 8;
-    UINT repeat = N >> 3;
-    UINT left = N & (UINT)(iteration - 1);
-    ITER i = 0;
-    ITER j = 0;
+  //  ITER i;
+  //#pragma omp parallel for shared(des, src) private(i)
+  //  for (i = 0; i < N; i++) {
+  //    des[i * des_inc] = src[i * src_inc];
+  //  }
 
-  #pragma omp parallel for shared(des, src) private(j, i)
-    for (j = 0; j < repeat; j++) {
-      i = j * iteration;
-      des[(i)*des_inc] = src[(i)*src_inc];
-      des[(i + 1) * des_inc] = src[(i + 1) * src_inc];
-      des[(i + 2) * des_inc] = src[(i + 2) * src_inc];
-      des[(i + 3) * des_inc] = src[(i + 3) * src_inc];
-      des[(i + 4) * des_inc] = src[(i + 4) * src_inc];
-      des[(i + 5) * des_inc] = src[(i + 5) * src_inc];
-      des[(i + 6) * des_inc] = src[(i + 6) * src_inc];
-      des[(i + 7) * des_inc] = src[(i + 7) * src_inc];
-    }
+  ITER iteration = 8;
+  UINT repeat = N >> 3;
+  UINT left = N & (UINT)(iteration - 1);
+  ITER i = 0;
+  ITER j = 0;
 
-	i = repeat * iteration;
+#pragma omp parallel for shared(des, src) private(j, i)
+  for (j = 0; j < repeat; j++) {
+    i = j * iteration;
+    des[(i)*des_inc] = src[(i)*src_inc];
+    des[(i + 1) * des_inc] = src[(i + 1) * src_inc];
+    des[(i + 2) * des_inc] = src[(i + 2) * src_inc];
+    des[(i + 3) * des_inc] = src[(i + 3) * src_inc];
+    des[(i + 4) * des_inc] = src[(i + 4) * src_inc];
+    des[(i + 5) * des_inc] = src[(i + 5) * src_inc];
+    des[(i + 6) * des_inc] = src[(i + 6) * src_inc];
+    des[(i + 7) * des_inc] = src[(i + 7) * src_inc];
+  }
 
-    for (j = 0; j < left; j++) {
-      des[(i + j) * des_inc] = src[(i + j) * src_inc];
-    }
+  i = repeat * iteration;
+
+  for (j = 0; j < left; j++) {
+    des[(i + j) * des_inc] = src[(i + j) * src_inc];
+  }
 }
 
 void ccopy(CMAT *src, CMAT *des) {
@@ -1016,7 +1010,7 @@ void mp_uscal(UINT size, CTYPE alpha, CTYPE *X, UINT incx) {
 
 #pragma omp parallel for shared(X) private(i)
   for (i = 0; i < size * incx; i += incx) {
-    cxmul(X[i], alpha, temp);
+    CXMUL(X[i], alpha, temp);
   }
 }
 
@@ -1080,7 +1074,7 @@ void uadd_inc(UINT size, CTYPE alpha, CTYPE *X, UINT incx) {
 #endif
 
   for (i = 0; i < size * incx; i += incx) {
-    cxadd(X[i], alpha);
+    CXADD(X[i], alpha);
   }
 }
 /** 열 더하기 **/
@@ -1105,117 +1099,105 @@ void row_uadd(CTYPE alpha, CMAT *X, UINT idx) {
 }
 
 /*** Computes the parameters for a Givens rotation. ***/
-void rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s){
+void rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s) {
 #if DEBUG
-	printf("%s\n", __func__);
+  printf("%s\n", __func__);
 #endif
 
 #if USE_CBLAS
-//DTYPE = float
+// DTYPE = float
 #if NTYPE == 0
-	cblas_srotg(a, b, c, s);
-	return;
+  cblas_srotg(a, b, c, s);
+  return;
 
-//DTYPE = double
+// DTYPE = double
 #elif NTYPE == 1
-	cblas_drotg(a, b, c, s);
-	return;
-#endif
-
-//USE_BLAS = 0 -> just c implement
-#else
-	return mp_rotg(a, b, c, s);
-#endif
-}
-void mp_rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s)
-{
-	DTYPE a_ = *a;
-	DTYPE b_ = *b;
-	DTYPE r_, z_;
-
-	r_ = (*c) * (*a) + (*b) * (*s);
-
-	if ((*b) * (*c) - (*a) * (*s) != 0)
-	{
-		printf("Wrong data!\n");
-		return;
-	}
-
-	a_ = a_ < 0 ? -a_ : a_;
-	b_ = b_ < 0 ? -b_ : b_;
-
-	if (a_ > b_)
-	{
-		z_ = *s;
-	}
-	else if (*c != 0)
-	{
-		z_ = 1 / (*c);
-	}
-	else
-	{
-		z_ = 1;
-	}
-
-	(*a) = r_;
-	(*b) = z_;
-}
-
-void crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s){
-#if DEBUG
-	printf("%s\n", __func__);
-#endif
-/*
-#if USE_CBLAS
-//DTYPE = float
-#if NTYPE == 0
-	cblas_crotg(a, b, c, s);
-	return;
-//DTYPE = double
-#elif NTYPE == 1
-	cblas_zrotg(a, b, c, s);
+  cblas_drotg(a, b, c, s);
   return;
 #endif
 
-//USE_BLAS = 0 -> just c implement
+// USE_BLAS = 0 -> just c implement
 #else
-  */
-	return mp_crotg(a, b, c, s);
-//#endif
+  return mp_rotg(a, b, c, s);
+#endif
 }
-void mp_crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s){
-	CTYPE a_ = *a;
-	CTYPE b_ = *b;
-	CTYPE r_, z_;
-	DTYPE factor = 0;
+void mp_rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s) {
+  DTYPE a_ = *a;
+  DTYPE b_ = *b;
+  DTYPE r_, z_;
 
-	r_.re = (*c) * (*a).re;
-	r_.re += (*b).re * (*s).re - (*b).im * (*s).im;
-	r_.im = (*c) * (*a).im;
-	r_.im += (*b).re * (*s).im + (*b).im * (*s).re;
+  r_ = (*c) * (*a) + (*b) * (*s);
 
-	// for exception handle.... later....
-	/*if ((*b) * (*c) - (*a) * (*s) != 0)
-	{
-		printf("Wrong data!\n");
-		return;
-	}*/
+  if ((*b) * (*c) - (*a) * (*s) != 0) {
+    printf("Wrong data!\n");
+    return;
+  }
 
-	if (ABS_CTYPE(a_) > ABS_CTYPE(b_))
-	{
-		z_ = (*s);
-	}
-	else if (*c != 0)
-	{
-		z_.re = 1 / (*c);
-		z_.im = 0;
-	}
-	else
-	{
-		z_.re = 1;
-		z_.im = 0;
-	}
+  a_ = a_ < 0 ? -a_ : a_;
+  b_ = b_ < 0 ? -b_ : b_;
 
-	(*a) = r_;
-	(*b) = z_;
+  if (a_ > b_) {
+    z_ = *s;
+  } else if (*c != 0) {
+    z_ = 1 / (*c);
+  } else {
+    z_ = 1;
+  }
+
+  (*a) = r_;
+  (*b) = z_;
+}
+
+void crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s) {
+#if DEBUG
+  printf("%s\n", __func__);
+#endif
+  /*
+  #if USE_CBLAS
+  //DTYPE = float
+  #if NTYPE == 0
+          cblas_crotg(a, b, c, s);
+          return;
+  //DTYPE = double
+  #elif NTYPE == 1
+          cblas_zrotg(a, b, c, s);
+    return;
+  #endif
+
+  //USE_BLAS = 0 -> just c implement
+  #else
+    */
+  return mp_crotg(a, b, c, s);
+  //#endif
+}
+void mp_crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s) {
+  CTYPE a_ = *a;
+  CTYPE b_ = *b;
+  CTYPE r_, z_;
+  DTYPE factor = 0;
+
+  r_.re = (*c) * (*a).re;
+  r_.re += (*b).re * (*s).re - (*b).im * (*s).im;
+  r_.im = (*c) * (*a).im;
+  r_.im += (*b).re * (*s).im + (*b).im * (*s).re;
+
+  // for exception handle.... later....
+  /*if ((*b) * (*c) - (*a) * (*s) != 0)
+  {
+          printf("Wrong data!\n");
+          return;
+  }*/
+
+  if (ABS_CTYPE(a_) > ABS_CTYPE(b_)) {
+    z_ = (*s);
+  } else if (*c != 0) {
+    z_.re = 1 / (*c);
+    z_.im = 0;
+  } else {
+    z_.re = 1;
+    z_.im = 0;
+  }
+
+  (*a) = r_;
+  (*b) = z_;
 }
