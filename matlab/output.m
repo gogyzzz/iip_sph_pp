@@ -6,17 +6,26 @@ test = fopen('test.txt','r');
 %% FOR each test file
 while ~feof(test)
     %% RUN functions
-        test_op  = fscanf(test,'%s',1);
-        datatype = fscanf(test,'%c',1);
-        d0       = fscanf(test,'%d',1);
-        d1       = fscanf(test,'%d',1);
-        d2       = fscanf(test,'%d',1);
-        %filename = fgetl(test);
-        infile = fscanf(test,'%s',1);
-        outfile = fscanf(test,'%s',1); 
-        A = read_mat(filename); 
+        %test_op  = fscanf(test,'%s',1);
+        %datatype = fscanf(test,'%c',1);
+       % d0       = fscanf(test,'%d',1);
+       % d1       = fscanf(test,'%d',1);
+      %  d2       = fscanf(test,'%d',1);
+        line = fgetl(test);
+      %  infile = fscanf(test,'%s',1);
+      %  outfile = fscanf(test,'%s',1); 
+        %A = read_mat(filename); 
+        line_arr = strsplit(line)
         
+        test_op = line_arr(1)
+        datatype = line_arr(2)
+        d0 = str2double(line_arr(3))
+        d1 = str2double(line_arr(4))
+        d2 = str2double(line_arr(5))
+        infile = line_arr{6}
+        outfile = line_arr(7)
         
+        mat = read_mat(infile,d0,d1,d2)
         
         %{
     %% SAVE output files    
