@@ -4309,7 +4309,7 @@ CTYPE cdet_nbyn(CMAT* mat) {
   return det;
 }
 
-/**** LU ****/
+/**** Work In Progress ****/
 
 void wiki_invert(DTYPE* X, UINT n, UINT* idx, DTYPE* Y) {
   ITER i, j, k;

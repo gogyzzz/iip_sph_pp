@@ -60,11 +60,9 @@ void cinvert_nbyn(CTYPE* X, CTYPE* Y, UINT n);
 DTYPE det_nbyn(MAT* mat);
 CTYPE cdet_nbyn(CMAT* mat);
 
-/**** LU ****/
+/**** Work In Progress ****/
 void wiki_invert(DTYPE* X, UINT n, UINT* idx, DTYPE* Y);
-
-void wiki_dcmp(DTYPE* X, UINT n, UINT* idx);
-
-void wiki(MAT* X, MAT* Y);
+void mp_dcmp(DTYPE* X, UINT n, UINT* idx);
+void my_invert(MAT* X, MAT* Y);
 
 #endif
