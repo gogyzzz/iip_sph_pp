@@ -1,3 +1,14 @@
+/*
+ * ===========================================================
+ *           Copyright (c) 2018, __IIPLAB__
+ *                All rights reserved.
+ * 
+ * This Source Code Form is subject to the terms of
+ * the Mozilla Public License, v. 2.0. 
+ * If a copy of the MPL was not distributed with this file,
+ *  You can obtain one at http://mozilla.org/MPL/2.0/.
+ * ===========================================================
+ */
 #include "iip_type.h"
 
 typedef struct WAV_BUF {
@@ -31,16 +42,23 @@ typedef struct WAV {
 
 } WAV;
 
+/*read wav from file_path and return allocated WAV struct*/
 WAV* read_wav(char* file_path);
 
+/*write wav file from WAV struct into file_path */
 void write_wav(WAV* wav, char* file_path);
 
+/*return MAT struct with wav's buffer*/
 MAT* wav2mat(WAV* wav);
 
+/*return MAT struct with wav_buf*/
 MAT* wav_buf2MAT(WAV_BUF* buf);
+
+/*return WAV struct mat as wav_buf with given sample_rate*/
 WAV* mat2wav(MAT* mat, UINT sample_rate);
 
+/*free WAV strcut*/
 void free_wav(WAV* wav);
 
-// Display header of WAV
+/* Display header info of WAV struct */
 void print_wav(WAV* wav);

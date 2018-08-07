@@ -1,3 +1,14 @@
+/*
+ * ===========================================================
+ *           Copyright (c) 2018, __IIPLAB__
+ *                All rights reserved.
+ * 
+ * This Source Code Form is subject to the terms of
+ * the Mozilla Public License, v. 2.0. 
+ * If a copy of the MPL was not distributed with this file,
+ *  You can obtain one at http://mozilla.org/MPL/2.0/.
+ * ===========================================================
+ */
 #ifndef IIP_INVERT_H
 #define IIP_INVERT_H
 
@@ -42,7 +53,7 @@ CTYPE cdet_5by5(CTYPE* X);
 DTYPE det_6by6(DTYPE* X);
 CTYPE cdet_6by6(CTYPE* X);
 
-/**** LAPACK ****/
+/**** inversion by LAPACK ****/
 void invert_nbyn(DTYPE* X, DTYPE* Y, UINT n);
 void cinvert_nbyn(CTYPE* X, CTYPE* Y, UINT n);
 

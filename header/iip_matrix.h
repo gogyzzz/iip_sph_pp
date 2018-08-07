@@ -1,3 +1,14 @@
+/*
+ * ===========================================================
+ *           Copyright (c) 2018, __IIPLAB__
+ *                All rights reserved.
+ * 
+ * This Source Code Form is subject to the terms of
+ * the Mozilla Public License, v. 2.0. 
+ * If a copy of the MPL was not distributed with this file,
+ *  You can obtain one at http://mozilla.org/MPL/2.0/.
+ * ===========================================================
+ */
 #ifndef IIP_MATRIX_H
 #define IIP_MATRIX_H
 
@@ -8,33 +19,34 @@
  **** iip_matrix ****
  ********************/
 
-void fill(MAT*, DTYPE);
-void cfill(CMAT*, DTYPE, DTYPE);
+/*fill every elements of matrix as v*/
+void fill(MAT* mat, DTYPE v);
+void cfill(CMAT* mat, DTYPE vr, DTYPE vi);
 
 #if USE_CUDA
 __global__ void cu_fill(DTYPE*, UINT, DTYPE, UINT);
 __global__ void cu_cfill(CTYPE*, UINT, DTYPE, DTYPE, UINT);
 #endif
 
-/*** allocMAT ***/
+/*** allocate MAT ***/
 #define alloc_mat_load(_x, _3, _2, _1, ...) _1
 #define alloc_mat_load_(args_list) alloc_mat_load args_list
 #define alloc_mat(...) \
   alloc_mat_load_(     \
       (__VA_ARGS__, alloc_mat_3d, alloc_mat_2d, alloc_mat_1d)(__VA_ARGS__))
 
-MAT* alloc_mat_1d(UINT);
-MAT* alloc_mat_2d(UINT, UINT);
-MAT* alloc_mat_3d(UINT, UINT, UINT);
+MAT* alloc_mat_1d(UINT d0);
+MAT* alloc_mat_2d(UINT d0, UINT d1);
+MAT* alloc_mat_3d(UINT d0, UINT d1, UINT d2);
 
 #define alloc_cmat_load(_x, _3, _2, _1, ...) _1
 #define alloc_cmat_load_(args_list) alloc_cmat_load args_list
 #define alloc_cmat(...) \
   alloc_cmat_load_(     \
       (__VA_ARGS__, alloc_cmat_3d, alloc_cmat_2d, alloc_cmat_1d)(__VA_ARGS__))
-CMAT* alloc_cmat_1d(UINT);
-CMAT* alloc_cmat_2d(UINT, UINT);
-CMAT* alloc_cmat_3d(UINT, UINT, UINT);
+CMAT* alloc_cmat_1d(UINT d0);
+CMAT* alloc_cmat_2d(UINT d0, UINT d1);
+CMAT* alloc_cmat_3d(UINT d0, UINT d1, UINT d2);
 
 /**** allocate MAT in memory pool : mpalloc_mat ***/
 #define mpalloc_mat_load(_x, _3, _2, _1, ...) _1
@@ -54,62 +66,62 @@ CMAT* mpalloc_cmat_1d(UINT d0);
 CMAT* mpalloc_cmat_2d(UINT d0, UINT d1);
 CMAT* mpalloc_cmat_3d(UINT d0, UINT d1, UINT d2);
 
-/**** zeros  ****/
+/**** allocate matrix and set all elements as 0  ****/
 #define zeros_load(_x, _3, _2, _1, ...) _1
 #define zeros_load_(args_list) zeros_load args_list
 #define zeros(...) \
   zeros_load_((__VA_ARGS__, zeros_3d, zeros_2d, zeros_1d)(__VA_ARGS__))
 
-MAT* zeros_1d(UINT);
-MAT* zeros_2d(UINT, UINT);
-MAT* zeros_3d(UINT, UINT, UINT);
+MAT* zeros_1d(UINT d0);
+MAT* zeros_2d(UINT d0, UINT d1);
+MAT* zeros_3d(UINT d0, UINT d1, UINT d2);
 
 #define czeros_load(_x, _3, _2, _1, ...) _1
 #define czeros_load_(args_list) czeros_load args_list
 #define czeros(...) \
   czeros_load_((__VA_ARGS__, czeros_3d, czeros_2d, czeros_1d)(__VA_ARGS__))
-CMAT* czeros_1d(UINT);
-CMAT* czeros_2d(UINT, UINT);
-CMAT* czeros_3d(UINT, UINT, UINT);
+CMAT* czeros_1d(UINT d0);
+CMAT* czeros_2d(UINT d0, UINT d1);
+CMAT* czeros_3d(UINT d0, UINT d1, UINT d2);
 
-/**** set overloading  ****/
+/**** set an element of a matrix as v ****/
 #define set_load(_x, _xx, _xxx, _3, _2, _1, ...) _1
 #define set_load_(args_list) set_load args_list
 #define set(...) set_load_((__VA_ARGS__, set_3d, set_2d, set_1d)(__VA_ARGS__))
-void set_1d(MAT*, UINT, DTYPE);
-void set_2d(MAT*, UINT, UINT, DTYPE);
-void set_3d(MAT*, UINT, UINT, UINT, DTYPE);
+void set_1d(MAT* mat, UINT d0, DTYPE v);
+void set_2d(MAT* mat , UINT d0, UINT d1, DTYPE v);
+void set_3d(MAT* mat, UINT d0, UINT d1, UINT d2, DTYPE v);
 
 #define cset_load(_x, _xx, _xxx, _xxxx, _3, _2, _1, ...) _1
 #define cset_load_(args_list) cset_load args_list
 #define cset(...) \
   cset_load_((__VA_ARGS__, cset_3d, cset_2d, cset_1d)(__VA_ARGS__))
-void cset_1d(CMAT*, UINT, DTYPE, DTYPE);
-void cset_2d(CMAT*, UINT, UINT, DTYPE, DTYPE);
-void cset_3d(CMAT*, UINT, UINT, UINT, DTYPE, DTYPE);
+void cset_1d(CMAT* mat, UINT d0, DTYPE vr, DTYPE vi);
+void cset_2d(CMAT* mat, UINT d0, UINT d1, DTYPE vr, DTYPE vi);
+void cset_3d(CMAT* mat, UINT d0, UINT d1, UINT d2, DTYPE vr, DTYPE vi);
 
 #if USE_CUDA
 __global__ void cu_set(DTYPE*, UINT, DTYPE);
 __global__ void cu_cset(CTYPE*, UINT, DTYPE, DTYPE);
 #endif
 
-/****  get overloadnig ****/
+/****  get an element of a matrix ****/
 #define get_load(_x, _xx, _3, _2, _1, ...) _1
 #define get_load_(args_list) get_load args_list
 #define get(...) get_load_((__VA_ARGS__, get_3d, get_2d, get_1d)(__VA_ARGS__))
-DTYPE get_1d(MAT*, UINT);
-DTYPE get_2d(MAT*, UINT, UINT);
-DTYPE get_3d(MAT*, UINT, UINT, UINT);
+DTYPE get_1d(MAT* mat, UINT d0);
+DTYPE get_2d(MAT* mat, UINT d0, UINT d1);
+DTYPE get_3d(MAT* mat, UINT d0, UINT d1, UINT d2);
 
 #define cget_load(_x, _xx, _3, _2, _1, ...) _1
 #define cget_load_(args_list) cget_load args_list
 #define cget(...) \
   cget_load_((__VA_ARGS__, cget_3d, cget_2d, cget_1d)(__VA_ARGS__))
-CTYPE cget_1d(CMAT*, UINT);
-CTYPE cget_2d(CMAT*, UINT, UINT);
-CTYPE cget_3d(CMAT*, UINT, UINT, UINT);
+CTYPE cget_1d(CMAT* mat, UINT d0) ;
+CTYPE cget_2d(CMAT* mat, UINT d0, UINT d1);
+CTYPE cget_3d(CMAT* mat, UINT d0, UINT d1, UINT d2);
 
-/**** submat overloading ****/
+/****   ****/
 
 #if USE_CUDA
 __global__ void cu_submat(DTYPE*, DTYPE*, ITER, ITER, ITER, ITER, UINT, UINT,
@@ -136,7 +148,7 @@ void csubmat_1d(CMAT*, CMAT*, ITER, ITER);
 void csubmat_2d(CMAT*, CMAT*, ITER, ITER, ITER, ITER);
 void csubmat_3d(CMAT*, CMAT*, ITER, ITER, ITER, ITER, ITER, ITER);
 
-/**** mpsubmat overloading ****/
+/**** submat using memory pool ****/
 
 #define mpsubmat_load(_x2, _x3, _x4, _3, _x5, _2, _x6, _1, ...) _1
 #define mpsubmat_load_(args_list) mpsubmat_load args_list
@@ -249,9 +261,6 @@ void hermit(CMAT* mat);
 
 /**** set Identity Matrix ****/
 void ident_mat(MAT* mat);
-
-/**** Inverse Matrix WIP ****/
-void invers(MAT* mat);
 
 /****  free memory of MAT ****/
 void free_mat(MAT*);
