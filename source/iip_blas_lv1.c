@@ -52,11 +52,11 @@ void axpy_inc(UINT size, DTYPE alpha, DTYPE *X, ITER incx, DTYPE *Y,
 #endif
 
 #else
-  mp_axpy(size, alpha, X, incx, Y, incy);
+  omp_axpy(size, alpha, X, incx, Y, incy);
 #endif
 }
 
-void mp_axpy(UINT N, DTYPE alpha, DTYPE *X, UINT INCX, DTYPE *Y, UINT INCY) {
+void omp_axpy(UINT N, DTYPE alpha, DTYPE *X, UINT INCX, DTYPE *Y, UINT INCY) {
   ITER i;
 
 #if DEBUG
@@ -99,11 +99,11 @@ void caxpy_inc(UINT size, CTYPE alpha, CTYPE *X, ITER incx, CTYPE *Y,
 #endif
 
 #else
-  mp_caxpy(size, alpha, X, incx, Y, incy);
+  omp_caxpy(size, alpha, X, incx, Y, incy);
 #endif
 }
 
-void mp_caxpy(UINT N, CTYPE alpha, CTYPE *X, UINT INCX, CTYPE *Y, UINT INCY) {
+void omp_caxpy(UINT N, CTYPE alpha, CTYPE *X, UINT INCX, CTYPE *Y, UINT INCY) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -148,11 +148,11 @@ void copy(MAT *src, MAT *des) {
 
 // USE_BLAS = 0 -> just c implement
 #else
-  mp_copy(mat_size, src->data, 1, des->data, 1);
+  omp_copy(mat_size, src->data, 1, des->data, 1);
 #endif
 }
 
-void mp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
+void omp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
   //  ITER i;
   //#pragma omp parallel for shared(des, src) private(i)
   //  for (i = 0; i < N; i++) {
@@ -208,11 +208,11 @@ void ccopy(CMAT *src, CMAT *des) {
 
 // USE_BLAS = 0 -> just c implement
 #else
-  mp_ccopy(mat_size, src->data, 1, des->data, 1);
+  omp_ccopy(mat_size, src->data, 1, des->data, 1);
 #endif
 }
 
-void mp_ccopy(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc) {
+void omp_ccopy(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc) {
   ITER i;
 #pragma omp parallel for shared(des, src) private(i)
   for (i = 0; i < N; i++) {
@@ -277,10 +277,10 @@ DTYPE asum(MAT *mat, UINT inc) {
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_asum(mat_size, mat->data, inc);
+  return omp_asum(mat_size, mat->data, inc);
 #endif
 }
-DTYPE mp_asum(UINT N, DTYPE *data, UINT inc) {
+DTYPE omp_asum(UINT N, DTYPE *data, UINT inc) {
   ITER i = 0;
   DTYPE sum = 0;
 
@@ -314,11 +314,11 @@ DTYPE casum(CMAT *mat, UINT inc) {
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_casum(mat_size, mat->data, inc);
+  return omp_casum(mat_size, mat->data, inc);
 #endif
 }
 
-DTYPE mp_casum(UINT N, CTYPE *data, UINT inc) {
+DTYPE omp_casum(UINT N, CTYPE *data, UINT inc) {
   ITER i = 0;
   DTYPE sum = 0;
 
@@ -356,11 +356,11 @@ DTYPE dot(MAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment) {
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_dot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
+  return omp_dot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
 #endif
 }
 
-DTYPE mp_dot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
+DTYPE omp_dot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
   ITER i = 0;
   DTYPE dot = 0;
 
@@ -400,11 +400,11 @@ CTYPE cdot(CMAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment) {
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_cdot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
+  return omp_cdot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
 #endif
 }
 
-CTYPE mp_cdot(UINT N, CTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
+CTYPE omp_cdot(UINT N, CTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
   ITER i = 0;
   CTYPE dot;
 
@@ -448,11 +448,11 @@ CTYPE udot(CMAT *src_x, UINT x_increment, CMAT *src_y, UINT y_increment) {
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_udot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
+  return omp_udot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
 #endif
 }
 
-CTYPE mp_udot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
+CTYPE omp_udot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
   ITER i = 0;
   CTYPE dot;
 
@@ -497,10 +497,10 @@ void swap_inc(MAT *src_x, UINT x_inc, MAT *src_y, UINT y_inc) {
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_swap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
+  return omp_swap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
 #endif
 }
-void mp_swap(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
+void omp_swap(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
   ITER i = 0;
   DTYPE temp = 0;
 
@@ -538,10 +538,10 @@ void cswap_inc(CMAT *src_x, UINT x_inc, CMAT *src_y, UINT y_inc) {
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_cswap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
+  return omp_cswap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
 #endif
 }
-void mp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
+void omp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
   ITER i = 0;
   CTYPE temp = {0, 0};
 
@@ -583,10 +583,10 @@ UINT amax_inc(MAT *src, UINT inc) {
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_amax(mat_size, src->data, inc);
+  return omp_amax(mat_size, src->data, inc);
 #endif
 }
-UINT mp_amax(UINT N, DTYPE *src, UINT inc) {
+UINT omp_amax(UINT N, DTYPE *src, UINT inc) {
   ITER i = 0;
   UINT idx = 0;
   DTYPE max = src[0];
@@ -627,10 +627,10 @@ UINT camax_inc(CMAT *src, UINT inc) {
 #endif
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_camax(mat_size, src->data, inc);
+  return omp_camax(mat_size, src->data, inc);
 #endif
 }
-UINT mp_camax(UINT N, CTYPE *src, UINT inc) {
+UINT omp_camax(UINT N, CTYPE *src, UINT inc) {
   ITER i = 0;
   UINT idx = 0;
   DTYPE max = ABS_CTYPE(src[0]);
@@ -672,13 +672,13 @@ UINT amin_inc(MAT *src, UINT inc) {
           return;
   #endif
   */
-  return mp_amin(mat_size, src->data, inc);
+  return omp_amin(mat_size, src->data, inc);
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_amin(mat_size, src->data, inc);
+  return omp_amin(mat_size, src->data, inc);
 #endif
 }
-UINT mp_amin(UINT N, DTYPE *src, UINT inc) {
+UINT omp_amin(UINT N, DTYPE *src, UINT inc) {
   ITER i = 0;
   UINT idx = 0;
   DTYPE min = src[0];
@@ -719,13 +719,13 @@ UINT camin_inc(CMAT *src, UINT inc) {
           return;
   #endif
   */
-  return mp_camin(mat_size, src->data, inc);
+  return omp_camin(mat_size, src->data, inc);
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_camin(mat_size, src->data, inc);
+  return omp_camin(mat_size, src->data, inc);
 #endif
 }
-UINT mp_camin(UINT N, CTYPE *src, UINT inc) {
+UINT omp_camin(UINT N, CTYPE *src, UINT inc) {
   ITER i = 0;
   UINT idx = 0;
   DTYPE min = ABS_CTYPE(src[0]);
@@ -770,10 +770,10 @@ DTYPE nrm2_inc(MAT *src, UINT inc) {
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_nrm2(mat_size, src->data, inc);
+  return omp_nrm2(mat_size, src->data, inc);
 #endif
 }
-DTYPE mp_nrm2(UINT N, DTYPE *data, UINT inc) {
+DTYPE omp_nrm2(UINT N, DTYPE *data, UINT inc) {
   ITER i = 0;
   DTYPE temp = 0;
 
@@ -810,10 +810,10 @@ DTYPE cnrm2_inc(CMAT *src, UINT inc) {
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_cnrm2(mat_size, src->data, inc);
+  return omp_cnrm2(mat_size, src->data, inc);
 #endif
 }
-DTYPE mp_cnrm2(UINT N, CTYPE *data, UINT inc) {
+DTYPE omp_cnrm2(UINT N, CTYPE *data, UINT inc) {
   ITER i = 0;
   DTYPE temp = 0;
 
@@ -853,20 +853,20 @@ void rot_inc(MAT *src_x, UINT x_inc, MAT *src_y, UINT y_inc, DTYPE c, DTYPE s) {
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_rot(mat_size, src_x->data, x_inc, src_y, y_inc, c, s);
+  return omp_rot(mat_size, src_x->data, x_inc, src_y, y_inc, c, s);
 #endif
 }
-void mp_rot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc, DTYPE c,
+void omp_rot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc, DTYPE c,
             DTYPE s) {
   ITER i = 0;
-  DTYPE temp_x, temp_y;
+  DTYPE teomp_x, teomp_y;
 
   for (i = 0; i < N; i++) {
-    temp_x = src_x[i * x_inc];
-    temp_y = src_y[i * y_inc];
+    teomp_x = src_x[i * x_inc];
+    teomp_y = src_y[i * y_inc];
 
-    src_x[i * x_inc] = c * temp_x + s * temp_y;
-    src_y[i * y_inc] = c * temp_y + s * temp_x;
+    src_x[i * x_inc] = c * teomp_x + s * teomp_y;
+    src_y[i * y_inc] = c * teomp_y + s * teomp_x;
   }
 }
 
@@ -891,33 +891,33 @@ void crot_inc(CMAT *src_x, UINT x_inc, CMAT *src_y, UINT y_inc, DTYPE c,
 // OpenBLAS에는 csrot zdrot이 없다
 #if NTYPE == 0
   // cblas_csrot(mat_size, src_x->data, x_inc, src_y->data, y_inc, c, s);
-  return mp_crot(mat_size, src_x->data, x_inc, src_y, y_inc, c, s);
+  return omp_crot(mat_size, src_x->data, x_inc, src_y, y_inc, c, s);
 
 // DTYPE = double
 #elif NTYPE == 1
   //	cblas_zdrot(mat_size, src_x->data, x_inc, src_y->data, y_inc, c, s);
-  return mp_crot(mat_size, src_x->data, x_inc, src_y, y_inc, c, s);
+  return omp_crot(mat_size, src_x->data, x_inc, src_y, y_inc, c, s);
 
 #endif
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_crot(mat_size, src_x->data, x_inc, src_y, y_inc, c, s);
+  return omp_crot(mat_size, src_x->data, x_inc, src_y, y_inc, c, s);
 #endif
 }
-void mp_crot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc,
+void omp_crot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc,
              DTYPE c, DTYPE s) {
   ITER i = 0;
-  CTYPE temp_x, temp_y;
+  CTYPE teomp_x, teomp_y;
 
   for (i = 0; i < N; i++) {
-    temp_x = src_x[i * x_inc];
-    temp_y = src_y[i * y_inc];
+    teomp_x = src_x[i * x_inc];
+    teomp_y = src_y[i * y_inc];
 
-    src_x[i * x_inc].re = c * temp_x.re + s * temp_y.re;
-    src_x[i * x_inc].im = c * temp_x.im + s * temp_y.im;
-    src_y[i * y_inc].re = c * temp_y.re + s * temp_x.re;
-    src_y[i * y_inc].im = c * temp_y.im + s * temp_x.im;
+    src_x[i * x_inc].re = c * teomp_x.re + s * teomp_y.re;
+    src_x[i * x_inc].im = c * teomp_x.im + s * teomp_y.im;
+    src_y[i * y_inc].re = c * teomp_y.re + s * teomp_x.re;
+    src_y[i * y_inc].im = c * teomp_y.im + s * teomp_x.im;
   }
 }
 /** 실수행렬 * 실수 **/
@@ -939,10 +939,10 @@ void scal_inc(UINT size, DTYPE alpha, DTYPE *X, UINT incx) {
   cblas_dscal(size, alpha, X, incx);
 #endif
 #else
-  mp_scal(size, alpha, X, incx);
+  omp_scal(size, alpha, X, incx);
 #endif
 }
-void mp_scal(UINT size, DTYPE alpha, DTYPE *X, UINT incx) {
+void omp_scal(UINT size, DTYPE alpha, DTYPE *X, UINT incx) {
   ITER i;
 
 #pragma omp parallel for shared(X) private(i)
@@ -969,10 +969,10 @@ void cscal_inc(UINT size, DTYPE alpha, CTYPE *X, UINT incx) {
   cblas_zdscal(size, alpha, X, incx);
 #endif
 #else
-  mp_cscal(size, alpha, X, incx);
+  omp_cscal(size, alpha, X, incx);
 #endif
 }
-void mp_cscal(UINT size, DTYPE alpha, CTYPE *X, UINT incx) {
+void omp_cscal(UINT size, DTYPE alpha, CTYPE *X, UINT incx) {
   ITER i;
 
 #pragma omp parallel for shared(X) private(i)
@@ -1001,10 +1001,10 @@ void uscal_inc(UINT size, CTYPE alpha, CTYPE *X, UINT incx) {
   cblas_zscal(size, &alpha, X, incx);
 #endif
 #else
-  mp_uscal(size, alpha, X, incx);
+  omp_uscal(size, alpha, X, incx);
 #endif
 }
-void mp_uscal(UINT size, CTYPE alpha, CTYPE *X, UINT incx) {
+void omp_uscal(UINT size, CTYPE alpha, CTYPE *X, UINT incx) {
   ITER i;
   DTYPE temp;
 
@@ -1118,10 +1118,10 @@ void rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s) {
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return mp_rotg(a, b, c, s);
+  return omp_rotg(a, b, c, s);
 #endif
 }
-void mp_rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s) {
+void omp_rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s) {
   DTYPE a_ = *a;
   DTYPE b_ = *b;
   DTYPE r_, z_;
@@ -1167,10 +1167,10 @@ void crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s) {
   //USE_BLAS = 0 -> just c implement
   #else
     */
-  return mp_crotg(a, b, c, s);
+  return omp_crotg(a, b, c, s);
   //#endif
 }
-void mp_crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s) {
+void omp_crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s) {
   CTYPE a_ = *a;
   CTYPE b_ = *b;
   CTYPE r_, z_;

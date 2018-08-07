@@ -87,7 +87,7 @@ void gemm(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
                   &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
 #else
-      mp_gemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
+      omp_gemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
               lda, &(B->data[i * B->d0 * B->d1]), ldb, beta,
               &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
@@ -106,7 +106,7 @@ void gemm(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
                   &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
 #else
-      mp_gemm(transA, transB, m, n, k, alpha, A->data, lda,
+      omp_gemm(transA, transB, m, n, k, alpha, A->data, lda,
               &(B->data[i * B->d0 * B->d1]), ldb, beta,
               &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
@@ -125,7 +125,7 @@ void gemm(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
                   &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
 #else
-      mp_gemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
+      omp_gemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
               lda, B->data, ldb, beta, &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
     }
@@ -133,7 +133,7 @@ void gemm(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
     ASSERT(DIM_INVAL)
 }
 
-void mp_gemm(char transA, char transB, UINT m, UINT n, UINT k, DTYPE alpha,
+void omp_gemm(char transA, char transB, UINT m, UINT n, UINT k, DTYPE alpha,
              DTYPE* A, UINT lda, DTYPE* B, UINT ldb, DTYPE beta, DTYPE* C,
              UINT ldc) {
   ITER i, j, l;
@@ -253,7 +253,7 @@ void cgemm(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
                   &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
 #else
-      mp_cgemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
+      omp_cgemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
                lda, &(B->data[i * B->d0 * B->d1]), ldb, beta,
                &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
@@ -272,7 +272,7 @@ void cgemm(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
                   &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
 #else
-      mp_cgemm(transA, transB, m, n, k, alpha, A->data, lda,
+      omp_cgemm(transA, transB, m, n, k, alpha, A->data, lda,
                &(B->data[i * B->d0 * B->d1]), ldb, beta,
                &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
@@ -291,7 +291,7 @@ void cgemm(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
                   &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
 #else
-      mp_cgemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
+      omp_cgemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
                lda, B->data, ldb, beta, &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
     }
@@ -299,7 +299,7 @@ void cgemm(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
     ASSERT(DIM_INVAL)
 }
 
-void mp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
+void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
               CTYPE* A, UINT lda, CTYPE* B, UINT ldb, CTYPE beta, CTYPE* C,
               UINT ldc) {
   ITER i, j, l;

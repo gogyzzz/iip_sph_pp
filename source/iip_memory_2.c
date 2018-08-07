@@ -37,13 +37,13 @@ void init() {
 }
 
 void *mpalloc(UINT size) {
-  UINT list_idx, temp_num;
-  mem_node *temp_node;
+  UINT list_idx, teomp_num;
+  mem_node *teomp_node;
   mem_node *cur_node;
   // get proper index
-  temp_num = size - 1;
+  teomp_num = size - 1;
 
-  if (temp_num < MEM_PAGE_BASIC_SIZE)
+  if (teomp_num < MEM_PAGE_BASIC_SIZE)
     list_idx = 0;
   else {
     /* 4096 : -12
@@ -52,8 +52,8 @@ void *mpalloc(UINT size) {
      *
      */
     list_idx = -8 + 1;
-    while (temp_num != 1) {
-      temp_num = temp_num >> 1;
+    while (teomp_num != 1) {
+      teomp_num = teomp_num >> 1;
       list_idx++;
     }
   }
@@ -62,32 +62,32 @@ void *mpalloc(UINT size) {
   //처음임
   if (mem_list[list_idx].front == NULL) {
     printf("create front for list[%d] : %u\n", list_idx, size);
-    temp_node = (mem_node *)malloc(sizeof(mem_node));
-    temp_node->p = (void *)malloc(mem_list[list_idx].block_size);
-    temp_node->used = 1;
-    temp_node->next = NULL;
+    teomp_node = (mem_node *)malloc(sizeof(mem_node));
+    teomp_node->p = (void *)malloc(mem_list[list_idx].block_size);
+    teomp_node->used = 1;
+    teomp_node->next = NULL;
 
     mem_list[list_idx].used++;
     mem_list[list_idx].alloced++;
-    mem_list[list_idx].front = temp_node;
+    mem_list[list_idx].front = teomp_node;
     show_list();
     return mem_list[list_idx].front->p;
   } else {
     //자리 없음
     if (mem_list[list_idx].alloced == mem_list[list_idx].used) {
       printf("create node for list[%d] : %u\n", list_idx, size);
-      temp_node = (mem_node *)malloc(sizeof(mem_node));
-      temp_node->p = (void *)malloc(mem_list[list_idx].block_size);
-      temp_node->used = 1;
-      temp_node->next = NULL;
-      //	printf("point %u\n",(UINT)temp_node->p);
+      teomp_node = (mem_node *)malloc(sizeof(mem_node));
+      teomp_node->p = (void *)malloc(mem_list[list_idx].block_size);
+      teomp_node->used = 1;
+      teomp_node->next = NULL;
+      //	printf("point %u\n",(UINT)teomp_node->p);
       cur_node = mem_list[list_idx].front;
       while ((cur_node->next) != NULL) cur_node = cur_node->next;
-      cur_node->next = temp_node;
+      cur_node->next = teomp_node;
       mem_list[list_idx].alloced++;
       mem_list[list_idx].used++;
       show_list();
-      return temp_node->p;
+      return teomp_node->p;
     }
     //자리 있음
     else if (mem_list[list_idx].alloced > mem_list[list_idx].used) {
@@ -108,7 +108,7 @@ void *mpalloc(UINT size) {
 void mpfree(void *p) {
   mem_node *cur_node;
   mem_node *bef_node;
-  mem_node *temp_node;
+  mem_node *teomp_node;
   ITER i, j;
   UINT found = 0;
 
@@ -123,8 +123,8 @@ void mpfree(void *p) {
       //첫 노드 해제해야함
       if (cur_node->p == p) {
         //	printf("first %u %u\n",(UINT)cur_node->p,p);
-        temp_node = cur_node;
-        temp_node->used = 0;
+        teomp_node = cur_node;
+        teomp_node->used = 0;
         if (cur_node->next != NULL) {
           mem_list[i].front = cur_node->next;
           // cur_node를 맨 뒤로
@@ -133,8 +133,8 @@ void mpfree(void *p) {
             cur_node = cur_node->next;
           }
           // bef_node 는 마지막 노드
-          bef_node->next = temp_node;
-          temp_node->next = NULL;
+          bef_node->next = teomp_node;
+          teomp_node->next = NULL;
         }
         //첫노드가 마지막노드
         else {
@@ -152,11 +152,11 @@ void mpfree(void *p) {
         if (cur_node == NULL) continue;
         //	printf("found %u\n",(UINT)cur_node->p);
         // cur_node 를 해제함
-        temp_node = cur_node;
-        temp_node->used = 0;
+        teomp_node = cur_node;
+        teomp_node->used = 0;
 
         //마지막 노드가 아님
-        if (temp_node->next != NULL) {
+        if (teomp_node->next != NULL) {
           bef_node->next = cur_node->next;
 
           //마지막 노드로
@@ -164,8 +164,8 @@ void mpfree(void *p) {
             bef_node = cur_node;
             cur_node = cur_node->next;
           }
-          bef_node->next = temp_node;
-          temp_node->next = NULL;
+          bef_node->next = teomp_node;
+          teomp_node->next = NULL;
         }
         //이미 마지막 노드라면
         else {
