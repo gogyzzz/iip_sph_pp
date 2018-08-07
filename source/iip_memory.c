@@ -34,9 +34,9 @@ void init(UINT mem_pool_size) {
   FILE* fp;
   fp = fopen("Memory_pool.log", "r");
 
-  char temp_str[256];
+  char teomp_str[256];
   if (fp != NULL) {
-    fgets(temp_str, 255, fp);
+    fgets(teomp_str, 255, fp);
     fscanf(fp, "%d", &size_before);
     fclose(fp);
   }
