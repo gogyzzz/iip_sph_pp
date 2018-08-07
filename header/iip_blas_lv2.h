@@ -13,12 +13,12 @@
 #define BLAS_LV2_H
 #include "iip_type.h"
 
-/*
- * TODO
+/*  matrix * vector operation
+ *  Since we don't have vector type
+ *  we recommed to use gemm of blas_lv3.
  *
- * gemv
  *
- * */
+ *  */
 
 #ifndef USE_CUDA
 void gemv(char transA, DTYPE alpha, MAT* A, MAT* X, DTYPE beta, MAT* Y);

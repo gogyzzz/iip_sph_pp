@@ -593,12 +593,26 @@ CMAT *mem_csubmat_3d(CMAT *mat, ITER d0_st, ITER d0_ed, ITER d1_st, ITER d1_ed,
   return submat;
 }
 
-/**** DIM allocator ****/
-DIM *new_dim() {
+/**** allocate DIM  ****/
+
+DIM* alloc_dim_0d(){
+  return alloc_dim_3d(1,1,1);
+}
+DIM* alloc_dim_1d(UINT d0){
+  return alloc_dim_3d(d0,1,1);
+}
+DIM* alloc_dim_2d(UINT d0,UINT d1){
+  return alloc_dim_3d(d0,d1,1);
+}
+
+DIM *alloc_dim_3d(UINT d0,UINT d1,UINT d2) {
   DIM *dim = (DIM *)malloc(sizeof(DIM));
 #if DEBUG
   printf("%s\n", __func__);
 #endif
+  dim->d0 = d0;
+  dim->d1 = d1;
+  dim->d2 = d2;
   return dim;
 }
 
@@ -610,10 +624,10 @@ CTYPE cget_by_dim(CMAT *mat, DIM *dim) {
   return mat->data[dim->d2 * mat->d0 * mat->d1 + dim->d1 * mat->d1 + dim->d0];
 }
 
-void setbydim(MAT *mat, DIM *dim, DTYPE val) {
+void set_by_dim(MAT *mat, DIM *dim, DTYPE val) {
   mat->data[dim->d2 * mat->d0 * mat->d1 + dim->d1 * mat->d1 + dim->d0] = val;
 }
-void csetbydim(CMAT *mat, DIM *dim, CTYPE val) {
+void cset_by_dim(CMAT *mat, DIM *dim, CTYPE val) {
   mat->data[dim->d2 * mat->d0 * mat->d1 + dim->d1 * mat->d1 + dim->d0] = val;
 }
 
@@ -1674,7 +1688,7 @@ void repmat(MAT *mat, DIM *dim) {
         }
   }
 
-  free_mpalloc_mat(t_mat);
+  mpfree_mat(t_mat);
 }
 
 void crepmat(CMAT *mat, DIM *dim) {
@@ -1706,7 +1720,7 @@ void crepmat(CMAT *mat, DIM *dim) {
         }
   }
 
-  free_mpalloc_cmat(t_mat);
+  mpfree_cmat(t_mat);
 }
 /**** reshape matrix ****/
 void reshape(MAT *mat, DIM *dim) {
@@ -1793,7 +1807,7 @@ void permute(MAT *mat, UINT seq) {
       mat->data[((i % d0d1) / t->d0) * mat->d0 * mat->d1 +
                 (i / d0d1) * mat->d0 + i % t->d0] = t->data[i];
     }
-    free_mpalloc_mat(t);
+    mpfree_mat(t);
   } else if (seq == 213) {
     t = mpalloc_mat(mat->d0, mat->d1, mat->d2);
     copy(mat, t);
@@ -1805,7 +1819,7 @@ void permute(MAT *mat, UINT seq) {
       mat->data[((i / d0d1)) * mat->d0 * mat->d1 + (i % t->d0) * mat->d0 +
                 (i % d0d1) / t->d0] = t->data[i];
     }
-    free_mpalloc_mat(t);
+    mpfree_mat(t);
   } else if (seq == 231) {
     t = mpalloc_mat(mat->d0, mat->d1, mat->d2);
     copy(mat, t);
@@ -1818,7 +1832,7 @@ void permute(MAT *mat, UINT seq) {
       mat->data[(i % t->d0) * mat->d0 * mat->d1 + (i / d0d1) * mat->d0 +
                 (i % d0d1) / t->d0] = t->data[i];
     }
-    free_mpalloc_mat(t);
+    mpfree_mat(t);
   } else if (seq == 312) {
     t = mpalloc_mat(mat->d0, mat->d1, mat->d2);
     copy(mat, t);
@@ -1830,7 +1844,7 @@ void permute(MAT *mat, UINT seq) {
       mat->data[(i % d0d1) / t->d0 * mat->d0 * mat->d1 + (i % t->d0) * mat->d0 +
                 i / d0d1] = t->data[i];
     }
-    free_mpalloc_mat(t);
+    mpfree_mat(t);
   } else if (seq == 321) {
     t = mpalloc_mat(mat->d0, mat->d1, mat->d2);
     copy(mat, t);
@@ -1842,7 +1856,7 @@ void permute(MAT *mat, UINT seq) {
       mat->data[(i % t->d0) * mat->d0 * mat->d1 + (i % d0d1) / t->d0 * mat->d0 +
                 i / d0d1] = t->data[i];
     }
-    free_mpalloc_mat(t);
+    mpfree_mat(t);
   } else
     ASSERT(ARG_INVAL)
 }
@@ -1873,7 +1887,7 @@ void cpermute(CMAT *mat, UINT seq) {
                 (i / d0d1) * mat->d0 + i % t->d0]
           .im = t->data[i].im;
     }
-    free_mpalloc_cmat(t);
+    mpfree_cmat(t);
   } else if (seq == 213) {
     t = mpalloc_cmat(mat->d0, mat->d1, mat->d2);
     ccopy(mat, t);
@@ -1889,7 +1903,7 @@ void cpermute(CMAT *mat, UINT seq) {
                 (i % d0d1) / t->d0]
           .im = t->data[i].im;
     }
-    free_mpalloc_cmat(t);
+    mpfree_cmat(t);
   } else if (seq == 231) {
     t = mpalloc_cmat(mat->d0, mat->d1, mat->d2);
     ccopy(mat, t);
@@ -1906,7 +1920,7 @@ void cpermute(CMAT *mat, UINT seq) {
                 (i % d0d1) / t->d0]
           .im = t->data[i].im;
     }
-    free_mpalloc_cmat(t);
+    mpfree_cmat(t);
   } else if (seq == 312) {
     t = mpalloc_cmat(mat->d0, mat->d1, mat->d2);
     ccopy(mat, t);
@@ -1922,7 +1936,7 @@ void cpermute(CMAT *mat, UINT seq) {
                 i / d0d1]
           .im = t->data[i].im;
     }
-    free_mpalloc_cmat(t);
+    mpfree_cmat(t);
   } else if (seq == 321) {
     t = mpalloc_cmat(mat->d0, mat->d1, mat->d2);
     ccopy(mat, t);
@@ -1938,7 +1952,7 @@ void cpermute(CMAT *mat, UINT seq) {
                 i / d0d1]
           .im = t->data[i].im;
     }
-    free_mpalloc_cmat(t);
+    mpfree_cmat(t);
   } else
     ASSERT(ARG_INVAL)
 }
@@ -2060,7 +2074,7 @@ void trans(MAT *mat) {
     mat->d1 = d0;
   }
   copy(temp, mat);
-  free_mpalloc_mat(temp);
+  mpfree_mat(temp);
 }
 
 void ctrans(CMAT *mat) {
@@ -2107,7 +2121,7 @@ void ctrans(CMAT *mat) {
     mat->d1 = d0;
   }
   ccopy(temp, mat);
-  free_mpalloc_cmat(temp);
+  mpfree_cmat(temp);
 }
 
 /* ex
@@ -2304,7 +2318,7 @@ void hermit(CMAT *mat) {
     mat->d1 = d0;
   }
   ccopy(temp, mat);
-  free_mpalloc_cmat(temp);
+  mpfree_cmat(temp);
 }
 
 /**** Identity Matrix****/
@@ -2400,12 +2414,12 @@ void print_cmat(CMAT *mat) {
   }
 }
 
-/**** free_mpalloc_mat ***/
-void free_mpalloc_mat(MAT *mat) {
+/**** mpfree_mat ***/
+void mpfree_mat(MAT *mat) {
   mpfree(mat->data);
   mpfree(mat);
 }
-void free_mpalloc_cmat(CMAT *mat) {
+void mpfree_cmat(CMAT *mat) {
   mpfree(mat->data);
   mpfree(mat);
 }
