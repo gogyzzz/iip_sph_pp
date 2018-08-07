@@ -23,7 +23,6 @@ C library for speech preprocessing.
 ## 참고
 * [Intel MKL Reference](https://software.intel.com/en-us/mkl-developer-reference-c-overview)
 * [Netlib.org](http://www.netlib.org/)
-* [Discussion with SY](https://docs.google.com/document/d/1rCuWjxcCX7lz-VraY0BthAHz8QdSYxDVFVWy7HIMcDo/edit)
 * [Open audio library study document](https://github.com/kooBH/OpenAudioLibraryStudy)
 
 ## LICENSE
