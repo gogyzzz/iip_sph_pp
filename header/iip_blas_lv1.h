@@ -17,9 +17,13 @@
 
 /* GENERAL RULE
  * {func} :  DTYPE matrix MAT operation
- * c{fuinc} : {func} with CTYPE matrix CMAT 
+ * c{func} : {func} with CTYPE matrix CMAT 
  * {func}_inc : {func} with DTYPE array with increment and size
  * c{func}_inc : c{func} with CTYPE array 
+ *
+ * + If there is {func} about two mat
+ * c{func} : {func} with CMAT and MAT
+ * u{func} : {func} with CMAT and CMAT
  *
  * + in {func}_inc
  * size : how many elements?
