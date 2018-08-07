@@ -10,8 +10,8 @@ C library for speech preprocessing.
 
 ## Requirement
 * cmake 3.6 or higher  
-* (OPTION) OpenBLAS  
-* (OPTION) IntelMKL  
+* (OPTION) OpenBLAS[Linux]  
+* (OPTION) IntelMKL[Windows]  
 
 ## Notaion
 * Set Options of CMAKE properly for you Envrionment
