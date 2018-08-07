@@ -31,7 +31,8 @@ endif()
 #set(MAIN_SRC test/test_invert.c)
 #set(MAIN_SRC test/test_cinvert.c)
 #set(MAIN_SRC test/test_dim.c)
-set(MAIN_SRC test/test_matlab.c)
+#set(MAIN_SRC test/test_matlab.c)
+set(MAIN_SRC test/test_combine.c)
 #set(MAIN_SRC test/test_permute.c)
 #set(MAIN_SRC test/test_bin.c)
 #set(MAIN_SRC test/test_invelem.c)
@@ -46,10 +47,6 @@ set(MAIN_SRC test/test_matlab.c)
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 
-message(STATUS "USE_CUDA   : " ${USE_CUDA})
-message(STATUS "USE_OPEN  : " ${USE_OPEN})
-message(STATUS "USE_MKL   : " ${USE_MKL})
-message(STATUS "USE_OPENMP : " ${USE_OPENMP})
 
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
@@ -119,6 +116,11 @@ if(USE_OPENMP)
     endif()
 endif()
 
+
+message(STATUS "USE_CUDA   : " ${USE_CUDA})
+message(STATUS "USE_OPEN  : " ${USE_OPEN})
+message(STATUS "USE_MKL   : " ${USE_MKL})
+message(STATUS "USE_OPENMP : " ${USE_OPENMP})
 
 #GET OS
 
@@ -205,6 +207,7 @@ if(USE_OPEN OR USE_MKL )
 
     string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
 	add_executable(${BLAS_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
+    string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
 
     if(USE_OPEN)
 	message(STATUS ${BLAS_LIBRARIES})
@@ -297,7 +300,9 @@ elseif(USE_OPENMP)
 else()
 	set(NATIVE_TARGET_NAME "${PROJECT_NAME}_native")
 	add_executable(${NATIVE_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})	
-	target_link_libraries(${NATIVE_TARGET_NAME} m)
+  If(UNIX)
+  target_link_libraries(${NATIVE_TARGET_NAME} m)
+  endif(UNIX)
 	target_include_directories(${NATIVE_TARGET_NAME}
 	PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/header)
