@@ -40,16 +40,16 @@ void stopwatch(int flag) {
 
     switch (unit) {
       case nano:
-        printf("% lld nano sec\n", diff);
+        printf("%lld nano sec\n", diff);
         break;
       case micro:
-        printf("% lld micro seconds\n", diff / 1000);
+        printf("%lld micro seconds\n", diff / 1000);
         break;
       case sec:
-        printf("% lld sec\n", diff / 1000000000);
+        printf("%lld sec\n", diff / 1000000000);
         break;
       default:
-        printf("% lld milli sec\n", diff / 100000);
+        printf("%lld milli sec\n", diff / 100000);
         break;
     }
   } else {
