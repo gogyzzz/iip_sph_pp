@@ -48,7 +48,7 @@ void cmatmul(CMAT* A, CMAT* B, CMAT* C);
  * trans options :
  * NoTran : No transposed
  * Tran   : Trasposed
- * CTran  : Hermition transposed
+ * CTran  : Hermitian transposed
  *
  * ex) gemm(NoTran,NoTran,1,A,B,0,C)
  *     is equal to matmul(A,B,C)
