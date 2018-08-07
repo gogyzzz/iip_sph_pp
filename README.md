@@ -6,21 +6,29 @@ C library for speech preprocessing.
 * Ubuntu 16.04 x64 (or higher)
 * Windows 10 x64
 * Mac high sierra 10.13.5
-* 임베디드 보드(라즈베리 파이나 zynx 보드 등)
+* Ebeded board(razberry pie, zynx board etc)
 
 ## Requirement
 * cmake 3.6 or higher  
-* (OPTION) OpenBLAS  
-* (OPTION) IntelMKL  
-* (OPTION) OpenMP  
+* (OPTION) OpenBLAS[Linux]  
+* (OPTION) IntelMKL[Windows]  
+
+## Notaion
+* Set Options of CMAKE properly for you Envrionment
+* We don't provide backend library, we assume you Environment contains backend library
+* If you want to use memory pool, you need to call 
+```C
+init(); //begining of your main()
+finit(); //at the end of your main()
+```
 
 ## Installation
-[설치 가이드](https://github.com/gogyzzz/iip_sph_pp/wiki/Install_Guide) 참조.
+[Installation Guide](https://github.com/gogyzzz/iip_sph_pp/wiki/Install_Guide)
 
 ## Example
-[Code Example](https://github.com/gogyzzz/iip_sph_pp/wiki/Examples) 참조.
+[Code Example](https://github.com/gogyzzz/iip_sph_pp/wiki/Examples)
 
-## 참고
+## Reference
 * [Intel MKL Reference](https://software.intel.com/en-us/mkl-developer-reference-c-overview)
 * [Netlib.org](http://www.netlib.org/)
 * [Open audio library study document](https://github.com/kooBH/OpenAudioLibraryStudy)

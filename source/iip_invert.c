@@ -21,6 +21,7 @@ void invert(MAT* mat, MAT* inv) {
   if (mat->d0 != inv->d0) ASSERT(DIM_INVAL)
 
   size = mat->d0 * mat->d1;
+
   for (i = 0; i < mat->d2; i++) {
     if (mat->d0 == 2)
       invert_2by2(&(mat->data[i * size]), &(inv->data[i * size]));
@@ -3205,14 +3206,15 @@ void cinvert_6by6(CTYPE* X, CTYPE* Y) {
   t = Y[34].re;
   Y[34].re = (Y[34].re * det.re - Y[34].im * det.im);
   Y[34].im = (t * det.im + Y[34].im * det.re);
-
+  
   t = Y[35].re;
   Y[35].re = (Y[35].re * det.re - Y[35].im * det.im);
   Y[35].im = (t * det.im + Y[35].im * det.re);
+  
 }
 
 /**** get determinant of matrix ****/
-DTYPE det(MAT* mat) {
+DTYPE det(MAT* mat){
   if (mat->d0 == 2)
     return det_2by2(mat->data);
   else if (mat->d0 == 3)
@@ -4297,7 +4299,9 @@ CTYPE cdet_nbyn(CMAT* mat) {
 #else
 
   printf("ERROR : 'OpenBLAS' or 'INTEL MKL' is required for this operation\n");
-  return -1;
+  det.re = -1;
+  det.im = -1;
+  return det;
 #endif
   det.re = 1.0;
   for (i = 0; i < mat->d0; i++) {

@@ -265,6 +265,7 @@ if(USE_OPEN OR USE_MKL )
 	target_compile_definitions(${BLAS_TARGET_NAME}
 	    PRIVATE
 	    USE_MKL=1)
+		
     endif()
 elseif(USE_OPENMP)
     set(OPENMP_TARGET_NAME "${PROJECT_NAME}_openmp")

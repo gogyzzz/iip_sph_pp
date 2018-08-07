@@ -672,7 +672,7 @@ UINT amin_inc(MAT *src, UINT inc) {
 
 #if USE_CBLAS
   // DTYPE = float
-  /* OpenBLAS에 없음
+  /* Not exists in OpenBLAS
   #if NTYPE == 0
           cblas_isamin(mat_size, src->data, inc);
           return;
@@ -899,7 +899,7 @@ void crot_inc(CMAT *src_x, UINT x_inc, CMAT *src_y, UINT y_inc, DTYPE c,
 #if USE_CBLAS
 // DTYPE = float
 
-// OpenBLAS에는 csrot zdrot이 없다
+// OpenBLAS not support (csrot / zdrot)
 #if NTYPE == 0
   // cblas_csrot(mat_size, src_x->data, x_inc, src_y->data, y_inc, c, s);
   return omp_crot(mat_size, src_x->data, x_inc, src_y, y_inc, c, s);
@@ -931,7 +931,7 @@ void omp_crot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc,
     src_y[i * y_inc].im = c * teomp_y.im + s * teomp_x.im;
   }
 }
-/** 실수행렬 * 실수 **/
+/** real matrix * real number **/
 void scal(DTYPE alpha, MAT *mat) {
 #if DEBUG
   printf("%s\n", __func__);
@@ -961,7 +961,7 @@ void omp_scal(UINT size, DTYPE alpha, DTYPE *X, UINT incx) {
     X[i] *= alpha;
   }
 }
-/** 복소수행렬 * 실수   **/
+/** complex matrix * real number   **/
 void cscal(DTYPE alpha, CMAT *mat) {
 #if DEBUG
   printf("%s\n", __func__);
@@ -993,7 +993,7 @@ void omp_cscal(UINT size, DTYPE alpha, CTYPE *X, UINT incx) {
   }
 }
 
-/** 복소수 행렬 * 복소수 **/
+/** complex matrix * complex number **/
 void uscal(CTYPE alpha, CMAT *mat) {
 #if DEBUG
   printf("%s\n", __func__);
@@ -1025,7 +1025,7 @@ void omp_uscal(UINT size, CTYPE alpha, CTYPE *X, UINT incx) {
   }
 }
 
-/** 열 스케일링 **/
+/** column scaling **/
 void col_scal(DTYPE alpha, MAT *X, UINT idx) {
   scal_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
 }
@@ -1037,7 +1037,7 @@ void col_cscal(DTYPE alpha, CMAT *X, UINT idx) {
 void col_uscal(CTYPE alpha, CMAT *X, UINT idx) {
   uscal_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
 }
-/** 행 스케일링 **/
+/** row scaling **/
 void row_scal(DTYPE alpha, MAT *X, UINT idx) {
   scal_inc(X->d1, alpha, &(X->data[idx]), X->d0);
 }
@@ -1049,7 +1049,7 @@ void row_cscal(DTYPE alpha, CMAT *X, UINT idx) {
 void row_uscal(CTYPE alpha, CMAT *X, UINT idx) {
   uscal_inc(X->d1, alpha, &(X->data[idx]), X->d0);
 }
-/** 실수행렬 + 실수 **/
+/** real matrix + real number **/
 void add(DTYPE alpha, MAT *mat) {
   add_inc(mat->d0 * mat->d1 * mat->d2, alpha, mat->data, 1);
 }
@@ -1062,7 +1062,7 @@ void add_inc(UINT size, DTYPE alpha, DTYPE *X, UINT incx) {
   for (i = 0; i < size * incx; i += incx) X[i] += alpha;
 }
 
-/** 복소수행렬 + 실수 **/
+/** complex matrix + real number **/
 void cadd(DTYPE alpha, CMAT *mat) {
   cadd_inc(mat->d0 * mat->d1 * mat->d2, alpha, mat->data, 1);
 }
@@ -1074,7 +1074,7 @@ void cadd_inc(UINT size, DTYPE alpha, CTYPE *X, UINT incx) {
 
   for (i = 0; i < size * incx; i += incx) X[i].re += alpha;
 }
-/** 복소수행렬 + 복소수**/
+/** complex matrix + complex number **/
 void uadd(CTYPE alpha, CMAT *mat) {
   uadd_inc(mat->d0 * mat->d1 * mat->d2, alpha, mat->data, 1);
 }
@@ -1088,7 +1088,7 @@ void uadd_inc(UINT size, CTYPE alpha, CTYPE *X, UINT incx) {
     CXADD(X[i], alpha);
   }
 }
-/** 열 더하기 **/
+/** column add **/
 void col_add(DTYPE alpha, MAT *X, UINT idx) {
   add_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
 }
@@ -1098,7 +1098,7 @@ void col_cadd(DTYPE alpha, CMAT *X, UINT idx) {
 void col_uadd(CTYPE alpha, CMAT *X, UINT idx) {
   uadd_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
 }
-/** 행 더하기 **/
+/** row add **/
 void row_add(DTYPE alpha, MAT *X, UINT idx) {
   add_inc(X->d1, alpha, &(X->data[idx]), X->d0);
 }
