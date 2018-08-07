@@ -24,14 +24,12 @@ WAV *read_wav(char *file_path) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  //파일 유무확인
   if (!(f = fopen(file_path, "rb"))) {
     printf("Failed to open '%s'\nAborting process\n", file_path);
     exit(-1);
     return NULL;
   }
 
-  // WAV 읽기
   wav = (WAV *)malloc(sizeof(WAV));
 
   fread(wav->riff_id, sizeof(wav->riff_id), 1, f);
@@ -84,7 +82,6 @@ WAV *read_wav(char *file_path) {
   wav->data_size =
       buffer4[0] | (buffer4[1] << 8) | (buffer4[2] << 16) | (buffer4[3] << 24);
 
-  //버퍼 만들고 읽기
   num_of_sample = (8 * wav->data_size) / (wav->channels * wav->bit_per_sample);
   size_of_each_sample = (wav->channels * wav->bit_per_sample) / 8;
 

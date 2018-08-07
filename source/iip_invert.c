@@ -21,7 +21,6 @@ void invert(MAT* mat, MAT* inv) {
   if (mat->d0 != inv->d0) ASSERT(DIM_INVAL)
 
   size = mat->d0 * mat->d1;
-  /*모양이 굉장히 마음에 안들지만 일단 넘긴다*/
   for (i = 0; i < mat->d2; i++) {
     if (mat->d0 == 2)
       invert_2by2(&(mat->data[i * size]), &(inv->data[i * size]));
@@ -1666,10 +1665,6 @@ void invert_6by6(DTYPE* X, DTYPE* Y) {
   Y[33] = Y[33] * det;
   Y[34] = Y[34] * det;
   Y[35] = Y[35] * det;
-  /*
-   * ESSENTIAL COMMENT : ERROR C2143's Solution
-   * Figuring out Why this is solution......? why?
-   * */
 }
 
 void cinvert_6by6(CTYPE* X, CTYPE* Y) {
