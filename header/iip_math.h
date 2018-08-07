@@ -1,3 +1,14 @@
+/*
+ * ===========================================================
+ *           Copyright (c) 2018, __IIPLAB__
+ *                All rights reserved.
+ * 
+ * This Source Code Form is subject to the terms of
+ * the Mozilla Public License, v. 2.0. 
+ * If a copy of the MPL was not distributed with this file,
+ *  You can obtain one at http://mozilla.org/MPL/2.0/.
+ * ===========================================================
+ */
 #ifndef IIP_MATH_H
 #define IIP_MATH_H
 
@@ -21,7 +32,7 @@ void pow_cmat_inc(UINT size, CTYPE* X, DTYPE n, ITER incx);
 void cpow_cmat(CMAT* mat, CTYPE n);
 void cpow_cmat_inc(UINT size, CTYPE* X, CTYPE n, ITER incx);
 
-// Uniform distribution of random number
+/* Uniform distribution of random number */
 void randu(MAT* mat, DTYPE a, DTYPE b);
 void randu_inc(UINT size, DTYPE* X, DTYPE a, DTYPE b, ITER incx);
 
@@ -29,7 +40,7 @@ void crandu(CMAT* mat, DTYPE ra, DTYPE rb, DTYPE ia, DTYPE ib);
 void crandu_inc(UINT size, CTYPE* X, DTYPE ra, DTYPE rb, DTYPE ia, DTYPE ib,
                 ITER incx);
 
-// Generate Normal Distribution Matrix Using Box-Muller Transform
+/* Generate Normal Distribution Matrix Using Box-Muller Transform */
 void randn(MAT* mat, DTYPE mean, DTYPE std);
 void randn_inc(UINT size, DTYPE* X, DTYPE mean, DTYPE std, ITER incx);
 
@@ -103,6 +114,6 @@ CTYPE min_cmat(CMAT* mat, DIM* dim);
 DTYPE amin_mat(MAT* mat, DIM* dim);
 DTYPE amin_cmat(CMAT* mat, DIM* dim);
 
-/**** misc ****/
+/**** return complex type : r + ii ****/
 CTYPE CX(DTYPE r, DTYPE i);
 #endif
