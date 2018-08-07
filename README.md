@@ -12,7 +12,15 @@ C library for speech preprocessing.
 * cmake 3.6 or higher  
 * (OPTION) OpenBLAS  
 * (OPTION) IntelMKL  
-* (OPTION) OpenMP  
+
+## Notaion
+* Set Options of CMAKE properly for you Envrionment
+* We don't provide backend library, we assume you Environment contains backend library
+* If you want to use memory pool, you need to call 
+```C
+init(); //begining of your main()
+finit(); //at the end of your main()
+```
 
 ## Installation
 [Installation Guide](https://github.com/gogyzzz/iip_sph_pp/wiki/Install_Guide)
