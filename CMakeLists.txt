@@ -1,9 +1,3 @@
-
-#CMAKE 3.9 버전 부터 CUDA관련 함수 및 기능 대폭 변경
-
-#CMAKE 3.10.3 이용
-
-
 cmake_minimum_required(VERSION 3.5)
 project(iip_sph_pp)
 
@@ -16,9 +10,13 @@ option(USE_BLAS    "Using BLAS"      ON)
 
 option(USE_OPENMP  "Using OpenMP"    ON)
 
+#설정을 다 하셨다면 이 옵션을 ON 해주세요
+option(I_DID_WHAT_I_HAVE_TO_DO "SET THIS ON" ON)
+if(NOT I_DID_WHAT_I_HAVE_TO_DO)
+    message(FATAL_ERROR "*****************************************\nYOU NEED TO SET CONFIGURATION OPTIONS MANUALLY\n****************************************")
+endif()
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
-
 #set(MAIN_SRC test/test_matrix.c)
 #set(MAIN_SRC test/test_matrix_2.c)
 #set(MAIN_SRC test/test_wav.c)
@@ -59,6 +57,7 @@ set(CMAKE_MODULE_PATH
 if(WIN32 AND MSVC)
     set(BUILD_FLAGS
 	"${CMAKE_C_FLAGS} /O3 /MP")
+  #There is something wrong about the way CMAKE set /W3 flag
     string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
 else()
     if(WIN32)
@@ -120,18 +119,7 @@ if(USE_OPENMP)
     endif()
 endif()
 
-#설정을 다 하셨다면 이 옵션을 ON 해주세요
 
-option(I_DID_WHAT_I_HAVE_TO_DO "SET THIS ON" ON)
-
-###################################################
-###################################################
-###################################################
-
-
-if(NOT I_DID_WHAT_I_HAVE_TO_DO)
-    message(FATAL_ERROR "*****************************************\nYOU NEED TO SET CONFIGURATION OPTIONS MANUALLY\n****************************************")
-endif()
 #GET OS
 
 #UNIX   TRUE for UNIX,APPLE
@@ -235,14 +223,30 @@ if(USE_OPEN OR USE_MKL )
 	    USE_OPEN=1
 	    USE_CBLAS=1)
     elseif(USE_MKL)
-	
-	#linux 라면 mkl 사용시 컴파일 옵션을 구질구질하게 걸어줘야하는데
-	#Windows VS를 쓰면 mkl 플러그인이 있어서 쓰기 편하다
-	#그렇다면 Window일땐 그냥 냅두는것이?
-
-	#	if(UNIX)
-	#   #MKL 은 원래도 수동으로 경로를 잡아서 cmake가 해줄순 없다
-  #   할 수 는 있겠지만... 할 일의 양이..
+  
+  # 리눅스 gnu-compiler intel-64 <linking> 64bit <threading> limiomp5 
+  # 
+  #   1. dynamic 
+  #       2. OMP
+  #         + link :   -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl
+  #         + compile :  -DMKL_ILP64 -m64 -I${MKLROOT}/include 
+  #       
+  #       2. sequential
+  #         + link :  -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl
+  #         + compile :  -DMKL_ILP64 -m64 -I${MKLROOT}/include
+  #
+  #   1. static
+  #       2. OMP
+  #         + line :  -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_intel_ilp64.a ${MKLROOT}/lib/intel64/libmkl_intel_thread.a ${MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -liomp5 -lpthread -lm -ldl
+  #         + compile :  -DMKL_ILP64 -m64 -I${MKLROOT}/include
+  #
+  #       2. sequential
+  #         + link :  -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_intel_ilp64.a ${MKLROOT}/lib/intel64/libmkl_sequential.a ${MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -lpthread -lm -ldl
+  #         + compile :  -DMKL_ILP64 -m64 -I${MKLROOT}/include
+  #
+  #   
+  
+	if(UNIX)
 	#    set(MKL_PATH)
 	#    if("${MKL_PATH}" STREQUAL "")
 	#		message(FATAL_ERROR "ADD AN ARGUMENT '-DMKL_PATH=<ALL REQUIRED MKL libs>'")
@@ -250,7 +254,10 @@ if(USE_OPEN OR USE_MKL )
 	#    message(STATUS "MKL_PATH : " ${MKL_PATH})
 	#    target_link_libraries(${BLAS_TARGET_NAME}
 	#		${MKL_PATH})
-	#endif()	
+  list(APPEND CMAKE_C_FLAGS -DMKL_ILP64 -m64 -I${MKLROOT}/include )
+  list(APPEND CMAKE_EXE_LINKER_FLAGS -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl
+ )
+	endif()	
 	
 	target_compile_definitions(${BLAS_TARGET_NAME}
 	    PRIVATE
