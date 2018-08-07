@@ -6,7 +6,7 @@ C library for speech preprocessing.
 * Ubuntu 16.04 x64 (or higher)
 * Windows 10 x64
 * Mac high sierra 10.13.5
-* 임베디드 보드(라즈베리 파이나 zynx 보드 등)
+* Ebeded board(razberry pie, zynx board etc)
 
 ## Requirement
 * cmake 3.6 or higher  
@@ -15,12 +15,12 @@ C library for speech preprocessing.
 * (OPTION) OpenMP  
 
 ## Installation
-[설치 가이드](https://github.com/gogyzzz/iip_sph_pp/wiki/Install_Guide) 참조.
+[Installation Guide](https://github.com/gogyzzz/iip_sph_pp/wiki/Install_Guide)
 
 ## Example
-[Code Example](https://github.com/gogyzzz/iip_sph_pp/wiki/Examples) 참조.
+[Code Example](https://github.com/gogyzzz/iip_sph_pp/wiki/Examples)
 
-## 참고
+## Reference
 * [Intel MKL Reference](https://software.intel.com/en-us/mkl-developer-reference-c-overview)
 * [Netlib.org](http://www.netlib.org/)
 * [Open audio library study document](https://github.com/kooBH/OpenAudioLibraryStudy)
