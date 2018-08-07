@@ -1666,6 +1666,10 @@ void invert_6by6(DTYPE* X, DTYPE* Y) {
   Y[33] = Y[33] * det;
   Y[34] = Y[34] * det;
   Y[35] = Y[35] * det;
+  /*
+   * ESSENTIAL COMMENT : ERROR C2143's Solution
+   * Figuring out Why this is solution......? why?
+   * */
 }
 
 void cinvert_6by6(CTYPE* X, CTYPE* Y) {
@@ -4258,7 +4262,9 @@ DTYPE det_nbyn(MAT* mat) {
 #else
 
   printf("ERROR : 'OpenBLAS' or 'INTEL MKL' is required for this operation\n");
-  return -1;
+  det.re = -1;
+  det.in = -1;
+  return det;
 #endif
   det = 1;
   for (i = 0; i < mat->d0; i++) {
