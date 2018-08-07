@@ -52,7 +52,6 @@ void init(UINT mem_pool_size) {
     fclose(fp);
   }
 
-  // 이전에 사용했던 메모리 풀의 크기 계산
   unsigned long long int page_size = MEM_PAGE_BASIC_SIZE;
   for (i = 0; i < size_before; i++) {
     page_size *= 2;
@@ -68,12 +67,10 @@ void init(UINT mem_pool_size) {
   // 	printf("%lu bytes of memory pool ready.\n", mem_pool_size);
   // }
 
-  // 지정된 size가 더 클 경우
   if (page_size < mem_pool_size && mem_pool_size > 0) {
     page_size = mem_pool_size;
   }
 
-  //메모리 풀 할당
   mpfree(
       mpalloc(((page_size + MEM_PAGE_BASIC_SIZE) >> 1) + (page_size & 1)));
 
@@ -258,7 +255,6 @@ signed long long int page_alloc_isable(int page_idx,
     page_size *= 2;
   }
 
-  // 지정된 페이지에 이미 할당된 메모리 조각들이 존재.
 
   if (log_cnt[page_idx] > 0) {
     max_remain = page_size;
@@ -267,7 +263,6 @@ signed long long int page_alloc_isable(int page_idx,
     addr = memory_log[page_idx][log_cnt[page_idx] - 1].frag_idx +
            memory_log[page_idx][log_cnt[page_idx] - 1].size;
   }
-  // 지정된 페이지에 할당된 메모리 조각이 없음. 페이지 전체 사용가능.
   else {
     max_remain = page_size;
     addr = 0;

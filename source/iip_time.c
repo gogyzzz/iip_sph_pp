@@ -20,7 +20,6 @@ void stopwatch(int flag) {
   static long long diff = 0;
 
   /*
-          여기서 단위 조정
           nano, micro, milli, sec
   */
   unit = micro;
