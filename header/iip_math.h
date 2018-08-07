@@ -127,12 +127,15 @@ void abs_cmat_inc(UINT size, CTYPE* X, ITER incx);
 DTYPE max_mat(MAT* mat, DIM* dim);
 CTYPE max_cmat(CMAT* mat, DIM* dim);
 
+/**** absolute max ****/
 DTYPE amax_mat(MAT* mat, DIM* dim);
 DTYPE amax_cmat(CMAT* mat, DIM* dim);
+
 /**** min ****/
 DTYPE min_mat(MAT* mat, DIM* dim);
 CTYPE min_cmat(CMAT* mat, DIM* dim);
 
+/**** absolute min ****/
 DTYPE amin_mat(MAT* mat, DIM* dim);
 DTYPE amin_cmat(CMAT* mat, DIM* dim);
 
