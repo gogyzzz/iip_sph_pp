@@ -24,10 +24,11 @@
 // DBL_MAX, FLT_MAX
 #include <float.h>
 
+/*If set by 1, every function call will print its name*/
 #define DEBUG 0
 
 /***********************************
-* 이 부분은 직접 해주세요
+* Set This Section Manually
 *********************************** */
 #define DTYPE double
 /*
@@ -36,7 +37,6 @@
 * */
 #define NTYPE 1
 /************************************
-*여기까지 설정해주세요
 *********************************** */
 
 #define MAX_CHAR 256
@@ -140,21 +140,22 @@ typedef struct DIM {
 #define __func__ __FUNCTION__
 #endif
 /*
-오버로딩
-#define 오버로딩매크로(_x(함수중 가장 인자가 적은수의 인자수만큼), 함수 수만큼,
-...)맨 오른쪽 것
-#define 오버로딩할함수(...) 오버로딩매크로(__VA_ARGS__, 함수들)(__VA_ARGS__)
+   overloading
 
-__VA_ARGS__는 함수의 인자의 매크로
+#define overloading_macro(_x(the number of argument of function with least arguments), many as the number of functions,
+...) rightest one
+#define function_to_overload(...) overloading_macro(__VA_ARGS__, functions)(__VA_ARGS__)
+
+__VA_ARGS__is MACRO for arguments of function
 
 EX)
 
 void f1(arg1,arg2)
 void f2(arg1,arg2,arg3)
 
-인자가 가장적은 함수의 인자가 2개이기 때문에
+function with leasts has 2 arguments
 _x,_xx
-함수가 2개니까
+2 function to overload
 _2,_1
 
 #define o_f(_x,_xx, _2, _1) _1
@@ -278,12 +279,9 @@ typedef struct USED_MEM {
   unsigned long long int size;
 } USED_MEM;
 
-//메모리풀
 static void* memory_pool[MAX_MEM_PAGE];
-//
 static USED_MEM* memory_log[MAX_MEM_PAGE];
 
-//해당 페이지에 몇 덩어리가 할당 되어있나
 static unsigned long long int log_cnt[MAX_MEM_PAGE];
 static unsigned int pool_cnt;
 signed long long int page_alloc_isable(int page_idx,
