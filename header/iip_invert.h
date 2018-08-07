@@ -15,7 +15,7 @@
 #include "iip_matrix.h"
 #include "iip_type.h"
 
-/**** get inverse of matrix ****/
+/**** get inverse matrix of mat  ****/
 void invert(MAT* mat, MAT* inv);
 void cinvert(CMAT* mat, CMAT* inv);
 
@@ -34,7 +34,7 @@ void cinvert_5by5(CTYPE* X, CTYPE* Y);
 void invert_6by6(DTYPE* X, DTYPE* Y);
 void cinvert_6by6(CTYPE* X, CTYPE* Y);
 
-/**** get determinant of matrix ****/
+/**** get determinant of mat ****/
 DTYPE det(MAT* mat);
 CTYPE cdet(CMAT* mat);
 

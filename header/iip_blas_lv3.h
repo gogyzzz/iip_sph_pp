@@ -14,13 +14,17 @@
 #include "iip_type.h"
 
 /**** REAL ****/
-
+/* C = alpha * A * B + beta * C   and its derivations
+ * t is transposed
+ * h is hermitian transposed
+ * */
 void aABpbC(DTYPE alpha, MAT* A, MAT* B, DTYPE beta, MAT* C);
 void aABtpbC(DTYPE alpha, MAT* A, MAT* B, DTYPE beta, MAT* C);
 
 void aAtBpbC(DTYPE alpha, MAT* A, MAT* B, DTYPE beta, MAT* C);
 void aAtBtpbC(DTYPE alpha, MAT* A, MAT* B, DTYPE beta, MAT* C);
 
+/* C = A*B   */
 void matmul(MAT* A, MAT* B, MAT* C);
 
 /**** COMPLEX ****/
@@ -40,6 +44,20 @@ void caAhBhpbC(CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta, CMAT* C);
 void cmatmul(CMAT* A, CMAT* B, CMAT* C);
 
 #ifndef USE_CUDA
+/* C = alhpa * op(A) * op(B) + beta * C
+ * trans options :
+ * NoTran : No transposed
+ * Tran   : Trasposed
+ * CTran  : Hermition transposed
+ *
+ * ex) gemm(NoTran,NoTran,1,A,B,0,C)
+ *     is equal to matmul(A,B,C)
+ *
+ *     cgemm(CTran,Tran,alpha,A,B,beta,C)
+ *     is equal to caAhBtpbC(alpha,A,B,beta,C)
+ *
+ *
+ * */
 void gemm(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
           MAT* C);
 void omp_gemm(char transA, char transB, UINT m, UINT n, UINT k, DTYPE alpha,

@@ -4268,7 +4268,7 @@ DTYPE det_nbyn(MAT* mat) {
       det *= mat->data[i * n + i];
   }
   mpfree(idx);
-  free_mpalloc_mat(tmat);
+  mpfree_mat(tmat);
   return det;
 }
 
@@ -4305,7 +4305,7 @@ CTYPE cdet_nbyn(CMAT* mat) {
                                                       t)
   }
   mpfree(idx);
-  free_mpalloc_cmat(tmat);
+  mpfree_cmat(tmat);
   return det;
 }
 

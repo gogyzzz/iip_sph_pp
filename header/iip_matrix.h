@@ -19,6 +19,28 @@
  **** iip_matrix ****
  ********************/
 
+/* GENERAL RULE
+ * {func} :  DTYPE matrix MAT operation
+ * c{fuinc} : {func} with CTYPE matrix CMAT 
+ * {func}_inc : {func} with DTYPE array with increment and size
+ * c{func}_inc : c{func} with CTYPE array 
+ *
+ * + in {func}_inc
+ * size : how many elements?
+ * increment(inc) : interval of array
+ * ex)
+ * MAT A(4,3)
+ * {func}_inc(UINT size,DTYPE*X,ITER incx)
+ * 
+ * {func}_inc(12,A->data,1) : for all elements, equal to {func}(A)
+ * {func}_inc(4,A->data,1) : for first column
+ * {func}_inc(4,&(A->data[4]),1) : for second column
+ * {func}_inc(3,A,4) : for first row
+ * {func}_inc(3,&(A->data[1]),4) : for second row
+ *
+ * By adjusting argument, row or column operation is available.
+ * */
+
 /*fill every elements of matrix as v*/
 void fill(MAT* mat, DTYPE v);
 void cfill(CMAT* mat, DTYPE vr, DTYPE vi);
@@ -121,23 +143,32 @@ CTYPE cget_1d(CMAT* mat, UINT d0) ;
 CTYPE cget_2d(CMAT* mat, UINT d0, UINT d1);
 CTYPE cget_3d(CMAT* mat, UINT d0, UINT d1, UINT d2);
 
-/****   ****/
-
-#if USE_CUDA
-__global__ void cu_submat(DTYPE*, DTYPE*, ITER, ITER, ITER, ITER, UINT, UINT,
-                          UINT, UINT, UINT);
-__global__ void cu_csubmat(CTYPE*, CTYPE*, ITER, ITER, ITER, ITER, UINT, UINT,
-                           UINT, UINT, UINT);
-#endif
-// since arg +=2, pend _x for each function
+/* Extract sub-matrix elements from mat by given range
+ * This function doesn't allocated submat
+ * 'submat' must be allocated 
+ *
+ * extracted ranged is d?_st ~ (d?_ed-1)
+ * if d?_st is '-1' then d?_st is 0
+ * if d?_ed is '-1' then d?_ed is mat->d?
+ * ex) 
+ * MAT A = | 1 2 3 |
+ *         | 4 5 6 |
+ *
+ * MAT B = | 0 0 |
+ *
+ * submat(A,B,0,1,1,3)
+ *
+ * => B = | 2 3 |
+ *
+ * */
 #define submat_load(_x1, _x2, _x3, _x4, _3, _x5, _2, _x6, _1, ...) _1
 #define submat_load_(args_list) submat_load args_list
 #define submat(...) \
   submat_load_(     \
       (__VA_ARGS__, submat_3d, _, submat_2d, _, submat_1d)(__VA_ARGS__))
-void submat_1d(MAT*, MAT*, ITER, ITER);
-void submat_2d(MAT*, MAT*, ITER, ITER, ITER, ITER);
-void submat_3d(MAT*, MAT*, ITER, ITER, ITER, ITER, ITER, ITER);
+void submat_1d(MAT* mat, MAT* submat, ITER d0_st, ITER d0_en);
+void submat_2d(MAT *mat, MAT* submat, ITER, ITER, ITER, ITER);
+void submat_3d(MAT* mat, MAT* submat, ITER, ITER, ITER, ITER, ITER, ITER);
 
 #define csubmat_load(_x1, _x2, _x3, _x4, _3, _x5, _2, _x6, _1, ...) _1
 #define csubmat_load_(args_list) csubmat_load args_list
@@ -148,6 +179,12 @@ void csubmat_1d(CMAT*, CMAT*, ITER, ITER);
 void csubmat_2d(CMAT*, CMAT*, ITER, ITER, ITER, ITER);
 void csubmat_3d(CMAT*, CMAT*, ITER, ITER, ITER, ITER, ITER, ITER);
 
+#if USE_CUDA
+__global__ void cu_submat(DTYPE*, DTYPE*, ITER, ITER, ITER, ITER, UINT, UINT,
+                          UINT, UINT, UINT);
+__global__ void cu_csubmat(CTYPE*, CTYPE*, ITER, ITER, ITER, ITER, UINT, UINT,
+                           UINT, UINT, UINT);
+#endif
 /**** submat using memory pool ****/
 
 #define mpsubmat_load(_x2, _x3, _x4, _3, _x5, _2, _x6, _1, ...) _1
@@ -170,15 +207,25 @@ CMAT* mem_csubmat_2d(CMAT* src, ITER s0, ITER e0, ITER s1, ITER e1);
 CMAT* mem_csubmat_3d(CMAT* src, ITER s0, ITER e0, ITER s1, ITER e1, ITER s2,
                      ITER e2);
 
-/**** DIM allocator ***/
-DIM* new_dim();
+/**** allocate DIM  
+ * currently DIM is only used for repmat, reshape
+ * ******************/
+#define alloc_dim_load(_x, _3, _2, _1, ...) _1
+#define alloc_dim_load_(args_list) alloc_dim_load args_list
+#define alloc_dim(...) \
+  alloc_dim_load_(     \
+      (__VA_ARGS__, alloc_dim_3d, alloc_dim_2d, alloc_dim_1d,alloc_dim_0d)(__VA_ARGS__))
+DIM* alloc_dim_0d();
+DIM* alloc_dim_1d(UINT d0);
+DIM* alloc_dim_2d(UINT d0,UINT d1);
+DIM* alloc_dim_3d(UINT d0,UINT d1,UINT d2);
 
 /**** element operation by DIM ***/
 DTYPE get_by_dim(MAT* mat, DIM* dim);
 CTYPE cget_by_dim(CMAT* mat, DIM* dim);
 
-void setbydim(MAT* mat, DIM* dim, DTYPE val);
-void csetbydim(CMAT* mat, DIM* dim, CTYPE val);
+void set_by_dim(MAT* mat, DIM* dim, DTYPE val);
+void cset_by_dim(CMAT* mat, DIM* dim, CTYPE val);
 
 /**** add elements - broadcasting operation ****/
 void add_elements(MAT* A, MAT* B, MAT* C);
@@ -199,11 +246,26 @@ void inv_elements_inc(UINT size, DTYPE* X, ITER incx);
 void cinv_elements(CMAT* mat);
 void cinv_elements_inc(UINT size, CTYPE* X, ITER incx);
 
-/**** repeat matrix****/
+/**** repeat mat
+ * mat's dimensions are multipied dim's dimension
+ * ex) MAT A(4,3,2), DIM D(1,2,3)
+ * repmat(A,D)
+ * ==> A(4,6,6)
+ *
+ * ****/
 void repmat(MAT* mat, DIM* dim);
 void crepmat(CMAT* mat, DIM* dim);
 
-/**** reshape matrix ****/
+/**** reshape mat
+ * mat's dimesnsions become dim's dimension
+ * dimension of mat and dim must be matched
+ * This funcion doesn't change memory structure
+ *ex)MAT A(4,3,2), DIM D(12,2,1)  : same amount of elements
+ * reshape(A,D)
+ * => A(12,2,1)
+ * *
+ * !!) this operation is not equal to permute
+ * *******************/
 void reshape(MAT* mat, DIM* dim);
 void creshape(CMAT* mat, DIM* dim);
 
@@ -211,7 +273,21 @@ void creshape(CMAT* mat, DIM* dim);
 void shiftdim(MAT* mat, SINT n);
 void cshiftdim(CMAT* mat, SINT n);
 
-/**** permute matrix ****/
+/**** permute mat
+ * permutate dimension of mat by seq
+ * seq is sequence of dimesnion
+ * original mat's seq is 123
+ * if seq is 231, it means first dimension becomes third dimension,
+ * second dimension becomes first dimension,
+ * third dimension becomes second dimension
+ * 
+ * ex)
+ * MAT A = (4,3,2)
+ * permute(A, 231)
+ * ==> A(3,2,4)
+ *
+ * !!) this operation is not eqaul to reshape
+ * ***************/
 void permute(MAT* mat, UINT seq);
 void cpermute(CMAT* mat, UINT seq);
 
@@ -263,16 +339,16 @@ void hermit(CMAT* mat);
 void ident_mat(MAT* mat);
 
 /****  free memory of MAT ****/
-void free_mat(MAT*);
-void free_cmat(CMAT*);
+void free_mat(MAT* mat);
+void free_cmat(CMAT* mat);
 
 /****  print MAT ****/
-void print_mat(MAT*);
-void print_cmat(CMAT*);
+void print_mat(MAT* mat);
+void print_cmat(CMAT* mat);
 
 /**** free_mat in memory pool****/
-void free_mpalloc_mat(MAT* mat_in_memory_pool);
-void free_mpalloc_cmat(CMAT* mat_in_memory_pool);
+void mpfree_mat(MAT* mat_in_memory_pool);
+void mpfree_cmat(CMAT* mat_in_memory_pool);
 
 #if USE_CUDA
 __global__ void cu_print_mat(DTYPE*, UINT, UINT, UINT);

@@ -15,6 +15,29 @@
 //#include "mother.h"
 #include "iip_type.h"
 
+/* GENERAL RULE
+ * {func} :  DTYPE matrix MAT operation
+ * c{fuinc} : {func} with CTYPE matrix CMAT 
+ * {func}_inc : {func} with DTYPE array with increment and size
+ * c{func}_inc : c{func} with CTYPE array 
+ *
+ * + in {func}_inc
+ * size : how many elements?
+ * increment(inc) : interval of array
+ * ex)
+ * MAT A(4,3)
+ * {func}_inc(UINT size,DTYPE*X,ITER incx)
+ * 
+ * {func}_inc(12,A->data,1) : for all elements, equal to {func}(A)
+ * {func}_inc(4,A->data,1) : for first column
+ * {func}_inc(4,&(A->data[4]),1) : for second column
+ * {func}_inc(3,A,4) : for first row
+ * {func}_inc(3,&(A->data[1]),4) : for second row
+ *
+ * By adjusting argument, row or column operation is available.
+ * */
+
+
 /*********************
 **** iip_blas_lv1 ****
 **********************/
