@@ -24,14 +24,14 @@ option(USE_OPENMP  "Using OpenMP"    ON)
 #set(MAIN_SRC test/test_cinvert.c)
 #set(MAIN_SRC test/test_dim.c)
 #set(MAIN_SRC test/test_matlab.c)
-set(MAIN_SRC test/test_combine.c)
+#set(MAIN_SRC test/test_combine.c)
 #set(MAIN_SRC test/test_permute.c)
 #set(MAIN_SRC test/test_bin.c)
 #set(MAIN_SRC test/test_invelem.c)
 #set(MAIN_SRC test/test_invers.c)
 #set(MAIN_SRC test/test_row_col.c)
 #set(MAIN_SRC test/test_rand.c)
-#set(MAIN_SRC test/test_math.c)
+set(MAIN_SRC test/test_math.c)
 #set(MAIN_SRC test/test_trans.c)
 #set(MAIN_SRC test/openBLAS_with_openMP.c)
 #set(MAIN_SRC test/test_blas_lv2_big.c)
@@ -44,10 +44,10 @@ set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 if(WIN32 AND MSVC)
-  list(APPEND  CMAKE_C_FLAGS "/O3 /MP ")
+  list(APPEND  CMAKE_C_FLAGS " /O2 /MP ")
 else()
   #list(APPEND CMAKE_C_FLAGS "-g -O3 -Wall -Wextra ")
-  list(APPEND CMAKE_C_FLAGS "-g -O3 -Wextra ")
+  list(APPEND CMAKE_C_FLAGS " -g -O3 -Wextra ")
 endif()
 
 
@@ -84,20 +84,21 @@ if(USE_BLAS)
 endif()
 
 if(USE_OPENMP)
-    find_package(OpenMP)
-    if(NOT(OpenMP_FOUND))
-		message(SEND_ERROR "USE_OPENMP is set ON but OpenMP not found")
-		set(USE_OPENMP OFF)
+#    find_package(OpenMP)
+#   if(NOT(OpenMP_FOUND))
+#	message(SEND_ERROR "USE_OPENMP is set ON but OpenMP not found")
+#	set(USE_OPENMP OFF)
+#  else()
+#	message(STATUS "OpenMP found")
 
-    else()
-	message(STATUS "OpenMP found")
+# Not going to use omp.h so just linker option is required.   
 	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS})
 	if(MSVC)
 	    # Visual Studio uses '/' for compile option
 	    # CMAKE set -openmp option for OpenMP_FLAGS
 	    string(REPLACE "-openmp" " /openmp" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 	endif(MSVC)
-    endif()
+#    endif()
 endif()
 
 
@@ -150,8 +151,6 @@ display_elements("Source files for C build" "${C_SOURCE}")
 if(USE_OPEN OR USE_MKL )
     set(BLAS_TARGET_NAME "${PROJECT_NAME}_blas")
 
-    message(STATUS "CMAKE_C_FLAGS : " ${CMAKE_C_FLAGS})	
-    message(STATUS "CMAKE_EXE_LINKER_FLAGS : " ${CMAKE_EXE_LINKER_FLAGS})
 
     string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
 	add_executable(${BLAS_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
@@ -283,6 +282,12 @@ endif()
 if(WIN32)
   #There is something wrong about the way CMAKE set /W3 flag
   string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
-endif(WIN32)
+  string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
+  
+  endif(WIN32)
+
+
+    message(STATUS "CMAKE_C_FLAGS : " ${CMAKE_C_FLAGS})	
+    message(STATUS "CMAKE_EXE_LINKER_FLAGS : " ${CMAKE_EXE_LINKER_FLAGS})
 
 message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
