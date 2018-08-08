@@ -2,9 +2,9 @@
  * ===========================================================
  *           Copyright (c) 2018, __IIPLAB__
  *                All rights reserved.
- * 
+ *
  * This Source Code Form is subject to the terms of
- * the Mozilla Public License, v. 2.0. 
+ * the Mozilla Public License, v. 2.0.
  * If a copy of the MPL was not distributed with this file,
  *  You can obtain one at http://mozilla.org/MPL/2.0/.
  * ===========================================================
@@ -46,7 +46,7 @@ void axpy(DTYPE alpha, MAT *x, MAT *y) {
       axpy_inc(x->d0 * x->d1, alpha, x->data, 1, &(y->data[i * y->d0 * y->d1]),
                1);
   } else
-	  ASSERT_DIM_INVALID()
+    ASSERT_DIM_INVALID()
 }
 void axpy_inc(UINT size, DTYPE alpha, DTYPE *X, ITER incx, DTYPE *Y,
               ITER incy) {
@@ -94,9 +94,8 @@ void caxpy(CTYPE alpha, CMAT *x, CMAT *y) {
     for (i = 0; i < y->d2; i++)
       caxpy_inc(x->d0 * x->d1, alpha, x->data, 1, &(y->data[i * y->d0 * y->d1]),
                 1);
-  }
-  else
-	  ASSERT_DIM_INVALID()
+  } else
+    ASSERT_DIM_INVALID()
 }
 
 void caxpy_inc(UINT size, CTYPE alpha, CTYPE *X, ITER incx, CTYPE *Y,
@@ -394,7 +393,7 @@ CTYPE cdot(CMAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment) {
   printf("%s\n", __func__);
 #endif
   UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
-  CTYPE result = { 0, 0 };
+  CTYPE result = {0, 0};
   ASSERT_DIM_EQUAL(src_x, src_y)
 
   if (mat_size == 0) {
@@ -443,7 +442,7 @@ CTYPE udot(CMAT *src_x, UINT x_increment, CMAT *src_y, UINT y_increment) {
   printf("%s\n", __func__);
 #endif
   UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
-  CTYPE result = { 0, 0 };
+  CTYPE result = {0, 0};
   ASSERT_DIM_EQUAL(src_x, src_y)
 
   if (mat_size == 0) {
@@ -878,8 +877,8 @@ void rot_inc(MAT *src_x, UINT x_inc, MAT *src_y, UINT y_inc, DTYPE c, DTYPE s) {
   return omp_rot(mat_size, src_x->data, x_inc, src_y, y_inc, c, s);
 #endif
 }
-void omp_rot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc, DTYPE c,
-            DTYPE s) {
+void omp_rot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc,
+             DTYPE c, DTYPE s) {
   ITER i = 0;
   DTYPE teomp_x, teomp_y;
 
@@ -929,7 +928,7 @@ void crot_inc(CMAT *src_x, UINT x_inc, CMAT *src_y, UINT y_inc, DTYPE c,
 #endif
 }
 void omp_crot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc,
-             DTYPE c, DTYPE s) {
+              DTYPE c, DTYPE s) {
   ITER i = 0;
   CTYPE teomp_x, teomp_y;
 

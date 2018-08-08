@@ -2,9 +2,9 @@
  * ===========================================================
  *           Copyright (c) 2018, __IIPLAB__
  *                All rights reserved.
- * 
+ *
  * This Source Code Form is subject to the terms of
- * the Mozilla Public License, v. 2.0. 
+ * the Mozilla Public License, v. 2.0.
  * If a copy of the MPL was not distributed with this file,
  *  You can obtain one at http://mozilla.org/MPL/2.0/.
  * ===========================================================
@@ -142,9 +142,11 @@ typedef struct DIM {
 /*
    overloading
 
-#define overloading_macro(_x(the number of argument of function with least arguments), many as the number of functions,
+#define overloading_macro(_x(the number of argument of function with least
+arguments), many as the number of functions,
 ...) rightest one
-#define function_to_overload(...) overloading_macro(__VA_ARGS__, functions)(__VA_ARGS__)
+#define function_to_overload(...) overloading_macro(__VA_ARGS__,
+functions)(__VA_ARGS__)
 
 __VA_ARGS__is MACRO for arguments of function
 
@@ -213,13 +215,13 @@ _2,_1
   }
 
 // Y = A/B
-#define CXEDIV(Y, A, B)                               \
-  {                                                   \
-    ASSERT(B.re != 0 || B.im !=0, "Divide by zero.\n")\
-    Y.re = ((A.re) * (B.re) + (A.im) * (B.im)) /      \
-           (((B.re) * (B.re)) + ((B.im) * (B.im)));   \
-    Y.im = ((A.im) * (B.re) - (A.re) * (B.im)) /      \
-           (((B.re) * (B.re)) + ((B.im) * (B.im)));   \
+#define CXEDIV(Y, A, B)                                 \
+  {                                                     \
+    ASSERT(B.re != 0 || B.im != 0, "Divide by zero.\n") \
+    Y.re = ((A.re) * (B.re) + (A.im) * (B.im)) /        \
+           (((B.re) * (B.re)) + ((B.im) * (B.im)));     \
+    Y.im = ((A.im) * (B.re) - (A.re) * (B.im)) /        \
+           (((B.re) * (B.re)) + ((B.im) * (B.im)));     \
   }
 
 #define CXEADD(Y, A, B) \
@@ -240,74 +242,77 @@ _2,_1
 *****************/
 
 /**** ASSERT FUNCTION ****/
-extern char str_assert[256];
+extern char str_assert[MAX_CHAR];
 /*
 void func (MAT*A, MAT*B){
-	//check dimension of A and B
-	//sprintf(str, " *** [iip_sh_pp] [%s] [A's dim : %d, B's dim : %d]\n", __func__, A->d, B->d);
-	ASSERT_DIM(A, B)
-	ASSERT_NULL(mat)
-	ASSERT_EQUAL(A,B)
+        //check dimension of A and B
+        //sprintf(str, " *** [iip_sh_pp] [%s] [A's dim : %d, B's dim : %d]\n",
+__func__, A->d, B->d);
+        ASSERT_DIM(A, B)
+        ASSERT_NULL(mat)
+        ASSERT_EQUAL(A,B)
 }*/
 
-#define ASSERT(x, msg)\
-{\
-	if(x == 0){\
-		printf(" *** [iip_sph_pp] [%s] %s", __func__, msg);\
-		exit(-1);\
-	}\
-}
+#define ASSERT(x, msg)                                    \
+  {                                                       \
+    if (x == 0) {                                         \
+      printf(" *** [iip_sph_pp] [%s] %s", __func__, msg); \
+      exit(-1);                                           \
+    }                                                     \
+  }
 
-#define ASSERT_DIM_INVALID() \
-{\
-  sprintf(str_assert, "Invalid dimension.\n"); \
-  ASSERT(0, str_assert); \
-}
+#define ASSERT_DIM_INVALID()                     \
+  {                                              \
+    sprintf(str_assert, "Invalid dimension.\n"); \
+    ASSERT(0, str_assert);                       \
+  }
 
-#define ASSERT_DIM_EQUAL(A,B) \
-{\
-	if(A->d0 != B->d0 || A->d1 != B->d1){\
-		sprintf(str_assert, "A's dim : %d x %d, B's dim : %d x %d\n", A->d0, A->d1, B->d0, B->d1);\
-		ASSERT(0, str_assert)\
-	}\
-}
+#define ASSERT_DIM_EQUAL(A, B)                                                 \
+  {                                                                            \
+    if (A->d0 != B->d0 || A->d1 != B->d1) {                                    \
+      sprintf(str_assert, " %d x %d | %d x %d\n", A->d0, A->d1, B->d0, B->d1); \
+      ASSERT(0, str_assert)                                                    \
+    }                                                                          \
+  }
 
-#define ASSERT_MUL(A, B, C) \
-{ \
-  if(A->d1 != B->d0 || A->d0 != C->d0 || B->d1 != C->d1){ \
-		sprintf(str_assert, "(%d * %d) X (%d * %d) = (%d * %d)\n", A->d0, A->d1, B->d0, B->d1, C->d0, C->d1);\
-    ASSERT(0, str_assert)\
-  } \
-}
+#define ASSERT_MUL(A, B, C)                                                    \
+  {                                                                            \
+    if (A->d1 != B->d0 || A->d0 != C->d0 || B->d1 != C->d1) {                  \
+      sprintf(str_assert, "(%d * %d) X (%d * %d) = (%d * %d)\n", A->d0, A->d1, \
+              B->d0, B->d1, C->d0, C->d1);                                     \
+      ASSERT(0, str_assert)                                                    \
+    }                                                                          \
+  }
 
-#define ASSERT_ARG_INVALID() \
-{ \
-  sprintf(str_assert, "Invalid arguments.\n"); \
-  ASSERT(0, str_assert); \
-}
+#define ASSERT_ARG_INVALID()                     \
+  {                                              \
+    sprintf(str_assert, "Invalid arguments.\n"); \
+    ASSERT(0, str_assert);                       \
+  }
 
-#define ASSERT_NULL(f)\
-{\
-	if(f == 0){\
-	sprintf(str_assert, "NULL pointer.\n");	\
-	ASSERT(0,str_assert)\
-	}\
-}
+#define ASSERT_NULL(f)                        \
+  {                                           \
+    if (f == 0) {                             \
+      sprintf(str_assert, "NULL pointer.\n"); \
+      ASSERT(0, str_assert)                   \
+    }                                         \
+  }
 
-#define ASSERT_FILE(f, file_name)\
-{\
-	if(f == 0){\
-	sprintf(str_assert, "Invalid file (%s).\n", file_name);	\
-	ASSERT(0,str_assert)\
-	}\
-}
+#define ASSERT_FILE(f, file_name)                             \
+  {                                                           \
+    if (f == 0) {                                             \
+      sprintf(str_assert, "Invalid file (%s).\n", file_name); \
+      ASSERT(0, str_assert)                                   \
+    }                                                         \
+  }
 
-#define ASSERT_EQUAL(A,B){ \
-if (A == B){ \
-  sprintf(str_assert, "Parameters must be different\n");	\
-	ASSERT(0,str_assert) \
-	} \
-}
+#define ASSERT_EQUAL(A, B)                                   \
+  {                                                          \
+    if (A == B) {                                            \
+      sprintf(str_assert, "Parameters must be different\n"); \
+      ASSERT(0, str_assert)                                  \
+    }                                                        \
+  }
 
 /*****************************
  **** MEMORY MANAGER *********

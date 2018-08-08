@@ -2,9 +2,9 @@
  * ===========================================================
  *           Copyright (c) 2018, __IIPLAB__
  *                All rights reserved.
- * 
+ *
  * This Source Code Form is subject to the terms of
- * the Mozilla Public License, v. 2.0. 
+ * the Mozilla Public License, v. 2.0.
  * If a copy of the MPL was not distributed with this file,
  *  You can obtain one at http://mozilla.org/MPL/2.0/.
  * ===========================================================
@@ -53,7 +53,7 @@ void gemv(char transA, DTYPE alpha, MAT *A, MAT *X, DTYPE beta, MAT *Y) {
 }
 
 void omp_gemv(char tranA, UINT m, UINT n, DTYPE alpha, DTYPE *A, UINT lda,
-             DTYPE *X, SINT incx, DTYPE beta, DTYPE *Y, SINT incy) {
+              DTYPE *X, SINT incx, DTYPE beta, DTYPE *Y, SINT incy) {
   ITER i, j;
   DTYPE temp;
 
@@ -129,7 +129,7 @@ void cgemv(char transA, CTYPE alpha, CMAT *A, CMAT *X, CTYPE beta, CMAT *Y) {
 }
 
 void omp_cgemv(char tranA, UINT m, UINT n, CTYPE alpha, CTYPE *A, UINT lda,
-              CTYPE *X, SINT incx, CTYPE beta, CTYPE *Y, SINT incy) {
+               CTYPE *X, SINT incx, CTYPE beta, CTYPE *Y, SINT incy) {
   ITER i, j;
   CTYPE temp;
   DTYPE temp2;

@@ -44,9 +44,12 @@ set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 if(WIN32 AND MSVC)
+  # No /O3 in VS2013
+  # /O2 - fastest code in the majority of cases
+  # /MP - compiled in mult-process : faster build time
   list(APPEND  CMAKE_C_FLAGS " /O2 /MP ")
 else()
-  #list(APPEND CMAKE_C_FLAGS "-g -O3 -Wall -Wextra ")
+  # list(APPEND CMAKE_C_FLAGS "-g -O3 -Wall -Wextra ") : Wall is too much for now
   list(APPEND CMAKE_C_FLAGS " -g -O3 -Wextra ")
 endif()
 
@@ -91,7 +94,7 @@ if(USE_OPENMP)
 #  else()
 #	message(STATUS "OpenMP found")
 
-# Not going to use omp.h so just linker option is required.   
+# Not going to use omp.h so, just linker option is required.   
 	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS})
 	if(MSVC)
 	    # Visual Studio uses '/' for compile option
@@ -284,10 +287,9 @@ if(WIN32)
   string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
   string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
   
-  endif(WIN32)
+endif(WIN32)
 
-
-    message(STATUS "CMAKE_C_FLAGS : " ${CMAKE_C_FLAGS})	
-    message(STATUS "CMAKE_EXE_LINKER_FLAGS : " ${CMAKE_EXE_LINKER_FLAGS})
-
+message(STATUS "CMAKE_C_FLAGS : " ${CMAKE_C_FLAGS})	
+message(STATUS "CMAKE_EXE_LINKER_FLAGS : " ${CMAKE_EXE_LINKER_FLAGS})
 message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
+
