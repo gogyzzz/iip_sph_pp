@@ -1,20 +1,12 @@
 cmake_minimum_required(VERSION 3.5)
 project(iip_sph_pp)
 
-###################################################
-###################################################
-###################################################
+#### BUILD ENVIRONMENT OPTIONS ######
 
 option(USE_CUDA    "Using CUDA"      OFF)
 option(USE_BLAS    "Using BLAS"      ON)
-
 option(USE_OPENMP  "Using OpenMP"    ON)
 
-#설정을 다 하셨다면 이 옵션을 ON 해주세요
-option(I_DID_WHAT_I_HAVE_TO_DO "SET THIS ON" ON)
-if(NOT I_DID_WHAT_I_HAVE_TO_DO)
-    message(FATAL_ERROR "*****************************************\nYOU NEED TO SET CONFIGURATION OPTIONS MANUALLY\n****************************************")
-endif()
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 #set(MAIN_SRC test/test_matrix.c)
@@ -52,18 +44,10 @@ set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 if(WIN32 AND MSVC)
-    set(BUILD_FLAGS
-	"${CMAKE_C_FLAGS} /O3 /MP")
-  #There is something wrong about the way CMAKE set /W3 flag
-    string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
+  list(APPEND  CMAKE_C_FLAGS "/O3 /MP ")
 else()
-    if(WIN32)
-	set(BUILD_FLAGS
-	    "${CMAKE_C_FLAGS} -g -O3 -Wall -Wextra")
-    else()
-	set(BUILD_FLAGS
-            "${CMAKE_C_FLAGS} -g -O3 -Wall -Wextra")
-    endif()
+  #list(APPEND CMAKE_C_FLAGS "-g -O3 -Wall -Wextra ")
+  list(APPEND CMAKE_C_FLAGS "-g -O3 -Wextra ")
 endif()
 
 
@@ -123,11 +107,8 @@ message(STATUS "USE_MKL   : " ${USE_MKL})
 message(STATUS "USE_OPENMP : " ${USE_OPENMP})
 
 #GET OS
-
 #UNIX   TRUE for UNIX,APPLE
-
 #WIN32  TRUE for Windows 32bit and 64bit
-
 #APPLE  TRUE for APPLE
 
 macro(display_elements
@@ -150,39 +131,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/header)
 include_directories()
 message(STATUS "ENV_PATH : " $ENV{PATH})
-
-if(USE_CUDA)
-    set(CUDA_TARGET_NAME "${PROJECT_NAME}_cuda")
-    set(CUDA_SRC 
-	${PROJECT_SOURCE_DIR}/source/iip_matrix.cu
-	${PROJECT_SOURCE_DIR}/source/iip_wav.cu
-	${PROJECT_SOURCE_DIR}/source/iip_blas_lv1.cu
-	${PROJECT_SOURCE_DIR}/source/iip_blas_lv2.cu
-	${PROJECT_SOURCE_DIR}/source/iip_blas_lv3.cu)
-	
-    display_elements("Source files for CUDA_SRC" "${CUDA_SRC}")
-
-    # compile .c files by nvcc
-    #SET_SOURCE_FILES_PROPERTIES(${COMMON_SRC} PROPERTIES LANGUAGE CUDA)
-
-    if(WIN32)
-	enable_language(CXX)
-	SET_SOURCE_FILES_PROPERTIES(${MAIN_SRC} PROPERTIES LANGUAGE CXX)	
-    else(WIN32)
-	SET_SOURCE_FILES_PROPERTIES(${MAIN_SRC} PROPERTIES LANGUAGE CUDA)
-    endif(WIN32)
-
-    cuda_add_executable(${CUDA_TARGET_NAME} ${MAIN_SRC} ${CUDA_SRC})		
-    cuda_add_cublas_to_target(${CUDA_TARGET_NAME})
-    target_include_directories(${CUDA_TARGET_NAME}
-	PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/header)
-    target_link_libraries(${CUDA_TARGET_NAME}
-	${CUDA_LIBRARIES})
-    target_compile_definitions(${CUDA_TARGET_NAME}
-	PRIVATE
-	USE_CUDA=1)
-endif()
 
 set(C_SOURCE
     source/iip_matrix.c
@@ -257,9 +205,6 @@ if(USE_OPEN OR USE_MKL )
 	#    message(STATUS "MKL_PATH : " ${MKL_PATH})
 	#    target_link_libraries(${BLAS_TARGET_NAME}
 	#		${MKL_PATH})
-  list(APPEND CMAKE_C_FLAGS -DMKL_ILP64 -m64 -I${MKLROOT}/include )
-  list(APPEND CMAKE_EXE_LINKER_FLAGS -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl
- )
 	endif()	
 	
 	target_compile_definitions(${BLAS_TARGET_NAME}
@@ -269,35 +214,27 @@ if(USE_OPEN OR USE_MKL )
     endif()
 elseif(USE_OPENMP)
     set(OPENMP_TARGET_NAME "${PROJECT_NAME}_openmp")
-    #    list(APPEND CMAKE_C_FLAGS )
-
-    #This Line Causes Error, ';' no such file or directory
-    #		list(APPEND CMAKE_EXE_LINKER_FLAGS ${OpenMP_EXE_LINKER_FLAGS})
     
+    #   Below Line Causes Error, ';' no such file or directory
+    #		list(APPEND CMAKE_EXE_LINKER_FLAGS ${OpenMP_EXE_LINKER_FLAGS})
     add_definitions(-DUSE_OMP=1)
     string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
     string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
-  
-    list(APPEND CMAKE_EXE_LINKER_FLAGS )
 
 	add_executable(${OPENMP_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})	
     target_link_libraries(${OPENMP_TARGET_NAME} )
 
   #  set_target_properties(${OPENMP_TARGET_NAME}
-  #PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}"
-  #     CXX_STANDARD 14
-  #      CXX_STANDARD_REQUIRED ON)
+  #  PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}"
   if(NOT MSVC)  
-  target_link_libraries(${OPENMP_TARGET_NAME}
+    target_link_libraries(${OPENMP_TARGET_NAME}
 	m)
   endif(NOT MSVC)
   target_include_directories(${OPENMP_TARGET_NAME}
 	PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/header)
-
-
-
-  #Fully native C
+  
+#Fully native C
 else()
 	set(NATIVE_TARGET_NAME "${PROJECT_NAME}_native")
 	add_executable(${NATIVE_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})	
@@ -307,9 +244,45 @@ else()
 	target_include_directories(${NATIVE_TARGET_NAME}
 	PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/header)
-
-
-
 endif()
+
+##### CUDA part is not complete ####
+if(USE_CUDA)
+    set(CUDA_TARGET_NAME "${PROJECT_NAME}_cuda")
+    set(CUDA_SRC 
+	${PROJECT_SOURCE_DIR}/source/iip_matrix.cu
+	${PROJECT_SOURCE_DIR}/source/iip_wav.cu
+	${PROJECT_SOURCE_DIR}/source/iip_blas_lv1.cu
+	${PROJECT_SOURCE_DIR}/source/iip_blas_lv2.cu
+	${PROJECT_SOURCE_DIR}/source/iip_blas_lv3.cu)
+	
+    display_elements("Source files for CUDA_SRC" "${CUDA_SRC}")
+
+    # compile .c files by nvcc
+    #SET_SOURCE_FILES_PROPERTIES(${COMMON_SRC} PROPERTIES LANGUAGE CUDA)
+
+    if(WIN32)
+	enable_language(CXX)
+	SET_SOURCE_FILES_PROPERTIES(${MAIN_SRC} PROPERTIES LANGUAGE CXX)	
+    else(WIN32)
+	SET_SOURCE_FILES_PROPERTIES(${MAIN_SRC} PROPERTIES LANGUAGE CUDA)
+    endif(WIN32)
+
+    cuda_add_executable(${CUDA_TARGET_NAME} ${MAIN_SRC} ${CUDA_SRC})		
+    cuda_add_cublas_to_target(${CUDA_TARGET_NAME})
+    target_include_directories(${CUDA_TARGET_NAME}
+	PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}/header)
+    target_link_libraries(${CUDA_TARGET_NAME}
+	${CUDA_LIBRARIES})
+    target_compile_definitions(${CUDA_TARGET_NAME}
+	PRIVATE
+	USE_CUDA=1)
+endif()
+
+if(WIN32)
+  #There is something wrong about the way CMAKE set /W3 flag
+  string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
+endif(WIN32)
 
 message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
