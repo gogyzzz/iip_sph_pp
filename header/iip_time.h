@@ -2,9 +2,9 @@
  * ===========================================================
  *           Copyright (c) 2018, __IIPLAB__
  *                All rights reserved.
- * 
+ *
  * This Source Code Form is subject to the terms of
- * the Mozilla Public License, v. 2.0. 
+ * the Mozilla Public License, v. 2.0.
  * If a copy of the MPL was not distributed with this file,
  *  You can obtain one at http://mozilla.org/MPL/2.0/.
  * ===========================================================
@@ -14,7 +14,6 @@
 
 #include "iip_type.h"
 
-
 /* Usage of stopwatch()
  ****************************
  * stopwatch(0);
@@ -23,10 +22,10 @@
  *
  * stopwatch(1);
  ****************************
- * 
+ *
  * stopwatch() function
  * print elapsed time between
- * stopwatch(0) and stopwatch(1) 
+ * stopwatch(0) and stopwatch(1)
  *
  * */
 

@@ -2,9 +2,9 @@
  * ===========================================================
  *           Copyright (c) 2018, __IIPLAB__
  *                All rights reserved.
- * 
+ *
  * This Source Code Form is subject to the terms of
- * the Mozilla Public License, v. 2.0. 
+ * the Mozilla Public License, v. 2.0.
  * If a copy of the MPL was not distributed with this file,
  *  You can obtain one at http://mozilla.org/MPL/2.0/.
  * ===========================================================
@@ -21,9 +21,9 @@
 
 /* GENERAL RULE
  * {func} :  DTYPE matrix MAT operation
- * c{func} : {func} with CTYPE matrix CMAT 
+ * c{func} : {func} with CTYPE matrix CMAT
  * {func}_inc : {func} with DTYPE array with increment and size
- * c{func}_inc : c{func} with CTYPE array 
+ * c{func}_inc : c{func} with CTYPE array
  *
  * + in {func}_inc
  * size : how many elements?
@@ -31,7 +31,7 @@
  * ex)
  * MAT A(4,3)
  * {func}_inc(UINT size,DTYPE*X,ITER incx)
- * 
+ *
  * {func}_inc(12,A->data,1) : for all elements, equal to {func}(A)
  * {func}_inc(4,A->data,1) : for first column
  * {func}_inc(4,&(A->data[4]),1) : for second column
@@ -73,17 +73,18 @@ CMAT* alloc_cmat_3d(UINT d0, UINT d1, UINT d2);
 /**** allocate MAT in memory pool : mpalloc_mat ***/
 #define mpalloc_mat_load(_x, _3, _2, _1, ...) _1
 #define mpalloc_mat_load_(args_list) mpalloc_mat_load args_list
-#define mpalloc_mat(...) \
-  mpalloc_mat_load_((__VA_ARGS__, mpalloc_mat_3d, mpalloc_mat_2d, mpalloc_mat_1d)(__VA_ARGS__))
+#define mpalloc_mat(...)                                          \
+  mpalloc_mat_load_((__VA_ARGS__, mpalloc_mat_3d, mpalloc_mat_2d, \
+                     mpalloc_mat_1d)(__VA_ARGS__))
 MAT* mpalloc_mat_1d(UINT d0);
 MAT* mpalloc_mat_2d(UINT d0, UINT d1);
 MAT* mpalloc_mat_3d(UINT d0, UINT d1, UINT d2);
 
 #define mpalloc_cmat_load(_x, _3, _2, _1, ...) _1
 #define mpalloc_cmat_load_(args_list) mpalloc_cmat_load args_list
-#define mpalloc_cmat(...) \
-  mpalloc_cmat_load_(     \
-      (__VA_ARGS__, mpalloc_cmat_3d, mpalloc_cmat_2d, mpalloc_cmat_1d)(__VA_ARGS__))
+#define mpalloc_cmat(...)                                            \
+  mpalloc_cmat_load_((__VA_ARGS__, mpalloc_cmat_3d, mpalloc_cmat_2d, \
+                      mpalloc_cmat_1d)(__VA_ARGS__))
 CMAT* mpalloc_cmat_1d(UINT d0);
 CMAT* mpalloc_cmat_2d(UINT d0, UINT d1);
 CMAT* mpalloc_cmat_3d(UINT d0, UINT d1, UINT d2);
@@ -111,7 +112,7 @@ CMAT* czeros_3d(UINT d0, UINT d1, UINT d2);
 #define set_load_(args_list) set_load args_list
 #define set(...) set_load_((__VA_ARGS__, set_3d, set_2d, set_1d)(__VA_ARGS__))
 void set_1d(MAT* mat, UINT d0, DTYPE v);
-void set_2d(MAT* mat , UINT d0, UINT d1, DTYPE v);
+void set_2d(MAT* mat, UINT d0, UINT d1, DTYPE v);
 void set_3d(MAT* mat, UINT d0, UINT d1, UINT d2, DTYPE v);
 
 #define cset_load(_x, _xx, _xxx, _xxxx, _3, _2, _1, ...) _1
@@ -139,18 +140,18 @@ DTYPE get_3d(MAT* mat, UINT d0, UINT d1, UINT d2);
 #define cget_load_(args_list) cget_load args_list
 #define cget(...) \
   cget_load_((__VA_ARGS__, cget_3d, cget_2d, cget_1d)(__VA_ARGS__))
-CTYPE cget_1d(CMAT* mat, UINT d0) ;
+CTYPE cget_1d(CMAT* mat, UINT d0);
 CTYPE cget_2d(CMAT* mat, UINT d0, UINT d1);
 CTYPE cget_3d(CMAT* mat, UINT d0, UINT d1, UINT d2);
 
 /* Extract sub-matrix elements from mat by given range
  * This function doesn't allocated submat
- * 'submat' must be allocated 
+ * 'submat' must be allocated
  *
  * extracted ranged is d?_st ~ (d?_ed-1)
  * if d?_st is '-1' then d?_st is 0
  * if d?_ed is '-1' then d?_ed is mat->d?
- * ex) 
+ * ex)
  * MAT A = | 1 2 3 |
  *         | 4 5 6 |
  *
@@ -167,7 +168,7 @@ CTYPE cget_3d(CMAT* mat, UINT d0, UINT d1, UINT d2);
   submat_load_(     \
       (__VA_ARGS__, submat_3d, _, submat_2d, _, submat_1d)(__VA_ARGS__))
 void submat_1d(MAT* mat, MAT* submat, ITER d0_st, ITER d0_en);
-void submat_2d(MAT *mat, MAT* submat, ITER, ITER, ITER, ITER);
+void submat_2d(MAT* mat, MAT* submat, ITER, ITER, ITER, ITER);
 void submat_3d(MAT* mat, MAT* submat, ITER, ITER, ITER, ITER, ITER, ITER);
 
 #define csubmat_load(_x1, _x2, _x3, _x4, _3, _x5, _2, _x6, _1, ...) _1
@@ -189,13 +190,13 @@ __global__ void cu_csubmat(CTYPE*, CTYPE*, ITER, ITER, ITER, ITER, UINT, UINT,
 
 #define mpsubmat_load(_x2, _x3, _x4, _3, _x5, _2, _x6, _1, ...) _1
 #define mpsubmat_load_(args_list) mpsubmat_load args_list
-#define mpsubmat(...)                                              \
-  mpsubmat_load_((__VA_ARGS__, mpsubmat_3d, _, mpsubmat_2d, _, \
-                    mpsubmat_1d)(__VA_ARGS__))
+#define mpsubmat(...) \
+  mpsubmat_load_(     \
+      (__VA_ARGS__, mpsubmat_3d, _, mpsubmat_2d, _, mpsubmat_1d)(__VA_ARGS__))
 MAT* mpsubmat_1d(MAT* src, ITER s0, ITER e0);
 MAT* mpsubmat_2d(MAT* src, ITER s0, ITER e0, ITER s1, ITER e1);
 MAT* mpsubmat_3d(MAT* src, ITER s0, ITER e0, ITER s1, ITER e1, ITER s2,
-                   ITER e2);
+                 ITER e2);
 
 #define mem_csubmat_load(_x2, _x3, _x4, _3, _x5, _2, _x6, _1, ...) _1
 #define mem_csubmat_load_(args_list) mem_csubmat_load args_list
@@ -207,18 +208,18 @@ CMAT* mem_csubmat_2d(CMAT* src, ITER s0, ITER e0, ITER s1, ITER e1);
 CMAT* mem_csubmat_3d(CMAT* src, ITER s0, ITER e0, ITER s1, ITER e1, ITER s2,
                      ITER e2);
 
-/**** allocate DIM  
+/**** allocate DIM
  * currently DIM is only used for repmat, reshape
  * ******************/
 #define alloc_dim_load(_x, _3, _2, _1, ...) _1
 #define alloc_dim_load_(args_list) alloc_dim_load args_list
-#define alloc_dim(...) \
-  alloc_dim_load_(     \
-      (__VA_ARGS__, alloc_dim_3d, alloc_dim_2d, alloc_dim_1d,alloc_dim_0d)(__VA_ARGS__))
+#define alloc_dim(...)                                                    \
+  alloc_dim_load_((__VA_ARGS__, alloc_dim_3d, alloc_dim_2d, alloc_dim_1d, \
+                   alloc_dim_0d)(__VA_ARGS__))
 DIM* alloc_dim_0d();
 DIM* alloc_dim_1d(UINT d0);
-DIM* alloc_dim_2d(UINT d0,UINT d1);
-DIM* alloc_dim_3d(UINT d0,UINT d1,UINT d2);
+DIM* alloc_dim_2d(UINT d0, UINT d1);
+DIM* alloc_dim_3d(UINT d0, UINT d1, UINT d2);
 
 /**** element operation by DIM ***/
 DTYPE get_by_dim(MAT* mat, DIM* dim);
@@ -280,7 +281,7 @@ void cshiftdim(CMAT* mat, SINT n);
  * if seq is 231, it means first dimension becomes third dimension,
  * second dimension becomes first dimension,
  * third dimension becomes second dimension
- * 
+ *
  * ex)
  * MAT A = (4,3,2)
  * permute(A, 231)

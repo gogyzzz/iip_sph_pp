@@ -2,9 +2,9 @@
  * ===========================================================
  *           Copyright (c) 2018, __IIPLAB__
  *                All rights reserved.
- * 
+ *
  * This Source Code Form is subject to the terms of
- * the Mozilla Public License, v. 2.0. 
+ * the Mozilla Public License, v. 2.0.
  * If a copy of the MPL was not distributed with this file,
  *  You can obtain one at http://mozilla.org/MPL/2.0/.
  * ===========================================================
@@ -17,9 +17,9 @@
 
 /* GENERAL RULE
  * {func} :  DTYPE matrix MAT operation
- * c{func} : {func} with CTYPE matrix CMAT 
+ * c{func} : {func} with CTYPE matrix CMAT
  * {func}_inc : {func} with DTYPE array with increment and size
- * c{func}_inc : c{func} with CTYPE array 
+ * c{func}_inc : c{func} with CTYPE array
  *
  * + in {func}_inc
  * size : how many elements?
@@ -27,7 +27,7 @@
  * ex)
  * MAT A(4,3)
  * {func}_inc(UINT size,DTYPE*X,ITER incx)
- * 
+ *
  * {func}_inc(12,A->data,1) : for all elements, equal to {func}(A)
  * {func}_inc(4,A->data,1) : for first column
  * {func}_inc(4,&(A->data[4]),1) : for second column

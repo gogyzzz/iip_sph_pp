@@ -2,9 +2,9 @@
  * ===========================================================
  *           Copyright (c) 2018, __IIPLAB__
  *                All rights reserved.
- * 
+ *
  * This Source Code Form is subject to the terms of
- * the Mozilla Public License, v. 2.0. 
+ * the Mozilla Public License, v. 2.0.
  * If a copy of the MPL was not distributed with this file,
  *  You can obtain one at http://mozilla.org/MPL/2.0/.
  * ===========================================================
@@ -17,9 +17,9 @@
 
 /* GENERAL RULE
  * {func} :  DTYPE matrix MAT operation
- * c{func} : {func} with CTYPE matrix CMAT 
+ * c{func} : {func} with CTYPE matrix CMAT
  * {func}_inc : {func} with DTYPE array with increment and size
- * c{func}_inc : c{func} with CTYPE array 
+ * c{func}_inc : c{func} with CTYPE array
  *
  * + If there is {func} about two mat
  * c{func} : {func} with CMAT and MAT
@@ -31,7 +31,7 @@
  * ex)
  * MAT A(4,3)
  * {func}_inc(UINT size,DTYPE*X,ITER incx)
- * 
+ *
  * {func}_inc(12,A->data,1) : for all elements, equal to {func}(A)
  * {func}_inc(4,A->data,1) : for first column
  * {func}_inc(4,&(A->data[4]),1) : for second column
@@ -40,7 +40,6 @@
  *
  * By adjusting argument, row or column operation is available.
  * */
-
 
 /*********************
 **** iip_blas_lv1 ****
@@ -55,7 +54,8 @@ void omp_axpy(UINT N, DTYPE alpha, DTYPE *X, UINT INCX, DTYPE *Y, UINT INCY);
 
 /* axpy about complex number. */
 void caxpy(CTYPE alpha, CMAT *x, CMAT *y);
-void caxpy_inc(UINT size, CTYPE alpha, CTYPE *X, ITER incx, CTYPE *Y, ITER incy);
+void caxpy_inc(UINT size, CTYPE alpha, CTYPE *X, ITER incx, CTYPE *Y,
+               ITER incy);
 void omp_caxpy(UINT, CTYPE, CTYPE *, UINT, CTYPE *, UINT);
 
 #if USE_CUDA
@@ -167,15 +167,15 @@ DTYPE omp_cnrm2(UINT N, CTYPE *data, UINT inc);
 /* Plane rotation of real points */
 void rot(MAT *src_x, MAT *src_y, DTYPE c, DTYPE s);
 void rot_inc(MAT *src_x, UINT x_inc, MAT *src_y, UINT y_inc, DTYPE c, DTYPE s);
-void omp_rot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc, DTYPE c,
-            DTYPE s);
+void omp_rot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc,
+             DTYPE c, DTYPE s);
 
 /* Plane rotation of complex points */
 void crot(CMAT *src_x, CMAT *src_y, DTYPE c, DTYPE s);
 void crot_inc(CMAT *src_x, UINT x_inc, CMAT *src_y, UINT y_inc, DTYPE c,
               DTYPE s);
 void omp_crot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc,
-             DTYPE c, DTYPE s);
+              DTYPE c, DTYPE s);
 
 /* (real MAT) * (real number) */
 void scal(DTYPE alpha, MAT *mat);

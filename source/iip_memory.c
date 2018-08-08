@@ -2,9 +2,9 @@
  * ===========================================================
  *           Copyright (c) 2018, __IIPLAB__
  *                All rights reserved.
- * 
+ *
  * This Source Code Form is subject to the terms of
- * the Mozilla Public License, v. 2.0. 
+ * the Mozilla Public License, v. 2.0.
  * If a copy of the MPL was not distributed with this file,
  *  You can obtain one at http://mozilla.org/MPL/2.0/.
  * ===========================================================
@@ -71,8 +71,7 @@ void init(UINT mem_pool_size) {
     page_size = mem_pool_size;
   }
 
-  mpfree(
-      mpalloc(((page_size + MEM_PAGE_BASIC_SIZE) >> 1) + (page_size & 1)));
+  mpfree(mpalloc(((page_size + MEM_PAGE_BASIC_SIZE) >> 1) + (page_size & 1)));
 
   // if (page_size > mem_pool_size && page_size > 0){
   //	page_size *= 2;
@@ -255,15 +254,13 @@ signed long long int page_alloc_isable(int page_idx,
     page_size *= 2;
   }
 
-
   if (log_cnt[page_idx] > 0) {
     max_remain = page_size;
     max_remain -= memory_log[page_idx][log_cnt[page_idx] - 1].frag_idx;
     max_remain -= memory_log[page_idx][log_cnt[page_idx] - 1].size;
     addr = memory_log[page_idx][log_cnt[page_idx] - 1].frag_idx +
            memory_log[page_idx][log_cnt[page_idx] - 1].size;
-  }
-  else {
+  } else {
     max_remain = page_size;
     addr = 0;
   }

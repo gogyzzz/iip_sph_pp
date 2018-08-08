@@ -2,9 +2,9 @@
  * ===========================================================
  *           Copyright (c) 2018, __IIPLAB__
  *                All rights reserved.
- * 
+ *
  * This Source Code Form is subject to the terms of
- * the Mozilla Public License, v. 2.0. 
+ * the Mozilla Public License, v. 2.0.
  * If a copy of the MPL was not distributed with this file,
  *  You can obtain one at http://mozilla.org/MPL/2.0/.
  * ===========================================================
@@ -101,8 +101,8 @@ void gemm(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
 #endif
 #else
       omp_gemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
-              lda, &(B->data[i * B->d0 * B->d1]), ldb, beta,
-              &(C->data[i * C->d0 * C->d1]), ldc);
+               lda, &(B->data[i * B->d0 * B->d1]), ldb, beta,
+               &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
     }
   } else if (A->d2 == 1 && B->d2 != 1) {
@@ -120,8 +120,8 @@ void gemm(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
 #endif
 #else
       omp_gemm(transA, transB, m, n, k, alpha, A->data, lda,
-              &(B->data[i * B->d0 * B->d1]), ldb, beta,
-              &(C->data[i * C->d0 * C->d1]), ldc);
+               &(B->data[i * B->d0 * B->d1]), ldb, beta,
+               &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
     }
   } else if (A->d2 != 1 && B->d2 == 1) {
@@ -139,7 +139,7 @@ void gemm(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
 #endif
 #else
       omp_gemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
-              lda, B->data, ldb, beta, &(C->data[i * C->d0 * C->d1]), ldc);
+               lda, B->data, ldb, beta, &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
     }
   } else
@@ -147,8 +147,8 @@ void gemm(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
 }
 
 void omp_gemm(char transA, char transB, UINT m, UINT n, UINT k, DTYPE alpha,
-             DTYPE* A, UINT lda, DTYPE* B, UINT ldb, DTYPE beta, DTYPE* C,
-             UINT ldc) {
+              DTYPE* A, UINT lda, DTYPE* B, UINT ldb, DTYPE beta, DTYPE* C,
+              UINT ldc) {
   ITER i, j, l;
   DTYPE temp;
 #if DEBUG
@@ -269,8 +269,8 @@ void cgemm(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
 #endif
 #else
       omp_cgemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
-               lda, &(B->data[i * B->d0 * B->d1]), ldb, beta,
-               &(C->data[i * C->d0 * C->d1]), ldc);
+                lda, &(B->data[i * B->d0 * B->d1]), ldb, beta,
+                &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
     }
   } else if (A->d2 == 1 && B->d2 != 1) {
@@ -288,8 +288,8 @@ void cgemm(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
 #endif
 #else
       omp_cgemm(transA, transB, m, n, k, alpha, A->data, lda,
-               &(B->data[i * B->d0 * B->d1]), ldb, beta,
-               &(C->data[i * C->d0 * C->d1]), ldc);
+                &(B->data[i * B->d0 * B->d1]), ldb, beta,
+                &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
     }
   } else if (A->d2 != 1 && B->d2 == 1) {
@@ -307,7 +307,7 @@ void cgemm(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
 #endif
 #else
       omp_cgemm(transA, transB, m, n, k, alpha, &(A->data[i * A->d0 * A->d1]),
-               lda, B->data, ldb, beta, &(C->data[i * C->d0 * C->d1]), ldc);
+                lda, B->data, ldb, beta, &(C->data[i * C->d0 * C->d1]), ldc);
 #endif
     }
   } else
@@ -315,8 +315,8 @@ void cgemm(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
 }
 
 void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
-              CTYPE* A, UINT lda, CTYPE* B, UINT ldb, CTYPE beta, CTYPE* C,
-              UINT ldc) {
+               CTYPE* A, UINT lda, CTYPE* B, UINT ldb, CTYPE beta, CTYPE* C,
+               UINT ldc) {
   ITER i, j, l;
   ITER adx, bdx;
   CTYPE temp;
@@ -352,8 +352,8 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
           for (i = 0; i < k; i++) {
             CXADD_mul(temp, A[i * m + l], B[i * n + j])
           }
-          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
-              CXADD(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2)
+          CXMUL(temp, alpha, temp2) CXADD(C[l + m * j], temp)
         }
       }
     } else  // tranB == CTran
@@ -369,8 +369,8 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
             temp.im += A[i * m + l].im * (B[i * n + j].re);
             temp.im -= A[i * m + l].re * (B[i * n + j].im);
           }
-          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
-              CXADD(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2)
+          CXMUL(temp, alpha, temp2) CXADD(C[l + m * j], temp)
         }
       }
     }
@@ -384,8 +384,8 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
           for (i = 0; i < k; i++) {
             CXADD_mul(temp, A[i + l * k], B[i + j * k])
           }
-          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
-              CXADD(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2)
+          CXMUL(temp, alpha, temp2) CXADD(C[l + m * j], temp)
         }
       }
 
@@ -398,8 +398,8 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
           for (i = 0; i < k; i++) {
             CXADD_mul(temp, A[i + l * k], B[i * n + j])
           }
-          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
-              CXADD(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2)
+          CXMUL(temp, alpha, temp2) CXADD(C[l + m * j], temp)
         }
       }
     } else  // transB == CTran
@@ -415,8 +415,8 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
             temp.re += A[adx].re * B[bdx].re - A[adx].im * (-B[bdx].im);
             temp.im += A[adx].re * (-B[bdx].im) + A[adx].im * (B[bdx].re);
           }
-          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
-              CXADD(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2)
+          CXMUL(temp, alpha, temp2) CXADD(C[l + m * j], temp)
         }
       }
     }
@@ -434,8 +434,8 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
             temp.re += A[adx].re * B[bdx].re + A[adx].im * (B[bdx].im);
             temp.im += A[adx].re * B[bdx].im - A[adx].im * (B[bdx].re);
           }
-          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
-              CXADD(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2)
+          CXMUL(temp, alpha, temp2) CXADD(C[l + m * j], temp)
         }
       }
 
@@ -451,8 +451,8 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
             temp.re += A[adx].re * B[bdx].re + (A[adx].im) * B[bdx].im;
             temp.im += A[adx].re * B[bdx].im - A[adx].im * (B[bdx].re);
           }
-          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
-              CXADD(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2)
+          CXMUL(temp, alpha, temp2) CXADD(C[l + m * j], temp)
         }
       }
     } else  // transB == CTran
@@ -468,8 +468,8 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
             temp.re += A[adx].re * B[bdx].re - A[adx].im * B[bdx].im;
             temp.im -= A[adx].re * B[bdx].im + A[adx].im * B[bdx].re;
           }
-          CXMUL(C[l + m * j], beta, temp2) CXMUL(temp, alpha, temp2)
-              CXADD(C[l + m * j], temp)
+          CXMUL(C[l + m * j], beta, temp2)
+          CXMUL(temp, alpha, temp2) CXADD(C[l + m * j], temp)
         }
       }
     }
