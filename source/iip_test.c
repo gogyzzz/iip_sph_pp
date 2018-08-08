@@ -41,7 +41,7 @@ void perform_test() {
   char cur[MAX_CHAR];
   f = NULL;
   f = fopen("../test/test.txt", "r");
-  if (f == NULL) ASSERT(NO_FILE)
+  ASSERT_FILE(f, "../test/test.txt")
   while (fscanf(f, "%s\n", cur) != EOF)
   // while(fgets(cur,MAX_CHAR,f) != EOF)
   {
@@ -110,7 +110,7 @@ void do_test(char *name) {
     free_mat(C);
   } else if (type == 'c') {
   } else
-    ASSERT(ARG_INVAL)
+    ASSERT_ARG_INVALID()
 
   if (sq) {
     if (f_inv)

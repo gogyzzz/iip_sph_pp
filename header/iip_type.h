@@ -213,12 +213,13 @@ _2,_1
   }
 
 // Y = A/B
-#define CXEDIV(Y, A, B)                             \
-  {                                                 \
-    Y.re = ((A.re) * (B.re) + (A.im) * (B.im)) /    \
-           (((B.re) * (B.re)) + ((B.im) * (B.im))); \
-    Y.im = ((A.im) * (B.re) - (A.re) * (B.im)) /    \
-           (((B.re) * (B.re)) + ((B.im) * (B.im))); \
+#define CXEDIV(Y, A, B)                               \
+  {                                                   \
+    ASSERT(B.re != 0 || B.im !=0, "Divide by zero.\n")\
+    Y.re = ((A.re) * (B.re) + (A.im) * (B.im)) /      \
+           (((B.re) * (B.re)) + ((B.im) * (B.im)));   \
+    Y.im = ((A.im) * (B.re) - (A.re) * (B.im)) /      \
+           (((B.re) * (B.re)) + ((B.im) * (B.im)));   \
   }
 
 #define CXEADD(Y, A, B) \
@@ -238,34 +239,75 @@ _2,_1
 **** ASSERT *****
 *****************/
 
-/**** ASSERT MACRO ****/
-#define DIM_INVAL 1
-#define ARG_INVAL 2
-#define NO_FILE 3
-#define NOT_SQUARE 4
-#define DET_FAIL 5
-
 /**** ASSERT FUNCTION ****/
-#define ASSERT(x)                                                             \
-  {                                                                           \
-    if (x == 1) {                                                             \
-      printf("WARNING(%s) : invalid dimension\n", __func__);                  \
-      return;                                                                 \
-    } else if (x == 2) {                                                      \
-      printf("WARNING(%s) : invalid argument\n", __func__);                   \
-      return;                                                                 \
-    } else if (x == 3) {                                                      \
-      printf("ERROR(%s)   : no such file exits \n", __func__);                \
-      exit(-1);                                                               \
-    } else if (x == 4) {                                                      \
-      printf("WARNING(%s) : This function requires SQAURE MATRIX \n",         \
-             __func__);                                                       \
-      return;                                                                 \
-    } else if (x == 5) {                                                      \
-      printf("WARNING(%s) : Matrix is singular, |det| < FEZRO \n", __func__); \
-      return;                                                                 \
-    }                                                                         \
-  }
+extern char str_assert[256];
+/*
+void func (MAT*A, MAT*B){
+	//check dimension of A and B
+	//sprintf(str, " *** [iip_sh_pp] [%s] [A's dim : %d, B's dim : %d]\n", __func__, A->d, B->d);
+	ASSERT_DIM(A, B)
+	ASSERT_NULL(mat)
+	ASSERT_EQUAL(A,B)
+}*/
+
+#define ASSERT(x, msg)\
+{\
+	if(x == 0){\
+		printf(" *** [iip_sph_pp] [%s] %s", __func__, msg);\
+		exit(-1);\
+	}\
+}
+
+#define ASSERT_DIM_INVALID() \
+{\
+  sprintf(str_assert, "Invalid dimension.\n"); \
+  ASSERT(0, str_assert); \
+}
+
+#define ASSERT_DIM_EQUAL(A,B) \
+{\
+	if(A->d0 != B->d0 || A->d1 != B->d1){\
+		sprintf(str_assert, "A's dim : %d x %d, B's dim : %d x %d\n", A->d0, A->d1, B->d0, B->d1);\
+		ASSERT(0, str_assert)\
+	}\
+}
+
+#define ASSERT_MUL(A, B, C) \
+{ \
+  if(A->d1 != B->d0 || A->d0 != C->d0 || B->d1 != C->d1){ \
+		sprintf(str_assert, "(%d * %d) X (%d * %d) = (%d * %d)\n", A->d0, A->d1, B->d0, B->d1, C->d0, C->d1);\
+    ASSERT(0, str_assert)\
+  } \
+}
+
+#define ASSERT_ARG_INVALID() \
+{ \
+  sprintf(str_assert, "Invalid arguments.\n"); \
+  ASSERT(0, str_assert); \
+}
+
+#define ASSERT_NULL(f)\
+{\
+	if(f == 0){\
+	sprintf(str_assert, "NULL pointer.\n");	\
+	ASSERT(0,str_assert)\
+	}\
+}
+
+#define ASSERT_FILE(f, file_name)\
+{\
+	if(f == 0){\
+	sprintf(str_assert, "Invalid file (%s).\n", file_name);	\
+	ASSERT(0,str_assert)\
+	}\
+}
+
+#define ASSERT_EQUAL(A,B){ \
+if (A == B){ \
+  sprintf(str_assert, "Parameters must be different\n");	\
+	ASSERT(0,str_assert) \
+	} \
+}
 
 /*****************************
  **** MEMORY MANAGER *********

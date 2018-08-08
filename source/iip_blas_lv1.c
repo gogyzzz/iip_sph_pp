@@ -37,6 +37,7 @@ void axpy(DTYPE alpha, MAT *x, MAT *y) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
+  ASSERT_DIM_EQUAL(x, y)
   if (y->d2 == x->d2) {
     size = x->d0 * x->d1 * x->d2;
     axpy_inc(size, alpha, x->data, 1, y->data, 1);
@@ -45,7 +46,7 @@ void axpy(DTYPE alpha, MAT *x, MAT *y) {
       axpy_inc(x->d0 * x->d1, alpha, x->data, 1, &(y->data[i * y->d0 * y->d1]),
                1);
   } else
-    ASSERT(DIM_INVAL)
+	  ASSERT_DIM_INVALID()
 }
 void axpy_inc(UINT size, DTYPE alpha, DTYPE *X, ITER incx, DTYPE *Y,
               ITER incy) {
@@ -85,6 +86,7 @@ void caxpy(CTYPE alpha, CMAT *x, CMAT *y) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
+  ASSERT_DIM_EQUAL(x, y)
   if (y->d2 == x->d2) {
     size = x->d0 * x->d1 * x->d2;
     caxpy_inc(size, alpha, x->data, 1, y->data, 1);
@@ -92,8 +94,9 @@ void caxpy(CTYPE alpha, CMAT *x, CMAT *y) {
     for (i = 0; i < y->d2; i++)
       caxpy_inc(x->d0 * x->d1, alpha, x->data, 1, &(y->data[i * y->d0 * y->d1]),
                 1);
-  } else
-    ASSERT(DIM_INVAL)
+  }
+  else
+	  ASSERT_DIM_INVALID()
 }
 
 void caxpy_inc(UINT size, CTYPE alpha, CTYPE *X, ITER incx, CTYPE *Y,
@@ -143,6 +146,7 @@ void copy(MAT *src, MAT *des) {
   printf("%s\n", __func__);
 #endif
   UINT mat_size = src->d0 * src->d1 * src->d2;
+  ASSERT_DIM_EQUAL(src, des)
 
   if (mat_size == 0) {
     printf("Wrong MAT size!\n");
@@ -201,6 +205,7 @@ void ccopy(CMAT *src, CMAT *des) {
   printf("%s\n", __func__);
 #endif
   UINT mat_size = src->d0 * src->d1 * src->d2;
+  ASSERT_DIM_EQUAL(src, des)
 
   if (mat_size == 0) {
     printf("Wrong MAT size!\n");
@@ -347,6 +352,7 @@ DTYPE dot(MAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment) {
   printf("%s\n", __func__);
 #endif
   UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
+  ASSERT_DIM_EQUAL(src_x, src_y)
 
   if (mat_size == 0) {
     printf("Wrong MAT size!\n");
@@ -388,7 +394,8 @@ CTYPE cdot(CMAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment) {
   printf("%s\n", __func__);
 #endif
   UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
-  CTYPE result = {0, 0};
+  CTYPE result = { 0, 0 };
+  ASSERT_DIM_EQUAL(src_x, src_y)
 
   if (mat_size == 0) {
     printf("Wrong MAT size!\n");
@@ -436,7 +443,8 @@ CTYPE udot(CMAT *src_x, UINT x_increment, CMAT *src_y, UINT y_increment) {
   printf("%s\n", __func__);
 #endif
   UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
-  CTYPE result = {0, 0};
+  CTYPE result = { 0, 0 };
+  ASSERT_DIM_EQUAL(src_x, src_y)
 
   if (mat_size == 0) {
     printf("Wrong MAT size!\n");
@@ -488,6 +496,7 @@ void swap_inc(MAT *src_x, UINT x_inc, MAT *src_y, UINT y_inc) {
   printf("%s\n", __func__);
 #endif
   UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
+  ASSERT_DIM_EQUAL(src_x, src_y)
 
   if (mat_size == 0) {
     printf("Wrong MAT size!\n");
@@ -529,6 +538,7 @@ void cswap_inc(CMAT *src_x, UINT x_inc, CMAT *src_y, UINT y_inc) {
   printf("%s\n", __func__);
 #endif
   UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
+  ASSERT_DIM_EQUAL(src_x, src_y)
 
   if (mat_size == 0) {
     printf("Wrong MAT size!\n");
@@ -844,6 +854,7 @@ void rot_inc(MAT *src_x, UINT x_inc, MAT *src_y, UINT y_inc, DTYPE c, DTYPE s) {
   printf("%s\n", __func__);
 #endif
   UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
+  ASSERT_DIM_EQUAL(src_x, src_y)
 
   if (mat_size == 0) {
     printf("Wrong MAT size!\n");
@@ -890,6 +901,7 @@ void crot_inc(CMAT *src_x, UINT x_inc, CMAT *src_y, UINT y_inc, DTYPE c,
   printf("%s\n", __func__);
 #endif
   UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
+  ASSERT_DIM_EQUAL(src_x, src_y)
 
   if (mat_size == 0) {
     printf("Wrong MAT size!\n");

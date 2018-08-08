@@ -337,6 +337,7 @@ void hermit(CMAT* mat);
 
 /**** set Identity Matrix ****/
 void ident_mat(MAT* mat);
+void ident_cmat(CMAT* mat);
 
 /****  free memory of MAT ****/
 void free_mat(MAT* mat);
