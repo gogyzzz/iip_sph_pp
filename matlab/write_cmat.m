@@ -1,6 +1,8 @@
-function write_cmat(filename,mat,d0,d1,d2)
+function write_cmat(filename,mat)
 mat_real = real(mat);
 mat_imag = imag(mat);
+[d0,d1,d2] = size(mat);
+
 out_mat = zeros(d0*2,d1,d2);
 
 for i = 1:d2
@@ -12,9 +14,7 @@ for i = 1:d2
     end
 end
 fileID = fopen(filename,'w');
-fwrite(fileID, d0, 'int');
-fwrite(fileID, d1, 'int');
-fwrite(fileID, d2, 'int');
 fwrite(fileID, out_mat, 'double');
 fclose(fileID);
+disp(filename);
 end

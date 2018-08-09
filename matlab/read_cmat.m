@@ -1,4 +1,6 @@
-function y = read_mat(f)
+function y = read_cmat(f)
+%READ_CMAT_WIP Summary of this function goes here
+%   Detailed explanation goes here
 
 if exist(f,'file') 
     bin = fopen(f,'r');
@@ -14,15 +16,20 @@ if exist(f,'file')
     [d2,rc] = strtok(rc,'_');
     d0 = str2num(d0);
     d1 = str2num(d1);
-    d2 = str2num(d2)    ;
+    d2 = str2num(d2);    
 
-    
     %mat = zeros(d0,d1,d2);
-    mat = fread(bin,'double');
-
+    temp = fread(bin,'double');
     fclose(bin);
-    mat = reshape(mat,d0,d1,d2);
-    y = mat;
+    temp = reshape(temp,d0*2,d1,d2);
+   
+    mat = zeros(d0,d1,d2);
+    for i = 1:d0
+        mat(i,:,:) = temp(2*i-1,:,:) + temp(2*i,:,:)*1i;        
+    end
+    
+    
+   y =mat;
 else
     msg = f;
     msg = strcat(msg,' does not exist');
