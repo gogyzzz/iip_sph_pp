@@ -1702,9 +1702,11 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if(a0 == b0 && a1 == b1  ) {
     if (((C->d0 != a0) || (C->d1 != b1)) ) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for shared(C, B, A) private(i)
+//#pragma omp parallel for shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++) {
-        CXEDIV(C->data[ic * j + i] , A->data[ia * j + i] , B->data[ib * j + i])
+        CXEDIV(	C->data[ic * j + i] ,
+				A->data[ia * j + i] , 
+				B->data[ib * j + i]) 
       }
   } else
     ASSERT_DIM_INVALID()

@@ -217,7 +217,8 @@ _2,_1
 // Y = A/B
 #define CXEDIV(Y, A, B)                                 \
   {                                                     \
-    ASSERT(B.re != 0 || B.im != 0, "Divide by zero.\n") \
+    printf("B.re : %lf, B.im : %lf\n", B.re, B.im);     \
+    ASSERT(B.re != 0. || B.im != 0., "Divide by zero.\n") \
     Y.re = ((A.re) * (B.re) + (A.im) * (B.im)) /        \
            (((B.re) * (B.re)) + ((B.im) * (B.im)));     \
     Y.im = ((A.im) * (B.re) - (A.re) * (B.im)) /        \
@@ -255,9 +256,11 @@ __func__, A->d, B->d);
 
 #define ASSERT(x, msg)                                    \
   {                                                       \
+    printf("X : %d\n", x);  \
     if (x == 0) {                                         \
+    printf("X==0 : %d\n", x == 0);  \
       printf(" *** [iip_sph_pp] [%s] %s", __func__, msg); \
-      exit(-1);                                           \
+      /*exit(-1);*/                                           \
     }                                                     \
   }
 

@@ -19,7 +19,7 @@
 #include "iip_time.h"
 
 static int is_init = 0;
-const int func_list_size = 44;
+const int func_list_size = 49;
 
 UINT _eq(DTYPE A, DTYPE B) {
 #if NTYPE == 0
@@ -46,24 +46,24 @@ UINT compare_cmat(CMAT *A, CMAT *B) {
   return 1;
 }
 
-void perform_test() {
-  FILE *f;
-  char cur[MAX_CHAR];
-  f = NULL;
-  f = fopen("../test/test.txt", "r");
-  ASSERT_FILE(f, "../test/test.txt")
-  while (fscanf(f, "%s\n", cur) != EOF)
-  // while(fgets(cur,MAX_CHAR,f) != EOF)
-  {
-    printf("== %s == \n", cur);
-    //do_test(cur);
-  }
+// void perform_test() {
+//   FILE *f;
+//   char cur[MAX_CHAR];
+//   f = NULL;
+//   f = fopen("../test/test.txt", "r");
+//   ASSERT_FILE(f, "../test/test.txt")
+//   while (fscanf(f, "%s\n", cur) != EOF)
+//   // while(fgets(cur,MAX_CHAR,f) != EOF)
+//   {
+//     printf("== %s == \n", cur);
+//     //do_test(cur);
+//   }
 
-  fclose(f);
-}
+//   fclose(f);
+// }
 
 void append_post(char *filename, const char *post, char *out) {
-  char t[MAX_CHAR] = "../test/";
+  char t[MAX_CHAR] = "../test_data/";
 
   strcpy(out, filename);
   strtok(out, ".");
@@ -93,13 +93,75 @@ void test_performance(int heat, int print_flag){
     printf(" Measuring...\n");
 
   MAT *A, *B, *C;
-  A = zeros(6, 6, 1);
-  B = zeros(6, 6, 1);
-  C = NULL;
+  MAT *A_, *B_, *C_;
+  MAT *A_diagonal, *A_trace, *A_mul;
+  MAT *B_mul;
+  MAT *C_mul;
+  MAT *result;
 
-  read_mat("../test/d_6_6_1.bin", A);
+  CMAT *cA, *cB, *cC;
+  CMAT *cA_, *cB_, *cC_;
+  CMAT *cA_diagonal, *cA_trace, *cA_mul;
+  CMAT *cB_mul;
+  CMAT *cC_mul;
+  CMAT *cresult;
+  
+  void *pA_, *pB_, *pC_, *pA_diagonal, *pA_trace, *pA_mul, *pB_mul, *pC_mul;
+
+  int mat_size = 4, mat_batch = 2;
+
+  CTYPE temp_param = {0, 0}, temp_param2 = {0, 0};
+
+  A = zeros(mat_size, mat_size, mat_batch);
+  A_ = zeros(mat_size, mat_size, mat_batch);
+  B = zeros(mat_size, mat_size, mat_batch);
+  B_ = zeros(mat_size, mat_size, mat_batch);
+  C = zeros(mat_size, mat_size, mat_batch);
+  C_ = zeros(mat_size, mat_size, mat_batch);
+
+  cA = czeros(mat_size, mat_size, mat_batch);
+  cA_ = czeros(mat_size, mat_size, mat_batch);
+  cB = czeros(mat_size, mat_size, mat_batch);
+  cB_ = czeros(mat_size, mat_size, mat_batch);
+  cC = czeros(mat_size, mat_size, mat_batch);
+  cC_ = czeros(mat_size, mat_size, mat_batch);
+
+  //set A
+  read_mat("../test_data/d_4_4_2.bin", A);
+  copy(A, A_);
+  read_cmat("../test_data/c_4_4_2.bin", cA);
+  ccopy(cA, cA_);
+  //set B
+  read_mat("../test_data/d_4_4_2.bin", B);
+  copy(B, B_);
+  read_cmat("../test_data/c_4_4_2.bin", cB);
+  ccopy(cB, cB_);
+  //set C
+  copy(A, C);
+  copy(C, C_);
+  ccopy(cA, cC);
+  ccopy(cC, cC_);
+  //set A_*
+  A_diagonal = zeros(mat_size, 1, mat_batch);
+  A_trace = zeros(1, 1, mat_batch);
+
+  cA_diagonal = czeros(mat_size, 1, mat_batch);
+  cA_trace = czeros(1, 1, mat_batch);
+
+  A_mul = zeros(2, 4, 1);
+  B_mul = zeros(4, 6, 1);
+  C_mul = zeros(2, 6, 1);
+  read_mat("../test_data/d_2_4_1.bin", A_mul);
+  read_mat("../test_data/d_4_6_1.bin", B_mul);
+  
+  cA_mul = czeros(2, 4, 1);
+  cB_mul = czeros(4, 6, 1);
+  cC_mul = czeros(2, 6, 1);
+  read_cmat("../test_data/c_2_4_1.bin", cA_mul);
+  read_cmat("../test_data/c_4_6_1.bin", cB_mul);
+
+
   is_ctype = 0;
-  copy(A, B);
   total = 0;
 
   if(heat == 1){
@@ -112,49 +174,158 @@ void test_performance(int heat, int print_flag){
     print_mat(A);
   }
 
-  for(i = 0; i<func_list_size-6; i++){
+  for(i = 0; i<func_list_size; i++){
     // continue for real / complex func
-    if(is_ctype == 0 && i%2 != 0)
-      continue;
-    else if(is_ctype != 0 && i%2 == 0)
-      continue;
+    // if(is_ctype == 0 && i%2 != 0)
+    //   continue;
+    // else if(is_ctype != 0 && i%2 == 0)
+    //   continue;
+
+    is_ctype = i%2;
 
     // set data
-    copy(A, B);
+    copy(A, A_);
+    copy(B, B_);
+    copy(C, C_);
+    ccopy(cA, cA_);
+    ccopy(cB, cB_);
+    ccopy(cC, cC_);
+
+    if (is_ctype == 0) {
+      pA_ = A_;
+      pB_ = B_;
+      pC_ = C_;
+      pA_diagonal = A_diagonal;
+      pA_trace = A_trace;
+      pA_mul = A_mul;
+      pB_mul = B_mul;
+      pC_mul = C_mul;
+    } else {
+      pA_ = cA_;
+      pB_ = cB_;
+      pC_ = cC_;
+      pA_diagonal = cA_diagonal;
+      pA_trace = cA_trace;
+      pA_mul = cA_mul;
+      pB_mul = cB_mul;
+      pC_mul = cC_mul;
+    }
     calced = 0;
 
-    // call appropriate func
+    /* call appropriate func */
+
+    // Require ONE matrix func
     if (func_list[i].param_cnt == 1) {
       calced = 1;
       stopwatch(0);
-      func_list[i].fp(B);
+      func_list[i].fp(pA_);
       total += stopwatch(1);
+      result = pA_;
     } else if (i == 4 || i == 5) {  // pow
       calced = 1;
       stopwatch(0);
-      func_list[i].fp(B, 2.0);
+      func_list[i].fp(pA_, 2.0);
       total += stopwatch(1);
-    } else if (i == 25 || i == 26) {  // permute
+      result = pA_;
+    } else if (i == 26 || i == 27) {  // permute
       calced = 1;
       stopwatch(0);
-      func_list[i].fp(B, 213);
+      func_list[i].fp(pA_, 213);
       total += stopwatch(1);
-    } else if (i == 35 || i == 36) {  // sum
+      result = pA_;
+    } else if (i == 36 || i == 37) {  // sum
       calced = 1;
       stopwatch(0);
-      func_list[i].fp(B, 10.0);
+      func_list[i].fp(pA_, 1);
       total += stopwatch(1);
-    } else if (i >= 37) {  // scal
+      result = pA_;
+    } else if (i == 44 || i == 45) {  //add
       calced = 1;
       stopwatch(0);
-      func_list[i].fp(5.0, B);
+      func_list[i].fp(10.0, pA_);
       total += stopwatch(1);
+      result = pA_;
+    } else if (i == func_list_size - 3) {  // scal
+      calced = 1;
+      stopwatch(0);
+      func_list[i].fp(5.0, pA_);
+      total += stopwatch(1);
+      result = pA_;
+    } else if (i == func_list_size - 2) {  // cscal
+      calced = 1;
+      pA_ = cA_;
+      stopwatch(0);
+      func_list[i].fp(5.0, pA_);
+      total += stopwatch(1);
+      result = pA_;
+    } else if (i == func_list_size - 1) {  // uscal
+      calced = 1;
+      pA_ = cA_;
+      temp_param.re = 5.0;
+      temp_param.im = 0.0;
+      stopwatch(0);
+      func_list[i].fp(temp_param, pA_);
+      total += stopwatch(1);
+      result = pA_;
+    }
+    //Require TWO matrix func (one input, one write buffer)
+    else if(func_list[i].param_cnt == 2 && !(i == 24 || i == 25 || i == 28 || i == 29)){
+      calced = 1;
+      if(i == 32 || i == 33){         // diagonal
+        stopwatch(0);
+        func_list[i].fp(pA_, pA_diagonal);
+        total += stopwatch(1);
+        result = pA_diagonal;
+      }
+      else if(i == 34 || i == 35){    // trace
+        stopwatch(0);
+        func_list[i].fp(pA_, pA_trace);
+        total += stopwatch(1);
+        result = pA_trace;
+      }
+      else{                           // invert
+        stopwatch(0);
+        func_list[i].fp(pA_, pC_);
+        total += stopwatch(1);
+        result = pC_;
+      }
+    }
+    //Require more than THREE matrix func (two input, one write buffer) (add, mul, div)_elements
+    else if(func_list[i].param_cnt == 3){
+      calced = 1;
+      stopwatch(0);
+      func_list[i].fp(pA_, pB_, pC_);
+      total += stopwatch(1);
+      result = pC_;
+    }
+    // only gemm (matmul)
+    else if(func_list[i].param_cnt > 3){
+      calced = 1;
+      if(is_ctype == 0){
+        stopwatch(0);
+        func_list[i].fp(NoTran, NoTran, 1.0, pA_mul, pB_mul, 0.0, pC_mul);
+        total += stopwatch(1);
+      }
+      if(is_ctype == 1){
+        temp_param.re = 1.0;
+        temp_param.im = 0.0;
+        temp_param2.re = 0.0;
+        temp_param2.im = 0.0;
+        stopwatch(0);
+        func_list[i].fp(NoTran, NoTran, temp_param, pA_mul, pB_mul, temp_param2, pC_mul);
+        total += stopwatch(1);
+      }
+      result = pC_mul;
+    }
+    // scale
+    else{
+
     }
 
     // print result
     if (calced != 0 && print_flag != 0) {
       printf("\n # %s\n", func_list[i].name);
-      print_mat(B);
+      print_mat(result);
     }
   }
 
@@ -167,16 +338,12 @@ void test_viewlist(){
     init_list();
   int i=0;
   printf("\n\n---- Func list ----\n");
-  for(i=0; i<func_list_size-6; i++){
+  for(i=0; i<func_list_size-3; i++){
     printf("戍成 %s\n", func_list[i++].name);
     printf("弛戌式 %s\n", func_list[i].name);
     printf("弛\n");
   }
-  i=func_list_size-6;
-  printf("戍成 %s\n", func_list[i++].name);
-  printf("弛戍式 %s\n", func_list[i++].name);
-  printf("弛戌式 %s\n", func_list[i++].name);
-  printf("弛\n");
+  i=func_list_size-3;
   printf("戌成 %s\n", func_list[i++].name);
   printf(" 戍式 %s\n", func_list[i++].name);
   printf(" 戌式 %s\n", func_list[i].name);
@@ -193,7 +360,7 @@ void preheat(){
 
   stopwatch(0);
   #pragma omp parallel for shared(temp) private(i)
-  for(i=0; i<1000000000; i++){
+  for(i=0; i<250000000; i++){
     temp += (double)i / 2.0;
     temp /= (double)i / 3.0;
     temp *= (double)i / 4.0;
@@ -311,10 +478,10 @@ void init_list(){
   strcpy(func_list[29].name, "cReshape");
   
   func_list[30].fp = gemm;
-  func_list[30].param_cnt = 6;
+  func_list[30].param_cnt = 7;
   strcpy(func_list[30].name, "Gemm");
   func_list[31].fp = cgemm;
-  func_list[31].param_cnt = 6;
+  func_list[31].param_cnt = 7;
   strcpy(func_list[31].name, "cGemm");
   
   func_list[32].fp = diagonal;
@@ -338,23 +505,41 @@ void init_list(){
   func_list[37].param_cnt = 2;
   strcpy(func_list[37].name, "cAsum");
   
-  func_list[38].fp = scal;
-  func_list[38].param_cnt = 2;
-  strcpy(func_list[38].name, "Scale");
-  func_list[39].fp = cscal;
-  func_list[39].param_cnt = 2;
-  strcpy(func_list[39].name, "cScale");
-  func_list[40].fp = uscal;
-  func_list[40].param_cnt = 2;
-  strcpy(func_list[40].name, "uScale");
+  func_list[38].fp = add_elements;
+  func_list[38].param_cnt = 3;
+  strcpy(func_list[38].name, "Add Elements");
+  func_list[39].fp = cadd_elements;
+  func_list[39].param_cnt = 3;
+  strcpy(func_list[39].name, "cAdd Elements");
   
-  func_list[41].fp = add;
+  func_list[40].fp = mul_elements;
+  func_list[40].param_cnt = 3;
+  strcpy(func_list[40].name, "Mul Elements");
+  func_list[41].fp = cmul_elements;
   func_list[41].param_cnt = 3;
-  strcpy(func_list[41].name, "Add");
-  func_list[42].fp = cadd;
+  strcpy(func_list[41].name, "cMul Elements");
+  
+  func_list[42].fp = div_elements;
   func_list[42].param_cnt = 3;
-  strcpy(func_list[42].name, "cAdd");
-  func_list[43].fp = uadd;
+  strcpy(func_list[42].name, "Div Elements");
+  func_list[43].fp = cdiv_elements;
   func_list[43].param_cnt = 3;
-  strcpy(func_list[43].name, "uAdd");
+  strcpy(func_list[43].name, "cDiv Elements");
+  
+  func_list[44].fp = add;
+  func_list[44].param_cnt = 2;
+  strcpy(func_list[44].name, "Add");
+  func_list[45].fp = cadd;
+  func_list[45].param_cnt = 2;
+  strcpy(func_list[45].name, "cAdd");
+  
+  func_list[func_list_size-3].fp = scal;
+  func_list[func_list_size-3].param_cnt = 2;
+  strcpy(func_list[func_list_size-3].name, "Scale");
+  func_list[func_list_size-2].fp = cscal;
+  func_list[func_list_size-2].param_cnt = 2;
+  strcpy(func_list[func_list_size-2].name, "cScale");
+  func_list[func_list_size-1].fp = uscal;
+  func_list[func_list_size-1].param_cnt = 2;
+  strcpy(func_list[func_list_size-1].name, "uScale");
 }
