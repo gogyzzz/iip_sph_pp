@@ -12,7 +12,7 @@
 #include "iip_time.h"
 
 #if OS_UNIX
-void stopwatch(int flag) {
+long long stopwatch(int flag) {
   enum clock_unit { nano = 0, micro, milli, sec } unit;
 
   const long long NANOS = 1000000000LL;
@@ -54,6 +54,7 @@ void stopwatch(int flag) {
   } else {
     printf("wrong flag | 0 : start, 1 : end\n");
   }
+  return diff;
 }
 #else
 
@@ -112,7 +113,7 @@ int clock_gettime(struct timeval *tv) {
   return (0);
 }
 
-void stopwatch(int flag) {
+long long stopwatch(int flag) {
   static struct timeval startTV, endTV;
   static long long diff;
   const long long MICRO = 1000000LL;
@@ -125,6 +126,7 @@ void stopwatch(int flag) {
            (endTV.tv_usec - startTV.tv_usec);
     printf("%lld micro seconds\n", diff);
   }
+  return diff;
 }
 #endif
 
