@@ -113,7 +113,7 @@ outname = post_appen(filename,'_scalpoint5');
 write_cmat(outname,outmat);
 
 for i = 1:d2
-outmat(i) = sum(A(:,:,i));
+outmat(i) = sum(sum(A(:,:,i)));
 end
 outname = post_appen(filename,'_sum');
 write_cmat(outname,outmat);
