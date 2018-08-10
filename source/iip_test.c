@@ -19,7 +19,7 @@
 #include "iip_time.h"
 
 static int is_init = 0;
-const int func_list_size = 49;
+const int func_list_size = 50;
 
 UINT _eq(DTYPE A, DTYPE B) {
 #if NTYPE == 0
@@ -526,12 +526,15 @@ void init_list(){
   func_list[43].param_cnt = 3;
   strcpy(func_list[43].name, "cDiv Elements");
   
-  func_list[44].fp = add;
-  func_list[44].param_cnt = 2;
-  strcpy(func_list[44].name, "Add");
-  func_list[45].fp = cadd;
-  func_list[45].param_cnt = 2;
-  strcpy(func_list[45].name, "cAdd");
+  func_list[func_list_size-6].fp = add;
+  func_list[func_list_size-6].param_cnt = 2;
+  strcpy(func_list[func_list_size-6].name, "Add");
+  func_list[func_list_size-5].fp = cadd;
+  func_list[func_list_size-5].param_cnt = 2;
+  strcpy(func_list[func_list_size-5].name, "cAdd");
+  func_list[func_list_size-4].fp = uadd;
+  func_list[func_list_size-4].param_cnt = 2;
+  strcpy(func_list[func_list_size-4].name, "uAdd");
   
   func_list[func_list_size-3].fp = scal;
   func_list[func_list_size-3].param_cnt = 2;
