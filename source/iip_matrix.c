@@ -817,6 +817,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
         C->data[ic * j + i] = A->data[ia * j + i] + B->data[ib * j + i / a0];
       }
   }
+  //CHANGE
   // a0 a1 b0  b1 | a0 b1 (a0 == b0 && a1 == b1)
   else if(a0 == b0 && a1 == b1  ) {
     if (((C->d0 != a0) || (C->d1 != b1)) ) ASSERT_DIM_INVALID()
