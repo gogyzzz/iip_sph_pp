@@ -30,11 +30,11 @@
  * */
 
 #if OS_UNIX
-void stopwatch(int flag);
+long long stopwatch(int flag);
 #elif OS_WIN
 LARGE_INTEGER get_filetime_offset();
 int clock_gettime(struct timeval *tv);
-void stopwatch(int flag);
+long long stopwatch(int flag);
 #endif
 
 /* return micro sec of currnet time, used for srand()*/
