@@ -37,19 +37,19 @@ long long stopwatch(int flag) {
     diff = NANOS * (endTS.tv_sec - startTS.tv_sec) +
            (endTS.tv_nsec - startTS.tv_nsec);
 
-    switch (unit) {
-      case nano:
-        printf("%lld nano sec\n", diff);
-        break;
-      case micro:
-        printf("%lld micro seconds\n", diff / 1000);
-        break;
-      case sec:
-        printf("%lld sec\n", diff / 1000000000);
-        break;
-      default:
-        printf("%lld milli sec\n", diff / 100000);
-        break;
+    // switch (unit) {
+    //   case nano:
+    //     printf("%lld nano sec\n", diff);
+    //     break;
+    //   case micro:
+    //     printf("%lld micro seconds\n", diff / 1000);
+    //     break;
+    //   case sec:
+    //     printf("%lld sec\n", diff / 1000000000);
+    //     break;
+    //   default:
+    //     printf("%lld milli sec\n", diff / 100000);
+    //     break;
     }
   } else {
     printf("wrong flag | 0 : start, 1 : end\n");
@@ -124,7 +124,7 @@ long long stopwatch(int flag) {
     clock_gettime(&endTV);
     diff = MICRO * (endTV.tv_sec - startTV.tv_sec) +
            (endTV.tv_usec - startTV.tv_usec);
-    printf("%lld micro seconds\n", diff);
+    //printf("%lld micro seconds\n", diff);
   }
   return diff;
 }

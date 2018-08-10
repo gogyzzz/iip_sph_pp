@@ -12,6 +12,9 @@
 
 #include "mother.h"
 
+int aks_preheat();
+void preheat();
+
 int main() {
   int selection=0;
 
@@ -28,10 +31,10 @@ int main() {
     scanf_s("%d", &selection);
     switch(selection){
       case 1:
-        test_verification();
+        test_verification(ask_preheat(), 1);
         break;
       case 2:
-        test_performance();
+        test_performance(ask_preheat(), 1);
         break;
       case 3:
         test_viewlist();
@@ -47,4 +50,18 @@ int main() {
   }
 
   return 0;
+}
+
+
+int ask_preheat(){
+  char temp = 0;
+  printf(" Preheat CPU? This may take a few seconds.(y/n) : ");
+  while(1){
+    temp = getchar();
+    if (temp == 'Y' || temp == 'y'){
+      return 1;
+    }
+    else if (temp == 'N' || temp == 'n')
+      return 0;
+  }
 }

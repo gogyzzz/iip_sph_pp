@@ -74,7 +74,7 @@ void append_post(char *filename, const char *post, char *out) {
 }
 
 
-void test_verification(){
+void test_verification(int heat){
   if(!is_init)
     init_list();
   printf("Verifying...\n");
@@ -82,14 +82,15 @@ void test_verification(){
   printf("Done.\n");
 }
 
-void test_performance(){
+void test_performance(int heat, int print_flag){
   int is_ctype = 0;     // 0 for DTYPE, 1 for CTYPE
   int i = 0, calced = 0;
   long long total;
 
   if(!is_init)
     init_list();
-  printf("Measuring...\n");
+  if(print_flag)
+    printf(" Measuring...\n");
 
   MAT *A, *B, *C;
   A = zeros(6, 6, 1);
@@ -101,8 +102,15 @@ void test_performance(){
   copy(A, B);
   total = 0;
 
-  printf(" *** Input Data ***\n");
-  print_mat(A);
+  if(heat == 1){
+    preheat();
+    test_performance(0, 0);
+  }
+
+  if(print_flag){
+    printf(" *** Input Data ***\n");
+    print_mat(A);
+  }
 
   for(i = 0; i<func_list_size-6; i++){
     // continue for real / complex func
@@ -144,13 +152,14 @@ void test_performance(){
     }
 
     // print result
-    if (calced != 0) {
+    if (calced != 0 && print_flag != 0) {
       printf("\n # %s\n", func_list[i].name);
       print_mat(B);
     }
   }
 
-  printf("Done.\n *** Total Run time : %ums\n", total);
+  if(print_flag)
+    printf("Done.\n *** Total Run time : %.3lfms\n", (double)total/1000.0);
 }
 
 void test_viewlist(){
@@ -175,7 +184,24 @@ void test_viewlist(){
   printf("-------------------\n\n\n");
 }
 
+void preheat(){
+  int i=0;
+  double temp=0;
+  long long times=0;
 
+  printf(" CPU is warming up...\n");
+
+  stopwatch(0);
+  #pragma omp parallel for shared(temp) private(i)
+  for(i=0; i<1000000000; i++){
+    temp += (double)i / 2.0;
+    temp /= (double)i / 3.0;
+    temp *= (double)i / 4.0;
+  }
+  times = stopwatch(1);
+
+  printf(" Took %.3lfms to warm up.\n\n", (double)times / 1000.0);
+}
 
 void init_list(){
   is_init = 1;
