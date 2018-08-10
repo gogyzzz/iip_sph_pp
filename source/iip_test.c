@@ -239,14 +239,32 @@ void test_performance(int heat, int print_flag){
       func_list[i].fp(pA_, 1);
       total += stopwatch(1);
       result = pA_;
-    } else if (i == 44 || i == 45) {  //add
+    } else if (i == func_list_size - 6) {  // add
       calced = 1;
+      pA_ = A_;
       stopwatch(0);
       func_list[i].fp(10.0, pA_);
       total += stopwatch(1);
       result = pA_;
+    } else if (i == func_list_size - 5) {  // cadd
+      calced = 1;
+      pA_ = cA_;
+      stopwatch(0);
+      func_list[i].fp(10.0, pA_);
+      total += stopwatch(1);
+      result = pA_;
+    } else if (i == func_list_size - 4) {  // uadd
+      calced = 1;
+      pA_ = cA_;
+      temp_param.re = 10.0;
+      temp_param.im = 10.0;
+      stopwatch(0);
+      func_list[i].fp(temp_param, pA_);
+      total += stopwatch(1);
+      result = pA_;
     } else if (i == func_list_size - 3) {  // scal
       calced = 1;
+      pA_ = A_;
       stopwatch(0);
       func_list[i].fp(5.0, pA_);
       total += stopwatch(1);
@@ -343,7 +361,11 @@ void test_viewlist(){
     printf("弛戌式 %s\n", func_list[i].name);
     printf("弛\n");
   }
-  i=func_list_size-3;
+  i=func_list_size-6;
+  printf("戍成 %s\n", func_list[i++].name);
+  printf("弛戍式 %s\n", func_list[i++].name);
+  printf("弛戌式 %s\n", func_list[i++].name);
+  printf("弛\n");
   printf("戌成 %s\n", func_list[i++].name);
   printf(" 戍式 %s\n", func_list[i++].name);
   printf(" 戌式 %s\n", func_list[i].name);
