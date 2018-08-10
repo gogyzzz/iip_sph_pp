@@ -1,6 +1,7 @@
-function write_mat(filename,mat,d0,d1,d2)
+function write_mat(filename,mat)
 fileID = fopen(filename,'w');
 fwrite(fileID, mat, 'double');
 fclose(fileID);
+disp(filename);
 end
 

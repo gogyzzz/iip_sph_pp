@@ -598,7 +598,7 @@ CMAT *mem_csubmat_3d(CMAT *mat, ITER d0_st, ITER d0_ed, ITER d1_st, ITER d1_ed,
     printf("%u %u %u %u %u %u\n", mat->d0, submat->d0, mat->d1, submat->d1,
            mat->d2, submat->d2);
     mpfree(submat);
-    return;
+    return ;
   }
 
 #pragma omp parallel for shared(submat, mat) private(i, j, k)
@@ -816,7 +816,17 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
       for (i = 0; i < a0 * b1; i++) {
         C->data[ic * j + i] = A->data[ia * j + i] + B->data[ib * j + i / a0];
       }
-  } else
+  }
+  //CHANGE
+  // a0 a1 b0  b1 | a0 b1 (a0 == b0 && a1 == b1)
+  else if(a0 == b0 && a1 == b1  ) {
+    if (((C->d0 != a0) || (C->d1 != b1)) ) ASSERT_DIM_INVALID()
+    for (j = 0; j < c2; j++)
+#pragma omp parallel for shared(C, B, A) private(i)
+      for (i = 0; i < a0 * b1; i++) {
+        C->data[ic * j + i] = A->data[ia * j + i] + B->data[ib * j + i];
+      }
+  }else
     ASSERT_DIM_INVALID()
 }
 
@@ -990,7 +1000,15 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + i],
                B->data[ib * j + i / a0])
       }
-  } else
+  } // a0 a1 b0  b1 | a0 b1 (a0 == b0 && a1 == b1)
+  else if(a0 == b0 && a1 == b1  ) {
+    if (((C->d0 != a0) || (C->d1 != b1)) ) ASSERT_DIM_INVALID()
+    for (j = 0; j < c2; j++)
+#pragma omp parallel for shared(C, B, A) private(i)
+      for (i = 0; i < a0 * b1; i++) {
+        CXEADD(C->data[ic * j + i] , A->data[ia * j + i] , B->data[ib * j + i])
+      }
+  }else
     ASSERT_DIM_INVALID()
 }
 
@@ -1153,7 +1171,15 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
 #pragma omp parallel for shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++)
         C->data[ic * j + i] = B->data[ib * j + i / a0] * A->data[ia * j + i];
-  } else
+  } // a0 a1 b0  b1 | a0 b1 (a0 == b0 && a1 == b1)
+  else if(a0 == b0 && a1 == b1  ) {
+    if (((C->d0 != a0) || (C->d1 != b1)) ) ASSERT_DIM_INVALID()
+    for (j = 0; j < c2; j++)
+#pragma omp parallel for shared(C, B, A) private(i)
+      for (i = 0; i < a0 * b1; i++) {
+        C->data[ic * j + i] = A->data[ia * j + i] * B->data[ib * j + i];
+      }
+  }else
     ASSERT_DIM_INVALID()
 }
 
@@ -1298,7 +1324,15 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
       for (i = 0; i < a0 * b1; i++)
         CXEMUL(C->data[ic * j + i], A->data[ia * j + i],
                B->data[ib * j + i / a0])
-  } else
+  }// a0 a1 b0  b1 | a0 b1 (a0 == b0 && a1 == b1)
+  else if(a0 == b0 && a1 == b1  ) {
+    if (((C->d0 != a0) || (C->d1 != b1)) ) ASSERT_DIM_INVALID()
+    for (j = 0; j < c2; j++)
+#pragma omp parallel for shared(C, B, A) private(i)
+      for (i = 0; i < a0 * b1; i++) {
+        CXEMUL(C->data[ic * j + i] , A->data[ia * j + i] , B->data[ib * j + i])
+      }
+  }else
     ASSERT_DIM_INVALID()
 }
 
@@ -1481,6 +1515,15 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
         ASSERT(B->data[ib * j + i / a0], "Divide by zero.\n")
         C->data[ic * j + i] = A->data[ia * j + i] / B->data[ib * j + i / a0];
       }
+  }// a0 a1 b0  b1 | a0 b1 (a0 == b0 && a1 == b1)
+  else if(a0 == b0 && a1 == b1  ) {
+    if (((C->d0 != a0) || (C->d1 != b1)) ) ASSERT_DIM_INVALID()
+    for (j = 0; j < c2; j++)
+#pragma omp parallel for shared(C, B, A) private(i)
+      for (i = 0; i < a0 * b1; i++) {
+        ASSERT(B->data[ib * j + i / a0], "Divide by zero.\n")
+        C->data[ic * j + i] = A->data[ia * j + i] / B->data[ib * j + i];
+      }
   } else
     ASSERT_DIM_INVALID()
 }
@@ -1654,6 +1697,14 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
       for (i = 0; i < a0 * b1; i++) {
         CXEDIV(C->data[ic * j + i], A->data[ia * j + i],
                B->data[ib * j + i / a0])
+      }
+  }// a0 a1 b0  b1 | a0 b1 (a0 == b0 && a1 == b1)
+  else if(a0 == b0 && a1 == b1  ) {
+    if (((C->d0 != a0) || (C->d1 != b1)) ) ASSERT_DIM_INVALID()
+    for (j = 0; j < c2; j++)
+#pragma omp parallel for shared(C, B, A) private(i)
+      for (i = 0; i < a0 * b1; i++) {
+        CXEDIV(C->data[ic * j + i] , A->data[ia * j + i] , B->data[ib * j + i])
       }
   } else
     ASSERT_DIM_INVALID()
