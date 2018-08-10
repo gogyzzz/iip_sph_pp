@@ -15,6 +15,14 @@
 #include "iip_matrix.h"
 #include "iip_type.h"
 
+typedef struct FUNCS{
+    char name[32];
+    int param_cnt;
+    void (*fp)();
+}FUNCS;
+
+FUNCS func_list[64];
+
 /*check equal of two DTYPEs*/
 UINT _eqdd(DTYPE A, DTYPE B);
 /*compare 2 MAT struct*/
@@ -23,7 +31,7 @@ UINT compare_mat(MAT* A, MAT* B);
 UINT compare_cmat(CMAT* A, CMAT* B);
 
 void perform_test();
-void do_test(char* filename);
+void init_list();
 
 /*char* operation : out = filename_post*/
 void append_post(char* filename, const char* post, char* out);
