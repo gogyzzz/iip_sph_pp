@@ -153,11 +153,7 @@ display_elements("Source files for C build" "${C_SOURCE}")
 
 if(USE_OPEN OR USE_MKL )
     set(BLAS_TARGET_NAME "${PROJECT_NAME}_blas")
-
-
-    string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
-	add_executable(${BLAS_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
-    string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
+	  add_executable(${BLAS_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
 
     if(USE_OPEN)
 	message(STATUS ${BLAS_LIBRARIES})
@@ -216,14 +212,8 @@ if(USE_OPEN OR USE_MKL )
     endif()
 elseif(USE_OPENMP)
     set(OPENMP_TARGET_NAME "${PROJECT_NAME}_openmp")
-    
-    #   Below Line Causes Error, ';' no such file or directory
-    #		list(APPEND CMAKE_EXE_LINKER_FLAGS ${OpenMP_EXE_LINKER_FLAGS})
     add_definitions(-DUSE_OMP=1)
-    string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
-    string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
-
-	add_executable(${OPENMP_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})	
+	  add_executable(${OPENMP_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})	
     target_link_libraries(${OPENMP_TARGET_NAME} )
 
   #  set_target_properties(${OPENMP_TARGET_NAME}
@@ -241,7 +231,7 @@ else()
 	set(NATIVE_TARGET_NAME "${PROJECT_NAME}_native")
 	add_executable(${NATIVE_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})	
   If(UNIX)
-  target_link_libraries(${NATIVE_TARGET_NAME} m)
+    target_link_libraries(${NATIVE_TARGET_NAME} m)
   endif(UNIX)
 	target_include_directories(${NATIVE_TARGET_NAME}
 	PUBLIC
