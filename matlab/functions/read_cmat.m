@@ -8,7 +8,8 @@ if exist(f,'file')
     msg = strcat(msg,' : reading');
     disp(msg);
       
-
+    [t,f] =strtok(f,'/');
+    f = strtok(f,'/');
     c = strtok(f,'.');
     [c,rc] = strtok(c,'_');
     [d0,rc] = strtok(rc,'_');
