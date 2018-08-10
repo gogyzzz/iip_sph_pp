@@ -74,7 +74,7 @@ void append_post(char *filename, const char *post, char *out) {
 }
 
 
-void test_verification(int heat){
+void test_verification(int heat, int print_flag){
   if(!is_init)
     init_list();
   printf("Verifying...\n");
