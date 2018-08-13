@@ -123,9 +123,11 @@ void cswap(CMAT *src_x, CMAT *src_y);
 void cswap_inc(UINT N,CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc);
 void omp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc);
 
+/* column swap*/
 void col_swap(MAT*mat, UINT a,UINT b);
 void col_cswap(CMAT*mat, UINT a,UINT b);
 
+/* row swap*/
 void row_swap(MAT*mat, UINT a,UINT b);
 void row_cswap(CMAT*mat, UINT a,UINT b);
 /* Index of the maximum absolute value element of a real vector */

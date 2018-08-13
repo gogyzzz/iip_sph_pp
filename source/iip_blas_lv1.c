@@ -499,6 +499,7 @@ void swap(MAT *src_x, MAT *src_y){
   
   swap_inc(src_x->d0*src_x->d1*src_x->d2,src_x->data, 1, src_y->data, 1);
 }
+
 void swap_inc(UINT N,DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
 #if DEBUG
   printf("%s\n", __func__);
@@ -523,6 +524,7 @@ void swap_inc(UINT N,DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
   return omp_swap(N, src_x, x_inc, src_y, y_inc);
 #endif
 }
+
 void omp_swap(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
   ITER i = 0;
   DTYPE temp = 0;
@@ -540,6 +542,7 @@ void cswap(CMAT *src_x, CMAT *src_y) {
   cswap_inc(src_x->d0*src_x->d1*src_x->d2,src_x->data, 1, src_y->data, 1);
 
 }
+
 void cswap_inc(UINT N,CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
 #if DEBUG
   printf("%s\n", __func__);
@@ -564,6 +567,7 @@ void cswap_inc(UINT N,CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
   return omp_cswap(N, src_x, x_inc, src_y, y_inc);
 #endif
 }
+
 void omp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
   ITER i = 0;
   CTYPE temp = {0, 0};
@@ -579,6 +583,7 @@ void omp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
   }
 }
 
+/* column swap */
 void col_swap(MAT*mat, UINT a,UINT b){
  if(a > mat->d1 || b > mat->d1)ASSERT_DIM_INVALID() 
   swap_inc(mat->d0,&(mat->data[mat->d0*a]),1,&(mat->data[mat->d0*b]),1);
@@ -588,6 +593,8 @@ void col_cswap(CMAT*mat, UINT a,UINT b){
 if(a > mat->d1 || b > mat->d1)ASSERT_DIM_INVALID() 
   cswap_inc(mat->d0,&(mat->data[mat->d0*a]),1,&(mat->data[mat->d0*b]),1);
 }
+
+/* row swap */
 void row_swap(MAT*mat, UINT a,UINT b){
  if(a > mat->d0 || b > mat->d0)ASSERT_DIM_INVALID() 
   swap_inc(mat->d1,&(mat->data[a]),mat->d0,&(mat->data[b]),mat->d0);
