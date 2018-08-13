@@ -15,7 +15,7 @@ if exist(f,'file')
     [d2,rc] = strtok(rc,'_');
     d0 = str2num(d0);
     d1 = str2num(d1);
-    d2 = str2num(d2)    ;
+    d2 = str2num(d2);
 
     
     %mat = zeros(d0,d1,d2);

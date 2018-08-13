@@ -4,6 +4,6 @@ tic;
 for i = 1:d2
 C(:,:,i) = A(:,:,i) * B(:,:,i);
 end
-y = toc;
+y = toc; +10 -10
 end
 
