@@ -8,7 +8,11 @@ option(USE_BLAS    "Using BLAS"      ON)
 option(USE_OPENMP  "Using OpenMP"    ON)
 
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
-### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
+#SET your sources here
+# EXAMPLE : set(MAIN_SRC YOUR_SRC1 folder1/YOUR_SRC2 folder2/YOUR_SRC3 )
+#INCLUDE your headers here
+# EXAMPLE : include_directories(${CMAKE_CURRENT_SOURCE_DIR}/YOUR_HEADER_FOLDER)
+
 #set(MAIN_SRC test/test_matrix.c)
 #set(MAIN_SRC test/test_matrix_2.c)
 #set(MAIN_SRC test/test_wav.c)
@@ -37,14 +41,11 @@ set(MAIN_SRC test/test_matlab.c)
 #set(MAIN_SRC test/test_blas_lv2_big.c)
 
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
-### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 
-
-set(CMAKE_MODULE_PATH
-    ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
+set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 if(WIN32 AND MSVC)
-  # No /O3 in VS2013
+  # No /O3 in VS2013 (higher, too)?
   # /O2 - fastest code in the majority of cases
   # /MP - compiled in mult-process : faster build time
   list(APPEND  CMAKE_C_FLAGS " /O2 /MP ")
@@ -62,7 +63,8 @@ if(USE_CUDA)
     else()
 	if(NOT CUDA_ARCH)
 		message(STATUS "cuda arch wasn't provided, running feature test")
-    	include(feature_test)
+
+    include(feature_test)
 	else()
 	    set(CUDA_GEN_CODE "-gencode arch=compute_${CUDA_ARCH},code=sm_${CUDA_ARCH}")
 		endif()
@@ -71,6 +73,12 @@ if(USE_CUDA)
 	message(STATUS "CUDA found")
     endif()
 endif()
+
+# MKL also can be found by find_package(BLAS)
+# But, MKL requires specific compile & link option.
+# just using "target_link_libraries" doesn't work for MKL.
+# In case, you want to use MKL in linux. I wrote MKL option MKL section below.
+# If you modify this file with those options, using MKL and CMAKE can be done.
 
 if(USE_BLAS)
     set(BLA_VENDOR "OpenBLAS")
@@ -87,33 +95,28 @@ if(USE_BLAS)
 endif()
 
 if(USE_OPENMP)
-#    find_package(OpenMP)
-#   if(NOT(OpenMP_FOUND))
-#	message(SEND_ERROR "USE_OPENMP is set ON but OpenMP not found")
-#	set(USE_OPENMP OFF)
-#  else()
-#	message(STATUS "OpenMP found")
-
 # Not going to use omp.h so, just linker option is required.   
+
+#   find_package(OpenMP)
+#   if(NOT(OpenMP_FOUND))
+#	    message(SEND_ERROR "USE_OPENMP is set ON but OpenMP not found")
+#	    set(USE_OPENMP OFF)
+#   else()
+#	  message(STATUS "OpenMP found")
+
 	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS})
 	if(MSVC)
 	    # Visual Studio uses '/' for compile option
-	    # CMAKE set -openmp option for OpenMP_FLAGS
-	    string(REPLACE "-openmp" " /openmp" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+	    # CMAKE sets -openmp option for OpenMP_FLAGS
+    string(REPLACE "-openmp" " /openmp" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 	endif(MSVC)
-#    endif()
 endif()
-
 
 message(STATUS "USE_CUDA   : " ${USE_CUDA})
 message(STATUS "USE_OPEN  : " ${USE_OPEN})
 message(STATUS "USE_MKL   : " ${USE_MKL})
 message(STATUS "USE_OPENMP : " ${USE_OPENMP})
 
-#GET OS
-#UNIX   TRUE for UNIX,APPLE
-#WIN32  TRUE for Windows 32bit and 64bit
-#APPLE  TRUE for APPLE
 
 macro(display_elements
 	DISPLAY_MESSAGE
@@ -124,16 +127,18 @@ macro(display_elements
     endforeach()
 endmacro()
 
+#GET OS
+#UNIX   TRUE for UNIX,APPLE
+#WIN32  TRUE for Windows 32bit and 64bit
+#APPLE  TRUE for APPLE
 if(UNIX)
     add_definitions(-DOS_UNIX=1)
 elseif(WIN32)
     add_definitions(-DOS_WIN=1)
 endif()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/header)
-include_directories()
+
 message(STATUS "ENV_PATH : " $ENV{PATH})
 
 set(C_SOURCE
@@ -153,11 +158,15 @@ display_elements("Source files for C build" "${C_SOURCE}")
 
 if(USE_OPEN OR USE_MKL )
     set(BLAS_TARGET_NAME "${PROJECT_NAME}_blas")
-	  add_executable(${BLAS_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
+
+    # if you set multiple "add_Executable"
+    # It works well in linux. But, in Windows.. it doesnt't work well.
+    add_executable(${BLAS_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
 
     if(USE_OPEN)
 	message(STATUS ${BLAS_LIBRARIES})
-  if(NOT MSVC)  
+  if(NOT MSVC) 
+    #include <math.h> 
     target_link_libraries(${BLAS_TARGET_NAME}
   	m
     )
@@ -172,8 +181,8 @@ if(USE_OPEN OR USE_MKL )
 	    USE_OPEN=1
 	    USE_CBLAS=1)
     elseif(USE_MKL)
-  
-  # 리눅스 gnu-compiler intel-64 <linking> 64bit <threading> limiomp5 
+  # MKL Options 
+  # Linux gnu-compiler intel-64 <linking> 64bit <threading> limiomp5 
   # 
   #   1. dynamic 
   #       2. OMP
@@ -249,7 +258,6 @@ if(USE_CUDA)
 	${PROJECT_SOURCE_DIR}/source/iip_blas_lv3.cu)
 	
     display_elements("Source files for CUDA_SRC" "${CUDA_SRC}")
-
     # compile .c files by nvcc
     #SET_SOURCE_FILES_PROPERTIES(${COMMON_SRC} PROPERTIES LANGUAGE CUDA)
 
@@ -276,7 +284,6 @@ if(WIN32)
   #There is something wrong about the way CMAKE set /W3 flag
   string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
   string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
-  
 endif(WIN32)
 
 message(STATUS "CMAKE_C_FLAGS : " ${CMAKE_C_FLAGS})	
