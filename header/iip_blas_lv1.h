@@ -115,14 +115,19 @@ __global__ void cu_dot(DTYPE *result, DTYPE *src_x, UINT x_inc, DTYPE *src_y,
 
 /* Swaps a real vector with another real vector. */
 void swap(MAT *src_x, MAT *src_y);
-void swap_inc(MAT *src_x, UINT x_inc, MAT *src_y, UINT y_inc);
+void swap_inc(UINT N,DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc);
 void omp_swap(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc);
 
 /* Swaps a complex vector with another complex vector. */
 void cswap(CMAT *src_x, CMAT *src_y);
-void cswap_inc(CMAT *src_x, UINT x_inc, CMAT *src_y, UINT y_inc);
+void cswap_inc(UINT N,CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc);
 void omp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc);
 
+void col_swap(MAT*mat, UINT a,UINT b);
+void col_cswap(CMAT*mat, UINT a,UINT b);
+
+void row_swap(MAT*mat, UINT a,UINT b);
+void row_cswap(CMAT*mat, UINT a,UINT b);
 /* Index of the maximum absolute value element of a real vector */
 UINT amax(MAT *src);
 UINT amax_inc(MAT *src, UINT inc);

@@ -287,7 +287,11 @@ DTYPE asum(MAT *mat, UINT inc) {
 
 // DTYPE = double
 #elif NTYPE == 1
-  return cblas_dasum(mat_size, mat->data, inc);
+  printf("cblas\n");
+  printf("%u %u\n",mat_size,inc);
+  cblas_dasum(mat_size, mat->data, inc);
+  printf("EXIT asum\n");
+  return 1;
 #endif
 
 // USE_BLAS = 0 -> just c implement
@@ -489,34 +493,34 @@ CTYPE omp_udot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
 }
 
 /*** Swaps vector ***/
-void swap(MAT *src_x, MAT *src_y) { swap_inc(src_x, 1, src_y, 1); }
-void swap_inc(MAT *src_x, UINT x_inc, MAT *src_y, UINT y_inc) {
+void swap(MAT *src_x, MAT *src_y){
+
+  ASSERT_DIM_EQUAL(src_x, src_y)
+  
+  swap_inc(src_x->d0*src_x->d1*src_x->d2,src_x->data, 1, src_y->data, 1);
+}
+void swap_inc(UINT N,DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
-  ASSERT_DIM_EQUAL(src_x, src_y)
 
-  if (mat_size == 0) {
-    printf("Wrong MAT size!\n");
-    return;
-  }
+  if(N == 0)ASSERT_ARG_INVALID()
 
 #if USE_CBLAS
 // DTYPE = float
 #if NTYPE == 0
-  cblas_sswap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
+  cblas_sswap(N, src_x, x_inc, src_y, y_inc);
   return;
 
 // DTYPE = double
 #elif NTYPE == 1
-  cblas_dswap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
+  cblas_dswap(N, src_x, x_inc, src_y, y_inc);
   return;
 #endif
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return omp_swap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
+  return omp_swap(N, src_x, x_inc, src_y, y_inc);
 #endif
 }
 void omp_swap(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
@@ -531,34 +535,33 @@ void omp_swap(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
   }
 }
 
-void cswap(CMAT *src_x, CMAT *src_y) { cswap_inc(src_x, 1, src_y, 1); }
-void cswap_inc(CMAT *src_x, UINT x_inc, CMAT *src_y, UINT y_inc) {
+void cswap(CMAT *src_x, CMAT *src_y) {
+  ASSERT_DIM_EQUAL(src_x, src_y)
+  cswap_inc(src_x->d0*src_x->d1*src_x->d2,src_x->data, 1, src_y->data, 1);
+
+}
+void cswap_inc(UINT N,CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
-  ASSERT_DIM_EQUAL(src_x, src_y)
 
-  if (mat_size == 0) {
-    printf("Wrong MAT size!\n");
-    return;
-  }
+  if (N == 0)ASSERT_ARG_INVALID()
 
 #if USE_CBLAS
 // DTYPE = float
 #if NTYPE == 0
-  cblas_cswap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
+  cblas_cswap(N, src_x, x_inc, src_y, y_inc);
   return;
 
 // DTYPE = double
 #elif NTYPE == 1
-  cblas_zswap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
+  cblas_zswap(N, src_x, x_inc, src_y, y_inc);
   return;
 #endif
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return omp_cswap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
+  return omp_cswap(N, src_x, x_inc, src_y, y_inc);
 #endif
 }
 void omp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
@@ -576,6 +579,24 @@ void omp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
   }
 }
 
+void col_swap(MAT*mat, UINT a,UINT b){
+ if(a > mat->d1 || b > mat->d1)ASSERT_DIM_INVALID() 
+  swap_inc(mat->d0,&(mat->data[mat->d0*a]),1,&(mat->data[mat->d0*b]),1);
+}
+
+void col_cswap(CMAT*mat, UINT a,UINT b){
+if(a > mat->d1 || b > mat->d1)ASSERT_DIM_INVALID() 
+  cswap_inc(mat->d0,&(mat->data[mat->d0*a]),1,&(mat->data[mat->d0*b]),1);
+}
+void row_swap(MAT*mat, UINT a,UINT b){
+ if(a > mat->d0 || b > mat->d0)ASSERT_DIM_INVALID() 
+  swap_inc(mat->d1,&(mat->data[a]),mat->d0,&(mat->data[b]),mat->d0);
+}
+
+void row_cswap(CMAT*mat, UINT a,UINT b){
+ if(a > mat->d1 || b > mat->d1)ASSERT_DIM_INVALID() 
+  cswap_inc(mat->d0,&(mat->data[a]),mat->d0,&(mat->data[b]),mat->d0);
+}
 /*** Finds MAX_ABS_VALUE_ELEMENT's index ***/
 UINT amax(MAT *src) { return amax_inc(src, 1); }
 UINT amax_inc(MAT *src, UINT inc) {
