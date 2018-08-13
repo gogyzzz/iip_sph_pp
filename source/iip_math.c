@@ -487,6 +487,54 @@ void log10_cmat_inc(UINT size, CTYPE* X, ITER incx) {
 #endif
   }
 }
+
+/**** log with base ****/
+void logb_mat(MAT*mat, UINT base){
+  logb_mat_inc(mat->d0*mat->d1*mat->d2,mat->data,base,1);
+}
+
+void logb_mat_inc(UINT size,DTYPE*X , UINT base, ITER incx){
+  ITER i;
+#if DEBUG
+  printf("%s\n", __func__);
+#endif
+#pragma omp parallel for shared(X) private(i)
+  for (i = 0; i < size; i += incx) {
+#if NTYPE == 0
+    X[i] = logf(X[i]) / logf(base);
+#elif NTYPE == 1
+    X[i] = log(X[i]) / log(base);
+#endif
+  }
+ 
+}
+
+void clogb_mat(CMAT*mat, UINT base){
+  clogb_mat_inc(mat->d0*mat->d1*mat->d2,mat->data,base,1);
+}
+
+void clogb_mat_inc(UINT size,CTYPE*X , UINT base, ITER incx){
+  ITER i;
+  DTYPE temp;
+#if DEBUG
+  printf("%s\n", __func__);
+#endif
+#pragma omp parallel for shared(X) private(i)
+  for (i = 0; i < size; i += incx) {
+#if NTYPE == 0
+    X[i] = clogf(CXF(X[i]));
+    temp = logf(base);
+    X[i].re / = temp;
+    X[i].im / = temp;
+#elif NTYPE == 1
+    X[i] = clog(CXD(X[i]));
+    temp = log(base);
+    X[i].re / = temp;
+    X[i].im / = temp;
+#endif
+  }
+}
+
 /**** exp ****/
 void exp_mat(MAT* mat) {
   exp_mat_inc(mat->d0 * mat->d1 * mat->d2, mat->data, 1);
