@@ -522,15 +522,15 @@ void clogb_mat_inc(UINT size,CTYPE*X , UINT base, ITER incx){
 #pragma omp parallel for shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
-    X[i] = clogf(CXF(X[i]));
+    CXF(X[i]) = clogf(CXF(X[i]));
     temp = logf(base);
-    X[i].re / = temp;
-    X[i].im / = temp;
+    X[i].re /= temp;
+    X[i].im /= temp;
 #elif NTYPE == 1
-    X[i] = clog(CXD(X[i]));
+    CXD(X[i]) = clog(CXD(X[i]));
     temp = log(base);
-    X[i].re / = temp;
-    X[i].im / = temp;
+    X[i].re /= temp;
+    X[i].im /= temp;
 #endif
   }
 }
