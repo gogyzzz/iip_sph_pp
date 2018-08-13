@@ -113,7 +113,8 @@ void log2_cmat_inc(UINT size, CTYPE* X, ITER incx);
 void logb_mat(MAT*mat, UINT base);
 void logb_mat_inc(UINT size, DTYPE*X, UINT base,ITER incx);
 
-
+void clogb_mat(CMAT*mat, UINT base);
+void clogb_mat_inc(UINT size, CTYPE*X, UINT base,ITER incx);
 /**** exp ****/
 void exp_mat(MAT* mat);
 void exp_mat_inc(UINT size, DTYPE* X, ITER incx);

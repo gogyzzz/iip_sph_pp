@@ -257,6 +257,7 @@ __func__, A->d, B->d);
   {                                                       \
     if ((x) == 0) {                                       \
       printf(" *** [iip_sph_pp] [%s] %s", __func__, msg); \
+      getchar();                                          \
       exit(-1);                                           \
     }                                                     \
   }
