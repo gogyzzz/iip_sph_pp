@@ -263,6 +263,9 @@ void omp_ccopy(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc) {
   */
 }
 
+/* get sum of every element in matrix */
+
+
 /*** Get sum of the magnitudes of elements of a vector ***/
 DTYPE asum(MAT *mat, UINT inc) {
 #if DEBUG
@@ -580,24 +583,32 @@ void omp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
 
 /* column swap */
 void col_swap(MAT*mat, UINT a,UINT b){
+ ITER i;
  if(a > mat->d1 || b > mat->d1)ASSERT_DIM_INVALID() 
-  swap_inc(mat->d0,&(mat->data[mat->d0*a]),1,&(mat->data[mat->d0*b]),1);
+ for(i=0;i<mat->d2;i++)
+  swap_inc(mat->d0,&(mat->data[mat->d0*a+ i*(mat->d0*mat->d1)]),1,&(mat->data[mat->d0*b+ i*(mat->d0*mat->d1)]),1);
 }
 
 void col_cswap(CMAT*mat, UINT a,UINT b){
+ ITER i;
 if(a > mat->d1 || b > mat->d1)ASSERT_DIM_INVALID() 
-  cswap_inc(mat->d0,&(mat->data[mat->d0*a]),1,&(mat->data[mat->d0*b]),1);
+ for(i=0;i<mat->d2;i++)
+  cswap_inc(mat->d0,&(mat->data[mat->d0*a+ i*(mat->d0*mat->d1)]),1,&(mat->data[mat->d0*b+ i*(mat->d0*mat->d1)]),1);
 }
 
 /* row swap */
 void row_swap(MAT*mat, UINT a,UINT b){
- if(a > mat->d0 || b > mat->d0)ASSERT_DIM_INVALID() 
-  swap_inc(mat->d1,&(mat->data[a]),mat->d0,&(mat->data[b]),mat->d0);
+ ITER i;
+  if(a > mat->d0 || b > mat->d0)ASSERT_DIM_INVALID() 
+ for(i=0;i<mat->d2;i++)
+  swap_inc(mat->d1,&(mat->data[a + i*(mat->d0*mat->d1) ]),mat->d0,&(mat->data[b + i*(mat->d0*mat->d1)]),mat->d0);
 }
 
 void row_cswap(CMAT*mat, UINT a,UINT b){
+ ITER i;
  if(a > mat->d1 || b > mat->d1)ASSERT_DIM_INVALID() 
-  cswap_inc(mat->d0,&(mat->data[a]),mat->d0,&(mat->data[b]),mat->d0);
+ for(i=0;i<mat->d2;i++)
+  cswap_inc(mat->d0,&(mat->data[a+ i*(mat->d0*mat->d1)]),mat->d0,&(mat->data[b+ i*(mat->d0*mat->d1)]),mat->d0);
 }
 /*** Finds MAX_ABS_VALUE_ELEMENT's index ***/
 UINT amax(MAT *src) { return amax_inc(src, 1); }
@@ -1061,27 +1072,39 @@ void omp_uscal(UINT size, CTYPE alpha, CTYPE *X, UINT incx) {
 
 /** column scaling **/
 void col_scal(DTYPE alpha, MAT *X, UINT idx) {
-  scal_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
+  ITER i;
+ for(i=0;i<X->d2;i++)
+  scal_inc(X->d0, alpha, &(X->data[X->d0 * idx + i*(X->d0*X->d1)]), 1);
 }
 
 void col_cscal(DTYPE alpha, CMAT *X, UINT idx) {
-  cscal_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
+  ITER i;
+ for(i=0;i<X->d2;i++)
+  cscal_inc(X->d0, alpha, &(X->data[X->d0 * idx + i*(X->d0*X->d1)]), 1);
 }
 
 void col_uscal(CTYPE alpha, CMAT *X, UINT idx) {
-  uscal_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
+  ITER i;
+ for(i=0;i<X->d2;i++)
+  uscal_inc(X->d0, alpha, &(X->data[X->d0 * idx + i*(X->d0*X->d1)]), 1);
 }
 /** row scaling **/
 void row_scal(DTYPE alpha, MAT *X, UINT idx) {
-  scal_inc(X->d1, alpha, &(X->data[idx]), X->d0);
+  ITER i;
+ for(i=0;i<X->d2;i++)
+  scal_inc(X->d1, alpha, &(X->data[idx + i*(X->d0*X->d1)]), X->d0);
 }
 
 void row_cscal(DTYPE alpha, CMAT *X, UINT idx) {
-  cscal_inc(X->d1, alpha, &(X->data[idx]), X->d0);
+  ITER i;
+ for(i=0;i<X->d2;i++)
+  cscal_inc(X->d1, alpha, &(X->data[idx + i*(X->d0*X->d1)]), X->d0);
 }
 
 void row_uscal(CTYPE alpha, CMAT *X, UINT idx) {
-  uscal_inc(X->d1, alpha, &(X->data[idx]), X->d0);
+  ITER i;
+ for(i=0;i<X->d2;i++)
+  uscal_inc(X->d1, alpha, &(X->data[idx + i*(X->d0*X->d1)]), X->d0);
 }
 /** real matrix + real number **/
 void add(DTYPE alpha, MAT *mat) {
@@ -1124,23 +1147,35 @@ void uadd_inc(UINT size, CTYPE alpha, CTYPE *X, UINT incx) {
 }
 /** column add **/
 void col_add(DTYPE alpha, MAT *X, UINT idx) {
-  add_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
+  ITER i;
+  for(i=0;i<X->d2; i++)
+  add_inc(X->d0, alpha, &(X->data[X->d0 * idx + i*(X->d0*X->d1)]), 1);
 }
 void col_cadd(DTYPE alpha, CMAT *X, UINT idx) {
-  cadd_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
+  ITER i;
+  for(i=0;i<X->d2; i++)
+  cadd_inc(X->d0, alpha, &(X->data[X->d0 * idx + i*(X->d0*X->d1)]), 1);
 }
 void col_uadd(CTYPE alpha, CMAT *X, UINT idx) {
-  uadd_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
+  ITER i;
+  for(i=0;i<X->d2; i++)
+  uadd_inc(X->d0, alpha, &(X->data[X->d0 * idx + i*(X->d0*X->d1)]), 1);
 }
 /** row add **/
 void row_add(DTYPE alpha, MAT *X, UINT idx) {
-  add_inc(X->d1, alpha, &(X->data[idx]), X->d0);
+  ITER i;
+  for(i=0;i<X->d2; i++)
+  add_inc(X->d1, alpha, &(X->data[idx + i*(X->d0*X->d1)]), X->d0);
 }
 void row_cadd(DTYPE alpha, CMAT *X, UINT idx) {
-  cadd_inc(X->d1, alpha, &(X->data[idx]), X->d0);
+  ITER i;
+  for(i=0;i<X->d2; i++)
+  cadd_inc(X->d1, alpha, &(X->data[idx + i*(X->d0*X->d1)]), X->d0);
 }
 void row_uadd(CTYPE alpha, CMAT *X, UINT idx) {
-  uadd_inc(X->d1, alpha, &(X->data[idx]), X->d0);
+  ITER i;
+  for(i=0;i<X->d2; i++)
+  uadd_inc(X->d1, alpha, &(X->data[idx + i*(X->d0*X->d1)]), X->d0);
 }
 
 /*** Computes the parameters for a Givens rotation. ***/
