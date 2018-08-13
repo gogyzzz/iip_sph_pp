@@ -141,29 +141,28 @@ void omp_caxpy(UINT N, CTYPE alpha, CTYPE *X, UINT INCX, CTYPE *Y, UINT INCY) {
  *  <?>acopy(integer N, DTYPE* X, intefer INCX, DTYPE* Y, integer INCY)
  * */
 void copy(MAT *src, MAT *des) {
+  ASSERT_DIM_EQUAL(src, des)
+  copy_inc(src->d0*src->d1*src->d2,src->data,1,des->data,1);
+}
+
+void copy_inc(UINT size, DTYPE *X, ITER incx, DTYPE *Y, ITER incy){
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  UINT mat_size = src->d0 * src->d1 * src->d2;
-  ASSERT_DIM_EQUAL(src, des)
 
-  if (mat_size == 0) {
-    printf("Wrong MAT size!\n");
-    return;
-  }
-
+  if (size== 0) ASSERT_DIM_INVALID()
 #if USE_CBLAS
 #if NTYPE == 0
-  cblas_scopy(mat_size, src->data, 1, des->data, 1);
-
+  cblas_scopy(size, X, incx, Y, incy);
 #elif NTYPE == 1
-  cblas_dcopy(mat_size, src->data, 1, des->data, 1);
+  cblas_dcopy(size, X, incx, Y, incy);
 #endif
 
 // USE_BLAS = 0 -> just c implement
 #else
-  omp_copy(mat_size, src->data, 1, des->data, 1);
+  omp_copy(size, X, incx, Y, incy);
 #endif
+
 }
 
 void omp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
@@ -200,33 +199,29 @@ void omp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
 }
 
 void ccopy(CMAT *src, CMAT *des) {
+  ASSERT_DIM_EQUAL(src, des)
+  copy_inc(src->d0*src->d1*src->d2,src->data,1,des->data,1);
+}
+
+void ccopy_inc(UINT size, CTYPE *X, ITER incx, CTYPE *Y, ITER incy){
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  UINT mat_size = src->d0 * src->d1 * src->d2;
-  ASSERT_DIM_EQUAL(src, des)
 
-  if (mat_size == 0) {
-    printf("Wrong MAT size!\n");
-    return;
-  }
-
+  if (size== 0) ASSERT_DIM_INVALID()
 #if USE_CBLAS
-// DTYPE = float
 #if NTYPE == 0
-  cblas_ccopy(mat_size, src->data, 1, des->data, 1);
-
-// DTYPE = double
+  cblas_ccopy(size, X, incx, Y, incy);
 #elif NTYPE == 1
-  cblas_zcopy(mat_size, src->data, 1, des->data, 1);
+  cblas_zcopy(size, X, incx, Y, incy);
 #endif
 
 // USE_BLAS = 0 -> just c implement
 #else
-  omp_ccopy(mat_size, src->data, 1, des->data, 1);
+  omp_ccopy(size, X, incx, Y, incy);
 #endif
-}
 
+}
 void omp_ccopy(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc) {
   ITER i;
 #pragma omp parallel for shared(des, src) private(i)
