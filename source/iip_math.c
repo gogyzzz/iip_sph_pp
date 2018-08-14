@@ -136,8 +136,7 @@ void cpow_cmat_inc(UINT size, CTYPE* X, CTYPE n, ITER incx) {
     *(complex float*)(&X[i]) =
         cpowf(*(complex float*)(&X[i]), *(complex float*)(&n));
 #elif NTYPE == 1
-    *(complex double*)(&X[i]) =
-        cpow(*(complex double*)(&X[i]), *(complex double*)(&n));
+    *(complex double*)(&X[i]) = cpow(*(complex double*)(&X[i]), *(complex double*)(&n));
 
 #endif
 #endif

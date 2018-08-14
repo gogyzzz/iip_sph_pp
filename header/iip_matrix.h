@@ -27,7 +27,7 @@
  *
  * + in {func}_inc
  * size : how many elements?
- * increment(inc) : interval of array
+ * increment(inc) : interval of array index
  * ex)
  * MAT A(4,3)
  * {func}_inc(UINT size,DTYPE*X,ITER incx)
@@ -254,6 +254,12 @@ void cinv_elements_inc(UINT size, CTYPE* X, ITER incx);
  * ==> A(4,6,6)
  *
  * ****/
+/*
+ *  4 X 3
+ *  DIM(2,3,1)
+ *  8 X 9 X 1
+ *  
+ * */
 void repmat(MAT* mat, DIM* dim);
 void crepmat(CMAT* mat, DIM* dim);
 
@@ -266,7 +272,7 @@ void crepmat(CMAT* mat, DIM* dim);
  * => A(12,2,1)
  * *
  * !!) this operation is not equal to permute
- * *******************/
+ * *********************************************/
 void reshape(MAT* mat, DIM* dim);
 void creshape(CMAT* mat, DIM* dim);
 

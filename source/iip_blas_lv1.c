@@ -285,10 +285,7 @@ DTYPE asum(MAT *mat, UINT inc) {
 
 // DTYPE = double
 #elif NTYPE == 1
-  printf("cblas\n");
-  printf("%u %u\n",mat_size,inc);
   cblas_dasum(mat_size, mat->data, inc);
-  printf("EXIT asum\n");
   return 1;
 #endif
 
