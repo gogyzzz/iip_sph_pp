@@ -141,29 +141,28 @@ void omp_caxpy(UINT N, CTYPE alpha, CTYPE *X, UINT INCX, CTYPE *Y, UINT INCY) {
  *  <?>acopy(integer N, DTYPE* X, intefer INCX, DTYPE* Y, integer INCY)
  * */
 void copy(MAT *src, MAT *des) {
+  ASSERT_DIM_EQUAL(src, des)
+  copy_inc(src->d0*src->d1*src->d2,src->data,1,des->data,1);
+}
+
+void copy_inc(UINT size, DTYPE *X, ITER incx, DTYPE *Y, ITER incy){
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  UINT mat_size = src->d0 * src->d1 * src->d2;
-  ASSERT_DIM_EQUAL(src, des)
 
-  if (mat_size == 0) {
-    printf("Wrong MAT size!\n");
-    return;
-  }
-
+  if (size== 0) ASSERT_DIM_INVALID()
 #if USE_CBLAS
 #if NTYPE == 0
-  cblas_scopy(mat_size, src->data, 1, des->data, 1);
-
+  cblas_scopy(size, X, incx, Y, incy);
 #elif NTYPE == 1
-  cblas_dcopy(mat_size, src->data, 1, des->data, 1);
+  cblas_dcopy(size, X, incx, Y, incy);
 #endif
 
 // USE_BLAS = 0 -> just c implement
 #else
-  omp_copy(mat_size, src->data, 1, des->data, 1);
+  omp_copy(size, X, incx, Y, incy);
 #endif
+
 }
 
 void omp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
@@ -200,33 +199,29 @@ void omp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
 }
 
 void ccopy(CMAT *src, CMAT *des) {
+  ASSERT_DIM_EQUAL(src, des)
+  copy_inc(src->d0*src->d1*src->d2,src->data,1,des->data,1);
+}
+
+void ccopy_inc(UINT size, CTYPE *X, ITER incx, CTYPE *Y, ITER incy){
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  UINT mat_size = src->d0 * src->d1 * src->d2;
-  ASSERT_DIM_EQUAL(src, des)
 
-  if (mat_size == 0) {
-    printf("Wrong MAT size!\n");
-    return;
-  }
-
+  if (size== 0) ASSERT_DIM_INVALID()
 #if USE_CBLAS
-// DTYPE = float
 #if NTYPE == 0
-  cblas_ccopy(mat_size, src->data, 1, des->data, 1);
-
-// DTYPE = double
+  cblas_ccopy(size, X, incx, Y, incy);
 #elif NTYPE == 1
-  cblas_zcopy(mat_size, src->data, 1, des->data, 1);
+  cblas_zcopy(size, X, incx, Y, incy);
 #endif
 
 // USE_BLAS = 0 -> just c implement
 #else
-  omp_ccopy(mat_size, src->data, 1, des->data, 1);
+  omp_ccopy(size, X, incx, Y, incy);
 #endif
-}
 
+}
 void omp_ccopy(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc) {
   ITER i;
 #pragma omp parallel for shared(des, src) private(i)
@@ -268,6 +263,9 @@ void omp_ccopy(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc) {
   */
 }
 
+/* get sum of every element in matrix */
+
+
 /*** Get sum of the magnitudes of elements of a vector ***/
 DTYPE asum(MAT *mat, UINT inc) {
 #if DEBUG
@@ -287,7 +285,11 @@ DTYPE asum(MAT *mat, UINT inc) {
 
 // DTYPE = double
 #elif NTYPE == 1
-  return cblas_dasum(mat_size, mat->data, inc);
+  printf("cblas\n");
+  printf("%u %u\n",mat_size,inc);
+  cblas_dasum(mat_size, mat->data, inc);
+  printf("EXIT asum\n");
+  return 1;
 #endif
 
 // USE_BLAS = 0 -> just c implement
@@ -489,36 +491,38 @@ CTYPE omp_udot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
 }
 
 /*** Swaps vector ***/
-void swap(MAT *src_x, MAT *src_y) { swap_inc(src_x, 1, src_y, 1); }
-void swap_inc(MAT *src_x, UINT x_inc, MAT *src_y, UINT y_inc) {
+void swap(MAT *src_x, MAT *src_y){
+
+  ASSERT_DIM_EQUAL(src_x, src_y)
+  
+  swap_inc(src_x->d0*src_x->d1*src_x->d2,src_x->data, 1, src_y->data, 1);
+}
+
+void swap_inc(UINT N,DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
-  ASSERT_DIM_EQUAL(src_x, src_y)
 
-  if (mat_size == 0) {
-    printf("Wrong MAT size!\n");
-    return;
-  }
+  if(N == 0)ASSERT_ARG_INVALID()
 
 #if USE_CBLAS
 // DTYPE = float
 #if NTYPE == 0
-  cblas_sswap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
+  cblas_sswap(N, src_x, x_inc, src_y, y_inc);
   return;
 
 // DTYPE = double
 #elif NTYPE == 1
-  cblas_dswap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
+  cblas_dswap(N, src_x, x_inc, src_y, y_inc);
   return;
 #endif
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return omp_swap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
+  return omp_swap(N, src_x, x_inc, src_y, y_inc);
 #endif
 }
+
 void omp_swap(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
   ITER i = 0;
   DTYPE temp = 0;
@@ -531,36 +535,37 @@ void omp_swap(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
   }
 }
 
-void cswap(CMAT *src_x, CMAT *src_y) { cswap_inc(src_x, 1, src_y, 1); }
-void cswap_inc(CMAT *src_x, UINT x_inc, CMAT *src_y, UINT y_inc) {
+void cswap(CMAT *src_x, CMAT *src_y) {
+  ASSERT_DIM_EQUAL(src_x, src_y)
+  cswap_inc(src_x->d0*src_x->d1*src_x->d2,src_x->data, 1, src_y->data, 1);
+
+}
+
+void cswap_inc(UINT N,CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
-  ASSERT_DIM_EQUAL(src_x, src_y)
 
-  if (mat_size == 0) {
-    printf("Wrong MAT size!\n");
-    return;
-  }
+  if (N == 0)ASSERT_ARG_INVALID()
 
 #if USE_CBLAS
 // DTYPE = float
 #if NTYPE == 0
-  cblas_cswap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
+  cblas_cswap(N, src_x, x_inc, src_y, y_inc);
   return;
 
 // DTYPE = double
 #elif NTYPE == 1
-  cblas_zswap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
+  cblas_zswap(N, src_x, x_inc, src_y, y_inc);
   return;
 #endif
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return omp_cswap(mat_size, src_x->data, x_inc, src_y->data, y_inc);
+  return omp_cswap(N, src_x, x_inc, src_y, y_inc);
 #endif
 }
+
 void omp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
   ITER i = 0;
   CTYPE temp = {0, 0};
@@ -576,6 +581,35 @@ void omp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
   }
 }
 
+/* column swap */
+void col_swap(MAT*mat, UINT a,UINT b){
+ ITER i;
+ if(a > mat->d1 || b > mat->d1)ASSERT_DIM_INVALID() 
+ for(i=0;i<mat->d2;i++)
+  swap_inc(mat->d0,&(mat->data[mat->d0*a+ i*(mat->d0*mat->d1)]),1,&(mat->data[mat->d0*b+ i*(mat->d0*mat->d1)]),1);
+}
+
+void col_cswap(CMAT*mat, UINT a,UINT b){
+ ITER i;
+if(a > mat->d1 || b > mat->d1)ASSERT_DIM_INVALID() 
+ for(i=0;i<mat->d2;i++)
+  cswap_inc(mat->d0,&(mat->data[mat->d0*a+ i*(mat->d0*mat->d1)]),1,&(mat->data[mat->d0*b+ i*(mat->d0*mat->d1)]),1);
+}
+
+/* row swap */
+void row_swap(MAT*mat, UINT a,UINT b){
+ ITER i;
+  if(a > mat->d0 || b > mat->d0)ASSERT_DIM_INVALID() 
+ for(i=0;i<mat->d2;i++)
+  swap_inc(mat->d1,&(mat->data[a + i*(mat->d0*mat->d1) ]),mat->d0,&(mat->data[b + i*(mat->d0*mat->d1)]),mat->d0);
+}
+
+void row_cswap(CMAT*mat, UINT a,UINT b){
+ ITER i;
+ if(a > mat->d1 || b > mat->d1)ASSERT_DIM_INVALID() 
+ for(i=0;i<mat->d2;i++)
+  cswap_inc(mat->d0,&(mat->data[a+ i*(mat->d0*mat->d1)]),mat->d0,&(mat->data[b+ i*(mat->d0*mat->d1)]),mat->d0);
+}
 /*** Finds MAX_ABS_VALUE_ELEMENT's index ***/
 UINT amax(MAT *src) { return amax_inc(src, 1); }
 UINT amax_inc(MAT *src, UINT inc) {
@@ -1038,27 +1072,39 @@ void omp_uscal(UINT size, CTYPE alpha, CTYPE *X, UINT incx) {
 
 /** column scaling **/
 void col_scal(DTYPE alpha, MAT *X, UINT idx) {
-  scal_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
+  ITER i;
+ for(i=0;i<X->d2;i++)
+  scal_inc(X->d0, alpha, &(X->data[X->d0 * idx + i*(X->d0*X->d1)]), 1);
 }
 
 void col_cscal(DTYPE alpha, CMAT *X, UINT idx) {
-  cscal_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
+  ITER i;
+ for(i=0;i<X->d2;i++)
+  cscal_inc(X->d0, alpha, &(X->data[X->d0 * idx + i*(X->d0*X->d1)]), 1);
 }
 
 void col_uscal(CTYPE alpha, CMAT *X, UINT idx) {
-  uscal_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
+  ITER i;
+ for(i=0;i<X->d2;i++)
+  uscal_inc(X->d0, alpha, &(X->data[X->d0 * idx + i*(X->d0*X->d1)]), 1);
 }
 /** row scaling **/
 void row_scal(DTYPE alpha, MAT *X, UINT idx) {
-  scal_inc(X->d1, alpha, &(X->data[idx]), X->d0);
+  ITER i;
+ for(i=0;i<X->d2;i++)
+  scal_inc(X->d1, alpha, &(X->data[idx + i*(X->d0*X->d1)]), X->d0);
 }
 
 void row_cscal(DTYPE alpha, CMAT *X, UINT idx) {
-  cscal_inc(X->d1, alpha, &(X->data[idx]), X->d0);
+  ITER i;
+ for(i=0;i<X->d2;i++)
+  cscal_inc(X->d1, alpha, &(X->data[idx + i*(X->d0*X->d1)]), X->d0);
 }
 
 void row_uscal(CTYPE alpha, CMAT *X, UINT idx) {
-  uscal_inc(X->d1, alpha, &(X->data[idx]), X->d0);
+  ITER i;
+ for(i=0;i<X->d2;i++)
+  uscal_inc(X->d1, alpha, &(X->data[idx + i*(X->d0*X->d1)]), X->d0);
 }
 /** real matrix + real number **/
 void add(DTYPE alpha, MAT *mat) {
@@ -1101,23 +1147,35 @@ void uadd_inc(UINT size, CTYPE alpha, CTYPE *X, UINT incx) {
 }
 /** column add **/
 void col_add(DTYPE alpha, MAT *X, UINT idx) {
-  add_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
+  ITER i;
+  for(i=0;i<X->d2; i++)
+  add_inc(X->d0, alpha, &(X->data[X->d0 * idx + i*(X->d0*X->d1)]), 1);
 }
 void col_cadd(DTYPE alpha, CMAT *X, UINT idx) {
-  cadd_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
+  ITER i;
+  for(i=0;i<X->d2; i++)
+  cadd_inc(X->d0, alpha, &(X->data[X->d0 * idx + i*(X->d0*X->d1)]), 1);
 }
 void col_uadd(CTYPE alpha, CMAT *X, UINT idx) {
-  uadd_inc(X->d0, alpha, &(X->data[X->d0 * idx]), 1);
+  ITER i;
+  for(i=0;i<X->d2; i++)
+  uadd_inc(X->d0, alpha, &(X->data[X->d0 * idx + i*(X->d0*X->d1)]), 1);
 }
 /** row add **/
 void row_add(DTYPE alpha, MAT *X, UINT idx) {
-  add_inc(X->d1, alpha, &(X->data[idx]), X->d0);
+  ITER i;
+  for(i=0;i<X->d2; i++)
+  add_inc(X->d1, alpha, &(X->data[idx + i*(X->d0*X->d1)]), X->d0);
 }
 void row_cadd(DTYPE alpha, CMAT *X, UINT idx) {
-  cadd_inc(X->d1, alpha, &(X->data[idx]), X->d0);
+  ITER i;
+  for(i=0;i<X->d2; i++)
+  cadd_inc(X->d1, alpha, &(X->data[idx + i*(X->d0*X->d1)]), X->d0);
 }
 void row_uadd(CTYPE alpha, CMAT *X, UINT idx) {
-  uadd_inc(X->d1, alpha, &(X->data[idx]), X->d0);
+  ITER i;
+  for(i=0;i<X->d2; i++)
+  uadd_inc(X->d1, alpha, &(X->data[idx + i*(X->d0*X->d1)]), X->d0);
 }
 
 /*** Computes the parameters for a Givens rotation. ***/

@@ -15,7 +15,7 @@ C library for speech preprocessing.
 
 ## Notaion
 * Set Options of CMAKE properly for you Envrionment
-* We don't provide backend library, we assume you Environment contains backend library
+* We don't provide backend library, we assume your Environment contains backend library
 * If you want to use memory pool, you need to call 
 ```C
 init(); //begining of your main()
