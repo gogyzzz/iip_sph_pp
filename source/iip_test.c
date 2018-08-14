@@ -350,6 +350,8 @@ void test_verification(int heat, int print_flag, int compare){
       total += stopwatch(1);
       result = pC_;
 
+      read_broad_ans(is_ctype, 0, func_list[i].name, ans_path, ans_A, ans_cA, &pAns);
+
       // not implemented yet
       continue;
     }
@@ -376,6 +378,7 @@ void test_verification(int heat, int print_flag, int compare){
     }
     // not using - repmat, reshape...
     else{
+      printf(" passing function [%s]\n", func_list[i].name);
       // do nothing
       continue;
     }
@@ -406,6 +409,14 @@ void test_verification(int heat, int print_flag, int compare){
         printf(" Done.\n");
       }
     }
+  }
+
+  if(print_flag)
+    printf("\n *** Broad Cast Function ***\n");
+  
+  ans_path;
+  for(i = 0; i<9; i++){
+
   }
 
   if(print_flag)
@@ -689,7 +700,9 @@ void test_performance(int heat, int print_flag){
     }
     // not using - repmat, reshape...
     else{
+      printf(" passing function [%s]\n", func_list[i].name);
       // do nothing
+      continue;
     }
 
     // print result
@@ -950,6 +963,26 @@ void read_ans(int is_ctype, char *func_name, char *ans_name, void *data_d, void 
   }
   else if(is_ctype == 1){
     append_post(ans_ctype, func_name, ans_name);
+    read_cmat(ans_name, data_c);
+    *result_mat = data_c;
+  }
+}
+
+
+void read_broad_ans(int is_ctype, int param_type, char *func_name, char *ans_name, void *data_d, void *data_c, void **result_mat){
+  char ans_broad[16] = "Broadcast_.bin";
+
+  char num[3] = "0";
+
+  sprintf(num, "%d", param_type);
+  append_post(ans_broad, num, ans_name);
+  append_post(ans_name, func_name, ans_name);
+
+  if(is_ctype == 0){
+    read_mat(ans_name, data_d);
+    *result_mat = data_d;
+  }
+  else if(is_ctype == 1){
     read_cmat(ans_name, data_c);
     *result_mat = data_c;
   }
