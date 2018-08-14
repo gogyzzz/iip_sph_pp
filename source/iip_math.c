@@ -829,7 +829,7 @@ DTYPE amin_cmat(CMAT* mat, DIM* dim) {
 }
 
 /**** accumulated sum ****/
-void asum_mat(MAT*src, MAT*des, UINT axis){
+void sum_mat(MAT*src, MAT*des, UINT axis){
 ITER i,j,k;
 DTYPE temp;
 UINT d0,d1,d2;
@@ -873,7 +873,7 @@ d2 = src->d2;
   else ASSERT_ARG_INVALID()
 }
 
-void asum_cmat(CMAT*src, CMAT*des, UINT axis){
+void sum_cmat(CMAT*src, CMAT*des, UINT axis){
 ITER i,j,k;
 CTYPE temp;
 UINT d0,d1,d2;
