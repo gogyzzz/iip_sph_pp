@@ -211,7 +211,7 @@ _2,_1
 #define CXEMUL(Y, A, B)                       \
   {                                           \
     Y.re = (A.re) * (B.re) - (A.im) * (B.im); \
-    Y.im = (A.re) * (B.im) + (A.im) + (B.re); \
+    Y.im = (A.re) * (B.im) + (A.im) * (B.re); \
   }
 
 // Y = A/B

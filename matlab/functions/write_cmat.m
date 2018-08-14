@@ -1,3 +1,11 @@
+%{
+Create binary FILE named 'filename'
+with complex MATRIX 'mat'
+ex)
+A = [1 + 2i, 3+ 4i; 5+ 6i, 7+8i;]
+file data sequence 
+: 1 2 5 6 3 4 7 8
+%}
 function write_cmat(filename,mat)
 mat_real = real(mat);
 mat_imag = imag(mat);

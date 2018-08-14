@@ -1,13 +1,16 @@
+%{
+Read binary file with specific formatted name
+d_<first dimension>_<second dimension>_<third dimension>.bin
+read file into y with given dimension
+%}
 function y = read_cmat(f)
-%READ_CMAT_WIP Summary of this function goes here
-%   Detailed explanation goes here
 
 if exist(f,'file') 
     bin = fopen(f,'r');
     msg = f;
     msg = strcat(msg,' : reading');
     disp(msg);
-      
+      [t,f] =strtok(f,'/');
     [t,f] =strtok(f,'/');
     f = strtok(f,'/');
     c = strtok(f,'.');

@@ -1,59 +1,27 @@
 cmake_minimum_required(VERSION 3.5)
 project(iip_sph_pp)
 
+set(TARGET_NAME ${PROJECT_NAME})
+
 #### BUILD ENVIRONMENT OPTIONS ######
 
 option(USE_CUDA    "Using CUDA"      OFF)
-option(USE_BLAS    "Using BLAS"      ON)
+option(USE_BLAS    "Using BLAS"      OFF)
 option(USE_OPENMP  "Using OpenMP"    ON)
 
-### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 #SET your sources here
 # EXAMPLE : set(MAIN_SRC YOUR_SRC1 folder1/YOUR_SRC2 folder2/YOUR_SRC3 )
 #INCLUDE your headers here
 # EXAMPLE : include_directories(${CMAKE_CURRENT_SOURCE_DIR}/YOUR_HEADER_FOLDER)
 
-#set(MAIN_SRC test/test_matrix.c)
-#set(MAIN_SRC test/test_matrix_2.c)
-#set(MAIN_SRC test/test_wav.c)
-#set(MAIN_SRC test/test_blas_lv1.c)
-#set(MAIN_SRC test/test_blas_lv2.c)
-#set(MAIN_SRC test/test_blas_lv3.c)
-#set(MAIN_SRC test/test_memory.c)
-#set(MAIN_SRC test/test_aABpbC.c)
-#set(MAIN_SRC test/test_broad.c)
-#set(MAIN_SRC test/test_broad_matmul.c)
-#set(MAIN_SRC test/test_dia_tr.c)
-#set(MAIN_SRC test/test_invert.c)
-#set(MAIN_SRC test/test_cinvert.c)
-#set(MAIN_SRC test/test_dim.c)
+### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
+
 set(MAIN_SRC test/test_matlab.c)
-#set(MAIN_SRC test/test_combine.c)
-#set(MAIN_SRC test/test_permute.c)
-#set(MAIN_SRC test/test_bin.c)
-#set(MAIN_SRC test/test_invelem.c)
-#set(MAIN_SRC test/test_invers.c)
-#set(MAIN_SRC test/test_row_col.c)
-#set(MAIN_SRC test/test_rand.c)
-#set(MAIN_SRC test/test_math.c)
-#set(MAIN_SRC test/test_trans.c)
-#set(MAIN_SRC test/openBLAS_with_openMP.c)
-#set(MAIN_SRC test/test_blas_lv2_big.c)
+#set(MAIN_SRC test/chunk.c)
 
 ### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 
 set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
-
-if(WIN32 AND MSVC)
-  # No /O3 in VS2013 (higher, too)?
-  # /O2 - fastest code in the majority of cases
-  # /MP - compiled in mult-process : faster build time
-  list(APPEND  CMAKE_C_FLAGS " /O2 /MP ")
-else()
-  # list(APPEND CMAKE_C_FLAGS "-g -O3 -Wall -Wextra ") : Wall is too much for now
-  list(APPEND CMAKE_C_FLAGS " -g -O3 -Wextra ")
-endif()
-
 
 if(USE_CUDA)
     find_package(CUDA)
@@ -97,19 +65,23 @@ endif()
 if(USE_OPENMP)
 # Not going to use omp.h so, just linker option is required.   
 
-#   find_package(OpenMP)
-#   if(NOT(OpenMP_FOUND))
-#	    message(SEND_ERROR "USE_OPENMP is set ON but OpenMP not found")
-#	    set(USE_OPENMP OFF)
-#   else()
-#	  message(STATUS "OpenMP found")
+   find_package(OpenMP)
+   if(NOT(OpenMP_FOUND))
+	    message(SEND_ERROR "USE_OPENMP is set ON but OpenMP not found")
+	    set(USE_OPENMP OFF)
+   else()
+	  message(STATUS "OpenMP found")
+   endif()
 
-	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS})
+   set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS})
+    set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_C_FLAGS})
 	if(MSVC)
 	    # Visual Studio uses '/' for compile option
 	    # CMAKE sets -openmp option for OpenMP_FLAGS
     string(REPLACE "-openmp" " /openmp" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+    string(REPLACE "-openmp" " /openmp" CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 	endif(MSVC)
+    add_definitions(-DUSE_OMP=1)
 endif()
 
 message(STATUS "USE_CUDA   : " ${USE_CUDA})
@@ -154,29 +126,29 @@ set(C_SOURCE
     source/iip_invert.c
     source/iip_test.c
     )
-display_elements("Source files for C build" "${C_SOURCE}")
+  display_elements("MAIN SOURCE" "${MAIN_SRC}")
+  display_elements("LIBRARY SOURCE" "${C_SOURCE}")
 
+add_executable(${TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
+
+target_include_directories(${TARGET_NAME}
+	PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}/header)
+
+if(NOT MSVC) 
+  #include <math.h> 
+  target_link_libraries(${TARGET_NAME}
+	m
+  )
+endif(NOT MSVC)
+	
 if(USE_OPEN OR USE_MKL )
-    set(BLAS_TARGET_NAME "${PROJECT_NAME}_blas")
 
-    # if you set multiple "add_Executable"
-    # It works well in linux. But, in Windows.. it doesnt't work well.
-    add_executable(${BLAS_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
-
-    if(USE_OPEN)
+ if(USE_OPEN)
 	message(STATUS ${BLAS_LIBRARIES})
-  if(NOT MSVC) 
-    #include <math.h> 
-    target_link_libraries(${BLAS_TARGET_NAME}
-  	m
-    )
-  endif(NOT MSVC)
-	target_link_libraries(${BLAS_TARGET_NAME}
+  target_link_libraries(${TARGET_NAME}
 	    openblas)
-	target_include_directories(${BLAS_TARGET_NAME}
-	    PUBLIC
-	    ${CMAKE_CURRENT_SOURCE_DIR}/header)
-	target_compile_definitions(${BLAS_TARGET_NAME}
+    target_compile_definitions(${TARGET_NAME}
 	    PRIVATE
 	    USE_OPEN=1
 	    USE_CBLAS=1)
@@ -214,38 +186,14 @@ if(USE_OPEN OR USE_MKL )
 	#		${MKL_PATH})
 	endif()	
 	
-	target_compile_definitions(${BLAS_TARGET_NAME}
+  target_compile_definitions(${TARGET_NAME}
 	    PRIVATE
 	    USE_MKL=1)
 		
     endif()
-elseif(USE_OPENMP)
-    set(OPENMP_TARGET_NAME "${PROJECT_NAME}_openmp")
-    add_definitions(-DUSE_OMP=1)
-	  add_executable(${OPENMP_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})	
-    target_link_libraries(${OPENMP_TARGET_NAME} )
-
-  #  set_target_properties(${OPENMP_TARGET_NAME}
-  #  PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}"
-  if(NOT MSVC)  
-    target_link_libraries(${OPENMP_TARGET_NAME}
-	m)
-  endif(NOT MSVC)
-  target_include_directories(${OPENMP_TARGET_NAME}
-	PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/header)
-  
-#Fully native C
-else()
-	set(NATIVE_TARGET_NAME "${PROJECT_NAME}_native")
-	add_executable(${NATIVE_TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})	
-  If(UNIX)
-    target_link_libraries(${NATIVE_TARGET_NAME} m)
-  endif(UNIX)
-	target_include_directories(${NATIVE_TARGET_NAME}
-	PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/header)
 endif()
+
+
 
 ##### CUDA part is not complete ####
 if(USE_CUDA)
@@ -286,7 +234,21 @@ if(WIN32)
   string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
 endif(WIN32)
 
-message(STATUS "CMAKE_C_FLAGS : " ${CMAKE_C_FLAGS})	
-message(STATUS "CMAKE_EXE_LINKER_FLAGS : " ${CMAKE_EXE_LINKER_FLAGS})
+if(WIN32 AND MSVC)
+  # No /O3 in VS2013 (higher, too)?
+  # /O2 - fastest code in the majority of cases
+  # /MP - compiled in mult-process : faster build time
+  list(APPEND  CMAKE_C_FLAGS " /O2 /MP ")
+else()
+  # list(APPEND CMAKE_C_FLAGS "-g -O3 -Wall -Wextra ") : Wall is too much for now
+     target_compile_options(${TARGET_NAME}
+     PRIVATE
+      -g
+      -O3
+      -Wextra
+      )
+endif()
+
 message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
+
 
