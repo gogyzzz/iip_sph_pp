@@ -40,5 +40,6 @@ void test_viewlist();
 
 /*char* operation : out = filename_post*/
 void append_post(char* filename, const char* post, char* out);
+void read_ans(int is_ctype, char *func_name, char *ans_name, void *data_d, void *data_c, void **result_mat);
 
 #endif
