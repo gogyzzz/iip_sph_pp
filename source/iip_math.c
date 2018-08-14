@@ -828,6 +828,99 @@ DTYPE amin_cmat(CMAT* mat, DIM* dim) {
   return min;
 }
 
+/**** accumulated sum ****/
+void asum_mat(MAT*src, MAT*des, UINT axis){
+ITER i,j,k;
+DTYPE temp;
+UINT d0,d1,d2;
+#if DEBUG
+  printf("%s\n", __func__);
+#endif
+if(src->d2 != des->d2) ASSERT_DIM_INVALID()
+d0 = src->d0;
+d1 = src->d1;
+d2 = src->d2;
+  if(axis == 0){ // d0 d1 d2 -> d0 1 d2
+    if(d0 != des->d0) ASSERT_DIM_INVALID()
+    if(des->d1 != 1) ASSERT_DIM_INVALID()
+  
+    for(k=0;k<d2;k++){
+#pragma omp parallel for shared(des) private(i,j,temp)
+      for(j=0;j<d0;j++){
+        temp = 0;
+        for(i=0;i<d1;i++){
+          temp += src->data[k*d0*d1 + i*d0 + j];
+        }  
+        des->data[k*d0*d1 + j] = temp;
+      }
+    }
+
+  }else if(axis == 1){ // d0 d1 d2 -> 1 d1 d2
+    if(des->d0 != 1) ASSERT_DIM_INVALID()
+    if(d1 != des->d1) ASSERT_DIM_INVALID()
+    
+    for(k=0;k<d2;k++){
+#pragma omp parallel for shared(des) private(i,j,temp)
+      for(j=0;j<d1;j++){
+        temp = 0;
+        for(i=0;i<d0;i++){
+          temp += src->data[k*d0*d1 + j*d0 + i];
+        }  
+        des->data[k*d0*d1 + j] = temp;
+      }
+    } 
+  }
+  else ASSERT_ARG_INVALID()
+}
+
+void asum_cmat(CMAT*src, CMAT*des, UINT axis){
+ITER i,j,k;
+CTYPE temp;
+UINT d0,d1,d2;
+#if DEBUG
+  printf("%s\n", __func__);
+#endif
+if(src->d2 != des->d2) ASSERT_DIM_INVALID()
+d0 = src->d0;
+d1 = src->d1;
+d2 = src->d2;
+  if(axis == 0){ // d0 d1 d2 -> d0 1 d2
+    if(d0 != des->d0) ASSERT_DIM_INVALID()
+    if(des->d1 != 1) ASSERT_DIM_INVALID()
+  
+    for(k=0;k<d2;k++){
+#pragma omp parallel for shared(des) private(i,j,temp)
+      for(j=0;j<d0;j++){
+        temp.re = 0;
+        temp.im = 0;
+        for(i=0;i<d1;i++){
+          temp.re += src->data[k*d0*d1 + i*d0 + j].re;
+          temp.im += src->data[k*d0*d1 + i*d0 + j].im;
+        }  
+        des->data[k*d0*d1 + j] = temp;
+      }
+    }
+
+  }else if(axis == 1){ // d0 d1 d2 -> 1 d1 d2
+    if(des->d0 != 1) ASSERT_DIM_INVALID()
+    if(d1 != des->d1) ASSERT_DIM_INVALID()
+    
+    for(k=0;k<d2;k++){
+#pragma omp parallel for shared(des) private(i,j,temp)
+      for(j=0;j<d1;j++){
+        temp.re = 0;
+        temp.im = 0;
+        for(i=0;i<d0;i++){
+          temp.re += src->data[k*d0*d1 + j*d0 + i].re;
+          temp.im += src->data[k*d0*d1 + j*d0 + i].im;
+        }  
+        des->data[k*d0*d1 + j] = temp;
+      }
+    } 
+  }
+  else ASSERT_ARG_INVALID()
+}
+
 /**** misc****/
 CTYPE CX(DTYPE r, DTYPE i) {
   CTYPE t;

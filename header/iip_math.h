@@ -145,6 +145,10 @@ CTYPE min_cmat(CMAT* mat, DIM* dim);
 DTYPE amin_mat(MAT* mat, DIM* dim);
 DTYPE amin_cmat(CMAT* mat, DIM* dim);
 
+/**** accumulated sum ****/
+void asum_mat(MAT*src, MAT*des, UINT axis);
+void asum_cmat(CMAT*src, CMAT*des, UINT axis);
+
 /**** return complex type : r + ii ****/
 CTYPE CX(DTYPE r, DTYPE i);
 #endif
