@@ -46,22 +46,6 @@ UINT compare_cmat(CMAT *A, CMAT *B) {
   return 1;
 }
 
-// void perform_test() {
-//   FILE *f;
-//   char cur[MAX_CHAR];
-//   f = NULL;
-//   f = fopen("../test/test.txt", "r");
-//   ASSERT_FILE(f, "../test/test.txt")
-//   while (fscanf(f, "%s\n", cur) != EOF)
-//   // while(fgets(cur,MAX_CHAR,f) != EOF)
-//   {
-//     printf("== %s == \n", cur);
-//     //do_test(cur);
-//   }
-
-//   fclose(f);
-// }
-
 void append_post(char *filename, const char *post, char *out) {
   char t[MAX_CHAR] = "../test_data/";
 
@@ -84,6 +68,7 @@ void test_verification(int heat, int print_flag){
   int is_ctype = 0;     // 0 for DTYPE, 1 for CTYPE
   int i = 0, calced = 0;
   long long total;
+  char ans_path[256];
 
   if(!is_init)
     init_list();
@@ -96,21 +81,19 @@ void test_verification(int heat, int print_flag){
   MAT *A_diagonal, *A_trace, *A_mul;
   MAT *B_mul;
   MAT *C_mul;
-  MAT *result;
 
   CMAT *cA, *cB, *cC;
   CMAT *cA_, *cB_, *cC_;
   CMAT *cA_diagonal, *cA_trace, *cA_mul;
   CMAT *cB_mul;
   CMAT *cC_mul;
-  CMAT *cresult;
   
-  void *pA_, *pB_, *pC_, *pA_diagonal, *pA_trace, *pA_mul, *pB_mul, *pC_mul;
+  void *pA_, *pB_, *pC_, *pA_diagonal, *pA_trace, *pA_mul, *pB_mul, *pC_mul, *result;
 
   /*** Answer Data ***/
-  MAT *ans_A;
-
-  CMAT *ans_cA;
+  MAT *ans_A = NULL, *ans_mul = NULL, *ans_diagonal = NULL, *ans_trace = NULL;
+  CMAT *ans_cA = NULL, *ans_cmul = NULL, *ans_cdiagonal = NULL, *ans_ctrace = NULL;
+  void *pAns = NULL;
 
   int mat_size = 4, mat_batch = 2;
 
@@ -122,6 +105,7 @@ void test_verification(int heat, int print_flag){
   B_ = zeros(mat_size, mat_size, mat_batch);
   C = zeros(mat_size, mat_size, mat_batch);
   C_ = zeros(mat_size, mat_size, mat_batch);
+  ans_A = zeros(mat_size, mat_size, mat_batch);
 
   cA = czeros(mat_size, mat_size, mat_batch);
   cA_ = czeros(mat_size, mat_size, mat_batch);
@@ -129,6 +113,7 @@ void test_verification(int heat, int print_flag){
   cB_ = czeros(mat_size, mat_size, mat_batch);
   cC = czeros(mat_size, mat_size, mat_batch);
   cC_ = czeros(mat_size, mat_size, mat_batch);
+  ans_cA = czeros(mat_size, mat_size, mat_batch);
 
   //set A
   read_mat("../test_data/d_4_4_2.bin", A);
@@ -148,21 +133,33 @@ void test_verification(int heat, int print_flag){
   //set A_*
   A_diagonal = zeros(mat_size, 1, mat_batch);
   A_trace = zeros(1, 1, mat_batch);
+  ans_diagonal = zeros(mat_size, 1, mat_batch);
+  ans_trace = zeros(1, 1, mat_batch);
+  read_mat("../test_ans/d_4_4_2_diag.bin", ans_diagonal);
+  read_mat("../test_ans/d_4_4_2_trace.bin", ans_trace);
 
   cA_diagonal = czeros(mat_size, 1, mat_batch);
   cA_trace = czeros(1, 1, mat_batch);
+  ans_cdiagonal = czeros(mat_size, 1, mat_batch);
+  ans_ctrace = czeros(1, 1, mat_batch);
+  read_cmat("../test_ans/c_4_4_2_diag.bin", ans_cdiagonal);
+  read_cmat("../test_ans/c_4_4_2_trace.bin", ans_ctrace);
 
   A_mul = zeros(2, 4, 1);
   B_mul = zeros(4, 6, 1);
   C_mul = zeros(2, 6, 1);
   read_mat("../test_data/d_2_4_1.bin", A_mul);
   read_mat("../test_data/d_4_6_1.bin", B_mul);
+  ans_mul = zeros(2, 6, 1);
+  read_mat("../test_ans/d_2_6_1_mul.bin", ans_mul);
   
   cA_mul = czeros(2, 4, 1);
   cB_mul = czeros(4, 6, 1);
   cC_mul = czeros(2, 6, 1);
   read_cmat("../test_data/c_2_4_1.bin", cA_mul);
   read_cmat("../test_data/c_4_6_1.bin", cB_mul);
+  ans_cmul = czeros(2, 6, 1);
+  read_cmat("../test_ans/c_2_6_1_mul.bin", ans_mul);
 
 
   is_ctype = 0;
@@ -179,12 +176,6 @@ void test_verification(int heat, int print_flag){
   }
 
   for(i = 0; i<func_list_size; i++){
-    // continue for real / complex func
-    // if(is_ctype == 0 && i%2 != 0)
-    //   continue;
-    // else if(is_ctype != 0 && i%2 == 0)
-    //   continue;
-
     is_ctype = i%2;
 
     // set data
@@ -225,6 +216,8 @@ void test_verification(int heat, int print_flag){
       func_list[i].fp(pA_);
       total += stopwatch(1);
       result = pA_;
+
+
     } else if (i == 24 || i == 25) {  // permute
       calced = 1;
       stopwatch(0);
