@@ -21,12 +21,12 @@ void sqrt_mat_inc(UINT size, DTYPE* X, ITER inc) {
   printf("%s\n", __func__);
 #endif
 
-#pragma omp parallel for shared(X) private(i)
+//#pragma omp parallel for shared(X) private(i)
   for (i = 0; i < size; i += inc) {
 #if NTYPE == 0
-    X[i] = sqrtf(X[i]);
+    X[i] = sqrtf(fabs(X[i]));
 #elif NTYPE == 1
-    X[i] = sqrt(X[i]);
+    X[i] = X[i] < 0 ? sqrt(-X[i]) : sqrt(X[i]);
 #endif
   }
 }

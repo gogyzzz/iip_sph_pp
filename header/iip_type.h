@@ -25,7 +25,7 @@
 #include <float.h>
 
 /*If set by 1, every function call will print its name*/
-#define DEBUG 0
+#define DEBUG 1
 
 /***********************************
 * Set This Section Manually
@@ -40,7 +40,7 @@
 *********************************** */
 
 #define MAX_CHAR 256
-#define FZERO 1e-10
+#define FZERO 1e-0
 
 #if NTYPE == 0
 #define INF FLT_MAX
