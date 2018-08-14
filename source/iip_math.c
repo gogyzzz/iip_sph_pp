@@ -136,8 +136,7 @@ void cpow_cmat_inc(UINT size, CTYPE* X, CTYPE n, ITER incx) {
     *(complex float*)(&X[i]) =
         cpowf(*(complex float*)(&X[i]), *(complex float*)(&n));
 #elif NTYPE == 1
-    *(complex double*)(&X[i]) =
-        cpow(*(complex double*)(&X[i]), *(complex double*)(&n));
+    *(complex double*)(&X[i]) = cpow(*(complex double*)(&X[i]), *(complex double*)(&n));
 
 #endif
 #endif
@@ -829,7 +828,7 @@ DTYPE amin_cmat(CMAT* mat, DIM* dim) {
 }
 
 /**** accumulated sum ****/
-void asum_mat(MAT*src, MAT*des, UINT axis){
+void sum_mat(MAT*src, MAT*des, UINT axis){
 ITER i,j,k;
 DTYPE temp;
 UINT d0,d1,d2;
@@ -873,7 +872,7 @@ d2 = src->d2;
   else ASSERT_ARG_INVALID()
 }
 
-void asum_cmat(CMAT*src, CMAT*des, UINT axis){
+void sum_cmat(CMAT*src, CMAT*des, UINT axis){
 ITER i,j,k;
 CTYPE temp;
 UINT d0,d1,d2;
