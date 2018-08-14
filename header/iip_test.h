@@ -34,7 +34,7 @@ void perform_test();
 void init_list();
 void preheat();
 
-void test_verification(int heat, int print_flag);
+void test_verification(int heat, int print_flag, int compare);
 void test_performance(int heat, int print_flag);
 void test_viewlist();
 
