@@ -31,7 +31,7 @@ int main() {
     scanf_s("%d", &selection);
     switch(selection){
       case 1:
-        test_verification(ask_preheat(), 1);
+        test_verification(ask_preheat(), 1, 1);
         break;
       case 2:
         test_performance(ask_preheat(), 1);

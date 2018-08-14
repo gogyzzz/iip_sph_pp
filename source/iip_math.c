@@ -383,9 +383,9 @@ void log_mat_inc(UINT size, DTYPE* X, ITER incx) {
 #pragma omp parallel for shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
-    X[i] = logf(X[i]);
+    X[i] = logf(X[i] < 0 ? -X[i] : X[i]);
 #elif NTYPE == 1
-    X[i] = log(X[i]);
+    X[i] = log(X[i] < 0 ? -X[i] : X[i]);
 #endif
   }
 }
@@ -419,9 +419,9 @@ void log2_mat_inc(UINT size, DTYPE* X, ITER incx) {
 #pragma omp parallel for shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
-    X[i] = log2f(X[i]);
+    X[i] = log2f(X[i] < 0 ? -X[i] : X[i]);
 #elif NTYPE == 1
-    X[i] = log2(X[i]);
+    X[i] = log2(X[i] < 0 ? -X[i] : X[i]);
 #endif
   }
 }
@@ -463,9 +463,9 @@ void log10_mat_inc(UINT size, DTYPE* X, ITER incx) {
 #pragma omp parallel for shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
-    X[i] = log10f(X[i]);
+    X[i] = log10f(X[i] < 0? -X[i] : X[i]);
 #elif NTYPE == 1
-    X[i] = log10(X[i]);
+    X[i] = log10(X[i] < 0 ? -X[i] : X[i]);
 #endif
   }
 }
@@ -501,9 +501,9 @@ void logb_mat_inc(UINT size,DTYPE*X , UINT base, ITER incx){
 #pragma omp parallel for shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
-    X[i] = logf(X[i]) / logf(base);
+    X[i] = logf(X[i] < 0 ? -X[i] : X[i]) / logf(base);
 #elif NTYPE == 1
-    X[i] = log(X[i]) / log(base);
+    X[i] = log(X[i] < 0 ? -X[i] : X[i]) / log(base);
 #endif
   }
  

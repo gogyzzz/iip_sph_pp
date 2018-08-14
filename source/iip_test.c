@@ -23,9 +23,9 @@ const int func_list_size = 51;
 
 UINT _eq(DTYPE A, DTYPE B) {
 #if NTYPE == 0
-  return fabsf(A - B) < FZERO ? 1 : 0;
+  return fabsf((A + 1.0) - B) < (FZERO + 1.0) ? 1 : 0;
 #elif NTYPE == 1
-  return fabs(A - B) < FZERO ? 1 : 0;
+  return fabs((A + 1.0) - B) < (FZERO + 1.0) ? 1 : 0;
 #endif
   return 0;
 }
@@ -58,7 +58,7 @@ void append_post(char *filename, const char *post, char *out) {
 }
 
 
-void test_verification(int heat, int print_flag){
+void test_verification(int heat, int print_flag, int compare){
   if(!is_init)
     init_list();
   printf("Verifying...\n");
@@ -377,7 +377,7 @@ void test_verification(int heat, int print_flag){
     // print result
     if (calced != 0 && print_flag != 0) {
       printf("\n # %s\n", func_list[i].name);
-      //if(func_list[i].param_cnt == 1)
+      if(compare != 0)
       {
         if(pAns == NULL)
           read_ans(is_ctype, func_list[i].name, ans_path, ans_A, ans_cA, &pAns);
@@ -393,6 +393,11 @@ void test_verification(int heat, int print_flag){
           else
             printf("  OK\n");
         }
+        //print_mat(pAns);
+        //print_mat(result);
+      }
+      else{
+        printf(" Done.\n");
       }
     }
   }

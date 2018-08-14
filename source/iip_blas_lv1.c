@@ -200,7 +200,7 @@ void omp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
 
 void ccopy(CMAT *src, CMAT *des) {
   ASSERT_DIM_EQUAL(src, des)
-  copy_inc(src->d0*src->d1*src->d2,src->data,1,des->data,1);
+  ccopy_inc(src->d0*src->d1*src->d2,src->data,1,des->data,1);
 }
 
 void ccopy_inc(UINT size, CTYPE *X, ITER incx, CTYPE *Y, ITER incy){
@@ -1064,7 +1064,7 @@ void omp_uscal(UINT size, CTYPE alpha, CTYPE *X, UINT incx) {
   ITER i;
   DTYPE temp;
 
-#pragma omp parallel for shared(X) private(i)
+//#pragma omp parallel for shared(X) private(i)
   for (i = 0; i < size * incx; i += incx) {
     CXMUL(X[i], alpha, temp);
   }
