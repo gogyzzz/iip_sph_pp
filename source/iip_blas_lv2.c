@@ -138,7 +138,7 @@ void omp_cgemv(char tranA, UINT m, UINT n, CTYPE alpha, CTYPE *A, UINT lda,
 #endif
 
   if (tranA == Tran) {
-#pragma omp parallel for shared(A, X, Y) private(temp, j, i)
+#pragma omp parallel for shared(A, X, Y) private(temp, j, i,temp2)
     for (j = 0; j < n; j++) {
       temp.re = 0;
       temp.im = 0;
@@ -150,7 +150,7 @@ void omp_cgemv(char tranA, UINT m, UINT n, CTYPE alpha, CTYPE *A, UINT lda,
       Y[j * incy] = temp;
     }
   } else if (tranA == NoTran) {
-#pragma omp parallel for shared(A, X, Y) private(temp, j, i)
+#pragma omp parallel for shared(A, X, Y) private(temp, j, i,temp2)
     for (j = 0; j < lda; j++) {
       temp.re = 0;
       temp.im = 0;
