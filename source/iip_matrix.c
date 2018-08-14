@@ -721,8 +721,9 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
     if ((C->d0 != b0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++) {
+      for (i = 0; i < b0; i++) {//b1 -> b0
         C->data[ic * j + i] = A->data[ia * j + 0] + B->data[ib * j + i];
+        printf("%lf = %lf + %lf\n", C->data[ic * j + i] , A->data[ia * j + 0] , B->data[ib * j + i]);
       }
   }
   // 1 a1 1 1
@@ -739,7 +740,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
     if ((C->d0 != a0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++) {
+      for (i = 0; i < a0; i++) {//b1 -> a0
         C->data[ic * j + i] = A->data[ia * j + i] + B->data[ib * j + 0];
       }
   }
@@ -901,7 +902,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
     if ((C->d0 != b0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++) {
+      for (i = 0; i < b0; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + 0], B->data[ib * j + i])
       }
   }
@@ -919,7 +920,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
     if ((C->d0 != a0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++) {
+      for (i = 0; i < a0; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + 0])
       }
   }
@@ -1085,7 +1086,7 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
     if ((C->d0 != b0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++)
+      for (i = 0; i < b0; i++)
         C->data[ic * j + i] =
             B->data[ib * j + ib * j + i] * A->data[ia * j + ia * j + 0];
   }
@@ -1103,7 +1104,7 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
     if ((C->d0 != a0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++)
+      for (i = 0; i < a0; i++)
         C->data[ic * j + i] = A->data[ia * j + i] * B->data[ib * j + 0];
   }
   // 1 1 b0 b1
@@ -1236,7 +1237,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
     if ((C->d0 != b0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++)
+      for (i = 0; i < b0; i++)
         CXEMUL(C->data[ic * j + i], A->data[ia * j + 0], B->data[ib * j + i])
   }
   // 1 a1 1 1
@@ -1252,7 +1253,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
     if ((C->d0 != a0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++)
+      for (i = 0; i < a0; i++)
         CXEMUL(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + 0])
   }
   // 1 1 b0 b1
@@ -1409,7 +1410,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
     if ((C->d0 != b0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++) {
+      for (i = 0; i < b0; i++) {
         ASSERT(B->data[ib * j + i], "Divide by zero.\n")
         C->data[ic * j + i] = A->data[ia * j + 0] / B->data[ib * j + i];
       }
@@ -1429,7 +1430,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
     if ((C->d0 != a0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++) {
+      for (i = 0; i < a1; i++) {
         ASSERT(B->data[ib * j], "Divide by zero.\n")
         C->data[ic * j + i] = A->data[ia * j + i] / B->data[ib * j + 0];
       }
@@ -2040,7 +2041,7 @@ void cpermute(CMAT *mat, UINT seq) {
     ASSERT_ARG_INVALID()
 }
 /**** transpose ****/
-MAT *create_trans(MAT *mat) {
+MAT *create_transpose(MAT *mat) {
   ITER i, j;
   UINT d0 = mat->d0;
   UINT d1 = mat->d1;
@@ -2075,7 +2076,7 @@ MAT *create_trans(MAT *mat) {
   return t_mat;
 }
 
-CMAT *create_ctrans(CMAT *mat) {
+CMAT *create_ctranspose(CMAT *mat) {
   ITER i, j;
   UINT d0 = mat->d0;
   UINT d1 = mat->d1;
@@ -2114,7 +2115,7 @@ CMAT *create_ctrans(CMAT *mat) {
   return t_mat;
 }
 
-void trans(MAT *mat) {
+void transpose(MAT *mat) {
   MAT *temp;
   ITER i, j, k;
   UINT d0, d1, d2;
@@ -2156,7 +2157,7 @@ void trans(MAT *mat) {
   mpfree_mat(temp);
 }
 
-void ctrans(CMAT *mat) {
+void ctranspose(CMAT *mat) {
   CMAT *temp;
   ITER i, j, k;
   UINT d0, d1, d2;

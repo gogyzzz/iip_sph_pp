@@ -1,7 +1,10 @@
+% ex) filename = d_4_3_2.bin, appen = hello
+% y = data/d_4_3_2_hello.bin
 function y = post_appen(filename,appen )
-[t,filename] = strtok(filename,'/');
+[t1,filename] = strtok(filename,'/');
+[t1,filename] = strtok(filename,'/');
 filename = strtok(filename,'/');
-c = 'data/';
+c = '../test_ans/';
 t = strtok(filename,'.');
 c = strcat(c,t);
 c =strcat(c,'_');

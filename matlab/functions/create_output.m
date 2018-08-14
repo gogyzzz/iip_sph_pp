@@ -1,3 +1,9 @@
+%{
+Create output files name <filename>_<function>.bin
+ex)
+filename = d_4_3_2.bin
+output : d_4_3_2_Invert.bin
+%}
 function create_output(filename)
 
 A = read_mat(filename);
@@ -39,7 +45,7 @@ if d0 == d1
 end
 
 outmat = power(A,2);
-outname = post_appen(filename,'Pow');
+outname = post_appen(filename,'Pow Mat');
 write_mat(outname,outmat);
 
 outmat = sqrt(abs(A));
@@ -106,7 +112,7 @@ outmat = reshape(A,d0*d1*d2,1,1);
 outname = post_appen(filename,'Reshape'); %d0*d1*d2 1 1
 write_mat(outname,outmat);
 
-outmat = A + A;
+outmat = A + 10;
 outname = post_appen(filename,'Add');
 write_mat(outname,outmat);
 
@@ -114,17 +120,15 @@ outmat = A * 2;
 outname = post_appen(filename,'Scale');
 write_mat(outname,outmat);
 
-for i = 1:d2
-outmat(i) = sum(sum(A(:,:,i)));
-end
-outname = post_appen(filename,'Sum'); % output -> d2,1,1
+clearvars outmat;
+outmat = sum(A,1)
+outname = post_appen(filename,'Sum Mat 0'); % output -> d2,1,1
 write_mat(outname,outmat);
 
-for i = 1:d2
-outmat(i) = sumabs(sum(A(:,:,i)));
-end
-outname = post_appen(filename,'Asum'); % output -> d2,1,1
-write_mat(outname,outmat);
 
+clearvars outmat;
+outmat = sum(A,2)
+outname = post_appen(filename,'Sum Mat 1'); % output -> d2,1,1
+write_mat(outname,outmat);
 
 end
