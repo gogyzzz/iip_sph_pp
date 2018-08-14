@@ -42,7 +42,7 @@ outmat = power(A,2);
 outname = post_appen(filename,'Pow');
 write_mat(outname,outmat);
 
-outmat = sqrt(A);
+outmat = sqrt(abs(A));
 outname = post_appen(filename,'Sqrt');
 write_mat(outname,outmat);
 
@@ -58,20 +58,20 @@ outmat = ceil(A);
 outname = post_appen(filename,'Ceil');
 write_mat(outname,outmat);
 
-outmat = log(A);
+outmat = log(abs(A));
 outname = post_appen(filename,'Log');
 write_mat(outname,outmat);
 
-outmat = log2(A);
+outmat = log2(abs(A));
 outname = post_appen(filename,'Log2');
 write_mat(outname,outmat);
 
-outmat = log10(A);
+outmat = log10(abs(A));
 outname = post_appen(filename,'Log10');
 write_mat(outname,outmat);
 
-outmat = exp(A);
-outname = post_appen(filename,'EXP');
+outmat = exp(abs(A));
+outname = post_appen(filename,'Exp');
 write_mat(outname,outmat);
 
 outmat = abs(A);

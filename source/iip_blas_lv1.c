@@ -1064,7 +1064,7 @@ void omp_uscal(UINT size, CTYPE alpha, CTYPE *X, UINT incx) {
   ITER i;
   DTYPE temp;
 
-//#pragma omp parallel for shared(X) private(i)
+#pragma omp parallel for shared(X) private(i,temp)
   for (i = 0; i < size * incx; i += incx) {
     CXMUL(X[i], alpha, temp);
   }
