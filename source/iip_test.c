@@ -515,7 +515,38 @@ void test_verification(int heat, int print_flag, int compare){
         case 40:
         case 41:
           // Div_elements
-          printf(" PASS DIV_ELEMENTS\n");
+          //printf(" PASS DIV_ELEMENTS\n");
+          stopwatch(0);
+          func_list[i].fp(pA_broad[4], pA_broad[6], pC_broad[3]);
+          total += stopwatch(1);
+          read_broad_ans(is_ctype, 9, func_list[i].name, ans_path, ans_broad[3], ans_cbroad[3], &pAns_broad[3]);
+
+          if(compare != 0 && print_flag != 0)
+            print_compare(func_list[i].name, is_ctype, pC_broad[3], pAns_broad[3]);
+
+          stopwatch(0);
+          func_list[i].fp(pA_broad[6], pA_broad[2], pC_broad[3]);
+          total += stopwatch(1);
+          read_broad_ans(is_ctype, 10, func_list[i].name, ans_path, ans_broad[3], ans_cbroad[3], &pAns_broad[3]);
+
+          if(compare != 0 && print_flag != 0)
+            print_compare(func_list[i].name, is_ctype, pC_broad[3], pAns_broad[3]);
+
+          stopwatch(0);
+          func_list[i].fp(pA_broad[6], pA_broad[4], pC_broad[3]);
+          total += stopwatch(1);
+          read_broad_ans(is_ctype, 11, func_list[i].name, ans_path, ans_broad[3], ans_cbroad[3], &pAns_broad[3]);
+
+          if(compare != 0 && print_flag != 0)
+            print_compare(func_list[i].name, is_ctype, pC_broad[3], pAns_broad[3]);
+          
+          stopwatch(0);
+          func_list[i].fp(pA_broad[6], pA_broad[6], pC_broad[3]);
+          total += stopwatch(1);
+          read_broad_ans(is_ctype, 12, func_list[i].name, ans_path, ans_broad[3], ans_cbroad[3], &pAns_broad[3]);
+
+          if(compare != 0 && print_flag != 0)
+            print_compare(func_list[i].name, is_ctype, pC_broad[3], pAns_broad[3]);
           break;
         default:
           // nothing
@@ -572,11 +603,6 @@ void test_verification(int heat, int print_flag, int compare){
 
   if(print_flag)
     printf("\n *** Broad Cast Function ***\n");
-  
-  ans_path;
-  for(i = 0; i<9; i++){
-
-  }
 
   if(print_flag)
     printf("Done.\n *** Total Run time : %.3lfms\n", (double)total/1000.0);
