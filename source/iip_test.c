@@ -483,7 +483,7 @@ void test_verification(int heat, int print_flag, int compare){
           stopwatch(0);
           func_list[i].fp(pA_broad[7], pA_broad[0], pC_broad[2]);
           total += stopwatch(1);
-          read_broad_ans(is_ctype, 4, func_list[i].name, ans_path, ans_broad[2], ans_cbroad[2], &pAns_broad[2]);
+          read_broad_ans(is_ctype, 5, func_list[i].name, ans_path, ans_broad[2], ans_cbroad[2], &pAns_broad[2]);
 
           if(compare != 0 && print_flag != 0)
             print_compare(func_list[i].name, is_ctype, pC_broad[2], pAns_broad[2]);
@@ -491,7 +491,7 @@ void test_verification(int heat, int print_flag, int compare){
           stopwatch(0);
           func_list[i].fp(pA_broad[2], pA_broad[5], pC_broad[2]);
           total += stopwatch(1);
-          read_broad_ans(is_ctype, 4, func_list[i].name, ans_path, ans_broad[2], ans_cbroad[2], &pAns_broad[2]);
+          read_broad_ans(is_ctype, 6, func_list[i].name, ans_path, ans_broad[2], ans_cbroad[2], &pAns_broad[2]);
 
           if(compare != 0 && print_flag != 0)
             print_compare(func_list[i].name, is_ctype, pC_broad[2], pAns_broad[2]);
@@ -499,7 +499,7 @@ void test_verification(int heat, int print_flag, int compare){
           stopwatch(0);
           func_list[i].fp(pA_broad[4], pA_broad[3], pC_broad[2]);
           total += stopwatch(1);
-          read_broad_ans(is_ctype, 4, func_list[i].name, ans_path, ans_broad[2], ans_cbroad[2], &pAns_broad[2]);
+          read_broad_ans(is_ctype, 7, func_list[i].name, ans_path, ans_broad[2], ans_cbroad[2], &pAns_broad[2]);
 
           if(compare != 0 && print_flag != 0)
             print_compare(func_list[i].name, is_ctype, pC_broad[2], pAns_broad[2]);
@@ -507,7 +507,7 @@ void test_verification(int heat, int print_flag, int compare){
           stopwatch(0);
           func_list[i].fp(pA_broad[2], pA_broad[7], pC_broad[2]);
           total += stopwatch(1);
-          read_broad_ans(is_ctype, 4, func_list[i].name, ans_path, ans_broad[2], ans_cbroad[2], &pAns_broad[2]);
+          read_broad_ans(is_ctype, 8, func_list[i].name, ans_path, ans_broad[2], ans_cbroad[2], &pAns_broad[2]);
 
           if(compare != 0 && print_flag != 0)
             print_compare(func_list[i].name, is_ctype, pC_broad[2], pAns_broad[2]);
@@ -940,10 +940,10 @@ void init_list(){
   func_list[1].param_cnt = 2;
   strcpy(func_list[1].name, "cInvert");
   
-  func_list[2].fp = trans;
+  func_list[2].fp = transpose;
   func_list[2].param_cnt = 1;
   strcpy(func_list[2].name, "Transpose");
-  func_list[3].fp = ctrans;
+  func_list[3].fp = ctranspose;
   func_list[3].param_cnt = 1;
   strcpy(func_list[3].name, "cTranspose");
   
@@ -1129,13 +1129,10 @@ void read_ans(int is_ctype, char *func_name, char *ans_name, void *data_d, void 
 
 
 void read_broad_ans(int is_ctype, int param_type, char *func_name, char *ans_name, void *data_d, void *data_c, void **result_mat){
-  char ans_broad[16] = "Broadcast_.bin";
+  char ans_broad[32] = "Broadcast_.bin";
 
-  char num[4] = "";
-
-  sprintf(num, "%d_", param_type);
-  append_post(ans_broad, num, ans_name);
-  append_post(ans_name, func_name, ans_name);
+  sprintf(ans_broad, "Broadcast_%d_.bin", param_type);
+  append_post(ans_broad, func_name, ans_name);
 
   if(is_ctype == 0){
     read_mat(ans_name, data_d);
