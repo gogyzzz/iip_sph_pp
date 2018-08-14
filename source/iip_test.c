@@ -33,15 +33,21 @@ UINT _eq(DTYPE A, DTYPE B) {
 UINT compare_mat(MAT *A, MAT *B) {
   ITER i;
   for (i = 0; i < A->d0 * A->d1 * A->d2; i++)
-    if (!_eq(A->data[i], B->data[i])) return 0;
+    if (!_eq(A->data[i], B->data[i])) {
+      printf("%.16lf != %.16lf \n",A->data[i],B->data[i]);
+      return 0;}
   return 1;
 }
 
 UINT compare_cmat(CMAT *A, CMAT *B) {
   ITER i;
   for (i = 0; i < A->d0 * A->d1 * A->d2; i++) {
-    if (!_eq(A->data[i].re, B->data[i].re)) return 0;
-    if (!_eq(A->data[i].im, B->data[i].im)) return 0;
+    if (!_eq(A->data[i].re, B->data[i].re)){ 
+      printf("re %.16lf != %.16lf \n",A->data[i].re,B->data[i].re);
+      return 0;}
+    if (!_eq(A->data[i].im, B->data[i].im)){
+      printf("im %.16lf != %.16lf \n",A->data[i].im,B->data[i].im);
+      return 0;}
   }
   return 1;
 }
@@ -253,7 +259,7 @@ void test_verification(int heat, int print_flag, int compare){
       calced = 1;
       pA_ = cA_;
       temp_param.re = 2.0;
-      temp_param.im = 0.0;
+      temp_param.im = 2.0;
       stopwatch(0);
       func_list[i].fp(pA_, temp_param);
       total += stopwatch(1);
@@ -580,7 +586,7 @@ void test_performance(int heat, int print_flag){
       calced = 1;
       pA_ = cA_;
       temp_param.re = 2.0;
-      temp_param.im = 0.0;
+      temp_param.im = 2.0;
       stopwatch(0);
       func_list[i].fp(pA_, temp_param);
       total += stopwatch(1);
