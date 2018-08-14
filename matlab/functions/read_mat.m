@@ -1,3 +1,8 @@
+%{
+Read binary file with specific formatted name
+d_<first dimension>_<second dimension>_<third dimension>.bin
+read file into y with given dimension
+%}
 function y = read_mat(f)
 
 if exist(f,'file') 
@@ -6,6 +11,7 @@ if exist(f,'file')
     msg = strcat(msg,' : reading');
     disp(msg);
       
+    [t,f] =strtok(f,'/');
     [t,f] =strtok(f,'/');
     f = strtok(f,'/');
     c = strtok(f,'.');

@@ -1,3 +1,9 @@
+%{
+Create output files name <filename>_<function>.bin
+ex)
+filename = d_4_3_2.bin
+output : d_4_3_2_Invert.bin
+%}
 function create_coutput(filename)
 
 A = read_cmat(filename);
@@ -37,11 +43,11 @@ end
 
 
 outmat = power(A,2);
-outname = post_appen(filename,'cPow');
+outname = post_appen(filename,'Pow cMat');
 write_cmat(outname,outmat);
 
 outmat = power(A,2 + 2i);
-outname = post_appen(filename,'uPow');
+outname = post_appen(filename,'cPow cMat');
 write_cmat(outname,outmat);
 
 
@@ -92,23 +98,23 @@ outname = post_appen(filename,'Repmat'); % d0*3, d1*2 , d2
 write_cmat(outname,outmat);
 
 outmat = permute(A,[1 3 2]);
-outname = post_appen(filename,'Permute132'); % d0 d2 d1
+outname = post_appen(filename,'cPermute132'); % d0 d2 d1
 write_cmat(outname,outmat);
 
 outmat = permute(A,[2 1 3]);
-outname = post_appen(filename,'Permute213'); % d1 d0 d2
+outname = post_appen(filename,'cPermute213'); % d1 d0 d2
 write_cmat(outname,outmat);
 
 outmat = permute(A,[2 3 1]);
-outname = post_appen(filename,'Permute231'); % d1 d2 d0
+outname = post_appen(filename,'cPermute231'); % d1 d2 d0
 write_cmat(outname,outmat);
 
 outmat = permute(A,[3, 1 2]);
-outname = post_appen(filename,'Permute312'); % d2 d0 d1
+outname = post_appen(filename,'cPermute312'); % d2 d0 d1
 write_cmat(outname,outmat);
 
 outmat = permute(A,[3 2 1]);
-outname = post_appen(filename,'Permute321'); % d2 d1 d0
+outname = post_appen(filename,'cPermute321'); % d2 d1 d0
 write_cmat(outname,outmat);
 
 outmat = reshape(A,d0*d1*d2,1,1);
@@ -132,16 +138,15 @@ outname = post_appen(filename,'uScale');
 write_cmat(outname,outmat);
 
 
-for i = 1:d2
-outmat(i) = sum(sum(A(:,:,i)));
-end
-outname = post_appen(filename,'cSum');
-write_cmat(outname,outmat);
+clearvars outmat;
+outmat = sum(A,1);
+outname = post_appen(filename,'Sum cMat 0'); % output -> d2,1,1
+write_mat(outname,outmat);
 
-for i = 1:d2
-outmat(i) = sum(sum(A(:,:,i)));
-end
-outname = post_appen(filename,'cAsum');
-write_cmat(outname,outmat);
+
+clearvars outmat;
+outmat = sum(A,2);
+outname = post_appen(filename,'Sum cMat 1'); % output -> d2,1,1
+write_mat(outname,outmat);
 
 end
