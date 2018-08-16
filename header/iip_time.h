@@ -20,11 +20,11 @@
  *
  *  do something you want to test
  *
- * stopwatch(1);
+ * printf("elapsed time : %lld\n",stopwatch(1));
  ****************************
  *
  * stopwatch() function
- * print elapsed time between
+ * return long long type of elapsed time between
  * stopwatch(0) and stopwatch(1)
  *
  * */

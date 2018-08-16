@@ -62,7 +62,7 @@ void omp_gemv(char tranA, UINT m, UINT n, DTYPE alpha, DTYPE *A, UINT lda,
 #endif
 
   if (tranA == Tran) {
-#pragma omp parallel for shared(A, X, Y) private(temp, j, i)
+#pragma omp parallel for schedule(dynamic) shared(A, X, Y) private(temp, j, i)
     for (j = 0; j < n; j++) {
       temp = 0;
       for (i = 0; i < m; i++) {
@@ -73,7 +73,7 @@ void omp_gemv(char tranA, UINT m, UINT n, DTYPE alpha, DTYPE *A, UINT lda,
       Y[j * incy] = temp;
     }
   } else if (tranA == NoTran) {
-#pragma omp parallel for shared(A, X, Y) private(temp, j, i)
+#pragma omp parallel for schedule(dynamic) shared(A, X, Y) private(temp, j, i)
     for (j = 0; j < lda; j++) {
       temp = 0;
       for (i = 0; i < n; i++) {
@@ -116,8 +116,8 @@ void cgemv(char transA, CTYPE alpha, CMAT *A, CMAT *X, CTYPE beta, CMAT *Y) {
 
 #if USE_CBLAS
 #if NTYPE == 0
-  cblas_cgemv(CblasColMajor, transA, m, n, alpha, A->data, lda, X->data, 1,
-              beta, Y->data, 1);
+  cblas_cgemv(CblasColMajor, transA, m, n, &alpha, A->data, lda, X->data, 1,
+              &beta, Y->data, 1);
 #else
   cblas_zgemv(CblasColMajor, transA, m, n, &alpha, A->data, lda, X->data, 1,
               &beta, Y->data, 1);
@@ -138,7 +138,8 @@ void omp_cgemv(char tranA, UINT m, UINT n, CTYPE alpha, CTYPE *A, UINT lda,
 #endif
 
   if (tranA == Tran) {
-#pragma omp parallel for shared(A, X, Y) private(temp, j, i,temp2)
+#pragma omp parallel for schedule(dynamic) shared(A, X, Y) private(temp, j, i, \
+                                                                   temp2)
     for (j = 0; j < n; j++) {
       temp.re = 0;
       temp.im = 0;
@@ -150,7 +151,8 @@ void omp_cgemv(char tranA, UINT m, UINT n, CTYPE alpha, CTYPE *A, UINT lda,
       Y[j * incy] = temp;
     }
   } else if (tranA == NoTran) {
-#pragma omp parallel for shared(A, X, Y) private(temp, j, i,temp2)
+#pragma omp parallel for schedule(dynamic) shared(A, X, Y) private(temp, j, i, \
+                                                                   temp2)
     for (j = 0; j < lda; j++) {
       temp.re = 0;
       temp.im = 0;

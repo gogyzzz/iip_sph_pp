@@ -5,7 +5,7 @@ set(TARGET_NAME ${PROJECT_NAME})
 
 #### BUILD ENVIRONMENT OPTIONS ######
 option(USE_CUDA    "Using CUDA"      OFF) # Not supported, yet.
-option(USE_BLAS    "Using BLAS"      ON)
+option(USE_BLAS    "Using BLAS"      OFF)
 option(USE_OPENMP  "Using OpenMP"    ON)
 
 #### set Your Source files ####
@@ -20,24 +20,24 @@ option(USE_OPENMP  "Using OpenMP"    ON)
 #
 # include_directories(${CMAKE_CURRENT_SOURCE_DIR}/my_header_folder)
 
+#set(MAIN_SRC test/test_time.c)
 set(MAIN_SRC test/test_matlab.c)
-#set(MAIN_SRC test/chunk.c)
 
 
-###########################################
-#       CMAKE INDEX                       #
-# 1. functions                            #
-# 2. includes                             #
-# 3. sources and executable               #
-# 4. check options           + Order      #
-# 5. defines and links        a. BLAS     #
-# 6. compile optinos          b. OMP      #
-# 7. misc : CUDA(WIP)         c. Native C #
-###########################################
+###############################
+#         CMAKE INDEX         #
+#  1. Functions               #
+#  2. Includes                #
+#  3. Sources and executable  #
+#  4. Check options           #
+#  5. Defines and links       #
+#  6. Compile optinos         #
+#  7. WIP : CUDA              #
+###############################
 
-# set options by 'set' is unstable. Often not working.
+# setting options by 'set' is unstable. Often not working.
 # recommed using 'target_<blah>_<blah>'
-# which is robust and modern.
+# which is more robust and modern.
 
 #compile flags
 set(CF)
@@ -45,6 +45,7 @@ set(CF)
 set(LF)
 #compule definitions
 set(CD)
+
 #### 1. functions ####
 
 macro(display_elements
@@ -80,8 +81,6 @@ set(C_SOURCE
     source/iip_invert.c
     source/iip_test.c
     )
-  display_elements("MAIN SOURCE" "${MAIN_SRC}")
-  display_elements("LIBRARY SOURCE" "${C_SOURCE}")
 
 add_executable(${TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
 
@@ -105,7 +104,6 @@ if(USE_BLAS)
 endif()
 
 if(USE_OPENMP)
-# Not going to use omp.h so, just linker option is required.   
    find_package(OpenMP)
    if(NOT(OpenMP_FOUND))
 	    message(SEND_ERROR "USE_OPENMP is set ON but OpenMP not found")
@@ -126,20 +124,18 @@ message(STATUS "USE_OPENMP : " ${USE_OPENMP})
 #UNIX   TRUE for UNIX,APPLE
 #WIN32  TRUE for Windows 32bit and 64bit
 #APPLE  TRUE for APPLE
+
 if(UNIX)
-    target_compile_definitions(${TARGET_NAME}
-    PRIVATE
+  list(APPEND CD
     OS_UNIX=1
     )
 elseif(WIN32)
-    target_compile_definitions(${TARGET_NAME}
-    PRIVATE
+  list(APPEND CD  
     OS_WIN=1
     )
 endif()
 
-
-message(STATUS "ENV_PATH : " $ENV{PATH})
+#message(STATUS "ENV_PATH : " $ENV{PATH})
 
 if(NOT MSVC)
   list(APPEND LF m)
@@ -157,13 +153,11 @@ if(USE_OPEN OR USE_MKL )
    
   list(APPEND CD
 	    USE_OPEN=1
-	    USE_CBLAS=1
       )
   elseif(USE_MKL)
 
   list(APPEND CD  
 	    USE_MKL=1
-	    USE_CBLAS=1
       )
 		
   endif()
@@ -222,27 +216,17 @@ if(WIN32 AND MSVC)
       )
   endif(WIN32 AND MSVC)
 
-target_compile_definitions(${TARGET_NAME}
-  PRIVATE
-  ${CD}
-)
+target_compile_definitions(${TARGET_NAME} PRIVATE ${CD} )
+target_compile_options    (${TARGET_NAME} PRIVATE ${CF} )
+target_link_libraries     (${TARGET_NAME} PRIVATE ${LF} )
 
-target_compile_options(${TARGET_NAME}
-  PRIVATE
-  ${CF}
-)
-
-target_link_libraries(${TARGET_NAME}
-  PRIVATE
-  ${LF}
-)
-
-
+display_elements("MAIN SOURCE" "${MAIN_SRC}")
+display_elements("LIBRARY SOURCE" "${C_SOURCE}")
 display_elements("Compile Flags" "${CF}")
 display_elements("Linker Flags" "${LF}")
 display_elements("Compile Defines" "${CD}")
-message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
 
+message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
 
 #### 7. misc : CUDA(Work in Progress) ####
 

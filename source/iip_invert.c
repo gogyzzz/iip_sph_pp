@@ -325,10 +325,10 @@ void cinvert_4by4(CTYPE* X, CTYPE* Y) {
   CTYPE det;
   CTYPE t1, t2, t3, t4, t5;
   DTYPE t;
+  ITER i;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-
   t1.re = (X[10].re * X[15].re - X[10].im * X[15].im) -
           (X[14].re * X[11].re - X[14].im * X[11].im);
   t1.im = (X[10].re * X[15].im + X[10].im * X[15].re) -
@@ -4189,17 +4189,17 @@ void invert_nbyn(DTYPE* X, DTYPE* Y, UINT n) {
 #if USE_CBLAS
   idx = mpalloc(sizeof(UINT) * n);
 
-#pragma omp parallel for shared(X, Y) private(i)
+#pragma omp parallel for schedule(dynamic) shared(X, Y) private(i)
   for (i = 0; i < n * n; i++) Y[i] = X[i];
 
 #if NTYPE == 0
-        LAPACKE_sgetrf(LAPACK_COL_MAJOR, n,n,Y,n,idx;
-	LAPACKE_sgetri(LAPACK_COL_MAJOR,n,Y,n,idx);
+  LAPACKE_sgetrf(LAPACK_COL_MAJOR, n, n, Y, n, idx);
+  LAPACKE_sgetri(LAPACK_COL_MAJOR, n, Y, n, idx);
 #elif NTYPE == 1
   LAPACKE_dgetrf(LAPACK_COL_MAJOR, n, n, Y, n, idx);
   LAPACKE_dgetri(LAPACK_COL_MAJOR, n, Y, n, idx);
 #endif
-	mpfree(idx);
+  mpfree(idx);
 
 #else
   printf("ERROR : 'OpenBLAS' or 'INTEL MKL' is required for this operation\n");
@@ -4215,19 +4215,19 @@ void cinvert_nbyn(CTYPE* X, CTYPE* Y, UINT n) {
 #endif
 #if USE_CBLAS
   idx = mpalloc(sizeof(UINT) * n);
-#pragma omp parallel for shared(X, Y) private(i)
+#pragma omp parallel for schedule(dynamic) shared(X, Y) private(i)
   for (i = 0; i < n; i++) {
     Y[i].re = X[i].re;
     Y[i].im = X[i].im;
   }
 #if NTYPE == 0
-        LAPACKE_cgetrf(LAPACK_COL_MAJOR, n,n,Y,n,idx;
-	LAPACKE_cgetri(LAPACK_COL_MAJOR,n,Y,n,idx);
+  LAPACKE_cgetrf(LAPACK_COL_MAJOR, n, n, Y, n, idx);
+  LAPACKE_cgetri(LAPACK_COL_MAJOR, n, Y, n, idx);
 #elif NTYPE == 1
   LAPACKE_zgetrf(LAPACK_COL_MAJOR, n, n, Y, n, idx);
   LAPACKE_zgetri(LAPACK_COL_MAJOR, n, Y, n, idx);
 #endif
-	mpfree(idx);
+  mpfree(idx);
 
 #else
   printf("ERROR : 'OpenBLAS' or 'INTEL MKL' is required for this operation\n");
@@ -4304,7 +4304,8 @@ CTYPE cdet_nbyn(CMAT* mat) {
   for (i = 0; i < mat->d0; i++) {
     if (i + 1 != idx[i])
       CXMUL(det, -mat->data[i * n + i], t)
-      else CXMUL(det, mat->data[i * n + i], t)
+    else
+      CXMUL(det, mat->data[i * n + i], t)
   }
   mpfree(idx);
   mpfree_cmat(tmat);

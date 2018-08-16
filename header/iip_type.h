@@ -40,7 +40,7 @@
 *********************************** */
 
 #define MAX_CHAR 256
-#define FZERO 1e-10
+#define FZERO 1e-12
 
 #if NTYPE == 0
 #define INF FLT_MAX
@@ -75,14 +75,11 @@
 
 #if USE_OPEN
 #include "cblas.h"
+#include "lapacke.h"
 #endif
 
 #if USE_MKL
 #include "mkl.h"
-#endif
-
-#if USE_OPEN
-#include "lapacke.h"
 #endif
 
 #if USE_CUDA
@@ -215,13 +212,13 @@ _2,_1
   }
 
 // Y = A/B
-#define CXEDIV(Y, A, B)                                 \
-  {                                                     \
+#define CXEDIV(Y, A, B)                                   \
+  {                                                       \
     ASSERT(B.re != 0. || B.im != 0., "Divide by zero.\n") \
-    Y.re = ((A.re) * (B.re) + (A.im) * (B.im)) /        \
-           (((B.re) * (B.re)) + ((B.im) * (B.im)));     \
-    Y.im = ((A.im) * (B.re) - (A.re) * (B.im)) /        \
-           (((B.re) * (B.re)) + ((B.im) * (B.im)));     \
+    Y.re = ((A.re) * (B.re) + (A.im) * (B.im)) /          \
+           (((B.re) * (B.re)) + ((B.im) * (B.im)));       \
+    Y.im = ((A.im) * (B.re) - (A.re) * (B.im)) /          \
+           (((B.re) * (B.re)) + ((B.im) * (B.im)));       \
   }
 
 #define CXEADD(Y, A, B) \

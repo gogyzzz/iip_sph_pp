@@ -66,6 +66,7 @@ __global__ void cu_caxpy(CTYPE alpha, CTYPE *X, UINT INCX, CTYPE *Y, UINT INCY,
 #endif
 
 /* Copy MAT from src to des */
+
 void copy_mat(MAT *src, MAT *des);
 void copy_mat_inc(UINT size,DTYPE*X,ITER incx, DTYPE *Y, ITER incy);
 void omp_copy_mat(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc);
@@ -117,21 +118,21 @@ __global__ void cu_dot(DTYPE *result, DTYPE *src_x, UINT x_inc, DTYPE *src_y,
 
 /* Swaps a real vector with another real vector. */
 void swap(MAT *src_x, MAT *src_y);
-void swap_inc(UINT N,DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc);
+void swap_inc(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc);
 void omp_swap(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc);
 
 /* Swaps a complex vector with another complex vector. */
 void cswap(CMAT *src_x, CMAT *src_y);
-void cswap_inc(UINT N,CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc);
+void cswap_inc(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc);
 void omp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc);
 
 /* column swap*/
-void col_swap(MAT*mat, UINT a,UINT b);
-void col_cswap(CMAT*mat, UINT a,UINT b);
+void col_swap(MAT *mat, UINT a, UINT b);
+void col_cswap(CMAT *mat, UINT a, UINT b);
 
 /* row swap*/
-void row_swap(MAT*mat, UINT a,UINT b);
-void row_cswap(CMAT*mat, UINT a,UINT b);
+void row_swap(MAT *mat, UINT a, UINT b);
+void row_cswap(CMAT *mat, UINT a, UINT b);
 /* Index of the maximum absolute value element of a real vector */
 UINT amax(MAT *src);
 UINT amax_inc(MAT *src, UINT inc);
