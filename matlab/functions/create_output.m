@@ -121,14 +121,14 @@ outname = post_appen(filename,'Scale');
 write_mat(outname,outmat);
 
 clearvars outmat;
-outmat = sum(A,1)
-outname = post_appen(filename,'Sum Mat 0'); % output -> d2,1,1
+outmat = sum(A,1);
+outname = post_appen(filename,'Sum Mat 1'); % output -> d0,1,d2
 write_mat(outname,outmat);
 
 
 clearvars outmat;
-outmat = sum(A,2)
-outname = post_appen(filename,'Sum Mat 1'); % output -> d2,1,1
+outmat = sum(A,2);
+outname = post_appen(filename,'Sum Mat 0'); % output -> d1,d0,d2
 write_mat(outname,outmat);
 
 end

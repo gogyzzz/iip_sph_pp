@@ -28,17 +28,17 @@ write_mat(f,c);
 c = bsxfun(@times, iid, ddi);
 f = post_appen(t,'4_Mul Elements');
 write_mat(f,c);
-c = bsxfun(@times, ddd,iii )
+c = bsxfun(@times, ddd,iii );
 f = post_appen(t,'5_Mul Elements');
 write_mat(f,c);
 % 1 4
-c = bsxfun(@times, idi,did )
+c = bsxfun(@times, idi,did );
 f = post_appen(t,'6_Mul Elements');
 write_mat(f,c);
-c = bsxfun(@times, dii,idd )
+c = bsxfun(@times, dii,idd );
 f = post_appen(t,'7_Mul Elements');
 write_mat(f,c);
-c = bsxfun(@times, idi, ddd)
+c = bsxfun(@times, idi, ddd);
 f = post_appen(t,'8_Mul Elements');
 write_mat(f,c);
 % 1 1
