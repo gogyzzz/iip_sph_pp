@@ -116,8 +116,8 @@ void cgemv(char transA, CTYPE alpha, CMAT *A, CMAT *X, CTYPE beta, CMAT *Y) {
 
 #if USE_CBLAS
 #if NTYPE == 0
-  cblas_cgemv(CblasColMajor, transA, m, n, alpha, A->data, lda, X->data, 1,
-              beta, Y->data, 1);
+  cblas_cgemv(CblasColMajor, transA, m, n, &alpha, A->data, lda, X->data, 1,
+              &beta, Y->data, 1);
 #else
   cblas_zgemv(CblasColMajor, transA, m, n, &alpha, A->data, lda, X->data, 1,
               &beta, Y->data, 1);

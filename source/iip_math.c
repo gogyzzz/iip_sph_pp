@@ -769,13 +769,13 @@ DTYPE amin_mat(MAT* mat, DIM* dim) {
   ITER i;
   UINT min_idx = 0;
 #if NTYPE == 0
-  DTYPE min = absf(mat->data[0]);
+  DTYPE min = fabsf(mat->data[0]);
 #if DEBUG
   printf("%s\n", __func__);
 #endif
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (absf(mat->data[i]) < min) {
-      min = absf(mat->data[i]);
+    if (fabsf(mat->data[i]) < min) {
+      min = fabsf(mat->data[i]);
       min_idx = i;
     }
   }
@@ -785,7 +785,7 @@ DTYPE amin_mat(MAT* mat, DIM* dim) {
   printf("%s\n", __func__);
 #endif
   for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
-    if (abs(mat->data[i]) < min) {
+    if (fabs(mat->data[i]) < min) {
       min = abs(mat->data[i]);
       min_idx = i;
     }
@@ -870,6 +870,7 @@ d2 = src->d2;
     } 
   }
   else ASSERT_ARG_INVALID()
+
 }
 
 void sum_cmat(CMAT*src, CMAT*des, UINT axis){
