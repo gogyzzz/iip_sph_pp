@@ -1755,7 +1755,7 @@ void repmat(MAT *mat, DIM *dim) {
 #endif
 
   t_mat = mpalloc_mat(mat->d0, mat->d1, mat->d2);
-  copy(mat, t_mat);
+  copy_mat(mat, t_mat);
   free_mat(mat);
   mat =
       alloc_mat(t_mat->d0 * dim->d0, t_mat->d1 * dim->d1, t_mat->d2 * dim->d2);
@@ -1787,7 +1787,7 @@ void crepmat(CMAT *mat, DIM *dim) {
 #endif
 
   t_mat = mpalloc_cmat(mat->d0, mat->d1, mat->d2);
-  ccopy(mat, t_mat);
+  ccopy_mat(mat, t_mat);
   free_cmat(mat);
   mat =
       alloc_cmat(t_mat->d0 * dim->d0, t_mat->d1 * dim->d1, t_mat->d2 * dim->d2);
@@ -1883,7 +1883,7 @@ void permute(MAT *mat, UINT seq) {
 
   if (seq == 132) {
     t = mpalloc_mat(mat->d0, mat->d1, mat->d2);
-    copy(mat, t);
+    copy_mat(mat, t);
     d0d1 = t->d0 * t->d1;
     mat->d1 = t->d2;
     mat->d2 = t->d1;
@@ -1895,7 +1895,7 @@ void permute(MAT *mat, UINT seq) {
     mpfree_mat(t);
   } else if (seq == 213) {
     t = mpalloc_mat(mat->d0, mat->d1, mat->d2);
-    copy(mat, t);
+    copy_mat(mat, t);
     d0d1 = t->d0 * t->d1;
     mat->d0 = t->d1;
     mat->d1 = t->d0;
@@ -1907,7 +1907,7 @@ void permute(MAT *mat, UINT seq) {
     mpfree_mat(t);
   } else if (seq == 231) {
     t = mpalloc_mat(mat->d0, mat->d1, mat->d2);
-    copy(mat, t);
+    copy_mat(mat, t);
     d0d1 = t->d0 * t->d1;
     mat->d0 = t->d1;
     mat->d1 = t->d2;
@@ -1920,7 +1920,7 @@ void permute(MAT *mat, UINT seq) {
     mpfree_mat(t);
   } else if (seq == 312) {
     t = mpalloc_mat(mat->d0, mat->d1, mat->d2);
-    copy(mat, t);
+    copy_mat(mat, t);
     d0d1 = t->d0 * t->d1;
     mat->d0 = t->d2;
     mat->d2 = t->d0;
@@ -1932,7 +1932,7 @@ void permute(MAT *mat, UINT seq) {
     mpfree_mat(t);
   } else if (seq == 321) {
     t = mpalloc_mat(mat->d0, mat->d1, mat->d2);
-    copy(mat, t);
+    copy_mat(mat, t);
     d0d1 = t->d0 * t->d1;
     mat->d0 = t->d2;
     mat->d2 = t->d0;
@@ -1959,7 +1959,7 @@ void cpermute(CMAT *mat, UINT seq) {
 
   if (seq == 132) {
     t = mpalloc_cmat(mat->d0, mat->d1, mat->d2);
-    ccopy(mat, t);
+    ccopy_mat(mat, t);
     d0d1 = t->d0 * t->d1;
     mat->d1 = t->d2;
     mat->d2 = t->d1;
@@ -1975,7 +1975,7 @@ void cpermute(CMAT *mat, UINT seq) {
     mpfree_cmat(t);
   } else if (seq == 213) {
     t = mpalloc_cmat(mat->d0, mat->d1, mat->d2);
-    ccopy(mat, t);
+    ccopy_mat(mat, t);
     d0d1 = t->d0 * t->d1;
     mat->d0 = t->d1;
     mat->d1 = t->d0;
@@ -1991,7 +1991,7 @@ void cpermute(CMAT *mat, UINT seq) {
     mpfree_cmat(t);
   } else if (seq == 231) {
     t = mpalloc_cmat(mat->d0, mat->d1, mat->d2);
-    ccopy(mat, t);
+    ccopy_mat(mat, t);
     d0d1 = t->d0 * t->d1;
     mat->d0 = t->d1;
     mat->d1 = t->d2;
@@ -2008,7 +2008,7 @@ void cpermute(CMAT *mat, UINT seq) {
     mpfree_cmat(t);
   } else if (seq == 312) {
     t = mpalloc_cmat(mat->d0, mat->d1, mat->d2);
-    ccopy(mat, t);
+    ccopy_mat(mat, t);
     d0d1 = t->d0 * t->d1;
     mat->d0 = t->d2;
     mat->d2 = t->d0;
@@ -2024,7 +2024,7 @@ void cpermute(CMAT *mat, UINT seq) {
     mpfree_cmat(t);
   } else if (seq == 321) {
     t = mpalloc_cmat(mat->d0, mat->d1, mat->d2);
-    ccopy(mat, t);
+    ccopy_mat(mat, t);
     d0d1 = t->d0 * t->d1;
     mat->d0 = t->d2;
     mat->d2 = t->d0;
@@ -2154,7 +2154,7 @@ void transpose(MAT *mat) {
     mat->d0 = d1;
     mat->d1 = d0;
   }
-  copy(temp, mat);
+  copy_mat(temp, mat);
   mpfree_mat(temp);
 }
 
@@ -2200,7 +2200,7 @@ void ctranspose(CMAT *mat) {
     mat->d0 = d1;
     mat->d1 = d0;
   }
-  ccopy(temp, mat);
+  ccopy_mat(temp, mat);
   mpfree_cmat(temp);
 }
 
@@ -2395,7 +2395,7 @@ void hermit(CMAT *mat) {
     mat->d0 = d1;
     mat->d1 = d0;
   }
-  ccopy(temp, mat);
+  ccopy_mat(temp, mat);
   mpfree_cmat(temp);
 }
 

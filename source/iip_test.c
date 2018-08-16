@@ -141,10 +141,10 @@ void test_verification(int heat, int print_flag, int compare) {
       NULL,
   };
 
-  int mat_size = 4, mat_batch = 2;
+  int mat_size = 1024, mat_batch = 4;
   int broad_alpha = 1;
-  int broad_beta = 2;
-  int broad_gamma = 4;
+  int broad_beta = 4;
+  int broad_gamma = 1024;
 
   char temp = 0;
 
@@ -152,6 +152,13 @@ void test_verification(int heat, int print_flag, int compare) {
 
   if (!is_init) init_list();
   if (print_flag) printf(" Running test...\n\n");
+
+  if(heat == 1){
+    preheat();
+    printf("\n # Preparing Cache\n");
+    test_verification(0, 0, 0);
+    printf("\n Cache prepared.\n");
+  }
 
   A = zeros(mat_size, mat_size, mat_batch);
   A_ = zeros(mat_size, mat_size, mat_batch);
@@ -219,22 +226,24 @@ void test_verification(int heat, int print_flag, int compare) {
   ans_cbroad[2] = czeros(broad_gamma, broad_gamma, broad_beta);
   ans_cbroad[3] = czeros(broad_gamma, broad_gamma, broad_alpha);
 
-  // set A
-  read_mat("../test_data/d_4_4_2.bin", A);
-  copy(A, A_);
-  read_cmat("../test_data/c_4_4_2.bin", cA);
-  ccopy(cA, cA_);
-  // set B
-  read_mat("../test_data/d_4_4_2.bin", B);
-  copy(B, B_);
-  read_cmat("../test_data/c_4_4_2.bin", cB);
-  ccopy(cB, cB_);
-  // set C
-  copy(A, C);
-  copy(C, C_);
-  ccopy(cA, cC);
-  ccopy(cC, cC_);
-  // set A_*
+
+  //set A
+  read_mat("../test_data/d_1024_1024_4.bin", A);
+  copy_mat(A, A_);
+  read_cmat("../test_data/c_1024_1024_4.bin", cA);
+  ccopy_mat(cA, cA_);
+  //set B
+  read_mat("../test_data/d_1024_1024_4.bin", B);
+  copy_mat(B, B_);
+  read_cmat("../test_data/c_1024_1024_4.bin", cB);
+  ccopy_mat(cB, cB_);
+  //set C
+  copy_mat(A, C);
+  copy_mat(C, C_);
+  ccopy_mat(cA, cC);
+  ccopy_mat(cC, cC_);
+  //set A_*
+
   A_diagonal = zeros(mat_size, 1, mat_batch);
   A_trace = zeros(1, 1, mat_batch);
   A_sum_1 = zeros(1, mat_size, mat_batch);
@@ -243,8 +252,8 @@ void test_verification(int heat, int print_flag, int compare) {
   ans_trace = zeros(1, 1, mat_batch);
   ans_sum_1 = zeros(1, mat_size, mat_batch);
   ans_sum_0 = zeros(mat_size, 1, mat_batch);
-  read_mat("../test_ans/d_4_4_2_Diagonal.bin", ans_diagonal);
-  read_mat("../test_ans/d_4_4_2_Trace.bin", ans_trace);
+  read_mat("../test_ans/d_1024_1024_4_Diagonal.bin", ans_diagonal);
+  read_mat("../test_ans/d_1024_1024_4_Trace.bin", ans_trace);
 
   cA_diagonal = czeros(mat_size, 1, mat_batch);
   cA_trace = czeros(1, 1, mat_batch);
@@ -254,36 +263,34 @@ void test_verification(int heat, int print_flag, int compare) {
   ans_ctrace = czeros(1, 1, mat_batch);
   ans_csum_1 = czeros(1, mat_size, mat_batch);
   ans_csum_0 = czeros(mat_size, 1, mat_batch);
-  read_cmat("../test_ans/c_4_4_2_cDiagonal.bin", ans_cdiagonal);
-  read_cmat("../test_ans/c_4_4_2_cTrace.bin", ans_ctrace);
 
-  A_mul = zeros(1, 4, 2);
-  B_mul = zeros(4, 4, 2);
-  C_mul = zeros(1, 4, 2);
-  read_mat("../test_data/d_1_4_2.bin", A_mul);
-  read_mat("../test_data/d_4_4_2.bin", B_mul);
-  ans_mul = zeros(1, 4, 2);
-  read_mat("../test_ans/d_1_4_2_Gemm.bin", ans_mul);
+  read_cmat("../test_ans/c_1024_1024_4_cDiagonal.bin", ans_cdiagonal);
+  read_cmat("../test_ans/c_1024_1024_4_cTrace.bin", ans_ctrace);
 
-  cA_mul = czeros(1, 4, 2);
-  cB_mul = czeros(4, 4, 2);
-  cC_mul = czeros(1, 4, 2);
-  read_cmat("../test_data/c_1_4_2.bin", cA_mul);
-  read_cmat("../test_data/c_4_4_2.bin", cB_mul);
-  ans_cmul = czeros(1, 4, 2);
-  read_cmat("../test_ans/c_1_4_2_cGemm.bin", ans_cmul);
+  A_mul = zeros(1, mat_size, mat_batch);
+  B_mul = zeros(mat_size, mat_size, mat_batch);
+  C_mul = zeros(1, mat_size, mat_batch);
+  read_mat("../test_data/d_1_1024_4.bin", A_mul);
+  read_mat("../test_data/d_1024_1024_4.bin", B_mul);
+  ans_mul = zeros(1, mat_size, mat_batch);
+  read_mat("../test_ans/d_1_1024_4_Gemm.bin", ans_mul);
+  
+  cA_mul = czeros(1, mat_size, mat_batch);
+  cB_mul = czeros(mat_size, mat_size, mat_batch);
+  cC_mul = czeros(1, mat_size, mat_batch);
+  read_cmat("../test_data/c_1_1024_4.bin", cA_mul);
+  read_cmat("../test_data/c_1024_1024_4.bin", cB_mul);
+  ans_cmul = czeros(1, mat_size, mat_batch);
+  read_cmat("../test_ans/c_1_1024_4_cGemm.bin", ans_cmul);
+
 
   is_ctype = 0;
   total = 0;
 
-  if (heat == 1) {
-    preheat();
-    printf("\n # Preparing Cache\n");
-    test_verification(0, 0, 0);
-    printf("\n Cache prepared.\n");
-  }
 
-  if (print_flag != 0) printf("\n\n # Testing\n");
+  if(print_flag != 0)
+    printf("\n\n # Testing\n");
+
   progressbar(PRGB_SIZE);
 
   FailCnt = 0;
@@ -296,12 +303,12 @@ void test_verification(int heat, int print_flag, int compare) {
     is_ctype = i % 2;
 
     // set data
-    copy(A, A_);
-    copy(B, B_);
-    copy(C, C_);
-    ccopy(cA, cA_);
-    ccopy(cB, cB_);
-    ccopy(cC, cC_);
+    copy_mat(A, A_);
+    copy_mat(B, B_);
+    copy_mat(C, C_);
+    ccopy_mat(cA, cA_);
+    ccopy_mat(cB, cB_);
+    ccopy_mat(cC, cC_);
 
     if (is_ctype == 0) {
       pA_ = A_;
@@ -756,22 +763,22 @@ void test_viewlist() {
   int i = 0;
   printf("\n\n---- Func list ----\n");
   for (i = 0; i < func_list_size - 9; i++) {
-    printf("¦§¦¨ %s\n", func_list[i++].name);
-    printf("¦¢¦¦¦¡ %s\n", func_list[i].name);
-    printf("¦¢\n");
+    printf("æˆæˆ %s\n", func_list[i++].name);
+    printf("å¼›æˆŒå¼ %s\n", func_list[i].name);
+    printf("å¼›\n");
   }
   i = func_list_size - 9;
-  printf("¦§¦¨ %s\n", func_list[i++].name);
-  printf("¦¢¦§¦¡ %s\n", func_list[i++].name);
-  printf("¦¢¦¦¦¡ %s\n", func_list[i++].name);
-  printf("¦¢\n");
-  printf("¦§¦¨ %s\n", func_list[i++].name);
-  printf("¦¢¦§¦¡ %s\n", func_list[i++].name);
-  printf("¦¢¦¦¦¡ %s\n", func_list[i++].name);
-  printf("¦¢\n");
-  printf("¦¦¦¨ %s\n", func_list[i++].name);
-  printf(" ¦§¦¡ %s\n", func_list[i++].name);
-  printf(" ¦¦¦¡ %s\n", func_list[i].name);
+  printf("æˆæˆ %s\n", func_list[i++].name);
+  printf("å¼›æˆå¼ %s\n", func_list[i++].name);
+  printf("å¼›æˆŒå¼ %s\n", func_list[i++].name);
+  printf("å¼›\n");
+  printf("æˆæˆ %s\n", func_list[i++].name);
+  printf("å¼›æˆå¼ %s\n", func_list[i++].name);
+  printf("å¼›æˆŒå¼ %s\n", func_list[i++].name);
+  printf("å¼›\n");
+  printf("æˆŒæˆ %s\n", func_list[i++].name);
+  printf(" æˆå¼ %s\n", func_list[i++].name);
+  printf(" æˆŒå¼ %s\n", func_list[i].name);
 
   printf("-------------------\n\n\n");
 }
@@ -979,10 +986,10 @@ void init_list() {
   strcpy(func_list[func_list_size - 1].name, "uScale");
 }
 
-void read_ans(int is_ctype, char *func_name, char *ans_name, void *data_d,
-              void *data_c, void **result_mat) {
-  char ans_dtype[16] = "d_4_4_2_.bin";
-  char ans_ctype[16] = "c_4_4_2_.bin";
+void read_ans(int is_ctype, char *func_name, char *ans_name, void *data_d, void *data_c, void **result_mat){
+  char ans_dtype[16] = "d_1024_1024_4_.bin";
+  char ans_ctype[16] = "c_1024_1024_4_.bin";
+
 
   if (is_ctype == 0) {
     append_post(ans_dtype, func_name, ans_name);
