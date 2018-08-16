@@ -140,12 +140,12 @@ void omp_caxpy(UINT N, CTYPE alpha, CTYPE *X, UINT INCX, CTYPE *Y, UINT INCY) {
  *
  *  <?>acopy(integer N, DTYPE* X, intefer INCX, DTYPE* Y, integer INCY)
  * */
-void copy(MAT *src, MAT *des) {
+void copy_mat(MAT *src, MAT *des) {
   ASSERT_DIM_EQUAL(src, des)
-  copy_inc(src->d0*src->d1*src->d2,src->data,1,des->data,1);
+  copy_mat_inc(src->d0*src->d1*src->d2,src->data,1,des->data,1);
 }
 
-void copy_inc(UINT size, DTYPE *X, ITER incx, DTYPE *Y, ITER incy){
+void copy_mat_inc(UINT size, DTYPE *X, ITER incx, DTYPE *Y, ITER incy){
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -160,12 +160,12 @@ void copy_inc(UINT size, DTYPE *X, ITER incx, DTYPE *Y, ITER incy){
 
 // USE_BLAS = 0 -> just c implement
 #else
-  omp_copy(size, X, incx, Y, incy);
+  omp_copy_mat(size, X, incx, Y, incy);
 #endif
 
 }
 
-void omp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
+void omp_copy_mat(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
   //  ITER i;
   //#pragma omp parallel for shared(des, src) private(i)
   //  for (i = 0; i < N; i++) {
@@ -198,12 +198,12 @@ void omp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
   }
 }
 
-void ccopy(CMAT *src, CMAT *des) {
+void ccopy_mat(CMAT *src, CMAT *des) {
   ASSERT_DIM_EQUAL(src, des)
-  ccopy_inc(src->d0*src->d1*src->d2,src->data,1,des->data,1);
+  ccopy_mat_inc(src->d0*src->d1*src->d2,src->data,1,des->data,1);
 }
 
-void ccopy_inc(UINT size, CTYPE *X, ITER incx, CTYPE *Y, ITER incy){
+void ccopy_mat_inc(UINT size, CTYPE *X, ITER incx, CTYPE *Y, ITER incy){
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -218,11 +218,11 @@ void ccopy_inc(UINT size, CTYPE *X, ITER incx, CTYPE *Y, ITER incy){
 
 // USE_BLAS = 0 -> just c implement
 #else
-  omp_ccopy(size, X, incx, Y, incy);
+  omp_ccopy_mat(size, X, incx, Y, incy);
 #endif
 
 }
-void omp_ccopy(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc) {
+void omp_ccopy_mat(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc) {
   ITER i;
 #pragma omp parallel for shared(des, src) private(i)
   for (i = 0; i < N; i++) {

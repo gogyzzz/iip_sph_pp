@@ -81,7 +81,7 @@
 #include "mkl.h"
 #endif
 
-#if USE_CBLAS
+#if USE_OPEN
 #include "lapacke.h"
 #endif
 

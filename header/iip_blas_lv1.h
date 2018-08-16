@@ -66,14 +66,14 @@ __global__ void cu_caxpy(CTYPE alpha, CTYPE *X, UINT INCX, CTYPE *Y, UINT INCY,
 #endif
 
 /* Copy MAT from src to des */
-void copy(MAT *src, MAT *des);
-void copy_inc(UINT size,DTYPE*X,ITER incx, DTYPE *Y, ITER incy);
-void omp_copy(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc);
+void copy_mat(MAT *src, MAT *des);
+void copy_mat_inc(UINT size,DTYPE*X,ITER incx, DTYPE *Y, ITER incy);
+void omp_copy_mat(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc);
 
 /* Copy CMAT from src to des */
-void ccopy(CMAT *src, CMAT *des);
-void ccopy_inc(UINT size, CTYPE  *X, ITER incx, CTYPE *Y,ITER incxy);
-void omp_ccopy(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc);
+void ccopy_mat(CMAT *src, CMAT *des);
+void ccopy_mat_inc(UINT size, CTYPE  *X, ITER incx, CTYPE *Y,ITER incxy);
+void omp_ccopy_mat(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc);
 
 #if USE_CUDA
 __global__ void cu_copy(DTYPE *SRC, UINT INC_SRC, DTYPE *DES, UINT INC_DES,

@@ -4248,7 +4248,7 @@ DTYPE det_nbyn(MAT* mat) {
 #if USE_CBLAS
   idx = mpalloc(sizeof(UINT) * n);
   tmat = mpalloc_mat(mat->d0, mat->d1, mat->d2);
-  copy(mat, tmat);
+  copy_mat(mat, tmat);
 #if NTYPE == 0
   LAPACKE_sgetrf(LAPACK_COL_MAJOR, n, n, mat->data, n, idx);
 #elif NTYPE == 1
@@ -4286,7 +4286,7 @@ CTYPE cdet_nbyn(CMAT* mat) {
 #if USE_CBLAS
   idx = mpalloc(sizeof(UINT) * n);
   tmat = mpalloc_cmat(mat->d0, mat->d1, mat->d2);
-  ccopy(mat, tmat);
+  ccopy_mat(mat, tmat);
 #if NTYPE == 0
   LAPACKE_cgetrf(LAPACK_COL_MAJOR, n, n, mat->data, n, idx);
 #elif NTYPE == 1
