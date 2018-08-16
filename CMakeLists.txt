@@ -244,7 +244,7 @@ if(WIN32 AND MSVC)
      PRIVATE
      /MP
      # /O2 - not compatible with debug mod flag /RTC1
-     # you had to set manuallu /O2 in release mod
+     # you have to set manuallu /O2 in release mod
      )
 else()
   # list(APPEND CMAKE_C_FLAGS "-g -O3 -Wall -Wextra ") : Wall is too much for now
