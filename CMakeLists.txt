@@ -5,7 +5,7 @@ set(TARGET_NAME ${PROJECT_NAME})
 
 #### BUILD ENVIRONMENT OPTIONS ######
 option(USE_CUDA    "Using CUDA"      OFF) # Not supported, yet.
-option(USE_BLAS    "Using BLAS"      OFF)
+option(USE_BLAS    "Using BLAS"      ON)
 option(USE_OPENMP  "Using OpenMP"    ON)
 
 #### set Your Source files ####
@@ -39,6 +39,12 @@ set(MAIN_SRC test/test_matlab.c)
 # recommed using 'target_<blah>_<blah>'
 # which is robust and modern.
 
+#compile flags
+set(CF)
+#link flags
+set(LF)
+#compule definitions
+set(CD)
 #### 1. functions ####
 
 macro(display_elements
@@ -58,12 +64,6 @@ endmacro()
 #	${CMAKE_CURRENT_SOURCE_DIR}/header)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/header)
 
-
-# MKL also can be found by find_package(BLAS)
-# But, MKL requires specific compile & link option.
-# just using "target_link_libraries" doesn't work for MKL.
-# In case you want to use MKL in linux. I wrote MKL option list BLAS section below.
-# If you modify this cmake with those options, you can use MKL in linux.
 
 #### 3. sources and executable ####
 
@@ -88,7 +88,10 @@ add_executable(${TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
 #### 4. check options ####
 
 if(USE_BLAS)
-    set(BLA_VENDOR "OpenBLAS")
+# MKL also can be found by find_package(BLAS)
+# But, MKL requires specific compile & link option.
+# just using "target_link_libraries" doesn't work for MKL.
+  set(BLA_VENDOR "OpenBLAS")
     find_package(BLAS)
 	if(BLAS_FOUND)
     message(STATUS "Found OpenBLAS : " ${BLAS_LIBRARIES})
@@ -138,101 +141,66 @@ endif()
 
 message(STATUS "ENV_PATH : " $ENV{PATH})
 
-if(NOT MSVC) 
-  #include <math.h> 
-  target_link_libraries(${TARGET_NAME}
-  PRIVATE
-	m
-  )
+if(NOT MSVC)
+  list(APPEND LF m)
 endif(NOT MSVC)
-	
+
+
 if(USE_OPEN OR USE_MKL )
 
  if(USE_OPEN)
 	message(STATUS ${BLAS_LIBRARIES})
-  target_link_libraries(${TARGET_NAME}
-	    openblas)
-    target_compile_definitions(${TARGET_NAME}
-	    PRIVATE
+
+  list(APPEND LF
+    openblas
+    )
+   
+  list(APPEND CD
 	    USE_OPEN=1
-	    USE_CBLAS=1)
-    elseif(USE_MKL)
-  # MKL Options 
-  # Linux gnu-compiler intel-64 <linking> 64bit <threading> limiomp5 
-  # 
-  #   1. dynamic 
-  #       2. OMP
-  #         + link :   -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl
-  #         + compile :  -DMKL_ILP64 -m64 -I${MKLROOT}/include 
-  #       
-  #       2. sequential
-  #         + link :  -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl
-  #         + compile :  -DMKL_ILP64 -m64 -I${MKLROOT}/include
-  #
-  #   1. static
-  #       2. OMP
-  #         + line :  -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_intel_ilp64.a ${MKLROOT}/lib/intel64/libmkl_intel_thread.a ${MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -liomp5 -lpthread -lm -ldl
-  #         + compile :  -DMKL_ILP64 -m64 -I${MKLROOT}/include
-  #
-  #       2. sequential
-  #         + link :  -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_intel_ilp64.a ${MKLROOT}/lib/intel64/libmkl_sequential.a ${MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -lpthread -lm -ldl
-  #         + compile :  -DMKL_ILP64 -m64 -I${MKLROOT}/include
-  #
-  #   
-  
-	if(UNIX)
-	#    set(MKL_PATH)
-	#    if("${MKL_PATH}" STREQUAL "")
-	#		message(FATAL_ERROR "ADD AN ARGUMENT '-DMKL_PATH=<ALL REQUIRED MKL libs>'")
-	##    endif()
-	#    message(STATUS "MKL_PATH : " ${MKL_PATH})
-	#    target_link_libraries(${BLAS_TARGET_NAME}
-	#		${MKL_PATH})
-	endif()	
-	
-  target_compile_definitions(${TARGET_NAME}
-	    PRIVATE
-	    USE_MKL=1)
+	    USE_CBLAS=1
+      )
+  elseif(USE_MKL)
+
+  list(APPEND CD  
+	    USE_MKL=1
+	    USE_CBLAS=1
+      )
 		
-    endif()
-endif()
+  endif()
+endif(USE_OPEN OR USE_MKL)
 
 if(USE_OPENMP)
-   #    set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS})
-   #    set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_C_FLAGS})
-	if(MSVC)
-	    # Visual Studio uses '/' for compile option
-     target_compile_options(${TARGET_NAME}
-     PRIVATE
-     /openmp
-   )
-   # MSVC works well with just compile option /openmp 
-  
+ #    set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS})
+ #    set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_C_FLAGS})
+if(MSVC)
+   # Visual Studio uses '/' for compile option
+    list(APPEND CF
+    /openmp
+    )
+ # MSVC works well with just compile option /openmp 
+
 else(MSVC)
-    target_compile_options(${TARGET_NAME}
-     PRIVATE
-     -fopenmp
-     )
-   target_link_libraries(${TARGET_NAME}
-     PRIVATE
-     -fopenmp  
-     )
-  endif(MSVC)
-    target_compile_definitions(
-      ${TARGET_NAME}
-      PRIVATE
-      USE_OMP=1
-      )
-    # add_definitions(-DUSE_OMP=1)
+  list(APPEND CF 
+   -fopenmp
+   )
+  list(APPEND LF  
+   -fopenmp
+   )
+endif(MSVC)
+
+list(APPEND CD    
+     USE_OMP=1
+    )
 endif(USE_OPENMP)
+
 
 ##### 6. compile optinos ####
 
-if(WIN32)
+#if(WIN32)
   #There is something wrong about the way CMAKE set /W3 flag
-  string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
-  string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
-endif(WIN32)
+  #string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
+  #string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
+  #endif(WIN32)
 
 if(WIN32 AND MSVC)
   # No /O3 in VS2013 (higher, too)?
@@ -240,22 +208,40 @@ if(WIN32 AND MSVC)
   # /O2 - fastest code in the majority of cases
   # /MP - compiled in mult-process : faster build time
   #list(APPEND  CMAKE_C_FLAGS " /O2 /MP ") -- This method is unstable.
-     target_compile_options(${TARGET_NAME}
-     PRIVATE
+  list(APPEND CF
      /MP
      # /O2 - not compatible with debug mod flag /RTC1
      # you have to set manuallu /O2 in release mod
      )
-else()
+ else(WIN32 AND MSVC)
   # list(APPEND CMAKE_C_FLAGS "-g -O3 -Wall -Wextra ") : Wall is too much for now
-     target_compile_options(${TARGET_NAME}
-     PRIVATE
+  list(APPEND CF
       -g
       -O3
       -Wextra
       )
-endif()
+  endif(WIN32 AND MSVC)
 
+target_compile_definitions(${TARGET_NAME}
+  PRIVATE
+  ${CD}
+)
+
+target_compile_options(${TARGET_NAME}
+  PRIVATE
+  ${CF}
+)
+
+target_link_libraries(${TARGET_NAME}
+  PRIVATE
+  ${LF}
+)
+
+
+display_elements("Compile Flags" "${CF}")
+display_elements("Linker Flags" "${LF}")
+display_elements("Compile Defines" "${CD}")
+message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
 
 
 #### 7. misc : CUDA(Work in Progress) ####
@@ -313,8 +299,4 @@ if(USE_CUDA)
 	PRIVATE
 	USE_CUDA=1)
 endif()
-
-
-message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
-
 
