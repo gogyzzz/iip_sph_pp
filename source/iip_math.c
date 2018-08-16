@@ -850,7 +850,7 @@ d2 = src->d2;
         for(i=0;i<d1;i++){
           temp += src->data[k*d0*d1 + i*d0 + j];
         }  
-        des->data[k*d0*d1 + j] = temp;
+        des->data[k*d0 + j] = temp;
       }
     }
 
@@ -865,7 +865,7 @@ d2 = src->d2;
         for(i=0;i<d0;i++){
           temp += src->data[k*d0*d1 + j*d0 + i];
         }  
-        des->data[k*d0*d1 + j] = temp;
+        des->data[k*d1 + j] = temp;
       }
     } 
   }
@@ -896,7 +896,7 @@ d2 = src->d2;
           temp.re += src->data[k*d0*d1 + i*d0 + j].re;
           temp.im += src->data[k*d0*d1 + i*d0 + j].im;
         }  
-        des->data[k*d0*d1 + j] = temp;
+        des->data[k*d0 + j] = temp;
       }
     }
 
@@ -913,7 +913,7 @@ d2 = src->d2;
           temp.re += src->data[k*d0*d1 + j*d0 + i].re;
           temp.im += src->data[k*d0*d1 + j*d0 + i].im;
         }  
-        des->data[k*d0*d1 + j] = temp;
+        des->data[k*d1 + j] = temp;
       }
     } 
   }

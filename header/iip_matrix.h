@@ -302,8 +302,8 @@ void cpermute(CMAT* mat, UINT seq);
 MAT* create_trans(MAT* mat);
 CMAT* create_ctrans(CMAT* mat);
 
-void trans(MAT* mat);  // with memory pool
-void ctrans(CMAT* mat);
+void transpose(MAT* mat);  // with memory pool
+void ctranspose(CMAT* mat);
 
 /**** get Diagonal of Matrix ****/
 /* ex

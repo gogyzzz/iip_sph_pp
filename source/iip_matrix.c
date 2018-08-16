@@ -723,7 +723,6 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
 #pragma omp parallel for shared(C, B, A) private(i)
       for (i = 0; i < b0; i++) {//b1 -> b0
         C->data[ic * j + i] = A->data[ia * j + 0] + B->data[ib * j + i];
-        printf("%lf = %lf + %lf\n", C->data[ic * j + i] , A->data[ia * j + 0] , B->data[ib * j + i]);
       }
   }
   // 1 a1 1 1

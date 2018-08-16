@@ -34,6 +34,7 @@ UINT compare_mat(MAT *A, MAT *B) {
   ITER i;
   for (i = 0; i < A->d0 * A->d1 * A->d2; i++)
     if (!_eq(A->data[i], B->data[i])) {
+      printf("index : %d\n", i);
       printf("%.16lf != %.16lf \n",A->data[i],B->data[i]);
       return 0;}
   return 1;
@@ -43,9 +44,13 @@ UINT compare_cmat(CMAT *A, CMAT *B) {
   ITER i;
   for (i = 0; i < A->d0 * A->d1 * A->d2; i++) {
     if (!_eq(A->data[i].re, B->data[i].re)){ 
+      printf("index : %d\n", i);
       printf("re %.16lf != %.16lf \n",A->data[i].re,B->data[i].re);
+      printf("im %.16lf != %.16lf \n",A->data[i].im,B->data[i].im);
       return 0;}
     if (!_eq(A->data[i].im, B->data[i].im)){
+      printf("index : %d\n", i);
+      printf("re %.16lf != %.16lf \n",A->data[i].re,B->data[i].re);
       printf("im %.16lf != %.16lf \n",A->data[i].im,B->data[i].im);
       return 0;}
   }
@@ -65,10 +70,6 @@ void append_post(char *filename, const char *post, char *out) {
 
 
 void test_verification(int heat, int print_flag, int compare){
-  if(!is_init)
-    init_list();
-  printf("Verifying...\n");
-
 /////////////////////////////////////////////
 
   int is_ctype = 0;     // 0 for DTYPE, 1 for CTYPE
@@ -79,7 +80,7 @@ void test_verification(int heat, int print_flag, int compare){
   /*** Input Data ***/
   MAT *A, *B, *C;
   MAT *A_, *B_, *C_;
-  MAT *A_diagonal, *A_trace, *A_mul;
+  MAT *A_diagonal, *A_trace, *A_mul, *A_sum_0, *A_sum_1;
   MAT *B_mul;
   MAT *C_mul;
   MAT *A_broad[8] = {NULL, };
@@ -87,19 +88,19 @@ void test_verification(int heat, int print_flag, int compare){
 
   CMAT *cA, *cB, *cC;
   CMAT *cA_, *cB_, *cC_;
-  CMAT *cA_diagonal, *cA_trace, *cA_mul;
+  CMAT *cA_diagonal, *cA_trace, *cA_mul, *cA_sum_0, *cA_sum_1;
   CMAT *cB_mul;
   CMAT *cC_mul;
   CMAT *cA_broad[8] = {NULL, };
   CMAT *cC_broad[4] = {NULL, };
   
-  void *pA_, *pB_, *pC_, *pA_diagonal, *pA_trace, *pA_mul, *pB_mul, *pC_mul, *result;
+  void *pA_, *pB_, *pC_, *pA_diagonal, *pA_trace, *pA_sum_0, *pA_sum_1, *pA_mul, *pB_mul, *pC_mul, *result;
   void *pA_broad[8] = {NULL, };
   void *pC_broad[4] = {NULL, };
 
   /*** Answer Data ***/
-  MAT *ans_A = NULL, *ans_mul = NULL, *ans_diagonal = NULL, *ans_trace = NULL;
-  CMAT *ans_cA = NULL, *ans_cmul = NULL, *ans_cdiagonal = NULL, *ans_ctrace = NULL;
+  MAT *ans_A = NULL, *ans_mul = NULL, *ans_diagonal = NULL, *ans_trace = NULL, *ans_sum_0 = NULL, *ans_sum_1 = NULL;
+  CMAT *ans_cA = NULL, *ans_cmul = NULL, *ans_cdiagonal = NULL, *ans_ctrace = NULL, *ans_csum_0 = NULL, *ans_csum_1 = NULL;
 
   MAT *ans_broad[4] = {NULL, };
   CMAT *ans_cbroad[4] = {NULL, };
@@ -116,7 +117,7 @@ void test_verification(int heat, int print_flag, int compare){
   if(!is_init)
     init_list();
   if(print_flag)
-    printf(" Measuring...\n");
+    printf(" Running test...\n\n");
 
   A = zeros(mat_size, mat_size, mat_batch);
   A_ = zeros(mat_size, mat_size, mat_batch);
@@ -201,15 +202,23 @@ void test_verification(int heat, int print_flag, int compare){
   //set A_*
   A_diagonal = zeros(mat_size, 1, mat_batch);
   A_trace = zeros(1, 1, mat_batch);
+  A_sum_1 = zeros(1, mat_size, mat_batch);
+  A_sum_0 = zeros(mat_size, 1, mat_batch);
   ans_diagonal = zeros(mat_size, 1, mat_batch);
   ans_trace = zeros(1, 1, mat_batch);
+  ans_sum_1 = zeros(1, mat_size, mat_batch);
+  ans_sum_0 = zeros(mat_size, 1, mat_batch);
   read_mat("../test_ans/d_4_4_2_Diagonal.bin", ans_diagonal);
   read_mat("../test_ans/d_4_4_2_Trace.bin", ans_trace);
 
   cA_diagonal = czeros(mat_size, 1, mat_batch);
   cA_trace = czeros(1, 1, mat_batch);
+  cA_sum_1 = czeros(1, mat_size, mat_batch);
+  cA_sum_0 = czeros(mat_size, 1, mat_batch);
   ans_cdiagonal = czeros(mat_size, 1, mat_batch);
   ans_ctrace = czeros(1, 1, mat_batch);
+  ans_csum_1 = czeros(1, mat_size, mat_batch);
+  ans_csum_0 = czeros(mat_size, 1, mat_batch);
   read_cmat("../test_ans/c_4_4_2_cDiagonal.bin", ans_cdiagonal);
   read_cmat("../test_ans/c_4_4_2_cTrace.bin", ans_ctrace);
 
@@ -235,7 +244,7 @@ void test_verification(int heat, int print_flag, int compare){
 
   if(heat == 1){
     preheat();
-    test_performance(0, 0);
+    test_verification(0, 0, 0);
   }
 
   if(print_flag){
@@ -260,6 +269,8 @@ void test_verification(int heat, int print_flag, int compare){
       pC_ = C_;
       pA_diagonal = A_diagonal;
       pA_trace = A_trace;
+      pA_sum_0 = A_sum_0;
+      pA_sum_1 = A_sum_1;
       pA_mul = A_mul;
       pB_mul = B_mul;
       pC_mul = C_mul;
@@ -276,6 +287,8 @@ void test_verification(int heat, int print_flag, int compare){
       pC_ = cC_;
       pA_diagonal = cA_diagonal;
       pA_trace = cA_trace;
+      pA_sum_0 = cA_sum_0;
+      pA_sum_1 = cA_sum_1;
       pA_mul = cA_mul;
       pB_mul = cB_mul;
       pC_mul = cC_mul;
@@ -309,14 +322,14 @@ void test_verification(int heat, int print_flag, int compare){
       result = pA_;
 
       //read_ans(is_ctype, func_list[i].name, ans_path, ans_A, ans_cA, pAns);
-    } else if (i == 34 || i == 35) {  // sum
+    } else if (i == 34 || i == 35) {  // sum_mat
       calced = 1;
       stopwatch(0);
-      func_list[i].fp(pA_, 1);
+      func_list[i].fp(pA_, pA_sum_0, 0);
       total += stopwatch(1);
-      result = pA_;
-	  printf("\n # skip asum\n");
-	  continue;
+      result = pA_sum_0;
+      
+      read_ans(is_ctype, func_list[i].name, ans_path, ans_sum_0, ans_csum_0, &pAns);
     } else if (i == func_list_size - 9) {  // pow_mat
       calced = 1;
       pA_ = A_;
@@ -443,17 +456,7 @@ void test_verification(int heat, int print_flag, int compare){
           if(compare != 0 && print_flag != 0){
             print_compare(func_list[i].name, is_ctype, pC_broad[0], pAns_broad[0]);
             print_compare(func_list[i].name, is_ctype, pC_broad[1], pAns_broad[1]);
-		  }
-		  printf("=============================\n");
-		  print_mat(pA_broad[1]);
-		  printf("------------\n");
-		  print_mat(pA_broad[5]);
-		  printf("------------\n");
-		  print_mat(pC_broad[1]);
-		  printf("------------\n");
-		  print_mat(pAns_broad[1]);
-		  printf("------------\n");
-		  printf("=============================\n");
+		      }
 
           stopwatch(0);
           func_list[i].fp(pA_broad[3], pA_broad[1], pC_broad[0]);
@@ -579,7 +582,7 @@ void test_verification(int heat, int print_flag, int compare){
     }
     // not using - repmat, reshape...
     else{
-      printf(" passing function [%s]\n", func_list[i].name);
+      //printf(" passing function [%s]\n", func_list[i].name);
       // do nothing
       continue;
     }
@@ -602,9 +605,6 @@ void test_verification(int heat, int print_flag, int compare){
   }
 
   if(print_flag)
-    printf("\n *** Broad Cast Function ***\n");
-
-  if(print_flag)
     printf("Done.\n *** Total Run time : %.3lfms\n", (double)total/1000.0);
 
 /////////////////////////////////////////////
@@ -613,14 +613,26 @@ void test_verification(int heat, int print_flag, int compare){
   free_mat(A);  free_mat(B);  free_mat(C);
   free_mat(A_); free_mat(B_); free_mat(C_);
   free_mat(A_diagonal); free_mat(A_trace);  free_mat(A_mul);
+  free_mat(A_sum_0);  free_mat(A_sum_1);
   free_mat(B_mul);  free_mat(C_mul);
-  
+  for (i = 0; i < 8; i++) { free_mat(A_broad[i]); }
+  for(i=0; i<4; i++){ free_mat(C_broad[i]); }
+
   free_cmat(cA);  free_cmat(cB);  free_cmat(cC);
   free_cmat(cA_); free_cmat(cB_); free_cmat(cC_);
   free_cmat(cA_diagonal); free_cmat(cA_trace);  free_cmat(cA_mul);
+  free_cmat(cA_sum_0);  free_cmat(cA_sum_1);
   free_cmat(cB_mul);  free_cmat(cC_mul);
-}
+  for (i = 0; i < 8; i++) { free_cmat(cA_broad[i]); }
+  for(i=0; i<4; i++){ free_cmat(cC_broad[i]); }
 
+  free_mat(ans_A);    free_mat(ans_mul);    free_mat(ans_diagonal);   free_mat(ans_trace);    
+  free_mat(ans_sum_0);    free_mat(ans_sum_1);
+  free_cmat(ans_cA);  free_cmat(ans_cmul);  free_cmat(ans_cdiagonal); free_cmat(ans_ctrace);  
+  free_cmat(ans_csum_0);  free_cmat(ans_csum_1);
+  for(i=0; i<4; i++){ free_mat(ans_broad[i]); free_cmat(ans_cbroad[i]); }
+}
+/*
 void test_performance(int heat, int print_flag){
   int is_ctype = 0;     // 0 for DTYPE, 1 for CTYPE
   int i = 0, calced = 0;
@@ -743,7 +755,7 @@ void test_performance(int heat, int print_flag){
     }
     calced = 0;
 
-    /* call appropriate func */
+    // call appropriate func 
 
     // Require ONE matrix func
     if (func_list[i].param_cnt == 1) {
@@ -900,7 +912,7 @@ void test_performance(int heat, int print_flag){
   if(print_flag)
     printf("Done.\n *** Total Run time : %.3lfms\n", (double)total/1000.0);
   
-  /*** Release Memory ***/
+  // Release Memory
   free_mat(A);  free_mat(B);  free_mat(C);
   free_mat(A_); free_mat(B_); free_mat(C_);
   free_mat(A_diagonal); free_mat(A_trace);  free_mat(A_mul);
@@ -911,6 +923,7 @@ void test_performance(int heat, int print_flag){
   free_cmat(cA_diagonal); free_cmat(cA_trace);  free_cmat(cA_mul);
   free_cmat(cB_mul);  free_cmat(cC_mul);
 }
+*/
 
 void test_viewlist(){
   if(!is_init)
@@ -1078,12 +1091,12 @@ void init_list(){
   func_list[33].param_cnt = 2;
   strcpy(func_list[33].name, "cTrace");
   
-  func_list[34].fp = asum;
+  func_list[34].fp = sum_mat;
   func_list[34].param_cnt = 2;
-  strcpy(func_list[34].name, "Asum");
-  func_list[35].fp = casum;
+  strcpy(func_list[34].name, "Sum Mat");
+  func_list[35].fp = sum_cmat;
   func_list[35].param_cnt = 2;
-  strcpy(func_list[35].name, "cAsum");
+  strcpy(func_list[35].name, "Sum cMat");
   
   func_list[36].fp = add_elements;
   func_list[36].param_cnt = 3;
@@ -1172,17 +1185,17 @@ void read_broad_ans(int is_ctype, int param_type, char *func_name, char *ans_nam
 
 void print_compare(char *func_name, int is_ctype, void *mat1, void *mat2){
   // print result
-  printf("\n # %s\n", func_name);
+  printf(" # %s\n", func_name);
   if(is_ctype == 0){
     if(compare_mat(mat1, mat2) == 0)
-      printf("  !! FAIL !!\n");
+      printf("  !! FAIL !!\n\n");
     else
-      printf("  OK\n");
+      printf("  OK\n\n");
   }
   else{
     if(compare_cmat(mat1, mat2) == 0)
-      printf("  !! FAIL !!\n");
+      printf("  !! FAIL !!\n\n");
     else
-      printf("  OK\n");
+      printf("  OK\n\n");
   }
 }

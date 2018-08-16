@@ -22,10 +22,9 @@ int main() {
     printf("============= TESTING =============\n");
     printf(" IIPLAB - project iip sph pp       \n");
     printf("-----------------------------------\n");
-    printf(" 1. Run Test - Verification        \n");
-    printf(" 2. Run Test - Performance         \n");
-    printf(" 3. View Testing List              \n");
-    printf(" 4. Exit                           \n");
+    printf(" 1. Run Test                       \n");
+    printf(" 2. View Testing List              \n");
+    printf(" 3. Exit                           \n");
     printf("===================================\n");
 
     scanf_s("%d", &selection);
@@ -33,13 +32,13 @@ int main() {
       case 1:
         test_verification(ask_preheat(), 1, 1);
         break;
+      // case 2:
+      //   test_performance(ask_preheat(), 1);
+      //   break;
       case 2:
-        test_performance(ask_preheat(), 1);
-        break;
-      case 3:
         test_viewlist();
         break;
-      case 4:
+      case 3:
         return 0;
         break;
       default:
