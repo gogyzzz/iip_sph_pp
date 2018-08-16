@@ -258,7 +258,7 @@ void cinv_elements_inc(UINT size, CTYPE* X, ITER incx);
  *  4 X 3
  *  DIM(2,3,1)
  *  8 X 9 X 1
- *  
+ *
  * */
 void repmat(MAT* mat, DIM* dim);
 void crepmat(CMAT* mat, DIM* dim);

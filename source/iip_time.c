@@ -50,11 +50,11 @@ long long stopwatch(int flag) {
     //   default:
     //     printf("%lld milli sec\n", diff / 100000);
     //     break;
-    }
+    //    }
   } else {
     printf("wrong flag | 0 : start, 1 : end\n");
   }
-  return diff;
+  return diff / 1000;
 }
 #else
 
@@ -124,7 +124,7 @@ long long stopwatch(int flag) {
     clock_gettime(&endTV);
     diff = MICRO * (endTV.tv_sec - startTV.tv_sec) +
            (endTV.tv_usec - startTV.tv_usec);
-    //printf("%lld micro seconds\n", diff);
+    // printf("%lld micro seconds\n", diff);
   }
   return diff;
 }

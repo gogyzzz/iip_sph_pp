@@ -199,7 +199,7 @@ MAT *wav_buf2MAT(WAV_BUF *buf) {
   mat->d2 = 1;
   mat->data = (DTYPE *)malloc(sizeof(DTYPE) * mat->d0 * mat->d1);
 
-#pragma omp parallel for shared(mat, buf) private(i, j)
+#pragma omp parallel for schedule(dynamic) shared(mat, buf) private(i, j)
   for (i = 0; i < mat->d1; i++) {
     for (j = 0; j < mat->d0; j++) {
       mat->data[i * mat->d0 + j] = (DTYPE)(buf->buf[i + mat->d1 * j]);
@@ -278,7 +278,7 @@ WAV *mat2wav(MAT *mat, UINT sample_rate) {
    *
    * */
   wav->buffer.buf = (short *)malloc(sizeof(short) * d0 * d1);
-#pragma omp parallel for shared(wav, mat) private(i)
+#pragma omp parallel for schedule(dynamic) shared(wav, mat) private(i)
   for (i = 0; i < d0 * d1; i++) {
     wav->buffer.buf[i] = (short)(mat->data[i % d1 * d0 + i / d1]);
   }

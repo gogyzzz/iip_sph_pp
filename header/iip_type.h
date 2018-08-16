@@ -212,13 +212,13 @@ _2,_1
   }
 
 // Y = A/B
-#define CXEDIV(Y, A, B)                                 \
-  {                                                     \
+#define CXEDIV(Y, A, B)                                   \
+  {                                                       \
     ASSERT(B.re != 0. || B.im != 0., "Divide by zero.\n") \
-    Y.re = ((A.re) * (B.re) + (A.im) * (B.im)) /        \
-           (((B.re) * (B.re)) + ((B.im) * (B.im)));     \
-    Y.im = ((A.im) * (B.re) - (A.re) * (B.im)) /        \
-           (((B.re) * (B.re)) + ((B.im) * (B.im)));     \
+    Y.re = ((A.re) * (B.re) + (A.im) * (B.im)) /          \
+           (((B.re) * (B.re)) + ((B.im) * (B.im)));       \
+    Y.im = ((A.im) * (B.re) - (A.re) * (B.im)) /          \
+           (((B.re) * (B.re)) + ((B.im) * (B.im)));       \
   }
 
 #define CXEADD(Y, A, B) \

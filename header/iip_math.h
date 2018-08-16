@@ -110,11 +110,11 @@ void log2_cmat(CMAT* mat);
 void log2_cmat_inc(UINT size, CTYPE* X, ITER incx);
 
 /**** log with base ****/
-void logb_mat(MAT*mat, UINT base);
-void logb_mat_inc(UINT size, DTYPE*X, UINT base,ITER incx);
+void logb_mat(MAT* mat, UINT base);
+void logb_mat_inc(UINT size, DTYPE* X, UINT base, ITER incx);
 
-void clogb_mat(CMAT*mat, UINT base);
-void clogb_mat_inc(UINT size, CTYPE*X, UINT base,ITER incx);
+void clogb_mat(CMAT* mat, UINT base);
+void clogb_mat_inc(UINT size, CTYPE* X, UINT base, ITER incx);
 /**** exp ****/
 void exp_mat(MAT* mat);
 void exp_mat_inc(UINT size, DTYPE* X, ITER incx);
@@ -147,23 +147,23 @@ DTYPE amin_cmat(CMAT* mat, DIM* dim);
 
 /**** accumulated sum ****/
 /*  ex)
- *  
- *  src  
- * | 1 3 | 
+ *
+ *  src
+ * | 1 3 |
  * | 2 4 |
  *
  *  axis = 0
  *  des
  * | 4 |
  * | 6 |
- * 
+ *
  * axis = 1
  *  des
  * | 3 7 |
  *
  */
-void sum_mat(MAT*src, MAT*des, UINT axis); // des :  1 d1 d2 
-void sum_cmat(CMAT*src, CMAT*des, UINT axis); // des : d0 1 d2
+void sum_mat(MAT* src, MAT* des, UINT axis);     // des :  1 d1 d2
+void sum_cmat(CMAT* src, CMAT* des, UINT axis);  // des : d0 1 d2
 
 /**** return complex type : r + ii ****/
 CTYPE CX(DTYPE r, DTYPE i);

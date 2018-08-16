@@ -20,8 +20,8 @@ option(USE_OPENMP  "Using OpenMP"    ON)
 #
 # include_directories(${CMAKE_CURRENT_SOURCE_DIR}/my_header_folder)
 
-set(MAIN_SRC test/test_time.c)
-#set(MAIN_SRC test/test_matlab.c)
+#set(MAIN_SRC test/test_time.c)
+set(MAIN_SRC test/test_matlab.c)
 
 
 ###############################
