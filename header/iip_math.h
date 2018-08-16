@@ -146,8 +146,24 @@ DTYPE amin_mat(MAT* mat, DIM* dim);
 DTYPE amin_cmat(CMAT* mat, DIM* dim);
 
 /**** accumulated sum ****/
-void sum_mat(MAT*src, MAT*des, UINT axis);
-void sum_cmat(CMAT*src, CMAT*des, UINT axis);
+/*  ex)
+ *  
+ *  src  
+ * | 1 3 | 
+ * | 2 4 |
+ *
+ *  axis = 0
+ *  des
+ * | 4 |
+ * | 6 |
+ * 
+ * axis = 1
+ *  des
+ * | 3 7 |
+ *
+ */
+void sum_mat(MAT*src, MAT*des, UINT axis); // des :  1 d1 d2 
+void sum_cmat(CMAT*src, CMAT*des, UINT axis); // des : d0 1 d2
 
 /**** return complex type : r + ii ****/
 CTYPE CX(DTYPE r, DTYPE i);
