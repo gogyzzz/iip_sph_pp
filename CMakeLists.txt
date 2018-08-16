@@ -9,86 +9,37 @@ option(USE_CUDA    "Using CUDA"      OFF)
 option(USE_BLAS    "Using BLAS"      OFF)
 option(USE_OPENMP  "Using OpenMP"    ON)
 
-#SET your sources here
-# EXAMPLE : set(MAIN_SRC YOUR_SRC1 folder1/YOUR_SRC2 folder2/YOUR_SRC3 )
-#INCLUDE your headers here
-# EXAMPLE : include_directories(${CMAKE_CURRENT_SOURCE_DIR}/YOUR_HEADER_FOLDER)
 
-### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
+
+#### set Your Source files ####
+
+# example for adding code
+# 
+# set(MAIN_SRC
+# my_main.c
+# src/my_c_code.c
+# src2/my_other_c_code.c
+# )
+#
+# include_directories(${CMAKE_CURRENT_SOURCE_DIR}/my_header_folder)
+#
 
 set(MAIN_SRC test/test_matlab.c)
 #set(MAIN_SRC test/chunk.c)
 
-### MAIN FILE ###### MAIN FILE ###### MAIN FILE ###
 
-set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
+###########################################
+#       CMAKE INDEX                       #
+# 1. functions                            #
+# 2. includes                             #
+# 3. sources and executable               #
+# 4. check options           + Order      #
+# 5. defines and links        a. BLAS     #
+# 6. compile optinos          b. OMP      #
+# 7. misc : CUDA(WIP)         c. Native C #
+###########################################
 
-if(USE_CUDA)
-    find_package(CUDA)
-    if(NOT(CUDA_FOUND))
-		message(SEND_ERROR "USE_CUDA is set ON but CUDA not found")
-		set(USE_CUDA OFF)
-    else()
-	if(NOT CUDA_ARCH)
-		message(STATUS "cuda arch wasn't provided, running feature test")
-
-    include(feature_test)
-	else()
-	    set(CUDA_GEN_CODE "-gencode arch=compute_${CUDA_ARCH},code=sm_${CUDA_ARCH}")
-		endif()
-	set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS}; ${CUDA_GEN_CODE}")
-
-	message(STATUS "CUDA found")
-    endif()
-endif()
-
-# MKL also can be found by find_package(BLAS)
-# But, MKL requires specific compile & link option.
-# just using "target_link_libraries" doesn't work for MKL.
-# In case, you want to use MKL in linux. I wrote MKL option MKL section below.
-# If you modify this file with those options, using MKL and CMAKE can be done.
-
-if(USE_BLAS)
-    set(BLA_VENDOR "OpenBLAS")
-    find_package(BLAS)
-	if(BLAS_FOUND)
-    message(STATUS "Found OpenBLAS : " ${BLAS_LIBRARIES})
-	set(USE_OPEN ON)
-	set(USE_MKL  OFF)
-    else()
-		message(STATUS "OpenBLAS not found, assume usnig MKL")
-	set(USE_OPEN OFF)
-	set(USE_MKL  ON)
-    endif()
-endif()
-
-if(USE_OPENMP)
-# Not going to use omp.h so, just linker option is required.   
-
-   find_package(OpenMP)
-   if(NOT(OpenMP_FOUND))
-	    message(SEND_ERROR "USE_OPENMP is set ON but OpenMP not found")
-	    set(USE_OPENMP OFF)
-   else()
-	  message(STATUS "OpenMP found")
-   endif()
-
-   set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS})
-    set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_C_FLAGS})
-	if(MSVC)
-	    # Visual Studio uses '/' for compile option
-	    # CMAKE sets -openmp option for OpenMP_FLAGS
-    string(REPLACE "-openmp" " /openmp" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-    string(REPLACE "-openmp" " /openmp" CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
-	endif(MSVC)
-    add_definitions(-DUSE_OMP=1)
-endif()
-
-message(STATUS "USE_CUDA   : " ${USE_CUDA})
-message(STATUS "USE_OPEN  : " ${USE_OPEN})
-message(STATUS "USE_MKL   : " ${USE_MKL})
-message(STATUS "USE_OPENMP : " ${USE_OPENMP})
-
+#### 1. functions ####
 
 macro(display_elements
 	DISPLAY_MESSAGE
@@ -99,19 +50,24 @@ macro(display_elements
     endforeach()
 endmacro()
 
-#GET OS
-#UNIX   TRUE for UNIX,APPLE
-#WIN32  TRUE for Windows 32bit and 64bit
-#APPLE  TRUE for APPLE
-if(UNIX)
-    add_definitions(-DOS_UNIX=1)
-elseif(WIN32)
-    add_definitions(-DOS_WIN=1)
-endif()
+#### 2. includes ####
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/header)
 
-message(STATUS "ENV_PATH : " $ENV{PATH})
+# This way is better. But, in this point, 'TARGET_NAME' isn't set.
+# target_include_directories(${TARGET_NAME}
+#	PUBLIC
+#	${CMAKE_CURRENT_SOURCE_DIR}/header)
+
+set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
+
+# MKL also can be found by find_package(BLAS)
+# But, MKL requires specific compile & link option.
+# just using "target_link_libraries" doesn't work for MKL.
+# In case you want to use MKL in linux. I wrote MKL option list BLAS section below.
+# If you modify this cmake with those options, you can use MKL in linux.
+
+#### 3. sources and executable ####
 
 set(C_SOURCE
     source/iip_matrix.c
@@ -131,13 +87,58 @@ set(C_SOURCE
 
 add_executable(${TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
 
-target_include_directories(${TARGET_NAME}
-	PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/header)
+#### 4. check options ####
+
+if(USE_BLAS)
+    set(BLA_VENDOR "OpenBLAS")
+    find_package(BLAS)
+	if(BLAS_FOUND)
+    message(STATUS "Found OpenBLAS : " ${BLAS_LIBRARIES})
+	set(USE_OPEN ON)
+	set(USE_MKL  OFF)
+    else()
+		message(STATUS "OpenBLAS not found, assume usnig MKL")
+	set(USE_OPEN OFF)
+	set(USE_MKL  ON)
+    endif()
+endif()
+
+if(USE_OPENMP)
+# Not going to use omp.h so, just linker option is required.   
+   find_package(OpenMP)
+   if(NOT(OpenMP_FOUND))
+	    message(SEND_ERROR "USE_OPENMP is set ON but OpenMP not found")
+	    set(USE_OPENMP OFF)
+   else()
+	  message(STATUS "OpenMP found")
+   endif()
+
+endif()
+
+message(STATUS "USE_CUDA   : " ${USE_CUDA})
+message(STATUS "USE_OPEN  : " ${USE_OPEN})
+message(STATUS "USE_MKL   : " ${USE_MKL})
+message(STATUS "USE_OPENMP : " ${USE_OPENMP})
+
+#### 5. defines and links  ####
+
+#GET OS
+#UNIX   TRUE for UNIX,APPLE
+#WIN32  TRUE for Windows 32bit and 64bit
+#APPLE  TRUE for APPLE
+if(UNIX)
+    add_definitions(-DOS_UNIX=1)
+elseif(WIN32)
+    add_definitions(-DOS_WIN=1)
+endif()
+
+
+message(STATUS "ENV_PATH : " $ENV{PATH})
 
 if(NOT MSVC) 
   #include <math.h> 
   target_link_libraries(${TARGET_NAME}
+  PRIVATE
 	m
   )
 endif(NOT MSVC)
@@ -193,9 +194,93 @@ if(USE_OPEN OR USE_MKL )
     endif()
 endif()
 
+if(USE_OPENMP)
+   #    set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS})
+   #    set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_C_FLAGS})
+	if(MSVC)
+	    # Visual Studio uses '/' for compile option
+	    # CMAKE sets -openmp option for OpenMP_FLAGS
+      #  string(REPLACE "-openmp" " /openmp" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+      #string(REPLACE "-openmp" " /openmp" CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
+   target_compile_options(${TARGET_NAME}
+     PRIVATE
+     /openmp
+   )
+   target_link_libraries(${TARGET_NAME}
+     PRIVATE
+     /openmp  
+   )
+   else(MSVC)
+   target_compile_options(${TARGET_NAME}
+     PRIVATE
+     -fopenmp
+   )
+   target_link_libraries(${TARGET_NAME}
+     PRIVATE
+     -fopenmp  
+   )
+  endif(MSVC)
+    target_compile_definitions(
+      ${TARGET_NAME}
+      PRIVATE
+      USE_OMP=1
+      )
+    # add_definitions(-DUSE_OMP=1)
+endif(USE_OPENMP)
+
+##### 6. compile optinos ####
+
+if(WIN32)
+  #There is something wrong about the way CMAKE set /W3 flag
+  string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
+  string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
+endif(WIN32)
+
+if(WIN32 AND MSVC)
+  # No /O3 in VS2013 (higher, too)?
+
+  # /O2 - fastest code in the majority of cases
+  # /MP - compiled in mult-process : faster build time
+  #list(APPEND  CMAKE_C_FLAGS " /O2 /MP ") -- This method is unstable.
+     target_compile_options(${TARGET_NAME}
+     PRIVATE
+     /MP
+     # /O2 - not compatible with debug mod flag /RTC1
+     )
+else()
+  # list(APPEND CMAKE_C_FLAGS "-g -O3 -Wall -Wextra ") : Wall is too much for now
+     target_compile_options(${TARGET_NAME}
+     PRIVATE
+      -g
+      -O3
+      -Wextra
+      )
+endif()
 
 
-##### CUDA part is not complete ####
+
+#### 7. misc : CUDA(Work in Progress) ####
+
+if(USE_CUDA)
+    find_package(CUDA)
+    if(NOT(CUDA_FOUND))
+		message(SEND_ERROR "USE_CUDA is set ON but CUDA not found")
+		set(USE_CUDA OFF)
+    else()
+	if(NOT CUDA_ARCH)
+		message(STATUS "cuda arch wasn't provided, running feature test")
+
+    include(feature_test)
+	else()
+	    set(CUDA_GEN_CODE "-gencode arch=compute_${CUDA_ARCH},code=sm_${CUDA_ARCH}")
+		endif()
+	set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS}; ${CUDA_GEN_CODE}")
+
+	message(STATUS "CUDA found")
+    endif()
+endif()
+
+
 if(USE_CUDA)
     set(CUDA_TARGET_NAME "${PROJECT_NAME}_cuda")
     set(CUDA_SRC 
@@ -228,26 +313,6 @@ if(USE_CUDA)
 	USE_CUDA=1)
 endif()
 
-if(WIN32)
-  #There is something wrong about the way CMAKE set /W3 flag
-  string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
-  string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
-endif(WIN32)
-
-if(WIN32 AND MSVC)
-  # No /O3 in VS2013 (higher, too)?
-  # /O2 - fastest code in the majority of cases
-  # /MP - compiled in mult-process : faster build time
-  list(APPEND  CMAKE_C_FLAGS " /O2 /MP ")
-else()
-  # list(APPEND CMAKE_C_FLAGS "-g -O3 -Wall -Wextra ") : Wall is too much for now
-     target_compile_options(${TARGET_NAME}
-     PRIVATE
-      -g
-      -O3
-      -Wextra
-      )
-endif()
 
 message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
 
