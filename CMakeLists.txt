@@ -4,12 +4,9 @@ project(iip_sph_pp)
 set(TARGET_NAME ${PROJECT_NAME})
 
 #### BUILD ENVIRONMENT OPTIONS ######
-
-option(USE_CUDA    "Using CUDA"      OFF)
+option(USE_CUDA    "Using CUDA"      OFF) # Not supported, yet.
 option(USE_BLAS    "Using BLAS"      OFF)
 option(USE_OPENMP  "Using OpenMP"    ON)
-
-
 
 #### set Your Source files ####
 
@@ -22,7 +19,6 @@ option(USE_OPENMP  "Using OpenMP"    ON)
 # )
 #
 # include_directories(${CMAKE_CURRENT_SOURCE_DIR}/my_header_folder)
-#
 
 set(MAIN_SRC test/test_matlab.c)
 #set(MAIN_SRC test/chunk.c)
@@ -39,6 +35,10 @@ set(MAIN_SRC test/test_matlab.c)
 # 7. misc : CUDA(WIP)         c. Native C #
 ###########################################
 
+# set options by 'set' is unstable. Often not working.
+# recommed using 'target_<blah>_<blah>'
+# which is robust and modern.
+
 #### 1. functions ####
 
 macro(display_elements
@@ -52,14 +52,12 @@ endmacro()
 
 #### 2. includes ####
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/header)
-
-# This way is better. But, in this point, 'TARGET_NAME' isn't set.
+# Below method is better. But, in this point, 'TARGET_NAME' isn't set.
 # target_include_directories(${TARGET_NAME}
 #	PUBLIC
 #	${CMAKE_CURRENT_SOURCE_DIR}/header)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/header)
 
-set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 # MKL also can be found by find_package(BLAS)
 # But, MKL requires specific compile & link option.
@@ -112,7 +110,6 @@ if(USE_OPENMP)
    else()
 	  message(STATUS "OpenMP found")
    endif()
-
 endif()
 
 message(STATUS "USE_CUDA   : " ${USE_CUDA})
@@ -127,9 +124,15 @@ message(STATUS "USE_OPENMP : " ${USE_OPENMP})
 #WIN32  TRUE for Windows 32bit and 64bit
 #APPLE  TRUE for APPLE
 if(UNIX)
-    add_definitions(-DOS_UNIX=1)
+    target_compile_definitions(${TARGET_NAME}
+    PRIVATE
+    OS_UNIX=1
+    )
 elseif(WIN32)
-    add_definitions(-DOS_WIN=1)
+    target_compile_definitions(${TARGET_NAME}
+    PRIVATE
+    OS_WIN=1
+    )
 endif()
 
 
@@ -199,26 +202,21 @@ if(USE_OPENMP)
    #    set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_C_FLAGS})
 	if(MSVC)
 	    # Visual Studio uses '/' for compile option
-	    # CMAKE sets -openmp option for OpenMP_FLAGS
-      #  string(REPLACE "-openmp" " /openmp" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-      #string(REPLACE "-openmp" " /openmp" CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
-   target_compile_options(${TARGET_NAME}
+     target_compile_options(${TARGET_NAME}
      PRIVATE
      /openmp
    )
-   target_link_libraries(${TARGET_NAME}
-     PRIVATE
-     /openmp  
-   )
-   else(MSVC)
-   target_compile_options(${TARGET_NAME}
+   # MSVC works well with just compile option /openmp 
+  
+else(MSVC)
+    target_compile_options(${TARGET_NAME}
      PRIVATE
      -fopenmp
-   )
+     )
    target_link_libraries(${TARGET_NAME}
      PRIVATE
      -fopenmp  
-   )
+     )
   endif(MSVC)
     target_compile_definitions(
       ${TARGET_NAME}
@@ -246,6 +244,7 @@ if(WIN32 AND MSVC)
      PRIVATE
      /MP
      # /O2 - not compatible with debug mod flag /RTC1
+     # you had to set manuallu /O2 in release mod
      )
 else()
   # list(APPEND CMAKE_C_FLAGS "-g -O3 -Wall -Wextra ") : Wall is too much for now
@@ -260,6 +259,8 @@ endif()
 
 
 #### 7. misc : CUDA(Work in Progress) ####
+
+set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 if(USE_CUDA)
     find_package(CUDA)
