@@ -802,7 +802,6 @@ void preheat() {
     progress_update((DTYPE)i / 50000000.0, PRGB_SIZE);
   }
   times = stopwatch(1);
-  printf("%lld\n", times);
   printf("\n Took %.3lfms to warm up.\n\n", (double)times / 1000.0);
 }
 
