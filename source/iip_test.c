@@ -19,7 +19,9 @@
 #include "iip_time.h"
 
 static int is_init = 0;
+int FailCnt = 0;
 const int func_list_size = 51;
+char output_str[2048] = { 0, };
 
 UINT _eq(DTYPE A, DTYPE B) {
 #if NTYPE == 0
@@ -34,25 +36,31 @@ UINT compare_mat(MAT *A, MAT *B) {
   ITER i;
   for (i = 0; i < A->d0 * A->d1 * A->d2; i++)
     if (!_eq(A->data[i], B->data[i])) {
-      printf("index : %d\n", i);
-      printf("%.16lf != %.16lf \n",A->data[i],B->data[i]);
-      return 0;}
+      FailCnt++;
+      sprintf(output_str, "%sindex : %d\n", output_str, i);
+      sprintf(output_str, "%s%.16lf != %.16lf \n", output_str,A->data[i],B->data[i]);
+      return 0;
+    }
   return 1;
 }
 
 UINT compare_cmat(CMAT *A, CMAT *B) {
   ITER i;
   for (i = 0; i < A->d0 * A->d1 * A->d2; i++) {
-    if (!_eq(A->data[i].re, B->data[i].re)){ 
-      printf("index : %d\n", i);
-      printf("re %.16lf != %.16lf \n",A->data[i].re,B->data[i].re);
-      printf("im %.16lf != %.16lf \n",A->data[i].im,B->data[i].im);
-      return 0;}
+    if (!_eq(A->data[i].re, B->data[i].re)){
+      FailCnt++;
+      sprintf(output_str, "%sindex : %d\n", output_str, i);
+      sprintf(output_str, "%sre %.16lf != %.16lf \n", output_str, A->data[i].re,B->data[i].re);
+      sprintf(output_str, "%sim %.16lf != %.16lf \n", output_str, A->data[i].im,B->data[i].im);
+      return 0;
+    }
     if (!_eq(A->data[i].im, B->data[i].im)){
-      printf("index : %d\n", i);
-      printf("re %.16lf != %.16lf \n",A->data[i].re,B->data[i].re);
-      printf("im %.16lf != %.16lf \n",A->data[i].im,B->data[i].im);
-      return 0;}
+      FailCnt++;
+      sprintf(output_str, "%sindex : %d\n", output_str, i);
+      sprintf(output_str, "%sre %.16lf != %.16lf \n", output_str, A->data[i].re,B->data[i].re);
+      sprintf(output_str, "%sim %.16lf != %.16lf \n", output_str, A->data[i].im,B->data[i].im);
+      return 0;
+    }
   }
   return 1;
 }
@@ -71,7 +79,6 @@ void append_post(char *filename, const char *post, char *out) {
 
 void test_verification(int heat, int print_flag, int compare){
 /////////////////////////////////////////////
-
   int is_ctype = 0;     // 0 for DTYPE, 1 for CTYPE
   int i = 0, j = 0, calced = 0;
   long long total;
@@ -111,6 +118,8 @@ void test_verification(int heat, int print_flag, int compare){
   int broad_alpha = 1;
   int broad_beta = 2;
   int broad_gamma = 4;
+
+  char temp = 0;
 
   CTYPE temp_param = {0, 0}, temp_param2 = {0, 0};
 
@@ -244,15 +253,22 @@ void test_verification(int heat, int print_flag, int compare){
 
   if(heat == 1){
     preheat();
+    printf("\n # Preparing Cache\n");
     test_verification(0, 0, 0);
+    printf("\n Cache prepared.\n");
   }
 
-  if(print_flag){
-    printf(" *** Input Data ***\n");
-    print_mat(A);
-  }
+  if(print_flag != 0)
+    printf("\n\n # Testing\n");
+  progressbar(PRGB_SIZE);
 
+  FailCnt = 0;
+  output_str[0] = 0;
+
+  //print_flag = 0;
   for(i = 0; i<func_list_size; i++){
+    progress_update((DTYPE)(i) / (DTYPE)(func_list_size), PRGB_SIZE);
+
     is_ctype = i%2;
 
     // set data
@@ -598,14 +614,28 @@ void test_verification(int heat, int print_flag, int compare){
         //print_mat(pAns);
         //print_mat(result);
       }
-      else{
-        printf(" Done.\n");
-      }
     }
   }
 
-  if(print_flag)
-    printf("Done.\n *** Total Run time : %.3lfms\n", (double)total/1000.0);
+  if(print_flag){
+    printf("\n Done.\n\n *** Total Run time : %.3lfms\n", (double)total/1000.0);
+    if(FailCnt == 0)
+      printf(" All Pass!");
+    else
+      printf(" %d Errors occured. ", FailCnt);
+
+    printf(" Print Log? (y/n) : ");
+    while(1){
+      temp = getchar();
+      if (temp == 'Y' || temp == 'y'){
+        printf("\n");
+        printf("==LOG==\n%s\n=======\n", output_str);
+        break;
+      }
+      else if (temp == 'N' || temp == 'n')
+        break;
+    }
+  }
 
 /////////////////////////////////////////////
 
@@ -632,298 +662,6 @@ void test_verification(int heat, int print_flag, int compare){
   free_cmat(ans_csum_0);  free_cmat(ans_csum_1);
   for(i=0; i<4; i++){ free_mat(ans_broad[i]); free_cmat(ans_cbroad[i]); }
 }
-/*
-void test_performance(int heat, int print_flag){
-  int is_ctype = 0;     // 0 for DTYPE, 1 for CTYPE
-  int i = 0, calced = 0;
-  long long total;
-
-  if(!is_init)
-    init_list();
-  if(print_flag)
-    printf(" Measuring...\n");
-
-  MAT *A, *B, *C;
-  MAT *A_, *B_, *C_;
-  MAT *A_diagonal, *A_trace, *A_mul;
-  MAT *B_mul;
-  MAT *C_mul;
-
-  CMAT *cA, *cB, *cC;
-  CMAT *cA_, *cB_, *cC_;
-  CMAT *cA_diagonal, *cA_trace, *cA_mul;
-  CMAT *cB_mul;
-  CMAT *cC_mul;
-  
-  void *pA_, *pB_, *pC_, *pA_diagonal, *pA_trace, *pA_mul, *pB_mul, *pC_mul, *result;
-
-  int mat_size = 4, mat_batch = 2;
-
-  CTYPE temp_param = {0, 0}, temp_param2 = {0, 0};
-
-  A = zeros(mat_size, mat_size, mat_batch);
-  A_ = zeros(mat_size, mat_size, mat_batch);
-  B = zeros(mat_size, mat_size, mat_batch);
-  B_ = zeros(mat_size, mat_size, mat_batch);
-  C = zeros(mat_size, mat_size, mat_batch);
-  C_ = zeros(mat_size, mat_size, mat_batch);
-
-  cA = czeros(mat_size, mat_size, mat_batch);
-  cA_ = czeros(mat_size, mat_size, mat_batch);
-  cB = czeros(mat_size, mat_size, mat_batch);
-  cB_ = czeros(mat_size, mat_size, mat_batch);
-  cC = czeros(mat_size, mat_size, mat_batch);
-  cC_ = czeros(mat_size, mat_size, mat_batch);
-
-  //set A
-  read_mat("../test_data/d_4_4_2.bin", A);
-  copy(A, A_);
-  read_cmat("../test_data/c_4_4_2.bin", cA);
-  ccopy(cA, cA_);
-  //set B
-  read_mat("../test_data/d_4_4_2.bin", B);
-  copy(B, B_);
-  read_cmat("../test_data/c_4_4_2.bin", cB);
-  ccopy(cB, cB_);
-  //set C
-  copy(A, C);
-  copy(C, C_);
-  ccopy(cA, cC);
-  ccopy(cC, cC_);
-  //set A_*
-  A_diagonal = zeros(mat_size, 1, mat_batch);
-  A_trace = zeros(1, 1, mat_batch);
-
-  cA_diagonal = czeros(mat_size, 1, mat_batch);
-  cA_trace = czeros(1, 1, mat_batch);
-
-  A_mul = zeros(2, 4, 1);
-  B_mul = zeros(4, 6, 1);
-  C_mul = zeros(2, 6, 1);
-  read_mat("../test_data/d_2_4_1.bin", A_mul);
-  read_mat("../test_data/d_4_6_1.bin", B_mul);
-  
-  cA_mul = czeros(2, 4, 1);
-  cB_mul = czeros(4, 6, 1);
-  cC_mul = czeros(2, 6, 1);
-  read_cmat("../test_data/c_2_4_1.bin", cA_mul);
-  read_cmat("../test_data/c_4_6_1.bin", cB_mul);
-
-
-  is_ctype = 0;
-  total = 0;
-
-  if(heat == 1){
-    preheat();
-    test_performance(0, 0);
-  }
-
-  if(print_flag){
-    printf(" *** Input Data ***\n");
-    print_mat(A);
-  }
-
-  for(i = 0; i<func_list_size; i++){
-    is_ctype = i%2;
-
-    // set data
-    copy(A, A_);
-    copy(B, B_);
-    copy(C, C_);
-    ccopy(cA, cA_);
-    ccopy(cB, cB_);
-    ccopy(cC, cC_);
-
-    if (is_ctype == 0) {
-      pA_ = A_;
-      pB_ = B_;
-      pC_ = C_;
-      pA_diagonal = A_diagonal;
-      pA_trace = A_trace;
-      pA_mul = A_mul;
-      pB_mul = B_mul;
-      pC_mul = C_mul;
-    } else {
-      pA_ = cA_;
-      pB_ = cB_;
-      pC_ = cC_;
-      pA_diagonal = cA_diagonal;
-      pA_trace = cA_trace;
-      pA_mul = cA_mul;
-      pB_mul = cB_mul;
-      pC_mul = cC_mul;
-    }
-    calced = 0;
-
-    // call appropriate func 
-
-    // Require ONE matrix func
-    if (func_list[i].param_cnt == 1) {
-      calced = 1;
-      stopwatch(0);
-      func_list[i].fp(pA_);
-      total += stopwatch(1);
-      result = pA_;
-    } else if (i == 24 || i == 25) {  // permute
-      calced = 1;
-      stopwatch(0);
-      func_list[i].fp(pA_, 213);
-      total += stopwatch(1);
-      result = pA_;
-    } else if (i == 34 || i == 35) {  // sum
-      calced = 1;
-      stopwatch(0);
-      func_list[i].fp(pA_, 1);
-      total += stopwatch(1);
-      result = pA_;
-    } else if (i == func_list_size - 9) {  // pow_mat
-      calced = 1;
-      pA_ = A_;
-      stopwatch(0);
-      func_list[i].fp(pA_, 2.0);
-      total += stopwatch(1);
-      result = pA_;
-    } else if (i == func_list_size - 8) {  // pow_cmat
-      calced = 1;
-      pA_ = cA_;
-      stopwatch(0);
-      func_list[i].fp(pA_, 2.0);
-      total += stopwatch(1);
-      result = pA_;
-    } else if (i == func_list_size - 7) {  // cpow_cmat
-      calced = 1;
-      pA_ = cA_;
-      temp_param.re = 2.0;
-      temp_param.im = 2.0;
-      stopwatch(0);
-      func_list[i].fp(pA_, temp_param);
-      total += stopwatch(1);
-      result = pA_;
-    } else if (i == func_list_size - 6) {  // add
-      calced = 1;
-      pA_ = A_;
-      stopwatch(0);
-      func_list[i].fp(10.0, pA_);
-      total += stopwatch(1);
-      result = pA_;
-    } else if (i == func_list_size - 5) {  // cadd
-      calced = 1;
-      pA_ = cA_;
-      stopwatch(0);
-      func_list[i].fp(10.0, pA_);
-      total += stopwatch(1);
-      result = pA_;
-    } else if (i == func_list_size - 4) {  // uadd
-      calced = 1;
-      pA_ = cA_;
-      temp_param.re = 10.0;
-      temp_param.im = 10.0;
-      stopwatch(0);
-      func_list[i].fp(temp_param, pA_);
-      total += stopwatch(1);
-      result = pA_;
-    } else if (i == func_list_size - 3) {  // scal
-      calced = 1;
-      pA_ = A_;
-      stopwatch(0);
-      func_list[i].fp(5.0, pA_);
-      total += stopwatch(1);
-      result = pA_;
-    } else if (i == func_list_size - 2) {  // cscal
-      calced = 1;
-      pA_ = cA_;
-      stopwatch(0);
-      func_list[i].fp(5.0, pA_);
-      total += stopwatch(1);
-      result = pA_;
-    } else if (i == func_list_size - 1) {  // uscal
-      calced = 1;
-      pA_ = cA_;
-      temp_param.re = 5.0;
-      temp_param.im = 0.0;
-      stopwatch(0);
-      func_list[i].fp(temp_param, pA_);
-      total += stopwatch(1);
-      result = pA_;
-    }
-    //Require TWO matrix func (one input, one write buffer)
-    else if(func_list[i].param_cnt == 2 && !(i == 22 || i == 23 || i == 26 || i == 27)){
-      calced = 1;
-      if(i == 30 || i == 31){         // diagonal
-        stopwatch(0);
-        func_list[i].fp(pA_, pA_diagonal);
-        total += stopwatch(1);
-        result = pA_diagonal;
-      }
-      else if(i == 32 || i == 33){    // trace
-        stopwatch(0);
-        func_list[i].fp(pA_, pA_trace);
-        total += stopwatch(1);
-        result = pA_trace;
-      }
-      else{                           // invert
-        stopwatch(0);
-        func_list[i].fp(pA_, pC_);
-        total += stopwatch(1);
-        result = pC_;
-      }
-    }
-    //Require more than THREE matrix func (two input, one write buffer) (add, mul, div)_elements
-    else if(func_list[i].param_cnt == 3){
-      calced = 1;
-      stopwatch(0);
-      func_list[i].fp(pA_, pB_, pC_);
-      total += stopwatch(1);
-      result = pC_;
-    }
-    // only gemm (matmul)
-    else if(func_list[i].param_cnt > 3){
-      calced = 1;
-      if(is_ctype == 0){
-        stopwatch(0);
-        func_list[i].fp(NoTran, NoTran, 1.0, pA_mul, pB_mul, 0.0, pC_mul);
-        total += stopwatch(1);
-      }
-      if(is_ctype == 1){
-        temp_param.re = 1.0;
-        temp_param.im = 0.0;
-        temp_param2.re = 0.0;
-        temp_param2.im = 0.0;
-        stopwatch(0);
-        func_list[i].fp(NoTran, NoTran, temp_param, pA_mul, pB_mul, temp_param2, pC_mul);
-        total += stopwatch(1);
-      }
-      result = pC_mul;
-    }
-    // not using - repmat, reshape...
-    else{
-      printf(" passing function [%s]\n", func_list[i].name);
-      // do nothing
-      continue;
-    }
-
-    // print result
-    if (calced != 0 && print_flag != 0) {
-      printf("\n # %s\n", func_list[i].name);
-      print_mat(result);
-    }
-  }
-
-  if(print_flag)
-    printf("Done.\n *** Total Run time : %.3lfms\n", (double)total/1000.0);
-  
-  // Release Memory
-  free_mat(A);  free_mat(B);  free_mat(C);
-  free_mat(A_); free_mat(B_); free_mat(C_);
-  free_mat(A_diagonal); free_mat(A_trace);  free_mat(A_mul);
-  free_mat(B_mul);  free_mat(C_mul);
-  
-  free_cmat(cA);  free_cmat(cB);  free_cmat(cC);
-  free_cmat(cA_); free_cmat(cB_); free_cmat(cC_);
-  free_cmat(cA_diagonal); free_cmat(cA_trace);  free_cmat(cA_mul);
-  free_cmat(cB_mul);  free_cmat(cC_mul);
-}
-*/
 
 void test_viewlist(){
   if(!is_init)
@@ -956,18 +694,22 @@ void preheat(){
   double temp=0;
   long long times=0;
 
-  printf(" CPU is warming up...\n");
+  printf(" # Warming up CPU\n");
+
+  progressbar(PRGB_SIZE);
 
   stopwatch(0);
-  #pragma omp parallel for shared(temp) private(i)
-  for(i=0; i<250000000; i++){
+  //#pragma omp parallel for shared(temp) private(i)
+  for(i=0; i<50000000; i++){
     temp += (double)i / 2.0;
     temp /= (double)i / 3.0;
     temp *= (double)i / 4.0;
+
+    progress_update((DTYPE)i/50000000.0, PRGB_SIZE);
   }
   times = stopwatch(1);
 
-  printf(" Took %.3lfms to warm up.\n\n", (double)times / 1000.0);
+  printf("\n Took %.3lfms to warm up.\n\n", (double)times / 1000.0);
 }
 
 void init_list(){
@@ -1185,17 +927,47 @@ void read_broad_ans(int is_ctype, int param_type, char *func_name, char *ans_nam
 
 void print_compare(char *func_name, int is_ctype, void *mat1, void *mat2){
   // print result
-  printf(" # %s\n", func_name);
+  sprintf(output_str, "%s # %s\n", output_str, func_name);
   if(is_ctype == 0){
     if(compare_mat(mat1, mat2) == 0)
-      printf("  !! FAIL !!\n\n");
+      sprintf(output_str, "%s  !! FAIL !!\n\n", output_str);
     else
-      printf("  OK\n\n");
+      sprintf(output_str, "%s  OK\n\n", output_str);
   }
   else{
     if(compare_cmat(mat1, mat2) == 0)
-      printf("  !! FAIL !!\n\n");
+      sprintf(output_str, "%s  !! FAIL !!\n\n", output_str);
     else
-      printf("  OK\n\n");
+      sprintf(output_str, "%s  OK\n\n", output_str);
+  }
+}
+
+void progressbar(int size){
+  int i=0;
+
+  printf(" Progressing...\n");
+  printf(" [");
+  for(i==0; i<size; i++){
+    printf(" ");
+  }
+  printf("]");
+}
+
+void progress_update(DTYPE rate, int size){
+  int i = 0, max = (DTYPE)size * rate + 1;
+  static int max_before = 0;
+
+  if(max > size)
+    max = size;
+
+  if(max != max_before){
+    printf("\r [");
+
+    for(i=0; i<max; i++)
+      printf("=");
+    if(max < size)
+      printf(">");
+    
+    max_before = max;
   }
 }
