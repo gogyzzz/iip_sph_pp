@@ -44,4 +44,8 @@ void print_compare(char *func_name, int is_ctype, void *mat1, void *mat2);
 void read_ans(int is_ctype, char *func_name, char *ans_name, void *data_d, void *data_c, void **result_mat);
 void read_broad_ans(int is_ctype, int param_type, char *func_name, char *ans_name, void *data_d, void *data_c, void **result_mat);
 
+#define PRGB_SIZE 30
+void progressbar(int size);
+void progress_update(DTYPE rate, int size);
+
 #endif
