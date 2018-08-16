@@ -5,7 +5,7 @@ set(TARGET_NAME ${PROJECT_NAME})
 
 #### BUILD ENVIRONMENT OPTIONS ######
 option(USE_CUDA    "Using CUDA"      OFF) # Not supported, yet.
-option(USE_BLAS    "Using BLAS"      ON)
+option(USE_BLAS    "Using BLAS"      OFF)
 option(USE_OPENMP  "Using OpenMP"    ON)
 
 #### set Your Source files ####
@@ -20,8 +20,8 @@ option(USE_OPENMP  "Using OpenMP"    ON)
 #
 # include_directories(${CMAKE_CURRENT_SOURCE_DIR}/my_header_folder)
 
-set(MAIN_SRC test/test_matlab.c)
-#set(MAIN_SRC test/chunk.c)
+set(MAIN_SRC test/test_time.c)
+#set(MAIN_SRC test/test_matlab.c)
 
 
 ###############################
@@ -153,13 +153,11 @@ if(USE_OPEN OR USE_MKL )
    
   list(APPEND CD
 	    USE_OPEN=1
-	    USE_CBLAS=1
       )
   elseif(USE_MKL)
 
   list(APPEND CD  
 	    USE_MKL=1
-	    USE_CBLAS=1
       )
 		
   endif()

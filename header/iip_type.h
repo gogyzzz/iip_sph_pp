@@ -40,7 +40,7 @@
 *********************************** */
 
 #define MAX_CHAR 256
-#define FZERO 1e-10
+#define FZERO 1e-12
 
 #if NTYPE == 0
 #define INF FLT_MAX
@@ -75,14 +75,11 @@
 
 #if USE_OPEN
 #include "cblas.h"
+#include "lapacke.h"
 #endif
 
 #if USE_MKL
 #include "mkl.h"
-#endif
-
-#if USE_CBLAS
-#include "lapacke.h"
 #endif
 
 #if USE_CUDA
