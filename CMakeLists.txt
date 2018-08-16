@@ -5,7 +5,7 @@ set(TARGET_NAME ${PROJECT_NAME})
 
 #### BUILD ENVIRONMENT OPTIONS ######
 option(USE_CUDA    "Using CUDA"      OFF) # Not supported, yet.
-option(USE_BLAS    "Using BLAS"      OFF)
+option(USE_BLAS    "Using BLAS"      ON)
 option(USE_OPENMP  "Using OpenMP"    ON)
 
 #### set Your Source files ####
@@ -143,6 +143,11 @@ endif(NOT MSVC)
 
 
 if(USE_OPEN OR USE_MKL )
+
+
+  list(APPEND CD
+    USE_CBLAS=1
+    )
 
  if(USE_OPEN)
 	message(STATUS ${BLAS_LIBRARIES})

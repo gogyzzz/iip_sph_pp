@@ -40,7 +40,7 @@
 *********************************** */
 
 #define MAX_CHAR 256
-#define FZERO 1e-12
+#define FZERO 1e-10
 
 #if NTYPE == 0
 #define INF FLT_MAX
