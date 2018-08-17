@@ -21,7 +21,7 @@ void sqrt_mat_inc(UINT size, DTYPE* X, ITER inc) {
   printf("%s\n", __func__);
 #endif
 
-  //#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+  //#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += inc) {
 #if NTYPE == 0
     X[i] = sqrtf(fabs(X[i]));
@@ -41,7 +41,7 @@ void sqrt_cmat_inc(UINT size, CTYPE* X, ITER incx) {
   printf("%s\n", __func__);
 #endif
 
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if OS_WIN
 #if NTYPE == 0
@@ -71,7 +71,7 @@ void pow_mat_inc(UINT size, DTYPE* X, DTYPE n, ITER incx) {
   printf("%s\n", __func__);
 #endif
 
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i] = powf(X[i], n);
@@ -93,7 +93,7 @@ void pow_cmat_inc(UINT size, CTYPE* X, DTYPE n, ITER incx) {
   printf("%s\n", __func__);
 #endif
 
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if OS_WIN
 #if NTYPE == 0
@@ -123,7 +123,7 @@ void cpow_cmat_inc(UINT size, CTYPE* X, CTYPE n, ITER incx) {
   printf("%s\n", __func__);
 #endif
 
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if OS_WIN
 #if NTYPE == 0
@@ -157,7 +157,7 @@ void randu_inc(UINT size, DTYPE* X, DTYPE a, DTYPE b, ITER incx) {
 #endif
   srand(get_micro_sec());
 
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i] = ((float)rand() / RAND_MAX) * (b - a) + a;
@@ -178,7 +178,7 @@ void crandu_inc(UINT size, CTYPE* X, DTYPE ra, DTYPE rb, DTYPE ia, DTYPE ib,
   printf("%s\n", __func__);
 #endif
   srand(get_micro_sec());
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i].re = ((float)rand() / RAND_MAX) * (rb - ra) + ra;
@@ -205,7 +205,7 @@ void randn_inc(UINT size, DTYPE* X, DTYPE mean, DTYPE std, ITER incx) {
 #endif
 
   srand(get_micro_sec());
-#pragma omp parallel for schedule(dynamic) shared(X) private(i, u, v, s)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i, u, v, s)
   for (i = 0; i < size; i += incx) {
     do {
       u = (2.0 * rand() / RAND_MAX) - 1;
@@ -236,7 +236,7 @@ void crandn_inc(UINT size, CTYPE* X, CTYPE mean, CTYPE std, ITER incx) {
 #endif
 
   srand(get_micro_sec());
-#pragma omp parallel for schedule(dynamic) shared(X) private(i, u, v, s)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i, u, v, s)
   for (i = 0; i < size; i += incx) {
     do {
       u = (2.0 * rand() / RAND_MAX) - 1;
@@ -266,7 +266,7 @@ void round_mat_inc(UINT size, DTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i] = roundf(X[i]);
@@ -284,7 +284,7 @@ void round_cmat_inc(UINT size, CTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i].re = roundf(X[i].re);
@@ -304,7 +304,7 @@ void floor_mat_inc(UINT size, DTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i] = floorf(X[i]);
@@ -322,7 +322,7 @@ void floor_cmat_inc(UINT size, CTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i].re = floorf(X[i].re);
@@ -342,7 +342,7 @@ void ceil_mat_inc(UINT size, DTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i] = ceilf(X[i]);
@@ -360,7 +360,7 @@ void ceil_cmat_inc(UINT size, CTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i].re = ceilf(X[i].re);
@@ -380,7 +380,7 @@ void log_mat_inc(UINT size, DTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i] = logf(X[i] < 0 ? -X[i] : X[i]);
@@ -398,7 +398,7 @@ void log_cmat_inc(UINT size, CTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     CXF(X[i]) = clogf(CXF(X[i]));
@@ -416,7 +416,7 @@ void log2_mat_inc(UINT size, DTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i] = log2f(X[i] < 0 ? -X[i] : X[i]);
@@ -434,7 +434,7 @@ void log2_cmat_inc(UINT size, CTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 /*	There is no clog2
  *	But clog2(cx) = clog(cx)/log(2)
@@ -460,7 +460,7 @@ void log10_mat_inc(UINT size, DTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i] = log10f(X[i] < 0 ? -X[i] : X[i]);
@@ -478,7 +478,7 @@ void log10_cmat_inc(UINT size, CTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     CXF(X[i]) = clog10f(CXF(X[i]));
@@ -498,7 +498,7 @@ void logb_mat_inc(UINT size, DTYPE* X, UINT base, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i] = logf(X[i] < 0 ? -X[i] : X[i]) / logf(base);
@@ -518,7 +518,7 @@ void clogb_mat_inc(UINT size, CTYPE* X, UINT base, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     CXF(X[i]) = clogf(CXF(X[i]));
@@ -543,7 +543,7 @@ void exp_mat_inc(UINT size, DTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i] = expf(X[i]);
@@ -561,7 +561,7 @@ void exp_cmat_inc(UINT size, CTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     CXF(X[i]) = cexpf(CXF(X[i]));
@@ -579,7 +579,7 @@ void abs_mat_inc(UINT size, DTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i] = fabsf(X[i]);
@@ -597,7 +597,7 @@ void abs_cmat_inc(UINT size, CTYPE* X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
 #if NTYPE == 0
     X[i].re = cabsf(CXF(X[i]));
@@ -844,7 +844,7 @@ void sum_mat(MAT* src, MAT* des, UINT axis) {
     if (des->d1 != 1) ASSERT_DIM_INVALID()
 
     for (k = 0; k < d2; k++) {
-#pragma omp parallel for schedule(dynamic) shared(des) private(i, j, temp)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(des) private(i, j, temp)
       for (j = 0; j < d0; j++) {
         temp = 0;
         for (i = 0; i < d1; i++) {
@@ -859,7 +859,7 @@ void sum_mat(MAT* src, MAT* des, UINT axis) {
     if (d1 != des->d1) ASSERT_DIM_INVALID()
 
     for (k = 0; k < d2; k++) {
-#pragma omp parallel for schedule(dynamic) shared(des) private(i, j, temp)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(des) private(i, j, temp)
       for (j = 0; j < d1; j++) {
         temp = 0;
         for (i = 0; i < d0; i++) {
@@ -888,7 +888,7 @@ void sum_cmat(CMAT* src, CMAT* des, UINT axis) {
     if (des->d1 != 1) ASSERT_DIM_INVALID()
 
     for (k = 0; k < d2; k++) {
-#pragma omp parallel for schedule(dynamic) shared(des) private(i, j, temp)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(des) private(i, j, temp)
       for (j = 0; j < d0; j++) {
         temp.re = 0;
         temp.im = 0;
@@ -905,7 +905,7 @@ void sum_cmat(CMAT* src, CMAT* des, UINT axis) {
     if (d1 != des->d1) ASSERT_DIM_INVALID()
 
     for (k = 0; k < d2; k++) {
-#pragma omp parallel for schedule(dynamic) shared(des) private(i, j, temp)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(des) private(i, j, temp)
       for (j = 0; j < d1; j++) {
         temp.re = 0;
         temp.im = 0;

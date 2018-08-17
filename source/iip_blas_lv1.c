@@ -75,7 +75,7 @@ void omp_axpy(UINT N, DTYPE alpha, DTYPE *X, UINT INCX, DTYPE *Y, UINT INCY) {
   printf("%s\n", __func__);
 #endif
 
-#pragma omp parallel for schedule(dynamic) shared(X, Y) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X, Y) private(i)
   for (i = 0; i < N; i++) {
     Y[i * INCY] = X[i * INCX] * alpha + Y[i * INCY];
   }
@@ -122,7 +122,7 @@ void omp_caxpy(UINT N, CTYPE alpha, CTYPE *X, UINT INCX, CTYPE *Y, UINT INCY) {
 #endif
   ITER i;
 
-#pragma omp parallel for schedule(dynamic) shared(X, Y) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X, Y) private(i)
   for (i = 0; i < N; i++) {
     Y[i * INCY].re = X[i * INCX].re * alpha.re + Y[i * INCY].re;
     Y[i * INCY].im = X[i * INCX].im * alpha.im + Y[i * INCY].im;
@@ -168,7 +168,7 @@ void copy_mat_inc(UINT size, DTYPE *X, ITER incx, DTYPE *Y, ITER incy){
 
 void omp_copy_mat(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
   //  ITER i;
-  //#pragma omp parallel for schedule(dynamic) shared(des, src) private(i)
+  //#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(des, src) private(i)
   //  for (i = 0; i < N; i++) {
   //    des[i * des_inc] = src[i * src_inc];
   //  }
@@ -179,7 +179,7 @@ void omp_copy_mat(UINT N, DTYPE *src, SINT src_inc, DTYPE *des, SINT des_inc) {
   ITER i = 0;
   ITER j = 0;
 
-#pragma omp parallel for schedule(dynamic) shared(des, src) private(j, i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(des, src) private(j, i)
   for (j = 0; j < repeat; j++) {
     i = j * iteration;
     des[(i)*des_inc] = src[(i)*src_inc];
@@ -226,7 +226,7 @@ void ccopy_mat_inc(UINT size, CTYPE *X, ITER incx, CTYPE *Y, ITER incy){
 }
 void omp_ccopy_mat(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc) {
   ITER i;
-#pragma omp parallel for schedule(dynamic) shared(des, src) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(des, src) private(i)
   for (i = 0; i < N; i++) {
     des[i * des_inc].re = src[i * src_inc].re;
     des[i * des_inc].im = src[i * src_inc].im;
@@ -237,7 +237,7 @@ void omp_ccopy_mat(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc) {
     UINT left = N & (UINT)(iteration - 1);
     UINT i = 0, j = 0;
 
-  #pragma omp parallel for schedule(dynamic) shared(des, src) private(j, i)
+  #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(des, src) private(j, i)
     for (j = 0; j < repeat; j++) {
       i = j * iteration;
       des[(i)*des_inc].re = src[(i)*src_inc].re;
@@ -380,7 +380,7 @@ DTYPE omp_dot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
   ITER i = 0;
   DTYPE dot = 0;
 
-#pragma omp parallel for schedule(dynamic) shared(src_x, src_y) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(src_x, src_y) private(i)
   for (i = 0; i < N; i++) {
     dot += src_x[i * x_inc] * src_y[i * y_inc];
   }
@@ -428,7 +428,7 @@ CTYPE omp_cdot(UINT N, CTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
   dot.re = 0;
   dot.im = 0;
 
-#pragma omp parallel for schedule(dynamic) shared(src_x, src_y) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(src_x, src_y) private(i)
   for (i = 0; i < N; i++) {
     dot.re += src_x[i * x_inc].re * src_y[i * y_inc];
     dot.im += src_x[i * x_inc].im * src_y[i * y_inc];
@@ -477,7 +477,7 @@ CTYPE omp_udot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
   dot.re = 0;
   dot.im = 0;
 
-#pragma omp parallel for schedule(dynamic) shared(src_x, src_y) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(src_x, src_y) private(i)
   for (i = 0; i < N; i++) {
     dot.re += src_x[i * x_inc].re * src_y[i * y_inc].re;
     dot.im += src_x[i * x_inc].re * src_y[i * y_inc].im;
@@ -524,7 +524,7 @@ void omp_swap(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
   ITER i = 0;
   DTYPE temp = 0;
 
-#pragma omp parallel for schedule(dynamic) shared(src_x, src_y) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(src_x, src_y) private(i)
   for (i = 0; i < N; i++) {
     temp = src_x[i * x_inc];
     src_x[i * x_inc] = src_y[i * y_inc];
@@ -566,7 +566,7 @@ void omp_cswap(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
   ITER i = 0;
   CTYPE temp = {0, 0};
 
-#pragma omp parallel for schedule(dynamic) shared(src_x, src_y) private(i, temp)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(src_x, src_y) private(i, temp)
   for (i = 0; i < N; i++) {
     temp.re = src_x[i * x_inc].re;
     temp.im = src_x[i * x_inc].im;
@@ -645,7 +645,7 @@ UINT omp_amax(UINT N, DTYPE *src, UINT inc) {
   UINT idx = 0;
   DTYPE max = src[0];
 
-  //#pragma omp parallel for schedule(dynamic) shared(src_x, src_y) private(i)
+  //#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(src_x, src_y) private(i)
   for (i = 1; i < N; i++) {
     if (max < (src[i * inc] < 0 ? -src[i * inc] : src[i * inc])) {
       idx = i;
@@ -689,7 +689,7 @@ UINT omp_camax(UINT N, CTYPE *src, UINT inc) {
   UINT idx = 0;
   DTYPE max = ABS_CTYPE(src[0]);
 
-  //#pragma omp parallel for schedule(dynamic) shared(src_x, src_y) private(i)
+  //#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(src_x, src_y) private(i)
   for (i = 1; i < N; i++) {
     if (max < ABS_CTYPE(src[i])) {
       idx = i;
@@ -737,7 +737,7 @@ UINT omp_amin(UINT N, DTYPE *src, UINT inc) {
   UINT idx = 0;
   DTYPE min = src[0];
 
-  //#pragma omp parallel for schedule(dynamic) shared(src_x, src_y) private(i)
+  //#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(src_x, src_y) private(i)
   for (i = 1; i < N; i++) {
     if (min > (src[i * inc] < 0 ? -src[i * inc] : src[i * inc])) {
       idx = i;
@@ -784,7 +784,7 @@ UINT omp_camin(UINT N, CTYPE *src, UINT inc) {
   UINT idx = 0;
   DTYPE min = ABS_CTYPE(src[0]);
 
-  //#pragma omp parallel for schedule(dynamic) shared(src_x, src_y) private(i)
+  //#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(src_x, src_y) private(i)
   for (i = 1; i < N; i++) {
     if (min > ABS_CTYPE(src[i])) {
       idx = i;
@@ -1001,7 +1001,7 @@ void scal_inc(UINT size, DTYPE alpha, DTYPE *X, UINT incx) {
 void omp_scal(UINT size, DTYPE alpha, DTYPE *X, UINT incx) {
   ITER i;
 
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size * incx; i += incx) {
     X[i] *= alpha;
   }
@@ -1031,7 +1031,7 @@ void cscal_inc(UINT size, DTYPE alpha, CTYPE *X, UINT incx) {
 void omp_cscal(UINT size, DTYPE alpha, CTYPE *X, UINT incx) {
   ITER i;
 
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size * incx; i += incx) {
     X[i].re *= alpha;
     X[i].im *= alpha;
@@ -1064,7 +1064,7 @@ void omp_uscal(UINT size, CTYPE alpha, CTYPE *X, UINT incx) {
   ITER i;
   DTYPE temp;
 
-#pragma omp parallel for schedule(dynamic) shared(X) private(i, temp)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i, temp)
   for (i = 0; i < size * incx; i += incx) {
     CXMUL(X[i], alpha, temp);
   }

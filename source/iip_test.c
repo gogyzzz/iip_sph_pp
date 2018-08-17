@@ -140,10 +140,11 @@ void run_test(int heat, int print_flag) {
 		NULL,
 	};
 
-	int mat_size = 1024, mat_batch = 4;
-	int broad_alpha = 1;
+  /* SETTING */
+	int mat_size = 128, mat_batch = 4;
+  int broad_alpha = 1;
 	int broad_beta = 4;
-	int broad_gamma = 1024;
+	int broad_gamma = 128;
 
 	char temp = 0;
 
@@ -236,19 +237,22 @@ void run_test(int heat, int print_flag) {
 	ans_cbroad[2] = czeros(broad_gamma, broad_gamma, broad_beta);
 	ans_cbroad[3] = czeros(broad_gamma, broad_gamma, broad_alpha);
 
+
+  /* SETTING */
+
 	//set A
-	read_mat("../test_data/d_1024_1024_4.bin", A);
+	read_mat("../test_data/d_128_128_4.bin", A);
 	copy_mat(A, A_);
-	read_cmat("../test_data/c_1024_1024_4.bin", cA);
+	read_cmat("../test_data/c_128_128_4.bin", cA);
 	ccopy_mat(cA, cA_);
 	if(print_flag != 0){
 		progress_update(27.0/45.0, PRGB_SIZE);
 	}
 
 	//set B
-	read_mat("../test_data/d_1024_1024_4.bin", B);
+	read_mat("../test_data/d_128_128_4.bin", B);
 	copy_mat(B, B_);
-	read_cmat("../test_data/c_1024_1024_4.bin", cB);
+	read_cmat("../test_data/c_128_128_4.bin", cB);
 	ccopy_mat(cB, cB_);
 	if(print_flag != 0){
 		progress_update(30.0/45.0, PRGB_SIZE);
@@ -270,11 +274,13 @@ void run_test(int heat, int print_flag) {
 	ans_sum_1 = zeros(1, mat_size, mat_batch);
 	ans_sum_0 = zeros(mat_size, 1, mat_batch);
 
+
 	read_mat("../test_ans/d_1024_1024_4_Diagonal.bin", ans_diagonal);
 	read_mat("../test_ans/d_1024_1024_4_Trace.bin", ans_trace);
 	if(print_flag != 0){
 		progress_update(32.0/45.0, PRGB_SIZE);
 	}
+
 
 	cA_diagonal = czeros(mat_size, 1, mat_batch);
 	cA_trace = czeros(1, 1, mat_batch);
@@ -285,33 +291,39 @@ void run_test(int heat, int print_flag) {
 	ans_csum_1 = czeros(1, mat_size, mat_batch);
 	ans_csum_0 = czeros(mat_size, 1, mat_batch);
 
+
 	read_cmat("../test_ans/c_1024_1024_4_cDiagonal.bin", ans_cdiagonal);
 	read_cmat("../test_ans/c_1024_1024_4_cTrace.bin", ans_ctrace);
 	if(print_flag != 0){
 		progress_update(36.0/45.0, PRGB_SIZE);
 	}
 
+
 	A_mul = zeros(1, mat_size, mat_batch);
 	B_mul = zeros(mat_size, mat_size, mat_batch);
 	C_mul = zeros(1, mat_size, mat_batch);
-	read_mat("../test_data/d_1_1024_4.bin", A_mul);
-	read_mat("../test_data/d_1024_1024_4.bin", B_mul);
+	read_mat("../test_data/d_1_128_4.bin", A_mul);
+	read_mat("../test_data/d_128_128_4.bin", B_mul);
 	ans_mul = zeros(1, mat_size, mat_batch);
+
 	read_mat("../test_ans/d_1_1024_4_Gemm.bin", ans_mul);
 	if(print_flag != 0){
 		progress_update(39.0/45.0, PRGB_SIZE);
 	}
 
+
 	cA_mul = czeros(1, mat_size, mat_batch);
 	cB_mul = czeros(mat_size, mat_size, mat_batch);
 	cC_mul = czeros(1, mat_size, mat_batch);
-	read_cmat("../test_data/c_1_1024_4.bin", cA_mul);
-	read_cmat("../test_data/c_1024_1024_4.bin", cB_mul);
+	read_cmat("../test_data/c_1_128_4.bin", cA_mul);
+	read_cmat("../test_data/c_128_128_4.bin", cB_mul);
 	ans_cmul = czeros(1, mat_size, mat_batch);
+
 	read_cmat("../test_ans/c_1_1024_4_cGemm.bin", ans_cmul);
 	if(print_flag != 0){
 		progress_update(1.0, PRGB_SIZE);
 	}
+
 
 	if (print_flag != 0)
 		printf("\n\n # Testing\n");
@@ -821,6 +833,8 @@ void preheat() {
 	progressbar(PRGB_SIZE);
 
 	stopwatch(0);
+
+
 	for (i = 0; i < 50000000; i++) {
 		temp += (double)i / 2.0;
 		temp /= (double)i / 3.0;
@@ -1013,6 +1027,7 @@ void init_list() {
 }
 
 void read_ans(int is_ctype, char *func_name, char *ans_name, void *data_d, void *data_c, void **result_mat){
+
 	char ans_dtype[32] = "d_1024_1024_4_.bin";
 	char ans_ctype[32] = "c_1024_1024_4_.bin";
 

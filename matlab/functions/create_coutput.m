@@ -139,8 +139,7 @@ write_cmat(outname,outmat);
 
 
 clearvars outmat;
-A
-outmat = sum(A,2)
+outmat = sum(A,2);
 outname = post_appen(filename,'Sum cMat 0'); % output -> d2,1,1
 write_cmat(outname,outmat);
 

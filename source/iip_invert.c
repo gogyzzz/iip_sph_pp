@@ -4189,7 +4189,7 @@ void invert_nbyn(DTYPE* X, DTYPE* Y, UINT n) {
 #if USE_CBLAS
   idx = mpalloc(sizeof(UINT) * n);
 
-#pragma omp parallel for schedule(dynamic) shared(X, Y) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X, Y) private(i)
   for (i = 0; i < n * n; i++) Y[i] = X[i];
 
 #if NTYPE == 0
@@ -4215,7 +4215,7 @@ void cinvert_nbyn(CTYPE* X, CTYPE* Y, UINT n) {
 #endif
 #if USE_CBLAS
   idx = mpalloc(sizeof(UINT) * n);
-#pragma omp parallel for schedule(dynamic) shared(X, Y) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X, Y) private(i)
   for (i = 0; i < n; i++) {
     Y[i].re = X[i].re;
     Y[i].im = X[i].im;

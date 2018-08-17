@@ -30,7 +30,6 @@ if d0 == d1
     t = diag(A(:,:,i));
     outmat(:,i) = t;
     end
-    outmat
     outname = post_appen(filename,'Diagonal'); % d0 1 d2
     write_mat(outname,outmat);
 
