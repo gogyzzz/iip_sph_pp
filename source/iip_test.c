@@ -83,8 +83,7 @@ void append_post(char *filename, const char *post, char *out) {
 	strcpy(out, t);
 }
 
-void test_verification(int heat, int print_flag, int compare) {
-	/////////////////////////////////////////////
+void run_test(int heat, int print_flag) {
 	int is_ctype = 0;  // 0 for DTYPE, 1 for CTYPE
 	int i = 0, j = 0, calced = 0;
 	long long total;
@@ -157,8 +156,13 @@ void test_verification(int heat, int print_flag, int compare) {
 	if (heat == 1){
 		preheat();
 		printf("\n # Preparing Cache\n");
-		test_verification(0, 0, 0);
+		run_test(0, 0, 0);
 		printf("\n Cache prepared.\n");
+	}
+
+	if(print_flag != 0){
+		printf("\n # Reading Data\n");
+		progressbar(PRGB_SIZE);
 	}
 
 	A = zeros(mat_size, mat_size, mat_batch);
@@ -190,6 +194,9 @@ void test_verification(int heat, int print_flag, int compare) {
 		sprintf(ans_path, "../test_data/d_%d_%d_%d.bin", A_broad[i]->d0,
 			A_broad[i]->d1, A_broad[i]->d2);
 		read_mat(ans_path, A_broad[i]);
+		if(print_flag != 0){
+			progress_update((DTYPE)i/45.0, PRGB_SIZE);
+		}
 	}
 
 	cA_broad[0] = czeros(broad_alpha, broad_alpha, broad_alpha);
@@ -205,6 +212,9 @@ void test_verification(int heat, int print_flag, int compare) {
 		sprintf(ans_path, "../test_data/c_%d_%d_%d.bin", cA_broad[i]->d0,
 			cA_broad[i]->d1, cA_broad[i]->d2);
 		read_cmat(ans_path, cA_broad[i]);
+		if(print_flag != 0){
+			progress_update((DTYPE)(i*2+8)/45.0, PRGB_SIZE);
+		}
 	}
 
 	C_broad[0] = zeros(broad_alpha, broad_gamma, broad_beta);
@@ -227,25 +237,34 @@ void test_verification(int heat, int print_flag, int compare) {
 	ans_cbroad[2] = czeros(broad_gamma, broad_gamma, broad_beta);
 	ans_cbroad[3] = czeros(broad_gamma, broad_gamma, broad_alpha);
 
-  
+
   /* SETTING */
+
 	//set A
 	read_mat("../test_data/d_128_128_4.bin", A);
 	copy_mat(A, A_);
 	read_cmat("../test_data/c_128_128_4.bin", cA);
 	ccopy_mat(cA, cA_);
+	if(print_flag != 0){
+		progress_update(27.0/45.0, PRGB_SIZE);
+	}
+
 	//set B
 	read_mat("../test_data/d_128_128_4.bin", B);
 	copy_mat(B, B_);
 	read_cmat("../test_data/c_128_128_4.bin", cB);
 	ccopy_mat(cB, cB_);
+	if(print_flag != 0){
+		progress_update(30.0/45.0, PRGB_SIZE);
+	}
+
 	//set C
 	copy_mat(A, C);
 	copy_mat(C, C_);
 	ccopy_mat(cA, cC);
 	ccopy_mat(cC, cC_);
+	
 	//set A_*
-
 	A_diagonal = zeros(mat_size, 1, mat_batch);
 	A_trace = zeros(1, 1, mat_batch);
 	A_sum_1 = zeros(1, mat_size, mat_batch);
@@ -254,8 +273,14 @@ void test_verification(int heat, int print_flag, int compare) {
 	ans_trace = zeros(1, 1, mat_batch);
 	ans_sum_1 = zeros(1, mat_size, mat_batch);
 	ans_sum_0 = zeros(mat_size, 1, mat_batch);
-	read_mat("../test_ans/d_128_128_4_Diagonal.bin", ans_diagonal);
-	read_mat("../test_ans/d_128_128_4_Trace.bin", ans_trace);
+
+
+	read_mat("../test_ans/d_1024_1024_4_Diagonal.bin", ans_diagonal);
+	read_mat("../test_ans/d_1024_1024_4_Trace.bin", ans_trace);
+	if(print_flag != 0){
+		progress_update(32.0/45.0, PRGB_SIZE);
+	}
+
 
 	cA_diagonal = czeros(mat_size, 1, mat_batch);
 	cA_trace = czeros(1, 1, mat_batch);
@@ -266,8 +291,13 @@ void test_verification(int heat, int print_flag, int compare) {
 	ans_csum_1 = czeros(1, mat_size, mat_batch);
 	ans_csum_0 = czeros(mat_size, 1, mat_batch);
 
-	read_cmat("../test_ans/c_128_128_4_cDiagonal.bin", ans_cdiagonal);
-	read_cmat("../test_ans/c_128_128_4_cTrace.bin", ans_ctrace);
+
+	read_cmat("../test_ans/c_1024_1024_4_cDiagonal.bin", ans_cdiagonal);
+	read_cmat("../test_ans/c_1024_1024_4_cTrace.bin", ans_ctrace);
+	if(print_flag != 0){
+		progress_update(36.0/45.0, PRGB_SIZE);
+	}
+
 
 	A_mul = zeros(1, mat_size, mat_batch);
 	B_mul = zeros(mat_size, mat_size, mat_batch);
@@ -275,7 +305,12 @@ void test_verification(int heat, int print_flag, int compare) {
 	read_mat("../test_data/d_1_128_4.bin", A_mul);
 	read_mat("../test_data/d_128_128_4.bin", B_mul);
 	ans_mul = zeros(1, mat_size, mat_batch);
-	read_mat("../test_ans/d_1_128_4_Gemm.bin", ans_mul);
+
+	read_mat("../test_ans/d_1_1024_4_Gemm.bin", ans_mul);
+	if(print_flag != 0){
+		progress_update(39.0/45.0, PRGB_SIZE);
+	}
+
 
 	cA_mul = czeros(1, mat_size, mat_batch);
 	cB_mul = czeros(mat_size, mat_size, mat_batch);
@@ -283,11 +318,11 @@ void test_verification(int heat, int print_flag, int compare) {
 	read_cmat("../test_data/c_1_128_4.bin", cA_mul);
 	read_cmat("../test_data/c_128_128_4.bin", cB_mul);
 	ans_cmul = czeros(1, mat_size, mat_batch);
-	read_cmat("../test_ans/c_1_128_4_cGemm.bin", ans_cmul);
 
-
-	is_ctype = 0;
-	total = 0;
+	read_cmat("../test_ans/c_1_1024_4_cGemm.bin", ans_cmul);
+	if(print_flag != 0){
+		progress_update(1.0, PRGB_SIZE);
+	}
 
 
 	if (print_flag != 0)
@@ -297,8 +332,9 @@ void test_verification(int heat, int print_flag, int compare) {
 
 	FailCnt = 0;
 	output_str[0] = 0;
+	is_ctype = 0;
+	total = 0;
 
-	// print_flag = 0;
 	for (i = 0; i < func_list_size; i++) {
 		progress_update((DTYPE)(i) / (DTYPE)(func_list_size), PRGB_SIZE);
 
@@ -362,8 +398,6 @@ void test_verification(int heat, int print_flag, int compare) {
 			func_list[i].fp(pA_);
 			total += stopwatch(1);
 			result = pA_;
-
-			// read_ans(is_ctype, func_list[i].name, ans_path, ans_A, ans_cA, pAns);
 		}
 		else if (i == 24 || i == 25) {  // permute
 			calced = 1;
@@ -371,8 +405,6 @@ void test_verification(int heat, int print_flag, int compare) {
 			func_list[i].fp(pA_, 213);
 			total += stopwatch(1);
 			result = pA_;
-
-			// read_ans(is_ctype, func_list[i].name, ans_path, ans_A, ans_cA, pAns);
 		}
 		else if (i == 34 || i == 35) {  // sum_mat
 			calced = 1;
@@ -521,7 +553,7 @@ void test_verification(int heat, int print_flag, int compare) {
 				read_broad_ans(is_ctype, 1, func_list[i].name, ans_path, ans_broad[1],
 					ans_cbroad[1], &pAns_broad[1]);
 
-				if (compare != 0 && print_flag != 0) {
+				if (print_flag != 0) {
 					print_compare(func_list[i].name, is_ctype, pC_broad[0],
 						pAns_broad[0]);
 					print_compare(func_list[i].name, is_ctype, pC_broad[1],
@@ -538,7 +570,7 @@ void test_verification(int heat, int print_flag, int compare) {
 				read_broad_ans(is_ctype, 3, func_list[i].name, ans_path, ans_broad[1],
 					ans_cbroad[1], &pAns_broad[1]);
 
-				if (compare != 0 && print_flag != 0) {
+				if (print_flag != 0) {
 					print_compare(func_list[i].name, is_ctype, pC_broad[0],
 						pAns_broad[0]);
 					print_compare(func_list[i].name, is_ctype, pC_broad[1],
@@ -548,14 +580,13 @@ void test_verification(int heat, int print_flag, int compare) {
 			case 38:
 			case 39:
 				// Mul_elements
-				// printf(" PASS MUL_ELEMENTS\n");
 				stopwatch(0);
 				func_list[i].fp(pA_broad[1], pA_broad[6], pC_broad[2]);
 				total += stopwatch(1);
 				read_broad_ans(is_ctype, 4, func_list[i].name, ans_path, ans_broad[2],
 					ans_cbroad[2], &pAns_broad[2]);
 
-				if (compare != 0 && print_flag != 0)
+				if (print_flag != 0)
 					print_compare(func_list[i].name, is_ctype, pC_broad[2],
 					pAns_broad[2]);
 
@@ -565,7 +596,7 @@ void test_verification(int heat, int print_flag, int compare) {
 				read_broad_ans(is_ctype, 5, func_list[i].name, ans_path, ans_broad[2],
 					ans_cbroad[2], &pAns_broad[2]);
 
-				if (compare != 0 && print_flag != 0)
+				if (print_flag != 0)
 					print_compare(func_list[i].name, is_ctype, pC_broad[2],
 					pAns_broad[2]);
 
@@ -575,7 +606,7 @@ void test_verification(int heat, int print_flag, int compare) {
 				read_broad_ans(is_ctype, 6, func_list[i].name, ans_path, ans_broad[2],
 					ans_cbroad[2], &pAns_broad[2]);
 
-				if (compare != 0 && print_flag != 0)
+				if (print_flag != 0)
 					print_compare(func_list[i].name, is_ctype, pC_broad[2],
 					pAns_broad[2]);
 
@@ -585,7 +616,7 @@ void test_verification(int heat, int print_flag, int compare) {
 				read_broad_ans(is_ctype, 7, func_list[i].name, ans_path, ans_broad[2],
 					ans_cbroad[2], &pAns_broad[2]);
 
-				if (compare != 0 && print_flag != 0)
+				if (print_flag != 0)
 					print_compare(func_list[i].name, is_ctype, pC_broad[2],
 					pAns_broad[2]);
 
@@ -595,21 +626,20 @@ void test_verification(int heat, int print_flag, int compare) {
 				read_broad_ans(is_ctype, 8, func_list[i].name, ans_path, ans_broad[2],
 					ans_cbroad[2], &pAns_broad[2]);
 
-				if (compare != 0 && print_flag != 0)
+				if (print_flag != 0)
 					print_compare(func_list[i].name, is_ctype, pC_broad[2],
 					pAns_broad[2]);
 				break;
 			case 40:
 			case 41:
 				// Div_elements
-				// printf(" PASS DIV_ELEMENTS\n");
 				stopwatch(0);
 				func_list[i].fp(pA_broad[4], pA_broad[6], pC_broad[3]);
 				total += stopwatch(1);
 				read_broad_ans(is_ctype, 9, func_list[i].name, ans_path, ans_broad[3],
 					ans_cbroad[3], &pAns_broad[3]);
 
-				if (compare != 0 && print_flag != 0)
+				if (print_flag != 0)
 					print_compare(func_list[i].name, is_ctype, pC_broad[3],
 					pAns_broad[3]);
 
@@ -619,7 +649,7 @@ void test_verification(int heat, int print_flag, int compare) {
 				read_broad_ans(is_ctype, 10, func_list[i].name, ans_path,
 					ans_broad[3], ans_cbroad[3], &pAns_broad[3]);
 
-				if (compare != 0 && print_flag != 0)
+				if (print_flag != 0)
 					print_compare(func_list[i].name, is_ctype, pC_broad[3],
 					pAns_broad[3]);
 
@@ -629,7 +659,7 @@ void test_verification(int heat, int print_flag, int compare) {
 				read_broad_ans(is_ctype, 11, func_list[i].name, ans_path,
 					ans_broad[3], ans_cbroad[3], &pAns_broad[3]);
 
-				if (compare != 0 && print_flag != 0)
+				if (print_flag != 0)
 					print_compare(func_list[i].name, is_ctype, pC_broad[3],
 					pAns_broad[3]);
 
@@ -639,7 +669,7 @@ void test_verification(int heat, int print_flag, int compare) {
 				read_broad_ans(is_ctype, 12, func_list[i].name, ans_path,
 					ans_broad[3], ans_cbroad[3], &pAns_broad[3]);
 
-				if (compare != 0 && print_flag != 0)
+				if (print_flag != 0)
 					print_compare(func_list[i].name, is_ctype, pC_broad[3],
 					pAns_broad[3]);
 				break;
@@ -648,7 +678,7 @@ void test_verification(int heat, int print_flag, int compare) {
 				break;
 			}
 
-			// not implemented yet
+			// All result printed.
 			continue;
 		}
 		// only gemm (matmul)
@@ -682,14 +712,9 @@ void test_verification(int heat, int print_flag, int compare) {
 
 		// print result
 		if (calced != 0 && print_flag != 0) {
-			if (compare != 0) {
-				if (pAns == NULL)
-					read_ans(is_ctype, func_list[i].name, ans_path, ans_A, ans_cA, &pAns);
-
-				print_compare(func_list[i].name, is_ctype, result, pAns);
-				// print_mat(pAns);
-				// print_mat(result);
-			}
+			if (pAns == NULL)
+				read_ans(is_ctype, func_list[i].name, ans_path, ans_A, ans_cA, &pAns);
+			print_compare(func_list[i].name, is_ctype, result, pAns);
 		}
 	}
 
@@ -713,8 +738,6 @@ void test_verification(int heat, int print_flag, int compare) {
 				break;
 		}
 	}
-
-	/////////////////////////////////////////////
 
 	/*** Release Memory ***/
 	free_mat(A);
@@ -810,7 +833,8 @@ void preheat() {
 	progressbar(PRGB_SIZE);
 
 	stopwatch(0);
-	//#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(temp) private(i)
+
+
 	for (i = 0; i < 50000000; i++) {
 		temp += (double)i / 2.0;
 		temp /= (double)i / 3.0;
@@ -1003,10 +1027,9 @@ void init_list() {
 }
 
 void read_ans(int is_ctype, char *func_name, char *ans_name, void *data_d, void *data_c, void **result_mat){
-	/* SETTING */
-  char ans_dtype[16] = "d_128_128_4_.bin";
-	char ans_ctype[16] = "c_128_128_4_.bin";
-  
+
+	char ans_dtype[32] = "d_1024_1024_4_.bin";
+	char ans_ctype[32] = "c_1024_1024_4_.bin";
 
 	if (is_ctype == 0) {
 		append_post(ans_dtype, func_name, ans_name);
@@ -1023,7 +1046,7 @@ void read_ans(int is_ctype, char *func_name, char *ans_name, void *data_d, void 
 void read_broad_ans(int is_ctype, int param_type, char *func_name,
 	char *ans_name, void *data_d, void *data_c,
 	void **result_mat) {
-	char ans_broad[32] = "Broadcast_.bin";
+	char ans_broad[64] = "Broadcast_.bin";
 
 	sprintf(ans_broad, "Broadcast_%d_.bin", param_type);
 	append_post(ans_broad, func_name, ans_name);
