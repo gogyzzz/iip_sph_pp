@@ -34,8 +34,7 @@ void perform_test();
 void init_list();
 void preheat();
 
-void test_verification(int heat, int print_flag, int compare);
-// void test_performance(int heat, int print_flag);      //legacy
+void run_test(int heat, int print_flag);
 void test_viewlist();
 
 /*char* operation : out = filename_post*/
@@ -47,7 +46,7 @@ void read_broad_ans(int is_ctype, int param_type, char *func_name,
                     char *ans_name, void *data_d, void *data_c,
                     void **result_mat);
 
-#define PRGB_SIZE 30
+#define PRGB_SIZE 45
 void progressbar(int size);
 void progress_update(DTYPE rate, int size);
 
