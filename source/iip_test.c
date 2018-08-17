@@ -141,10 +141,11 @@ void test_verification(int heat, int print_flag, int compare) {
 		NULL,
 	};
 
-	int mat_size = 1024, mat_batch = 4;
-	int broad_alpha = 1;
+  /* SETTING */
+	int mat_size = 128, mat_batch = 4;
+  int broad_alpha = 1;
 	int broad_beta = 4;
-	int broad_gamma = 1024;
+	int broad_gamma = 128;
 
 	char temp = 0;
 
@@ -226,16 +227,17 @@ void test_verification(int heat, int print_flag, int compare) {
 	ans_cbroad[2] = czeros(broad_gamma, broad_gamma, broad_beta);
 	ans_cbroad[3] = czeros(broad_gamma, broad_gamma, broad_alpha);
 
-
+  
+  /* SETTING */
 	//set A
-	read_mat("../test_data/d_1024_1024_4.bin", A);
+	read_mat("../test_data/d_128_128_4.bin", A);
 	copy_mat(A, A_);
-	read_cmat("../test_data/c_1024_1024_4.bin", cA);
+	read_cmat("../test_data/c_128_128_4.bin", cA);
 	ccopy_mat(cA, cA_);
 	//set B
-	read_mat("../test_data/d_1024_1024_4.bin", B);
+	read_mat("../test_data/d_128_128_4.bin", B);
 	copy_mat(B, B_);
-	read_cmat("../test_data/c_1024_1024_4.bin", cB);
+	read_cmat("../test_data/c_128_128_4.bin", cB);
 	ccopy_mat(cB, cB_);
 	//set C
 	copy_mat(A, C);
@@ -252,8 +254,8 @@ void test_verification(int heat, int print_flag, int compare) {
 	ans_trace = zeros(1, 1, mat_batch);
 	ans_sum_1 = zeros(1, mat_size, mat_batch);
 	ans_sum_0 = zeros(mat_size, 1, mat_batch);
-	read_mat("../test_ans/d_1024_1024_4_Diagonal.bin", ans_diagonal);
-	read_mat("../test_ans/d_1024_1024_4_Trace.bin", ans_trace);
+	read_mat("../test_ans/d_128_128_4_Diagonal.bin", ans_diagonal);
+	read_mat("../test_ans/d_128_128_4_Trace.bin", ans_trace);
 
 	cA_diagonal = czeros(mat_size, 1, mat_batch);
 	cA_trace = czeros(1, 1, mat_batch);
@@ -264,24 +266,24 @@ void test_verification(int heat, int print_flag, int compare) {
 	ans_csum_1 = czeros(1, mat_size, mat_batch);
 	ans_csum_0 = czeros(mat_size, 1, mat_batch);
 
-	read_cmat("../test_ans/c_1024_1024_4_cDiagonal.bin", ans_cdiagonal);
-	read_cmat("../test_ans/c_1024_1024_4_cTrace.bin", ans_ctrace);
+	read_cmat("../test_ans/c_128_128_4_cDiagonal.bin", ans_cdiagonal);
+	read_cmat("../test_ans/c_128_128_4_cTrace.bin", ans_ctrace);
 
 	A_mul = zeros(1, mat_size, mat_batch);
 	B_mul = zeros(mat_size, mat_size, mat_batch);
 	C_mul = zeros(1, mat_size, mat_batch);
-	read_mat("../test_data/d_1_1024_4.bin", A_mul);
-	read_mat("../test_data/d_1024_1024_4.bin", B_mul);
+	read_mat("../test_data/d_1_128_4.bin", A_mul);
+	read_mat("../test_data/d_128_128_4.bin", B_mul);
 	ans_mul = zeros(1, mat_size, mat_batch);
-	read_mat("../test_ans/d_1_1024_4_Gemm.bin", ans_mul);
+	read_mat("../test_ans/d_1_128_4_Gemm.bin", ans_mul);
 
 	cA_mul = czeros(1, mat_size, mat_batch);
 	cB_mul = czeros(mat_size, mat_size, mat_batch);
 	cC_mul = czeros(1, mat_size, mat_batch);
-	read_cmat("../test_data/c_1_1024_4.bin", cA_mul);
-	read_cmat("../test_data/c_1024_1024_4.bin", cB_mul);
+	read_cmat("../test_data/c_1_128_4.bin", cA_mul);
+	read_cmat("../test_data/c_128_128_4.bin", cB_mul);
 	ans_cmul = czeros(1, mat_size, mat_batch);
-	read_cmat("../test_ans/c_1_1024_4_cGemm.bin", ans_cmul);
+	read_cmat("../test_ans/c_1_128_4_cGemm.bin", ans_cmul);
 
 
 	is_ctype = 0;
@@ -808,7 +810,7 @@ void preheat() {
 	progressbar(PRGB_SIZE);
 
 	stopwatch(0);
-	//#pragma omp parallel for schedule(dynamic) shared(temp) private(i)
+	//#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(temp) private(i)
 	for (i = 0; i < 50000000; i++) {
 		temp += (double)i / 2.0;
 		temp /= (double)i / 3.0;
@@ -1001,9 +1003,10 @@ void init_list() {
 }
 
 void read_ans(int is_ctype, char *func_name, char *ans_name, void *data_d, void *data_c, void **result_mat){
-	char ans_dtype[16] = "d_1024_1024_4_.bin";
-	char ans_ctype[16] = "c_1024_1024_4_.bin";
-
+	/* SETTING */
+  char ans_dtype[16] = "d_128_128_4_.bin";
+	char ans_ctype[16] = "c_128_128_4_.bin";
+  
 
 	if (is_ctype == 0) {
 		append_post(ans_dtype, func_name, ans_name);

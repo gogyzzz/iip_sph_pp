@@ -446,7 +446,7 @@ void submat_3d(MAT *mat, MAT *submat, ITER d0_st, ITER d0_ed, ITER d1_st,
              (d2_ed - d2_st) + 1 == submat->d2,
          "Wrong submat size.\n")
 
-#pragma omp parallel for schedule(dynamic) shared(submat, mat) private(i, j, k)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(submat, mat) private(i, j, k)
   for (i = 0; i < d0_ed - d0_st; i++)
     for (j = 0; d1_st + j < d1_ed; j++)
       for (k = 0; d2_st + k < d2_ed; k++) {
@@ -496,7 +496,7 @@ void csubmat_3d(CMAT *mat, CMAT *submat, ITER d0_st, ITER d0_ed, ITER d1_st,
              (d2_ed - d2_st) + 1 == submat->d2,
          "Wrong submat size.\n")
 
-#pragma omp parallel for schedule(dynamic) shared(submat, mat) private(i, j, k)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(submat, mat) private(i, j, k)
   for (i = 0; i < d0_ed - d0_st; i++)
     for (j = 0; d1_st + j < d1_ed; j++)
       for (k = 0; d2_st + k < d2_ed; k++) {
@@ -551,7 +551,7 @@ MAT *mpsubmat_3d(MAT *mat, ITER d0_st, ITER d0_ed, ITER d1_st, ITER d1_ed,
     return;
   }
 
-#pragma omp parallel for schedule(dynamic) shared(submat, mat) private(i, j, k)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(submat, mat) private(i, j, k)
   for (i = 0; i < d0_ed - d0_st; i++)
     for (j = 0; d1_st + j < d1_ed; j++)
       for (k = 0; d2_st + k < d2_ed; k++) {
@@ -601,7 +601,7 @@ CMAT *mem_csubmat_3d(CMAT *mat, ITER d0_st, ITER d0_ed, ITER d1_st, ITER d1_ed,
     return;
   }
 
-#pragma omp parallel for schedule(dynamic) shared(submat, mat) private(i, j, k)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(submat, mat) private(i, j, k)
   for (i = 0; i < d0_ed - d0_st; i++)
     for (j = 0; d1_st + j < d1_ed; j++)
       for (k = 0; d2_st + k < d2_ed; k++) {
@@ -711,7 +711,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
   if (((a0 == 1) && (a1 == 1)) && ((b0 == 1) && (b1 != 1))) {
     if ((C->d0 != 1) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b1; i++) {
         C->data[ic * j + i] = A->data[ia * j + 0] + B->data[ib * j + i];
       }
@@ -720,7 +720,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 == 1) && (a1 == 1)) && ((b0 != 1) && (b1 == 1))) {
     if ((C->d0 != b0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0; i++) {  // b1 -> b0
         C->data[ic * j + i] = A->data[ia * j + 0] + B->data[ib * j + i];
       }
@@ -729,7 +729,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != 1) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b1; i++) {
         C->data[ic * j + i] = A->data[ia * j + i] + B->data[ib * j + 0];
       }
@@ -738,7 +738,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != a0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0; i++) {  // b1 -> a0
         C->data[ic * j + i] = A->data[ia * j + i] + B->data[ib * j + 0];
       }
@@ -747,7 +747,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 == 1) && (a1 == 1)) && ((b0 != 1) && (b1 != 1))) {
     if ((C->d0 != b0) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * b1; i++) {
         C->data[ic * j + i] = A->data[ia * j + 0] + B->data[ib * j + i];
       }
@@ -756,7 +756,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != a0) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * a1; i++) {
         C->data[ic * j + i] = A->data[ia * j + i] + B->data[ib * j + 0];
       }
@@ -765,7 +765,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 != 1) && (b1 == 1))) {
     if ((C->d0 != b0) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++) {
         C->data[ic * j + i] =
             A->data[ia * j + i / a1] + B->data[ib * j + i % b0];
@@ -775,7 +775,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 == 1) && (b1 != 1))) {
     if ((C->d0 != a0) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++) {
         C->data[ic * j + i] =
             A->data[ia * j + i % a0] + B->data[ib * j + i / b1];
@@ -785,7 +785,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 != 1) && (b1 != 1))) {
     if (((C->d0 != b0) || (C->d1 != a1)) || (a1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++) {
         C->data[ic * j + i] = A->data[ia * j + i / b1] + B->data[ib * j + i];
       }
@@ -794,7 +794,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 != 1) && (b1 != 1))) {
     if (((C->d0 != b0) || (C->d1 != b1)) || (a0 != b0)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * b1; i++) {
         C->data[ic * j + i] = A->data[ia * j + i % b0] + B->data[ib * j + i];
       }
@@ -803,7 +803,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 != 1) && (b1 == 1))) {
     if (((C->d0 != b0) || (C->d1 != a1)) || (a0 != b0)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++) {
         C->data[ic * j + i] = A->data[ia * j + i] + B->data[ib * j + i % a1];
       }
@@ -812,7 +812,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 == 1) && (b1 != 1))) {
     if (((C->d0 != a0) || (C->d1 != b1)) || (a1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++) {
         C->data[ic * j + i] = A->data[ia * j + i] + B->data[ib * j + i / a0];
       }
@@ -822,7 +822,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
   else if (a0 == b0 && a1 == b1) {
     if (((C->d0 != a0) || (C->d1 != b1))) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++) {
         C->data[ic * j + i] = A->data[ia * j + i] + B->data[ib * j + i];
       }
@@ -891,7 +891,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
   if (((a0 == 1) && (a1 == 1)) && ((b0 == 1) && (b1 != 1))) {
     if ((C->d0 != 1) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b1; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + 0], B->data[ib * j + i])
       }
@@ -900,7 +900,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 == 1) && (a1 == 1)) && ((b0 != 1) && (b1 == 1))) {
     if ((C->d0 != b0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + 0], B->data[ib * j + i])
       }
@@ -909,7 +909,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != 1) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b1; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + 0])
       }
@@ -918,7 +918,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != a0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + 0])
       }
@@ -927,7 +927,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 == 1) && (a1 == 1)) && ((b0 != 1) && (b1 != 1))) {
     if ((C->d0 != b0) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * b1; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + 0], B->data[ib * j + i])
       }
@@ -936,7 +936,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != a0) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * a1; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + 0])
       }
@@ -945,7 +945,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 != 1) && (b1 == 1))) {
     if ((C->d0 != b0) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + i / a1],
                B->data[ib * j + i % b0])
@@ -955,7 +955,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 == 1) && (b1 != 1))) {
     if ((C->d0 != a0) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + i % a0],
                B->data[ib * j + i / b1])
@@ -965,7 +965,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 != 1) && (b1 != 1))) {
     if (((C->d0 != b0) || (C->d1 != a1)) || (a1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + i / b1],
                B->data[ib * j + i])
@@ -975,7 +975,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 != 1) && (b1 != 1))) {
     if (((C->d0 != b0) || (C->d1 != b1)) || (a0 != b0)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * b1; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + i % b0],
                B->data[ib * j + i])
@@ -985,7 +985,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 != 1) && (b1 == 1))) {
     if (((C->d0 != b0) || (C->d1 != a1)) || (a0 != b0)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + i],
                B->data[ib * j + i % a1])
@@ -995,7 +995,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 == 1) && (b1 != 1))) {
     if (((C->d0 != a0) || (C->d1 != b1)) || (a1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + i],
                B->data[ib * j + i / a0])
@@ -1004,7 +1004,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (a0 == b0 && a1 == b1) {
     if (((C->d0 != a0) || (C->d1 != b1))) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + i])
       }
@@ -1075,7 +1075,7 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
   if (((a0 == 1) && (a1 == 1)) && ((b0 == 1) && (b1 != 1))) {
     if ((C->d0 != 1) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b1; i++)
         C->data[ic * j + i] =
             B->data[ib * j + ib * j + i] * A->data[ia * j + ia * j + 0];
@@ -1084,7 +1084,7 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 == 1) && (a1 == 1)) && ((b0 != 1) && (b1 == 1))) {
     if ((C->d0 != b0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0; i++)
         C->data[ic * j + i] =
             B->data[ib * j + ib * j + i] * A->data[ia * j + ia * j + 0];
@@ -1093,7 +1093,7 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != 1) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b1; i++)
         C->data[ic * j + i] =
             A->data[ia * j + ia * j + i] * B->data[ib * j + ib * j + 0];
@@ -1102,7 +1102,7 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != a0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0; i++)
         C->data[ic * j + i] = A->data[ia * j + i] * B->data[ib * j + 0];
   }
@@ -1110,7 +1110,7 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 == 1) && (a1 == 1)) && ((b0 != 1) && (b1 != 1))) {
     if ((C->d0 != b0) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * b1; i++)
         C->data[ic * j + i] = B->data[ib * j + i] * A->data[ia * j + 0];
   }
@@ -1118,7 +1118,7 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != a0) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * a1; i++)
         C->data[ic * j + i] = A->data[ia * j + i] * B->data[ib * j + 0];
   }
@@ -1126,7 +1126,7 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 != 1) && (b1 == 1))) {
     if ((C->d0 != b0) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++)
         C->data[ic * j + i] =
             B->data[ib * j + i % b0] * A->data[ia * j + i / a1];
@@ -1135,7 +1135,7 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 == 1) && (b1 != 1))) {
     if ((C->d0 != a0) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++)
         C->data[ic * j + i] =
             B->data[ib * j + i / b1] * A->data[ia * j + i % a0];
@@ -1144,7 +1144,7 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 != 1) && (b1 != 1))) {
     if (((C->d0 != b0) || (C->d1 != a1)) || (a1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++)
         C->data[ic * j + i] = A->data[ia * j + i / b1] * B->data[ib * j + i];
   }
@@ -1152,7 +1152,7 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 != 1) && (b1 != 1))) {
     if (((C->d0 != b0) || (C->d1 != b1)) || (a0 != b0)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * b1; i++)
         C->data[ic * j + i] = A->data[ia * j + i % b0] * B->data[ib * j + i];
   }
@@ -1160,7 +1160,7 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 != 1) && (b1 == 1))) {
     if (((C->d0 != b0) || (C->d1 != a1)) || (a0 != b0)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++)
         C->data[ic * j + i] = B->data[ib * j + i % a1] * A->data[ia * j + i];
   }
@@ -1168,14 +1168,14 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 == 1) && (b1 != 1))) {
     if (((C->d0 != a0) || (C->d1 != b1)) || (a1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++)
         C->data[ic * j + i] = B->data[ib * j + i / a0] * A->data[ia * j + i];
   }  // a0 a1 b0  b1 | a0 b1 (a0 == b0 && a1 == b1)
   else if (a0 == b0 && a1 == b1) {
     if (((C->d0 != a0) || (C->d1 != b1))) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++) {
         C->data[ic * j + i] = A->data[ia * j + i] * B->data[ib * j + i];
       }
@@ -1227,7 +1227,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
   if (((a0 == 1) && (a1 == 1)) && ((b0 == 1) && (b1 != 1))) {
     if ((C->d0 != 1) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b1; i++)
         CXEMUL(C->data[i], A->data[ia * j + 0], B->data[ib * j + i])
   }
@@ -1235,7 +1235,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 == 1) && (a1 == 1)) && ((b0 != 1) && (b1 == 1))) {
     if ((C->d0 != b0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0; i++)
         CXEMUL(C->data[ic * j + i], A->data[ia * j + 0], B->data[ib * j + i])
   }
@@ -1243,7 +1243,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != 1) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b1; i++)
         CXEMUL(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + 0])
   }
@@ -1251,7 +1251,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != a0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0; i++)
         CXEMUL(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + 0])
   }
@@ -1259,7 +1259,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 == 1) && (a1 == 1)) && ((b0 != 1) && (b1 != 1))) {
     if ((C->d0 != b0) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * b1; i++)
         CXEMUL(C->data[ic * j + i], A->data[ia * j + 0], B->data[ib * j + i])
   }
@@ -1267,7 +1267,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != a0) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * a1; i++)
         CXEMUL(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + 0])
   }
@@ -1275,7 +1275,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 != 1) && (b1 == 1))) {
     if ((C->d0 != b0) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++)
         CXEMUL(C->data[ic * j + i], A->data[ia * j + i / a1],
                B->data[ib * j + i % b0])
@@ -1284,7 +1284,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 == 1) && (b1 != 1))) {
     if ((C->d0 != a0) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++)
         CXEMUL(C->data[ic * j + i], A->data[ia * j + i % a0],
                B->data[ib * j + i / b1])
@@ -1293,7 +1293,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 != 1) && (b1 != 1))) {
     if (((C->d0 != b0) || (C->d1 != a1)) || (a1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++)
         CXEMUL(C->data[ic * j + i], A->data[ia * j + i / b1],
                B->data[ib * j + i])
@@ -1302,7 +1302,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 != 1) && (b1 != 1))) {
     if (((C->d0 != b0) || (C->d1 != b1)) || (a0 != b0)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * b1; i++)
         CXEMUL(C->data[ic * j + i], A->data[ia * j + i % b0],
                B->data[ib * j + i])
@@ -1311,7 +1311,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 != 1) && (b1 == 1))) {
     if (((C->d0 != b0) || (C->d1 != a1)) || (a0 != b0)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++)
         CXEMUL(C->data[ic * j + i], A->data[ia * j + i],
                B->data[ib * j + i % a1])
@@ -1320,7 +1320,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 == 1) && (b1 != 1))) {
     if (((C->d0 != a0) || (C->d1 != b1)) || (a1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++)
         CXEMUL(C->data[ic * j + i], A->data[ia * j + i],
                B->data[ib * j + i / a0])
@@ -1328,7 +1328,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (a0 == b0 && a1 == b1) {
     if (((C->d0 != a0) || (C->d1 != b1))) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++) {
         CXEMUL(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + i])
       }
@@ -1398,7 +1398,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
   if (((a0 == 1) && (a1 == 1)) && ((b0 == 1) && (b1 != 1))) {
     if ((C->d0 != 1) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b1; i++) {
         ASSERT(B->data[ib * j + i], "Divide by zero.\n")
         C->data[ic * j + i] = A->data[ia * j + 0] / B->data[ib * j + i];
@@ -1408,7 +1408,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 == 1) && (a1 == 1)) && ((b0 != 1) && (b1 == 1))) {
     if ((C->d0 != b0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0; i++) {
         ASSERT(B->data[ib * j + i], "Divide by zero.\n")
         C->data[ic * j + i] = A->data[ia * j + 0] / B->data[ib * j + i];
@@ -1418,7 +1418,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != 1) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b1; i++) {
         ASSERT(B->data[ib * j], "Divide by zero.\n")
         C->data[ic * j + i] = A->data[ia * j + i] / B->data[ib * j + 0];
@@ -1428,7 +1428,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != a0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a1; i++) {
         ASSERT(B->data[ib * j], "Divide by zero.\n")
         C->data[ic * j + i] = A->data[ia * j + i] / B->data[ib * j + 0];
@@ -1438,7 +1438,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 == 1) && (a1 == 1)) && ((b0 != 1) && (b1 != 1))) {
     if ((C->d0 != b0) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * b1; i++) {
         ASSERT(B->data[ib * j + i], "Divide by zero.\n")
         C->data[ic * j + i] = A->data[ia * j + 0] / B->data[ib * j + i];
@@ -1448,7 +1448,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != a0) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * a1; i++) {
         ASSERT(B->data[ib * j], "Divide by zero.\n")
         C->data[ic * j + i] = A->data[ia * j + i] / B->data[ib * j + 0];
@@ -1458,7 +1458,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 != 1) && (b1 == 1))) {
     if ((C->d0 != b0) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++) {
         ASSERT(B->data[ib * j + i % b0], "Divide by zero.\n")
         C->data[ic * j + i] =
@@ -1469,7 +1469,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 == 1) && (b1 != 1))) {
     if ((C->d0 != a0) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++) {
         ASSERT(B->data[ib * j + i / b1], "Divide by zero.\n")
         C->data[ic * j + i] =
@@ -1480,7 +1480,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 != 1) && (b1 != 1))) {
     if (((C->d0 != b0) || (C->d1 != a1)) || (a1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++) {
         ASSERT(B->data[ib * j + i], "Divide by zero.\n")
         C->data[ic * j + i] = A->data[ia * j + i / b1] / B->data[ib * j + i];
@@ -1490,7 +1490,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 != 1) && (b1 != 1))) {
     if (((C->d0 != b0) || (C->d1 != b1)) || (a0 != b0)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * b1; i++) {
         ASSERT(B->data[ib * j + i], "Divide by zero.\n")
         C->data[ic * j + i] = A->data[ia * j + i % b0] / B->data[ib * j + i];
@@ -1500,7 +1500,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 != 1) && (b1 == 1))) {
     if (((C->d0 != b0) || (C->d1 != a1)) || (a0 != b0)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++) {
         ASSERT(B->data[ib * j + i % a1], "Divide by zero.\n")
         C->data[ic * j + i] = A->data[ia * j + i] / B->data[ib * j + i % a1];
@@ -1510,7 +1510,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 == 1) && (b1 != 1))) {
     if (((C->d0 != a0) || (C->d1 != b1)) || (a1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++) {
         ASSERT(B->data[ib * j + i / a0], "Divide by zero.\n")
         C->data[ic * j + i] = A->data[ia * j + i] / B->data[ib * j + i / a0];
@@ -1519,7 +1519,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
   else if (a0 == b0 && a1 == b1) {
     if (((C->d0 != a0) || (C->d1 != b1))) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++) {
         ASSERT(B->data[ib * j + i / a0], "Divide by zero.\n")
         C->data[ic * j + i] = A->data[ia * j + i] / B->data[ib * j + i];
@@ -1589,7 +1589,7 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
   if (((a0 == 1) && (a1 == 1)) && ((b0 == 1) && (b1 != 1))) {
     if ((C->d0 != 1) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b1; i++) {
         CXEDIV(C->data[ic * j + i], A->data[ia * j + 0], B->data[ib * j + i])
       }
@@ -1598,7 +1598,7 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 == 1) && (a1 == 1)) && ((b0 != 1) && (b1 == 1))) {
     if ((C->d0 != b0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b1; i++) {
         CXEDIV(C->data[ic * j + i], A->data[ia * j + 0], B->data[ib * j + i])
       }
@@ -1607,7 +1607,7 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != 1) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b1; i++) {
         CXEDIV(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + 0])
       }
@@ -1616,7 +1616,7 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != a0) || (C->d1 != 1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b1; i++) {
         CXEDIV(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + 0])
       }
@@ -1625,7 +1625,7 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 == 1) && (a1 == 1)) && ((b0 != 1) && (b1 != 1))) {
     if ((C->d0 != b0) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * b1; i++) {
         CXEDIV(C->data[ic * j + i], A->data[ia * j + 0], B->data[ib * j + i])
       }
@@ -1634,7 +1634,7 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 == 1) && (b1 == 1))) {
     if ((C->d0 != a0) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * a1; i++) {
         CXEDIV(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + 0])
       }
@@ -1643,7 +1643,7 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 != 1) && (b1 == 1))) {
     if ((C->d0 != b0) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++) {
         CXEDIV(C->data[ic * j + i], A->data[ia * j + i / a1],
                B->data[ib * j + i % b0])
@@ -1653,7 +1653,7 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 == 1) && (b1 != 1))) {
     if ((C->d0 != a0) || (C->d1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++) {
         CXEDIV(C->data[ic * j + i], A->data[ia * j + i % a0],
                B->data[ib * j + i / b1])
@@ -1663,7 +1663,7 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 == 1) && (a1 != 1)) && ((b0 != 1) && (b1 != 1))) {
     if (((C->d0 != b0) || (C->d1 != a1)) || (a1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++) {
         CXEDIV(C->data[ic * j + i], A->data[ia * j + i / b1],
                B->data[ib * j + i])
@@ -1673,7 +1673,7 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 == 1)) && ((b0 != 1) && (b1 != 1))) {
     if (((C->d0 != b0) || (C->d1 != b1)) || (a0 != b0)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * b1; i++) {
         CXEDIV(C->data[ic * j + i], A->data[ia * j + i % b0],
                B->data[ib * j + i])
@@ -1683,7 +1683,7 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 != 1) && (b1 == 1))) {
     if (((C->d0 != b0) || (C->d1 != a1)) || (a0 != b0)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < b0 * a1; i++) {
         CXEDIV(C->data[ic * j + i], A->data[ia * j + i],
                B->data[ib * j + i % a1])
@@ -1693,7 +1693,7 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (((a0 != 1) && (a1 != 1)) && ((b0 == 1) && (b1 != 1))) {
     if (((C->d0 != a0) || (C->d1 != b1)) || (a1 != b1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++) {
         CXEDIV(C->data[ic * j + i], A->data[ia * j + i],
                B->data[ib * j + i / a0])
@@ -1702,7 +1702,7 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
   else if (a0 == b0 && a1 == b1) {
     if (((C->d0 != a0) || (C->d1 != b1))) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
-#pragma omp parallel for schedule(dynamic) shared(C, B, A) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
       for (i = 0; i < a0 * b1; i++) {
         CXEDIV(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + i])
       }
@@ -1720,7 +1720,7 @@ void inv_elements_inc(UINT size, DTYPE *X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
     ASSERT(X[i] != 0, "Divide by zero.\n")
     X[i] = 1 / X[i];
@@ -1736,7 +1736,7 @@ void cinv_elements_inc(UINT size, CTYPE *X, ITER incx) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-#pragma omp parallel for schedule(dynamic) shared(X) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
   for (i = 0; i < size; i += incx) {
     ASSERT(X[i].re != 0 || X[i].im != 0, "Divide by zero.\n")
     X[i].re = X[i].re / ((X[i].re * X[i].re) + (X[i].im * X[i].im));
@@ -1762,7 +1762,7 @@ void repmat(MAT *mat, DIM *dim) {
 
   size = t_mat->d0 * t_mat->d1;
 
-#pragma omp parallel for schedule(dynamic) shared(mat, t_mat) private(i, l, k, \
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat, t_mat) private(i, l, k, \
                                                                       j)
   for (i = 0; i < size; i++) {
     for (l = 0; l < dim->d2; l++)
@@ -1794,7 +1794,7 @@ void crepmat(CMAT *mat, DIM *dim) {
 
   size = t_mat->d0 * t_mat->d1;
 
-#pragma omp parallel for schedule(dynamic) shared(mat, t_mat) private(i, l, k, \
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat, t_mat) private(i, l, k, \
                                                                       j)
   for (i = 0; i < size; i++) {
     for (l = 0; l < dim->d2; l++)
@@ -1887,7 +1887,7 @@ void permute(MAT *mat, UINT seq) {
     d0d1 = t->d0 * t->d1;
     mat->d1 = t->d2;
     mat->d2 = t->d1;
-#pragma omp parallel for schedule(dynamic) shared(mat, t) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat, t) private(i)
     for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
       mat->data[((i % d0d1) / t->d0) * mat->d0 * mat->d1 +
                 (i / d0d1) * mat->d0 + i % t->d0] = t->data[i];
@@ -1899,7 +1899,7 @@ void permute(MAT *mat, UINT seq) {
     d0d1 = t->d0 * t->d1;
     mat->d0 = t->d1;
     mat->d1 = t->d0;
-#pragma omp parallel for schedule(dynamic) shared(mat, t) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat, t) private(i)
     for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
       mat->data[((i / d0d1)) * mat->d0 * mat->d1 + (i % t->d0) * mat->d0 +
                 (i % d0d1) / t->d0] = t->data[i];
@@ -1912,7 +1912,7 @@ void permute(MAT *mat, UINT seq) {
     mat->d0 = t->d1;
     mat->d1 = t->d2;
     mat->d2 = t->d0;
-#pragma omp parallel for schedule(dynamic) shared(mat, t) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat, t) private(i)
     for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
       mat->data[(i % t->d0) * mat->d0 * mat->d1 + (i / d0d1) * mat->d0 +
                 (i % d0d1) / t->d0] = t->data[i];
@@ -1924,7 +1924,7 @@ void permute(MAT *mat, UINT seq) {
     d0d1 = t->d0 * t->d1;
     mat->d0 = t->d2;
     mat->d2 = t->d0;
-#pragma omp parallel for schedule(dynamic) shared(mat, t) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat, t) private(i)
     for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
       mat->data[(i % d0d1) / t->d0 * mat->d0 * mat->d1 + (i % t->d0) * mat->d0 +
                 i / d0d1] = t->data[i];
@@ -1936,7 +1936,7 @@ void permute(MAT *mat, UINT seq) {
     d0d1 = t->d0 * t->d1;
     mat->d0 = t->d2;
     mat->d2 = t->d0;
-#pragma omp parallel for schedule(dynamic) shared(mat, t) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat, t) private(i)
     for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
       mat->data[(i % t->d0) * mat->d0 * mat->d1 + (i % d0d1) / t->d0 * mat->d0 +
                 i / d0d1] = t->data[i];
@@ -1963,7 +1963,7 @@ void cpermute(CMAT *mat, UINT seq) {
     d0d1 = t->d0 * t->d1;
     mat->d1 = t->d2;
     mat->d2 = t->d1;
-#pragma omp parallel for schedule(dynamic) shared(mat, t) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat, t) private(i)
     for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
       mat->data[((i % d0d1) / t->d0) * mat->d0 * mat->d1 +
                 (i / d0d1) * mat->d0 + i % t->d0]
@@ -1979,7 +1979,7 @@ void cpermute(CMAT *mat, UINT seq) {
     d0d1 = t->d0 * t->d1;
     mat->d0 = t->d1;
     mat->d1 = t->d0;
-#pragma omp parallel for schedule(dynamic) shared(mat, t) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat, t) private(i)
     for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
       mat->data[((i / d0d1)) * mat->d0 * mat->d1 + (i % t->d0) * mat->d0 +
                 (i % d0d1) / t->d0]
@@ -1996,7 +1996,7 @@ void cpermute(CMAT *mat, UINT seq) {
     mat->d0 = t->d1;
     mat->d1 = t->d2;
     mat->d2 = t->d0;
-#pragma omp parallel for schedule(dynamic) shared(mat, t) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat, t) private(i)
     for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
       mat->data[(i % t->d0) * mat->d0 * mat->d1 + (i / d0d1) * mat->d0 +
                 (i % d0d1) / t->d0]
@@ -2012,7 +2012,7 @@ void cpermute(CMAT *mat, UINT seq) {
     d0d1 = t->d0 * t->d1;
     mat->d0 = t->d2;
     mat->d2 = t->d0;
-#pragma omp parallel for schedule(dynamic) shared(mat, t) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat, t) private(i)
     for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
       mat->data[(i % d0d1) / t->d0 * mat->d0 * mat->d1 + (i % t->d0) * mat->d0 +
                 i / d0d1]
@@ -2028,7 +2028,7 @@ void cpermute(CMAT *mat, UINT seq) {
     d0d1 = t->d0 * t->d1;
     mat->d0 = t->d2;
     mat->d2 = t->d0;
-#pragma omp parallel for schedule(dynamic) shared(mat, t) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat, t) private(i)
     for (i = 0; i < mat->d0 * mat->d1 * mat->d2; i++) {
       mat->data[(i % t->d0) * mat->d0 * mat->d1 + (i % d0d1) / t->d0 * mat->d0 +
                 i / d0d1]
@@ -2054,19 +2054,19 @@ MAT *create_transpose(MAT *mat) {
 #endif
   if (mat->ndim == 0) {
     t_mat = alloc_mat(d1, d0);
-#pragma omp parallel for schedule(dynamic) shared(t_mat, mat) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(t_mat, mat) private(i)
     for (i = 0; i < d0; i++) {
       t_mat->data[i] = mat->data[i];
     }
   } else if (mat->ndim == 1) {
     t_mat = alloc_mat(d1, d0);
-#pragma omp parallel for schedule(dynamic) shared(t_mat, mat) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(t_mat, mat) private(i)
     for (i = 0; i < d0 * d1; i++) {
       t_mat->data[i / d0 + i % d0 * d1] = mat->data[i];
     }
   } else {
     t_mat = alloc_mat(d1, d0, d2);
-#pragma omp parallel for schedule(dynamic) shared(t_mat, mat) private(i, j)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(t_mat, mat) private(i, j)
     for (j = 0; j < d2; j++) {
       for (i = 0; i < d0 * d1; i++) {
         t_mat->data[j * d0 * d1 + i / d0 + i % d0 * d1] =
@@ -2089,21 +2089,21 @@ CMAT *create_ctranspose(CMAT *mat) {
 #endif
   if (mat->ndim == 0) {
     t_mat = alloc_cmat(d1, d0);
-#pragma omp parallel for schedule(dynamic) shared(t_mat, mat) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(t_mat, mat) private(i)
     for (i = 0; i < d0; i++) {
       t_mat->data[i].re = mat->data[i].re;
       t_mat->data[i].im = mat->data[i].im;
     }
   } else if (mat->ndim == 1) {
     t_mat = alloc_cmat(d1, d0);
-#pragma omp parallel for schedule(dynamic) shared(t_mat, mat) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(t_mat, mat) private(i)
     for (i = 0; i < d0 * d1; i++) {
       t_mat->data[i / d0 + i % d0 * d1].re = mat->data[i].re;
       t_mat->data[i / d0 + i % d0 * d1].im = mat->data[i].im;
     }
   } else {
     t_mat = alloc_cmat(d1, d0, d2);
-#pragma omp parallel for schedule(dynamic) shared(t_mat, mat) private(i, j)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(t_mat, mat) private(i, j)
     for (j = 0; j < d2; j++) {
       for (i = 0; i < d0 * d1; i++) {
         t_mat->data[j * d0 * d1 + i / d0 + i % d0 * d1].re =
@@ -2129,7 +2129,7 @@ void transpose(MAT *mat) {
   d2 = mat->d2;
   temp = mpalloc_mat(mat->d0, mat->d1, mat->d2);
   if (mat->ndim == 0) {
-#pragma omp parallel for schedule(dynamic) shared(temp, mat) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(temp, mat) private(i)
     for (i = 0; i < d0; i++) {
       temp->data[i] = mat->data[i];
     }
@@ -2137,14 +2137,14 @@ void transpose(MAT *mat) {
     mat->d0 = d1;
     mat->d1 = d0;
   } else if (mat->ndim == 1) {
-#pragma omp parallel for schedule(dynamic) shared(temp, mat) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(temp, mat) private(i)
     for (i = 0; i < d0 * d1; i++) {
       temp->data[i / d0 + i % d0 * d1] = mat->data[i];
     }
     mat->d0 = d1;
     mat->d1 = d0;
   } else {
-#pragma omp parallel for schedule(dynamic) shared(temp, mat) private(i, j)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(temp, mat) private(i, j)
     for (j = 0; j < d2; j++) {
       for (i = 0; i < d0 * d1; i++) {
         temp->data[j * d0 * d1 + i / d0 + i % d0 * d1] =
@@ -2171,7 +2171,7 @@ void ctranspose(CMAT *mat) {
   d2 = mat->d2;
   temp = mpalloc_cmat(mat->d0, mat->d1, mat->d2);
   if (mat->ndim == 0) {
-#pragma omp parallel for schedule(dynamic) shared(temp, mat) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(temp, mat) private(i)
     for (i = 0; i < d0; i++) {
       temp->data[i].re = mat->data[i].re;
       temp->data[i].im = mat->data[i].im;
@@ -2180,7 +2180,7 @@ void ctranspose(CMAT *mat) {
     mat->d0 = d1;
     mat->d1 = d0;
   } else if (mat->ndim == 1) {
-#pragma omp parallel for schedule(dynamic) shared(temp, mat) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(temp, mat) private(i)
     for (i = 0; i < d0 * d1; i++) {
       temp->data[i / d0 + i % d0 * d1].re = mat->data[i].re;
       temp->data[i / d0 + i % d0 * d1].im = mat->data[i].im;
@@ -2188,7 +2188,7 @@ void ctranspose(CMAT *mat) {
     mat->d0 = d1;
     mat->d1 = d0;
   } else {
-#pragma omp parallel for schedule(dynamic) shared(temp, mat) private(i, j)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(temp, mat) private(i, j)
     for (j = 0; j < d2; j++) {
       for (i = 0; i < d0 * d1; i++) {
         temp->data[j * d0 * d1 + i / d0 + i % d0 * d1].re =
@@ -2326,21 +2326,21 @@ CMAT *create_hermit(CMAT *mat) {
 #endif
   if (mat->ndim == 0) {
     t_mat = alloc_cmat(d1, d0);
-#pragma omp parallel for schedule(dynamic) shared(t_mat, mat) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(t_mat, mat) private(i)
     for (i = 0; i < d0; i++) {
       t_mat->data[i].re = mat->data[i].re;
       t_mat->data[i].im = -(mat->data[i].im);
     }
   } else if (mat->ndim == 1) {
     t_mat = alloc_cmat(d1, d0);
-#pragma omp parallel for schedule(dynamic) shared(t_mat, mat) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(t_mat, mat) private(i)
     for (i = 0; i < d0 * d1; i++) {
       t_mat->data[i / d0 + i % d0 * d1].re = mat->data[i].re;
       t_mat->data[i / d0 + i % d0 * d1].im = -(mat->data[i].im);
     }
   } else {
     t_mat = alloc_cmat(d1, d0, d2);
-#pragma omp parallel for schedule(dynamic) shared(t_mat, mat) private(i, j)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(t_mat, mat) private(i, j)
     for (j = 0; j < d2; j++) {
       for (i = 0; i < d0 * d1; i++) {
         t_mat->data[j * d0 * d1 + i / d0 + i % d0 * d1].re =
@@ -2366,7 +2366,7 @@ void hermit(CMAT *mat) {
   d2 = mat->d2;
   temp = mpalloc_cmat(mat->d0, mat->d1, mat->d2);
   if (mat->ndim == 0) {
-#pragma omp parallel for schedule(dynamic) shared(temp, mat) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(temp, mat) private(i)
     for (i = 0; i < d0; i++) {
       temp->data[i].re = mat->data[i].re;
       temp->data[i].im = -mat->data[i].im;
@@ -2375,7 +2375,7 @@ void hermit(CMAT *mat) {
     mat->d0 = d1;
     mat->d1 = d0;
   } else if (mat->ndim == 1) {
-#pragma omp parallel for schedule(dynamic) shared(temp, mat) private(i)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(temp, mat) private(i)
     for (i = 0; i < d0 * d1; i++) {
       temp->data[i / d0 + i % d0 * d1].re = mat->data[i].re;
       temp->data[i / d0 + i % d0 * d1].im = -mat->data[i].im;
@@ -2383,7 +2383,7 @@ void hermit(CMAT *mat) {
     mat->d0 = d1;
     mat->d1 = d0;
   } else {
-#pragma omp parallel for schedule(dynamic) shared(temp, mat) private(i, j)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(temp, mat) private(i, j)
     for (j = 0; j < d2; j++) {
       for (i = 0; i < d0 * d1; i++) {
         temp->data[j * d0 * d1 + i / d0 + i % d0 * d1].re =
@@ -2409,7 +2409,7 @@ void ident_mat(MAT *mat) {
   if (mat->ndim == 1) {
     d0 = mat->d0;
 
-#pragma omp parallel for schedule(dynamic) shared(mat) private(i, j)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat) private(i, j)
     for (i = 0; i < d0; i++) {
       for (j = 0; j < d0; j++) {
         if (i == j) {
@@ -2421,7 +2421,7 @@ void ident_mat(MAT *mat) {
   } else if (mat->ndim == 2) {
     d0 = mat->d0;
     d2 = mat->d2;
-#pragma omp parallel for schedule(dynamic) shared(mat) private(i, j, k)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat) private(i, j, k)
     for (i = 0; i < d2; i++) {
       for (j = 0; j < d0; j++) {
         for (k = 0; k < d0; k++) {
@@ -2444,7 +2444,7 @@ void ident_cmat(CMAT *mat) {
   if (mat->ndim == 1) {
     d0 = mat->d0;
 
-#pragma omp parallel for schedule(dynamic) shared(mat) private(i, j)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat) private(i, j)
     for (i = 0; i < d0; i++) {
       for (j = 0; j < d0; j++) {
         if (i == j) {
@@ -2459,7 +2459,7 @@ void ident_cmat(CMAT *mat) {
   } else if (mat->ndim == 2) {
     d0 = mat->d0;
     d2 = mat->d2;
-#pragma omp parallel for schedule(dynamic) shared(mat) private(i, j, k)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(mat) private(i, j, k)
     for (i = 0; i < d2; i++) {
       for (j = 0; j < d0; j++) {
         for (k = 0; k < d0; k++) {

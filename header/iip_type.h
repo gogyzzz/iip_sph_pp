@@ -62,6 +62,8 @@
 #define CTran 113
 #endif
 
+#define CHUNK_SIZE 128
+
 /**** LIBRARY SETTING ****/
 
 #if USE_CUDA

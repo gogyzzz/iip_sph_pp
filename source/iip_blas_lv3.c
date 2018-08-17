@@ -156,8 +156,7 @@ void omp_gemm(char transA, char transB, UINT m, UINT n, UINT k, DTYPE alpha,
 #endif
 
   if ((transA == NoTran) && (transB == NoTran)) {
-#pragma omp parallel for schedule(dynamic) shared(A, B, C) private(temp, i, j, \
-                                                                   l)
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(A,B,C) private(temp, i, j,l)
     for (l = 0; l < m; l++) {
       for (j = 0; j < n; j++) {
         temp = 0;
@@ -173,7 +172,7 @@ void omp_gemm(char transA, char transB, UINT m, UINT n, UINT k, DTYPE alpha,
   }
 
   if ((transA != NoTran) && (transB == NoTran)) {
-#pragma omp parallel for schedule(dynamic) shared(A, B, C) private(temp, i, j, \
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(A, B, C) private(temp, i, j, \
                                                                    l)
     for (l = 0; l < m; l++) {
       for (j = 0; j < n; j++) {
@@ -189,7 +188,7 @@ void omp_gemm(char transA, char transB, UINT m, UINT n, UINT k, DTYPE alpha,
     }
   }
   if ((transA != NoTran) && (transB != NoTran)) {
-#pragma omp parallel for schedule(dynamic) shared(A, B, C) private(temp, i, j, \
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(A, B, C) private(temp, i, j, \
                                                                    l)
     for (l = 0; l < m; l++) {
       for (j = 0; j < n; j++) {
@@ -205,7 +204,7 @@ void omp_gemm(char transA, char transB, UINT m, UINT n, UINT k, DTYPE alpha,
     }
   }
   if ((transA == NoTran) && (transB != NoTran)) {
-#pragma omp parallel for schedule(dynamic) shared(A, B, C) private(temp, i, j, \
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(A, B, C) private(temp, i, j, \
                                                                    l)
     for (l = 0; l < m; l++) {
       for (j = 0; j < n; j++) {
@@ -333,7 +332,7 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
 
   if ((transA == NoTran)) {
     if (transB == NoTran) {
-#pragma omp parallel for schedule(dynamic) shared(A, B, C) private(temp, i, j, \
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(A, B, C) private(temp, i, j, \
                                                                    l, temp2)
       for (l = 0; l < m; l++) {
         for (j = 0; j < n; j++) {
@@ -349,7 +348,7 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
       }
 
     } else if (transB == Tran) {
-#pragma omp parallel for schedule(dynamic) shared(A, B, C) private(temp, i, j, \
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(A, B, C) private(temp, i, j, \
                                                                    l, temp2)
       for (l = 0; l < m; l++) {
         for (j = 0; j < n; j++) {
@@ -364,7 +363,7 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
       }
     } else  // tranB == CTran
     {
-#pragma omp parallel for schedule(dynamic) shared(A, B, C) private(temp, i, j, \
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(A, B, C) private(temp, i, j, \
                                                                    l, temp2)
       for (l = 0; l < m; l++) {
         for (j = 0; j < n; j++) {
@@ -383,7 +382,7 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
     }
   } else if (transA == Tran) {
     if (transB == NoTran) {
-#pragma omp parallel for schedule(dynamic) shared(A, B, C) private(temp, i, j, \
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(A, B, C) private(temp, i, j, \
                                                                    l, temp2)
       for (l = 0; l < m; l++) {
         for (j = 0; j < n; j++) {
@@ -398,7 +397,7 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
       }
 
     } else if (transB == Tran) {
-#pragma omp parallel for schedule(dynamic) shared(A, B, C) private(temp, i, j, \
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(A, B, C) private(temp, i, j, \
                                                                    l, temp2)
       for (l = 0; l < m; l++) {
         for (j = 0; j < n; j++) {
@@ -413,7 +412,7 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
       }
     } else  // transB == CTran
     {
-#pragma omp parallel for schedule(dynamic) \
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) \
     shared(A, B, C) private(temp, i, j, l, temp2, adx, bdx)
       for (l = 0; l < m; l++) {
         for (j = 0; j < n; j++) {
@@ -433,7 +432,7 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
   } else  // transA == CTran
   {
     if (transB == NoTran) {
-#pragma omp parallel for schedule(dynamic) \
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) \
     shared(A, B, C) private(temp, i, j, l, temp2, adx, bdx)
       for (l = 0; l < m; l++) {
         for (j = 0; j < n; j++) {
@@ -451,7 +450,7 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
       }
 
     } else if (transB == Tran) {
-#pragma omp parallel for schedule(dynamic) \
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) \
     shared(A, B, C) private(i, j, l, adx, bdx, temp, temp2)
       for (l = 0; l < m; l++) {
         for (j = 0; j < n; j++) {
@@ -469,7 +468,7 @@ void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
       }
     } else  // transB == CTran
     {
-#pragma omp parallel for schedule(dynamic) \
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) \
     shared(A, B, C) private(i, j, l, adx, bdx, temp, temp2)
       for (l = 0; l < m; l++) {
         for (j = 0; j < n; j++) {
