@@ -156,7 +156,7 @@ void run_test(int heat, int print_flag) {
 	if (heat == 1){
 		preheat();
 		printf("\n # Preparing Cache\n");
-		run_test(0, 0, 0);
+		run_test(0, 0);
 		printf("\n Cache prepared.\n");
 	}
 
