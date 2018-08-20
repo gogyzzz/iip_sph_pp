@@ -1,52 +1,32 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.4)
 project(iip_sph_pp)
 
+# TARGET_NAME will be the name of executable.
 set(TARGET_NAME ${PROJECT_NAME})
 
 #### BUILD ENVIRONMENT OPTIONS ######
-option(USE_CUDA    "Using CUDA"      OFF) # Not supported, yet.
 option(USE_BLAS    "Using BLAS"      ON)
 option(USE_OPENMP  "Using OpenMP"    ON)
 
-#### set Your Source files ####
+# Not supported, yet.
+#option(USE_CUDA    "Using CUDA"      OFF)
 
-# example for adding code
-# 
-# set(MAIN_SRC
-# my_main.c
-# src/my_c_code.c
-# src2/my_other_c_code.c
-# )
-#
-# include_directories(${CMAKE_CURRENT_SOURCE_DIR}/my_header_folder)
-
-#set(MAIN_SRC test/test_time.c)
-set(MAIN_SRC test/test_matlab.c)
-
-
-###############################
-#         CMAKE INDEX         #
-#  1. Functions               #
-#  2. Includes                #
-#  3. Sources and executable  #
-#  4. Check options           #
-#  5. Defines and links       #
-#  6. Compile optinos         #
-#  7. WIP : CUDA              #
-###############################
+#################################
+#         CMAKE INDEX           #
+#  1. Macros                    #
+#  2. Sources and an executable #
+#  3. Header Includes           #
+#  4. Check options             #
+#  5. Defines and Libraries     #
+#  6. Compile optinos           #
+#  7. WIP : CUDA                #
+#################################
 
 # setting options by 'set' is unstable. Often not working.
 # recommed using 'target_<blah>_<blah>'
 # which is more robust and modern.
 
-#compile flags
-set(CF)
-#link flags
-set(LF)
-#compule definitions
-set(CD)
-
-#### 1. functions ####
+#### 1. Macros ####
 
 macro(display_elements
 	DISPLAY_MESSAGE
@@ -56,18 +36,18 @@ macro(display_elements
 	message(STATUS ${_DISPLAY_ELEMENT})
     endforeach()
 endmacro()
+#### 2. sources and executable ####
 
-#### 2. includes ####
+set(MAIN_SRC 
+	# Add your source files here.
+	# including the source which contains main().
+	# root directory is location of CMakeLists.txt 
+	# EXAMPLE
+	# test/test_matlab.c
+	
+	)
 
-# Below method is better. But, in this point, 'TARGET_NAME' isn't set.
-# target_include_directories(${TARGET_NAME}
-#	PUBLIC
-#	${CMAKE_CURRENT_SOURCE_DIR}/header)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/header)
-
-
-#### 3. sources and executable ####
-
+#library source files
 set(C_SOURCE
     source/iip_matrix.c
     source/iip_wav.c
@@ -83,6 +63,15 @@ set(C_SOURCE
     )
 
 add_executable(${TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
+
+#### 3. Header includes ####
+
+target_include_directories(${TARGET_NAME}
+	PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}/header
+	# Add additional header folders here.
+	#${CMAKE_CURRENT_SOURCE_DIR} means root directory.
+	)
 
 #### 4. check options ####
 
@@ -120,11 +109,24 @@ message(STATUS "USE_OPENMP : " ${USE_OPENMP})
 
 #### 5. defines and links  ####
 
+#compile flags
+set(CF)
+#link flags
+set(LF)
+#compule definitions
+set(CD)
+
+# Addition flags and defines can be attached by
+# list(APPEND $(FLAG or Defines))
+# EXAMPLE
+# list(APPEND CF /W3) -> add /W3 to compile option
+# list(APPEND LF -pthread) -> add -pthread as link option
+# list(APPEND CD my_define 100) ->add #define my_define 100 at pre-process time
+
 #GET OS
 #UNIX   TRUE for UNIX,APPLE
 #WIN32  TRUE for Windows 32bit and 64bit
 #APPLE  TRUE for APPLE
-
 if(UNIX)
   list(APPEND CD
     OS_UNIX=1
@@ -135,7 +137,8 @@ elseif(WIN32)
     )
 endif()
 
-#message(STATUS "ENV_PATH : " $ENV{PATH})
+# Check whether PATH is set correctly or not.
+# message(STATUS "ENV_PATH : " $ENV{PATH})
 
 if(NOT MSVC)
   list(APPEND LF m)
@@ -144,14 +147,12 @@ endif(NOT MSVC)
 
 if(USE_OPEN OR USE_MKL )
 
-
   list(APPEND CD
     USE_CBLAS=1
     )
 
  if(USE_OPEN)
 	message(STATUS ${BLAS_LIBRARIES})
-
   list(APPEND LF
     openblas
     )
@@ -169,8 +170,7 @@ if(USE_OPEN OR USE_MKL )
 endif(USE_OPEN OR USE_MKL)
 
 if(USE_OPENMP)
- #    set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS})
- #    set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_C_FLAGS})
+
 if(MSVC)
    # Visual Studio uses '/' for compile option
     list(APPEND CF
@@ -195,12 +195,6 @@ endif(USE_OPENMP)
 
 ##### 6. compile optinos ####
 
-#if(WIN32)
-  #There is something wrong about the way CMAKE set /W3 flag
-  #string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
-  #string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
-  #endif(WIN32)
-
 if(WIN32 AND MSVC)
   # No /O3 in VS2013 (higher, too)?
 
@@ -210,7 +204,7 @@ if(WIN32 AND MSVC)
   list(APPEND CF
      /MP
      # /O2 - not compatible with debug mod flag /RTC1
-     # you have to set manuallu /O2 in release mod
+     # you have to set manually /O2 in release mod
      )
  else(WIN32 AND MSVC)
   # list(APPEND CMAKE_C_FLAGS "-g -O3 -Wall -Wextra ") : Wall is too much for now
