@@ -1,32 +1,69 @@
 cmake_minimum_required(VERSION 3.4)
 project(iip_sph_pp)
 
+#################################
+#         CMAKE INDEX           #
+#  1. Declaration               #
+#  2. ** User Setting **        #
+#  3. Macros                    #
+#  4. Add executable            #
+#  5. Header Includes           #
+#  6. Availability of Options   #
+#  7. Library Setting           #
+#  8. Basic Compile options     #
+#  9. WIP : CUDA                #
+#################################
+
+#### 1. Declaration ####
 # TARGET_NAME will be the name of executable.
 set(TARGET_NAME ${PROJECT_NAME})
 
-#### BUILD ENVIRONMENT OPTIONS ######
+
+# Compile flags
+set(CF)
+# Link flags
+set(LF)
+# Compile definitions
+set(CD)
+# Header directory
+set(HD)
+
+#### 2. User Setting ####
+
+## BUILD ENVIRONMENT OPTIONS ##
 option(USE_BLAS    "Using BLAS"      ON)
 option(USE_OPENMP  "Using OpenMP"    ON)
 
 # Not supported, yet.
-#option(USE_CUDA    "Using CUDA"      OFF)
+# option(USE_CUDA    "Using CUDA"      OFF)
 
-#################################
-#         CMAKE INDEX           #
-#  1. Macros                    #
-#  2. Sources and an executable #
-#  3. Header Includes           #
-#  4. Check options             #
-#  5. Defines and Libraries     #
-#  6. Compile optinos           #
-#  7. WIP : CUDA                #
-#################################
+set(MAIN_SRC 
+	# Add your source files here.
+	# including the source which contains main().
+	# root directory is location of CMakeLists.txt 
+	# EXAMPLE
+	# test/test_matlab.c	
+	)
+	
+list(APPEND HD
+    # Add additional header folders here.
+	# ${CMAKE_CURRENT_SOURCE_DIR} means root directory.
+	# EXAMPLE
+	# ${CMAKE_CURRENT_SOURCE_DIR}/my_new_header_folder
+    ) 
 
-# setting options by 'set' is unstable. Often not working.
-# recommed using 'target_<blah>_<blah>'
-# which is more robust and modern.
-
-#### 1. Macros ####
+# Additional link flags and defines can be attached.
+list(APPEND CF
+	# my compile option
+	)
+list(APPEND LF
+	# my link option
+	)
+list(APPEND CD
+	# my pre-process defines
+	)	
+	
+#### 3. Macros ####
 
 macro(display_elements
 	DISPLAY_MESSAGE
@@ -36,16 +73,7 @@ macro(display_elements
 	message(STATUS ${_DISPLAY_ELEMENT})
     endforeach()
 endmacro()
-#### 2. sources and executable ####
-
-set(MAIN_SRC 
-	# Add your source files here.
-	# including the source which contains main().
-	# root directory is location of CMakeLists.txt 
-	# EXAMPLE
-	# test/test_matlab.c
-	
-	)
+#### 4. sources and executable ####
 
 #library source files
 set(C_SOURCE
@@ -64,16 +92,21 @@ set(C_SOURCE
 
 add_executable(${TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
 
-#### 3. Header includes ####
+#### 5. Header includes ####
+
+# Setting options by 'set(CMAKE_<blah>_<blah>)' is unstable. Often not working.
+# Recommed using 'target_<blah>_<blah>'
+# which is more robust and modern.
+
 
 target_include_directories(${TARGET_NAME}
 	PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/header
-	# Add additional header folders here.
-	#${CMAKE_CURRENT_SOURCE_DIR} means root directory.
+	$(HD)	
 	)
 
-#### 4. check options ####
+#### 6. check options ####
+# This section checks whether your option is available or not. 
 
 if(USE_BLAS)
 # MKL also can be found by find_package(BLAS)
@@ -107,21 +140,8 @@ message(STATUS "USE_OPEN  : " ${USE_OPEN})
 message(STATUS "USE_MKL   : " ${USE_MKL})
 message(STATUS "USE_OPENMP : " ${USE_OPENMP})
 
-#### 5. defines and links  ####
-
-#compile flags
-set(CF)
-#link flags
-set(LF)
-#compule definitions
-set(CD)
-
-# Addition flags and defines can be attached by
-# list(APPEND $(FLAG or Defines))
-# EXAMPLE
-# list(APPEND CF /W3) -> add /W3 to compile option
-# list(APPEND LF -pthread) -> add -pthread as link option
-# list(APPEND CD my_define 100) ->add #define my_define 100 at pre-process time
+#### 7. defines and Libraries  ####
+# This section sets pre-processing defines and flags specified by environment
 
 #GET OS
 #UNIX   TRUE for UNIX,APPLE
@@ -192,8 +212,11 @@ list(APPEND CD
     )
 endif(USE_OPENMP)
 
+target_link_libraries     (${TARGET_NAME} PRIVATE ${LF} )
+target_compile_definitions(${TARGET_NAME} PRIVATE ${CD} )
 
-##### 6. compile optinos ####
+##### 8. compile optinos ####
+# This section adds basic compile options 
 
 if(WIN32 AND MSVC)
   # No /O3 in VS2013 (higher, too)?
@@ -215,19 +238,18 @@ if(WIN32 AND MSVC)
       )
   endif(WIN32 AND MSVC)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE ${CD} )
-target_compile_options    (${TARGET_NAME} PRIVATE ${CF} )
-target_link_libraries     (${TARGET_NAME} PRIVATE ${LF} )
 
+target_compile_options    (${TARGET_NAME} PRIVATE ${CF} )
+
+
+message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
 display_elements("MAIN SOURCE" "${MAIN_SRC}")
 display_elements("LIBRARY SOURCE" "${C_SOURCE}")
 display_elements("Compile Flags" "${CF}")
 display_elements("Linker Flags" "${LF}")
 display_elements("Compile Defines" "${CD}")
 
-message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
-
-#### 7. misc : CUDA(Work in Progress) ####
+#### 9. misc : CUDA(Work in Progress) ####
 
 set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
