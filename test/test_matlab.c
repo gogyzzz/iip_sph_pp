@@ -17,7 +17,7 @@ void preheat();
 
 int main() {
   int selection=0;
-
+   init(1024);
   while(1){
     printf("============= TESTING =============\n");
     printf(" IIPLAB - project iip sph pp       \n");
@@ -26,11 +26,14 @@ int main() {
     printf(" 2. View Testing List              \n");
     printf(" 3. Exit                           \n");
     printf("===================================\n");
-
+#if OS_WIN
     scanf_s("%d", &selection);
+#else
+    scanf("%d", &selection);
+#endif
     switch(selection){
       case 1:
-        run_test(ask_preheat(), 1, 1);
+        run_test(ask_preheat(), 1);
         break;
       case 2:
         test_viewlist();
@@ -44,7 +47,7 @@ int main() {
     }
     printf("\n\n");
   }
-
+  finit();
   return 0;
 }
 

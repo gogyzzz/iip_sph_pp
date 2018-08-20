@@ -314,6 +314,14 @@ __func__, A->d, B->d);
     }                                                        \
   }
 
+#define ASSERT_FILE_SIZE(read,expect)                                   \
+  {                                                                     \
+    if( (read) != (expect)){                                            \
+      sprintf(str_assert, "File size is different from expactation.");   \
+      ASSERT(0,str_assert)                                              \
+    }                                                                   \
+  }                                                                     
+
 /*****************************
  **** MEMORY MANAGER *********
  *****************************/
