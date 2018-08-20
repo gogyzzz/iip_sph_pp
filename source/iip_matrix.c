@@ -380,7 +380,7 @@ DTYPE get_3d(MAT *mat, UINT idx0, UINT idx1, UINT idx2) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  return mat->data[idx0 + (mat->d0) * idx1 + (mat->d0) * (mat->d1) * idx0];
+  return mat->data[idx0 + (mat->d0) * idx1 + (mat->d0) * (mat->d1) * idx2];
 }
 
 CTYPE cget_1d(CMAT *mat, UINT idx0) {
@@ -400,7 +400,7 @@ CTYPE cget_3d(CMAT *mat, UINT idx0, UINT idx1, UINT idx2) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  return mat->data[idx0 + (mat->d0) * idx1 + (mat->d0) * (mat->d1) * idx0];
+  return mat->data[idx0 + (mat->d0) * idx1 + (mat->d0) * (mat->d1) * idx2];
 }
 
 /**** submat ****/
@@ -1191,7 +1191,6 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-
   a2 = A->d2;
   b2 = B->d2;
   c2 = C->d2;
@@ -1244,7 +1243,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
     if ((C->d0 != 1) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++)
+      for (i = 0; i < b1; i++) // b1 -> a1
         CXEMUL(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + 0])
   }
   // a0 1 1 1
@@ -1749,7 +1748,6 @@ void repmat(MAT *mat, DIM *dim) {
   MAT *t_mat;
   ITER i, j, k, l;
   UINT size, idx;
-  UINT v, h, b;  // vertical, horizontal, blockal
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -1781,7 +1779,6 @@ void crepmat(CMAT *mat, DIM *dim) {
   CMAT *t_mat;
   ITER i, j, k, l;
   UINT size, idx;
-  UINT v, h, b;  // vertical, horizontal, blockal
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -2118,7 +2115,7 @@ CMAT *create_ctranspose(CMAT *mat) {
 
 void transpose(MAT *mat) {
   MAT *temp;
-  ITER i, j, k;
+  ITER i, j;
   UINT d0, d1, d2;
 
 #if DEBUG
@@ -2160,7 +2157,7 @@ void transpose(MAT *mat) {
 
 void ctranspose(CMAT *mat) {
   CMAT *temp;
-  ITER i, j, k;
+  ITER i, j;
   UINT d0, d1, d2;
 
 #if DEBUG
@@ -2222,7 +2219,7 @@ void ctranspose(CMAT *mat) {
 
 /**** get Diagonal of Matrix ****/
 void diagonal(MAT *mat, MAT *dia) {
-  ITER i, j, k;
+  ITER i, k;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -2240,7 +2237,7 @@ void diagonal(MAT *mat, MAT *dia) {
 }
 
 void cdiagonal(CMAT *mat, CMAT *dia) {
-  ITER i, j, k;
+  ITER i, k;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -2273,7 +2270,7 @@ void cdiagonal(CMAT *mat, CMAT *dia) {
 
 /**** get trace of Matrix ****/
 void trace(MAT *mat, MAT *tr) {
-  ITER i, j, k;
+  ITER i, k;
   DTYPE temp = 0;
 #if DEBUG
   printf("%s\n", __func__);
@@ -2293,7 +2290,7 @@ void trace(MAT *mat, MAT *tr) {
 }
 
 void ctrace(CMAT *mat, CMAT *tr) {
-  ITER i, j, k;
+  ITER i, k;
   CTYPE temp;
 #if DEBUG
   printf("%s\n", __func__);
@@ -2355,7 +2352,7 @@ CMAT *create_hermit(CMAT *mat) {
 
 void hermit(CMAT *mat) {
   CMAT *temp;
-  ITER i, j, k;
+  ITER i, j; 
   UINT d0, d1, d2;
 
 #if DEBUG
