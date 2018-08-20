@@ -141,10 +141,10 @@ void run_test(int heat, int print_flag) {
 	};
 
   /* SETTING */
-	int mat_size = 128, mat_batch = 4;
+	int mat_size = 1024, mat_batch = 4;
   int broad_alpha = 1;
 	int broad_beta = 4;
-	int broad_gamma = 128;
+	int broad_gamma = 1024;
 
 	char temp = 0;
 
@@ -241,18 +241,22 @@ void run_test(int heat, int print_flag) {
   /* SETTING */
 
 	//set A
-	read_mat("../test_data/d_128_128_4.bin", A);
+	sprintf(ans_path, "../test_data/d_%d_%d_%d.bin", A->d0, A->d1, A->d2);
+	read_mat(ans_path, A);
 	copy_mat(A, A_);
-	read_cmat("../test_data/c_128_128_4.bin", cA);
+	sprintf(ans_path, "../test_data/c_%d_%d_%d.bin", cA->d0, cA->d1, cA->d2);
+	read_cmat(ans_path, cA);
 	ccopy_mat(cA, cA_);
 	if(print_flag != 0){
 		progress_update(27.0/45.0, PRGB_SIZE);
 	}
 
 	//set B
-	read_mat("../test_data/d_128_128_4.bin", B);
+	sprintf(ans_path, "../test_data/d_%d_%d_%d.bin", B->d0, B->d1, B->d2);
+	read_mat(ans_path, B);
 	copy_mat(B, B_);
-	read_cmat("../test_data/c_128_128_4.bin", cB);
+	sprintf(ans_path, "../test_data/c_%d_%d_%d.bin", cB->d0, cB->d1, cB->d2);
+	read_cmat(ans_path, cB);
 	ccopy_mat(cB, cB_);
 	if(print_flag != 0){
 		progress_update(30.0/45.0, PRGB_SIZE);
@@ -275,8 +279,10 @@ void run_test(int heat, int print_flag) {
 	ans_sum_0 = zeros(mat_size, 1, mat_batch);
 
 
-	read_mat("../test_ans/d_1024_1024_4_Diagonal.bin", ans_diagonal);
-	read_mat("../test_ans/d_1024_1024_4_Trace.bin", ans_trace);
+	sprintf(ans_path, "../test_ans/d_%d_%d_%d_Diagonal.bin", mat_size, mat_size, mat_batch);
+	read_mat(ans_path, ans_diagonal);
+	sprintf(ans_path, "../test_ans/d_%d_%d_%d_Trace.bin", mat_size, mat_size, mat_batch);
+	read_mat(ans_path, ans_trace);
 	if(print_flag != 0){
 		progress_update(32.0/45.0, PRGB_SIZE);
 	}
@@ -292,8 +298,10 @@ void run_test(int heat, int print_flag) {
 	ans_csum_0 = czeros(mat_size, 1, mat_batch);
 
 
-	read_cmat("../test_ans/c_1024_1024_4_cDiagonal.bin", ans_cdiagonal);
-	read_cmat("../test_ans/c_1024_1024_4_cTrace.bin", ans_ctrace);
+	sprintf(ans_path, "../test_ans/c_%d_%d_%d_cDiagonal.bin", mat_size, mat_size, mat_batch);
+	read_cmat(ans_path, ans_cdiagonal);
+	sprintf(ans_path, "../test_ans/c_%d_%d_%d_cTrace.bin", mat_size, mat_size, mat_batch);
+	read_cmat(ans_path, ans_ctrace);
 	if(print_flag != 0){
 		progress_update(36.0/45.0, PRGB_SIZE);
 	}
@@ -302,11 +310,14 @@ void run_test(int heat, int print_flag) {
 	A_mul = zeros(1, mat_size, mat_batch);
 	B_mul = zeros(mat_size, mat_size, mat_batch);
 	C_mul = zeros(1, mat_size, mat_batch);
-	read_mat("../test_data/d_1_128_4.bin", A_mul);
-	read_mat("../test_data/d_128_128_4.bin", B_mul);
+	sprintf(ans_path, "../test_data/d_%d_%d_%d.bin", A_mul->d0, A_mul->d1, A_mul->d2);
+	read_mat(ans_path, A_mul);
+	sprintf(ans_path, "../test_data/d_%d_%d_%d.bin", B_mul->d0, B_mul->d1, B_mul->d2);
+	read_mat(ans_path, B_mul);
 	ans_mul = zeros(1, mat_size, mat_batch);
 
-	read_mat("../test_ans/d_1_1024_4_Gemm.bin", ans_mul);
+	sprintf(ans_path, "../test_ans/d_%d_%d_%d_Gemm.bin", ans_mul->d0, ans_mul->d1, ans_mul->d2);
+	read_mat(ans_path, ans_mul);
 	if(print_flag != 0){
 		progress_update(39.0/45.0, PRGB_SIZE);
 	}
@@ -315,11 +326,14 @@ void run_test(int heat, int print_flag) {
 	cA_mul = czeros(1, mat_size, mat_batch);
 	cB_mul = czeros(mat_size, mat_size, mat_batch);
 	cC_mul = czeros(1, mat_size, mat_batch);
-	read_cmat("../test_data/c_1_128_4.bin", cA_mul);
-	read_cmat("../test_data/c_128_128_4.bin", cB_mul);
+	sprintf(ans_path, "../test_data/c_%d_%d_%d.bin", cA_mul->d0, cA_mul->d1, cA_mul->d2);
+	read_cmat(ans_path, cA_mul);
+	sprintf(ans_path, "../test_data/c_%d_%d_%d.bin", cB_mul->d0, cB_mul->d1, cB_mul->d2);
+	read_cmat(ans_path, cB_mul);
 	ans_cmul = czeros(1, mat_size, mat_batch);
 
-	read_cmat("../test_ans/c_1_1024_4_cGemm.bin", ans_cmul);
+	sprintf(ans_path, "../test_ans/c_%d_%d_%d_cGemm.bin", ans_cmul->d0, ans_cmul->d1, ans_cmul->d2);
+	read_cmat(ans_path, ans_cmul);
 	if(print_flag != 0){
 		progress_update(1.0, PRGB_SIZE);
 	}
