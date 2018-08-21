@@ -203,9 +203,9 @@ MAT* mpsubmat_3d(MAT* src, ITER s0, ITER e0, ITER s1, ITER e1, ITER s2,
 #define mem_csubmat(...)                                                \
   mem_csubmat_load_((__VA_ARGS__, mem_csubmat_3d, _, mem_csubmat_2d, _, \
                      mem_csubmat_1d)(__VA_ARGS__))
-CMAT* mem_csubmat_1d(CMAT* src, ITER s0, ITER e0);
-CMAT* mem_csubmat_2d(CMAT* src, ITER s0, ITER e0, ITER s1, ITER e1);
-CMAT* mem_csubmat_3d(CMAT* src, ITER s0, ITER e0, ITER s1, ITER e1, ITER s2,
+CMAT* mpcsubmat_1d(CMAT* src, ITER s0, ITER e0);
+CMAT* mpcsubmat_2d(CMAT* src, ITER s0, ITER e0, ITER s1, ITER e1);
+CMAT* mpcsubmat_3d(CMAT* src, ITER s0, ITER e0, ITER s1, ITER e1, ITER s2,
                      ITER e2);
 
 /**** allocate DIM

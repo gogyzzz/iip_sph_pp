@@ -562,14 +562,14 @@ MAT *mpsubmat_3d(MAT *mat, ITER d0_st, ITER d0_ed, ITER d1_st, ITER d1_ed,
   return submat;
 }
 
-CMAT *mem_csubmat_1d(CMAT *mat, ITER d0_st, ITER d0_ed) {
-  return mem_csubmat_3d(mat, d0_st, d0_ed, -1, -1, -1, -1);
+CMAT *mpcsubmat_1d(CMAT *mat, ITER d0_st, ITER d0_ed) {
+  return mpcsubmat_3d(mat, d0_st, d0_ed, -1, -1, -1, -1);
 }
-CMAT *mem_csubmat_2d(CMAT *Cmat, ITER d0_st, ITER d0_ed, ITER d1_st,
+CMAT *mpcsubmat_2d(CMAT *Cmat, ITER d0_st, ITER d0_ed, ITER d1_st,
                      ITER d1_ed) {
-  return mem_csubmat_3d(Cmat, d0_st, d0_ed, d1_st, d1_ed, -1, -1);
+  return mpcsubmat_3d(Cmat, d0_st, d0_ed, d1_st, d1_ed, -1, -1);
 }
-CMAT *mem_csubmat_3d(CMAT *mat, ITER d0_st, ITER d0_ed, ITER d1_st, ITER d1_ed,
+CMAT *mpcsubmat_3d(CMAT *mat, ITER d0_st, ITER d0_ed, ITER d1_st, ITER d1_ed,
                      ITER d2_st, ITER d2_ed) {
   ITER i, j, k;
   CMAT *submat;
