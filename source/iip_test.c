@@ -141,10 +141,10 @@ void run_test(int heat, int print_flag) {
 	};
 
   /* SETTING */
-	int mat_size = 1024, mat_batch = 4;
+	int mat_size = 256, mat_batch = 4;
   int broad_alpha = 1;
 	int broad_beta = 4;
-	int broad_gamma = 1024;
+	int broad_gamma = 256;
 
 	char temp = 0;
 
@@ -238,7 +238,6 @@ void run_test(int heat, int print_flag) {
 	ans_cbroad[3] = czeros(broad_gamma, broad_gamma, broad_alpha);
 
 
-  /* SETTING */
 
 	//set A
 	sprintf(ans_path, "../test_data/d_%d_%d_%d.bin", A->d0, A->d1, A->d2);
@@ -307,14 +306,14 @@ void run_test(int heat, int print_flag) {
 	}
 
 
-	A_mul = zeros(1, mat_size, mat_batch);
+	A_mul = zeros(mat_size, mat_size, mat_batch);
 	B_mul = zeros(mat_size, mat_size, mat_batch);
-	C_mul = zeros(1, mat_size, mat_batch);
+	C_mul = zeros(mat_size, mat_size, mat_batch);
 	sprintf(ans_path, "../test_data/d_%d_%d_%d.bin", A_mul->d0, A_mul->d1, A_mul->d2);
 	read_mat(ans_path, A_mul);
 	sprintf(ans_path, "../test_data/d_%d_%d_%d.bin", B_mul->d0, B_mul->d1, B_mul->d2);
 	read_mat(ans_path, B_mul);
-	ans_mul = zeros(1, mat_size, mat_batch);
+	ans_mul = zeros(mat_size, mat_size, mat_batch);
 
 	sprintf(ans_path, "../test_ans/d_%d_%d_%d_Gemm.bin", ans_mul->d0, ans_mul->d1, ans_mul->d2);
 	read_mat(ans_path, ans_mul);
@@ -323,14 +322,14 @@ void run_test(int heat, int print_flag) {
 	}
 
 
-	cA_mul = czeros(1, mat_size, mat_batch);
+	cA_mul = czeros(mat_size, mat_size, mat_batch);
 	cB_mul = czeros(mat_size, mat_size, mat_batch);
-	cC_mul = czeros(1, mat_size, mat_batch);
+	cC_mul = czeros(mat_size, mat_size, mat_batch);
 	sprintf(ans_path, "../test_data/c_%d_%d_%d.bin", cA_mul->d0, cA_mul->d1, cA_mul->d2);
 	read_cmat(ans_path, cA_mul);
 	sprintf(ans_path, "../test_data/c_%d_%d_%d.bin", cB_mul->d0, cB_mul->d1, cB_mul->d2);
 	read_cmat(ans_path, cB_mul);
-	ans_cmul = czeros(1, mat_size, mat_batch);
+	ans_cmul = czeros(mat_size, mat_size, mat_batch);
 
 	sprintf(ans_path, "../test_ans/c_%d_%d_%d_cGemm.bin", ans_cmul->d0, ans_cmul->d1, ans_cmul->d2);
 	read_cmat(ans_path, ans_cmul);
@@ -1042,8 +1041,9 @@ void init_list() {
 
 void read_ans(int is_ctype, char *func_name, char *ans_name, void *data_d, void *data_c, void **result_mat){
 
-	char ans_dtype[32] = "d_1024_1024_4_.bin";
-	char ans_ctype[32] = "c_1024_1024_4_.bin";
+  //SETTING
+	char ans_dtype[32] = "d_256_256_4_.bin";
+	char ans_ctype[32] = "c_256_256_4_.bin";
 
 	if (is_ctype == 0) {
 		append_post(ans_dtype, func_name, ans_name);
