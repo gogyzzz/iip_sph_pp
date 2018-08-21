@@ -100,17 +100,21 @@ __global__ void cu_casum(CTYPE *data, UINT inc, UINT len, UINT block_size,
 #endif
 
 /* (real vector)-(real vector) dot product. */
-DTYPE dot(MAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment);
-DTYPE omp_dot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc);
+DTYPE dot(MAT *src_x, MAT *src_y);
+DTYPE dot_inc(UINT N, DTYPE *X,ITER incx,DTYPE *Y,ITER incy);
+DTYPE omp_dot(UINT N, DTYPE *src_x, ITER x_inc, DTYPE *src_y, ITER y_inc);
 
 /* (complex vector)-(real vector) dot product. */
-CTYPE cdot(CMAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment);
-CTYPE omp_cdot(UINT N, CTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc);
+
+CTYPE cdot(CMAT *src_x, MAT *src_y);
+CTYPE cdot_inc(UINT N, CTYPE *X,ITER incx,DTYPE *Y,ITER incy);
+CTYPE omp_cdot(UINT N, CTYPE *src_x, ITER x_inc, DTYPE *src_y, ITER y_inc);
 
 /* (complex vector)-(complex vector) dot product. */
-CTYPE udot(CMAT *src_x, UINT x_increment, CMAT *src_y, UINT y_increment);
-CTYPE omp_udot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc);
 
+CTYPE udot(CMAT *src_x, CMAT *src_y);
+CTYPE udot_inc(UINT N, CTYPE *X,ITER incx,CTYPE *Y,ITER incy);
+CTYPE omp_udot(UINT N, CTYPE *src_x, ITER x_inc, CTYPE *src_y, ITER y_inc);
 #if USE_CUDA
 __global__ void cu_dot(DTYPE *result, DTYPE *src_x, UINT x_inc, DTYPE *src_y,
                        UINT y_inc, UINT len, UINT block_size);

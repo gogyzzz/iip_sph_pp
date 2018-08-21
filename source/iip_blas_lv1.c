@@ -346,37 +346,37 @@ DTYPE omp_casum(UINT N, CTYPE *data, UINT inc) {
 }
 
 /*** Get a vector-vector dot product ***/
-DTYPE dot(MAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment) {
+DTYPE dot(MAT *src_x,MAT *src_y) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
+  UINT N = src_x->d0 * src_x->d1 * src_x->d2;
   ASSERT_DIM_EQUAL(src_x, src_y)
 
-  if (mat_size == 0) {
-    printf("Wrong MAT size!\n");
-    return 0;
-  }
+ return  dot_inc(N,src_x->data,1,src_y->data,1);
 
+}
+
+DTYPE dot_inc(UINT N,DTYPE *X,ITER incx, DTYPE *Y, ITER incy){
+
+ASSERT(N, "size is 0.\n");
 #if USE_CBLAS
 // DTYPE = float
 #if NTYPE == 0
-  return cblas_sdot(mat_size, src_x->data, x_increment, src_y->data,
-                    y_increment);
+  return cblas_sdot(N, X, incx, Y,incy);
 
 // DTYPE = double
 #elif NTYPE == 1
-  return cblas_ddot(mat_size, src_x->data, x_increment, src_y->data,
-                    y_increment);
+  return cblas_ddot(N, X, incx, Y,incy);
 #endif
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return omp_dot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
+  return omp_dot(N, X, incx, Y,incy);
 #endif
 }
 
-DTYPE omp_dot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
+DTYPE omp_dot(UINT N, DTYPE *src_x, ITER x_inc, DTYPE *src_y, ITER y_inc) {
   ITER i = 0;
   DTYPE dot = 0;
 
@@ -388,40 +388,38 @@ DTYPE omp_dot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
   return dot;
 }
 
-CTYPE cdot(CMAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment) {
+/* (complex vector)-(real vector) dot product. */
+CTYPE cdot(CMAT *src_x,MAT *src_y) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
-  CTYPE result = {0, 0};
+  UINT N = src_x->d0 * src_x->d1 * src_x->d2;
   ASSERT_DIM_EQUAL(src_x, src_y)
 
-  if (mat_size == 0) {
-    printf("Wrong MAT size!\n");
-    return result;
-  }
+ return  cdot_inc(N,src_x->data,1,src_y->data,1);
 
+}
+
+CTYPE cdot_inc(UINT N,CTYPE *X,ITER incx, DTYPE *Y, ITER incy){
+
+ASSERT(N, "size is 0.\n");
 #if USE_CBLAS
 // DTYPE = float
 #if NTYPE == 0
-  cblas_cdotc_sub(mat_size, src_x->data, x_increment, src_y->data, y_increment,
-                  &result);
-  return result;
+  return cblas_cdotc_sub(N, X, incx, Y,incy);
 
 // DTYPE = double
 #elif NTYPE == 1
-  cblas_zdotc_sub(mat_size, src_x->data, x_increment, src_y->data, y_increment,
-                  &result);
-  return result;
+  return cblas_zdotc_sub(N, X, incx, Y,incy);
 #endif
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return omp_cdot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
+  return omp_cdot(N, X, incx, Y,incy);
 #endif
 }
 
-CTYPE omp_cdot(UINT N, CTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
+CTYPE omp_cdot(UINT N, CTYPE *src_x, ITER x_inc, DTYPE *src_y, ITER y_inc) {
   ITER i = 0;
   CTYPE dot;
 
@@ -437,40 +435,39 @@ CTYPE omp_cdot(UINT N, CTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
   return dot;
 }
 
-CTYPE udot(CMAT *src_x, UINT x_increment, CMAT *src_y, UINT y_increment) {
+
+/* (complex vector)-(complex vector) dot product. */
+CTYPE udot(CMAT *src_x,CMAT *src_y) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  UINT mat_size = src_x->d0 * src_x->d1 * src_x->d2;
-  CTYPE result = {0, 0};
+  UINT N = src_x->d0 * src_x->d1 * src_x->d2;
   ASSERT_DIM_EQUAL(src_x, src_y)
 
-  if (mat_size == 0) {
-    printf("Wrong MAT size!\n");
-    return result;
-  }
+ return  cdot_inc(N,src_x->data,1,src_y->data,1);
 
+}
+
+CTYPE udot_inc(UINT N,CTYPE *X,ITER incx, CTYPE *Y, ITER incy){
+
+ASSERT(N, "size is 0.\n");
 #if USE_CBLAS
 // DTYPE = float
 #if NTYPE == 0
-  cblas_cdotu_sub(mat_size, src_x->data, x_increment, src_y->data, y_increment,
-                  &result);
-  return result;
+  return cblas_cdotu_sub(N, X, incx, Y,incy);
 
 // DTYPE = double
 #elif NTYPE == 1
-  cblas_zdotu_sub(mat_size, src_x->data, x_increment, src_y->data, y_increment,
-                  &result);
-  return result;
+  return cblas_zdotu_sub(N, X, incx, Y,incy);
 #endif
 
 // USE_BLAS = 0 -> just c implement
 #else
-  return omp_udot(mat_size, src_x->data, x_increment, src_y->data, y_increment);
+  return omp_udot(N, X, incx, Y,incy);
 #endif
 }
 
-CTYPE omp_udot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc) {
+CTYPE omp_udot(UINT N, CTYPE *src_x, ITER x_inc, CTYPE *src_y, ITER y_inc) {
   ITER i = 0;
   CTYPE dot;
 
