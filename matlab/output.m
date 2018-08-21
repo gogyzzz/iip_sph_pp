@@ -1,4 +1,4 @@
-N = 1024;
+N = 256;
 
 total = 0.;
 d_iii = '../test_data/d_1_1_1.bin';
