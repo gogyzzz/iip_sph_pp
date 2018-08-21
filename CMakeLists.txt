@@ -18,7 +18,6 @@ project(iip_sph_pp)
 # TARGET_NAME will be the name of executable.
 set(TARGET_NAME ${PROJECT_NAME})
 
-
 # Compile flags
 set(CF)
 # Link flags
@@ -31,7 +30,7 @@ set(HD)
 #### 2. User Setting ####
 
 ## BUILD ENVIRONMENT OPTIONS ##
-option(USE_BLAS    "Using BLAS"      ON)
+option(USE_BLAS    "Using BLAS"      OFF)
 option(USE_OPENMP  "Using OpenMP"    ON)
 
 # Not supported, yet.
@@ -42,7 +41,7 @@ set(MAIN_SRC
 	# including the source which contains main().
 	# root directory is location of CMakeLists.txt 
 	# EXAMPLE
-	# test/test_matlab.c	
+  	test/test_matlab.c	
 	)
 	
 list(APPEND HD
@@ -226,14 +225,18 @@ if(WIN32 AND MSVC)
   #list(APPEND  CMAKE_C_FLAGS " /O2 /MP ") -- This method is unstable.
   list(APPEND CF
      /MP
-     # /O2 - not compatible with debug mod flag /RTC1
-     # you have to set manually /O2 in release mod
+     # /O2 - not compatible with debug mode flag /RTC1
+     # /O2 is set as default in release mode of visual Studio
      )
  else(WIN32 AND MSVC)
   # list(APPEND CMAKE_C_FLAGS "-g -O3 -Wall -Wextra ") : Wall is too much for now
   list(APPEND CF
       -g
-      -O3
+      # -O3 : maximize performace
+      # -O2 : maximize performance as long as not increasing size of executable
+      # -O1 : minimize compile time and others are secondary
+      # -Os : minimize size of executable
+       -O3
       -Wextra
       )
   endif(WIN32 AND MSVC)
