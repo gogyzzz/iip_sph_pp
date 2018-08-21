@@ -16,6 +16,20 @@
 
 /*** READ MATLAB .bin FILE ****/
 void read_mat(const char* filename, MAT* mat);
+/*
+ * Default Binary Complex format of MAtlab is
+ * < Real Real Real ... Imag Imag Imag ... >
+ *
+ * But Data structure of CTYPE is
+ * < Real Imag Real Imag ... >
+ * 
+ * So binary file this function read 
+ * must be in form of
+ * < Real Imag Real Imag ...>
+ *
+ * Check 'write_cmat.m' and 'read_cmat.m' in
+ * matlab/functions
+ * */
 void read_cmat(const char* filename, CMAT* mat);
 
 /*** WRTIE MATLAB .bin FILE ****/
