@@ -42,7 +42,8 @@ set(MAIN_SRC
 	# root directory is location of CMakeLists.txt 
 	# EXAMPLE
   #	test/test_matlab.c	
-    test/test_wav.c
+  # test/test_wav.c
+  # test/test_fft.c
 	)
 	
 list(APPEND HD
@@ -89,6 +90,7 @@ set(C_SOURCE
     source/iip_io.c
     source/iip_invert.c
     source/iip_test.c
+    source/iip_fft.c
     )
 
 add_executable(${TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
