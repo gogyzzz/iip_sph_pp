@@ -13,6 +13,7 @@ void fft(MAT*in,CMAT*out);
  *
  * */
 void hfft(MAT*in, CMAT*out);
+void hfft_col(UINT N,DTYPE*in, CTYPE*out);
 
 /*
     Ooura's FFt - fft4g
@@ -24,6 +25,55 @@ void hfft(MAT*in, CMAT*out);
     without fee. You may distribute this ORIGINAL package.
 */
 void cdft(int, int, double *, int *, double *);
+/*
+-------- Real DFT / Inverse of Real DFT --------
+    [definition]
+        <case1> RDFT
+            R[k] = sum_j=0^n-1 a[j]*cos(2*pi*j*k/n), 0<=k<=n/2
+            I[k] = sum_j=0^n-1 a[j]*sin(2*pi*j*k/n), 0<k<n/2
+        <case2> IRDFT (excluding scale)
+            a[k] = (R[0] + R[n/2]*cos(pi*k))/2 + 
+                   sum_j=1^n/2-1 R[j]*cos(2*pi*j*k/n) + 
+                   sum_j=1^n/2-1 I[j]*sin(2*pi*j*k/n), 0<=k<n
+    [usage]
+        <case1>
+            ip[0] = 0; // first time only
+            rdft(n, 1, a, ip, w);
+        <case2>
+            ip[0] = 0; // first time only
+            rdft(n, -1, a, ip, w);
+    [parameters]
+        n              :data length (int)
+                        n >= 2, n = power of 2
+        a[0...n-1]     :input/output data (double *)
+                        <case1>
+                            output data
+                                a[2*k] = R[k], 0<=k<n/2
+                                a[2*k+1] = I[k], 0<k<n/2
+                                a[1] = R[n/2]
+                        <case2>
+                            input data
+                                a[2*j] = R[j], 0<=j<n/2
+                                a[2*j+1] = I[j], 0<j<n/2
+                                a[1] = R[n/2]
+        ip[0...*]      :work area for bit reversal (int *)
+                        length of ip >= 2+sqrt(n/2)
+                        strictly, 
+                        length of ip >= 
+                            2+(1<<(int)(log(n/2+0.5)/log(2))/2).
+                        ip[0],ip[1] are pointers of the cos/sin table.
+        w[0...n/2-1]   :cos/sin table (double *)
+                        w[],ip[] are initialized if ip[0] == 0.
+    [remark]
+        Inverse of 
+            rdft(n, 1, a, ip, w);
+        is 
+            rdft(n, -1, a, ip, w);
+            for (j = 0; j <= n - 1; j++) {
+                a[j] *= 2.0 / n;
+            }
+        .
+*/
 void rdft(int, int, double *, int *, double *);
 void ddct(int, int, double *, int *, double *);
 void ddst(int, int, double *, int *, double *);

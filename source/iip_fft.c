@@ -1,7 +1,40 @@
 #include "iip_fft.h"
 
 void hfft(MAT*in,CMAT*out){
+  
+  UINT N = in->d0;
 
+  hfft_col(N,in->data,out->data);
+}
+
+void hfft_col(UINT N, DTYPE* in,CTYPE* out){
+  double*a; 
+  int* ip;
+  double* w;
+  ITER i;
+  
+  a = mpalloc(sizeof(double)*N);
+  ip = mpalloc(sizeof(int)*((int)(sqrt(N/2))+1));
+  w = mpalloc(sizeof(double)*(N/2)); 
+
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(a,in) private(i)
+  for(i=0;i<N;i++)
+    a[i] = in[i];
+
+  rdft(N,1,a,ip,w);
+
+#pragma omp parallddel for schedule(dynamic,CHUNK_SIZE) shared(a,out) private(i)
+  for(i=0;i<(N/2);i++){
+    out[i].re = a[2*i];
+    out[i].im =- a[2*i+1];
+  }
+  out[0].im = 0;
+  out[N/2].re = a[1];
+  out[N/2].im = 0;
+
+  mpfree(w);
+  mpfree(ip);
+  mpfree(a);
 }
 
 void fft(MAT*in,CMAT*out){
