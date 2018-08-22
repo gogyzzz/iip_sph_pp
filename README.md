@@ -6,7 +6,7 @@ C library for speech preprocessing.
 * Ubuntu 16.04 x64 (or higher)
 * Windows 10 x64
 * Mac high sierra 10.13.5
-* Ebeded board(razberry pie, zynx board etc)
+* Embedded board(raspberry pi, zynx board etc)
 
 ## Requirement
 * cmake 3.5 or higher  
