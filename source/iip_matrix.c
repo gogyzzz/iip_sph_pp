@@ -336,30 +336,7 @@ void cset_3d(CMAT *mat, UINT idx0, UINT idx1, UINT idx2, DTYPE re, DTYPE im) {
   mat->data[idx0 + (mat->d0) * idx1 + (mat->d0) * (mat->d1) * idx2].im = im;
 }
 
-/**** fill ****/
 
-void fill(MAT *mat, DTYPE val)  // for real mat
-{
-  ITER i = 0;
-  UINT len = mat->d0 * mat->d1 * mat->d2;
-#if DEBUG
-  printf("%s\n", __func__);
-#endif
-  for (i = 0; i < len; i++) mat->data[i] = val;
-}
-
-void cfill(CMAT *cmat, DTYPE re, DTYPE im)  // for complex mat
-{
-  ITER i = 0;
-  UINT len = cmat->d0 * cmat->d1 * cmat->d2;
-#if DEBUG
-  printf("%s\n", __func__);
-#endif
-  for (i = 0; i < len; i++) {
-    cmat->data[i].re = re;
-    cmat->data[i].im = im;
-  }
-}
 
 /**** get ****/
 
@@ -401,6 +378,39 @@ CTYPE cget_3d(CMAT *mat, UINT idx0, UINT idx1, UINT idx2) {
   printf("%s\n", __func__);
 #endif
   return mat->data[idx0 + (mat->d0) * idx1 + (mat->d0) * (mat->d1) * idx2];
+}
+
+/**** fill ****/
+
+void fill(MAT *mat, DTYPE val)  // for real mat
+{
+  fill_inc(mat->d0*mat->d1*mat->d2,mat->data,1,val);
+}
+
+void fill_inc(UINT N, DTYPE*X, ITER incx, DTYPE v){
+  ITER i = 0;
+#if DEBUG
+  printf("%s\n", __func__);
+#endif
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
+  for (i = 0; i < N; i+=incx) X[i] = v;
+}
+
+void cfill(CMAT *mat, CTYPE val)  // for complex mat
+{
+  cfill_inc(mat->d0*mat->d1*mat->d2,mat->data,1,val);
+}
+
+void cfill_inc(UINT N, CTYPE*X, ITER incx, CTYPE v){
+  ITER i = 0;
+#if DEBUG
+  printf("%s\n", __func__);
+#endif
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
+  for (i = 0; i < N; i+=incx){
+    X[i].re = v.re;
+    X[i].im = v.im;
+  }
 }
 
 /**** submat ****/

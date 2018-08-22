@@ -23,4 +23,6 @@
 #include "iip_test.h"
 #include "iip_time.h"
 #include "iip_wav.h"
+#include "iip_fft.h"
+
 #endif
