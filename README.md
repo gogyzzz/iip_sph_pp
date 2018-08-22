@@ -9,7 +9,7 @@ C library for speech preprocessing.
 * Ebeded board(razberry pie, zynx board etc)
 
 ## Requirement
-* cmake 3.6 or higher  
+* cmake 3.5 or higher  
 * (OPTION) OpenBLAS[Linux]  
 * (OPTION) IntelMKL[Windows]  
 
