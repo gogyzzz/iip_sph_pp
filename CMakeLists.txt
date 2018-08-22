@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.5)
 project(iip_sph_pp)
 
 #################################
@@ -31,7 +31,7 @@ set(HD)
 
 ## BUILD ENVIRONMENT OPTIONS ##
 option(USE_BLAS    "Using BLAS"      OFF)
-option(USE_OPENMP  "Using OpenMP"    ON)
+option(USE_OPENMP  "Using OpenMP"    OFF)
 
 # Not supported, yet.
 # option(USE_CUDA    "Using CUDA"      OFF)
@@ -41,7 +41,8 @@ set(MAIN_SRC
 	# including the source which contains main().
 	# root directory is location of CMakeLists.txt 
 	# EXAMPLE
-  	test/test_matlab.c	
+  #	test/test_matlab.c	
+    test/test_wav.c
 	)
 	
 list(APPEND HD
@@ -72,6 +73,7 @@ macro(display_elements
 	message(STATUS ${_DISPLAY_ELEMENT})
     endforeach()
 endmacro()
+
 #### 4. sources and executable ####
 
 #library source files
@@ -220,10 +222,10 @@ target_compile_definitions(${TARGET_NAME} PRIVATE ${CD} )
 if(WIN32 AND MSVC)
   # No /O3 in VS2013 (higher, too)?
 
-  # /O2 - fastest code in the majority of cases
-  # /MP - compiled in mult-process : faster build time
   #list(APPEND  CMAKE_C_FLAGS " /O2 /MP ") -- This method is unstable.
   list(APPEND CF
+     # /O2 - fastest code in the majority of cases
+     # /MP - compiled in mult-process : faster build time
      /MP
      # /O2 - not compatible with debug mode flag /RTC1
      # /O2 is set as default in release mode of visual Studio
@@ -241,9 +243,7 @@ if(WIN32 AND MSVC)
       )
   endif(WIN32 AND MSVC)
 
-
 target_compile_options    (${TARGET_NAME} PRIVATE ${CF} )
-
 
 message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
 display_elements("MAIN SOURCE" "${MAIN_SRC}")
