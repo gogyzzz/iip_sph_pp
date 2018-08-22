@@ -41,10 +41,6 @@
  * By adjusting argument, row or column operation is available.
  * */
 
-/*fill every elements of matrix as v*/
-void fill(MAT* mat, DTYPE v);
-void cfill(CMAT* mat, DTYPE vr, DTYPE vi);
-
 #if USE_CUDA
 __global__ void cu_fill(DTYPE*, UINT, DTYPE, UINT);
 __global__ void cu_cfill(CTYPE*, UINT, DTYPE, DTYPE, UINT);
@@ -143,6 +139,14 @@ DTYPE get_3d(MAT* mat, UINT d0, UINT d1, UINT d2);
 CTYPE cget_1d(CMAT* mat, UINT d0);
 CTYPE cget_2d(CMAT* mat, UINT d0, UINT d1);
 CTYPE cget_3d(CMAT* mat, UINT d0, UINT d1, UINT d2);
+
+/*fill every elements of matrix as v*/
+void fill(MAT* mat, DTYPE v);
+void fill_inc(UINT N, DTYPE*X, ITER incx, DTYPE v);
+
+void cfill(CMAT* mat, CTYPE v);
+void cfill_inc(UINT N, CTYPE*X, ITER incx, CTYPE v);
+
 
 /* Extract sub-matrix elements from mat by given range
  * This function doesn't allocated submat
