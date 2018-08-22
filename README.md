@@ -13,7 +13,7 @@ C library for speech preprocessing.
 * (OPTION) OpenBLAS[Linux]  
 * (OPTION) IntelMKL[Windows]  
 
-## Notaion
+## Notice
 * Set Options of CMAKE properly for you Envrionment
 * We don't provide backend library, we assume your Environment contains backend library
 * If you want to use memory pool, you need to call 
