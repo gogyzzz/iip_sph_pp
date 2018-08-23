@@ -4,6 +4,7 @@ void hfft(MAT*in,CMAT*out){
   
   UINT N = in->d0;
 
+
   hfft_col(N,in->data,out->data);
 }
 
@@ -12,11 +13,11 @@ void hfft_col(UINT N, DTYPE* in,CTYPE* out){
   int* ip;
   double* w;
   ITER i;
-  
+ 
   a = mpalloc(sizeof(double)*N);
   ip = mpalloc(sizeof(int)*((int)(sqrt(N/2))+1));
   w = mpalloc(sizeof(double)*(N/2)); 
-
+  ip[0]=0;
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(a,in) private(i)
   for(i=0;i<N;i++)
     a[i] = in[i];
@@ -37,13 +38,129 @@ void hfft_col(UINT N, DTYPE* in,CTYPE* out){
   mpfree(a);
 }
 
+void ifft(CMAT*in,MAT*out){
+UINT N = in->d0;
+
+ifft_col(N,in->data,out->data);
+
+}
+
+void ifft_col(UINT N,CTYPE*in,DTYPE*out){
+double*a; 
+int* ip;
+double* w;
+ITER i;
+
+a = mpalloc(sizeof(double)*N);
+ip = mpalloc(sizeof(int)*((int)(sqrt(N/2))+1));
+w = mpalloc(sizeof(double)*(N/2)); 
+ip[0]=0;
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(a,in) private(i)
+for(i=0;i<N/2;i++){
+  a[2*i] = in[i].re;
+  a[2*i+1] = -in[i].im;
+}
+a[1] = in[N/2].re;
+
+rdft(N,-1,a,ip,w);
+for(i=0;i<N;i++) {
+  a[i] *=2.0;
+  a[i] /=N;
+}
+
+#pragma omp parallddel for schedule(dynamic,CHUNK_SIZE) shared(a,out) private(i)
+for(i=0;i<N;i++){
+  out[i] = a[i];
+}
+
+mpfree(w);
+mpfree(ip);
+mpfree(a);
+}
+
+
 void fft(MAT*in,CMAT*out){
+  UINT N = in->d0;
+  ITER i;
+
+  fft_col(N,in->data,out->data);
+
+
+}
+
+void fft_col(UINT N,DTYPE*in,CTYPE*out){
+  double*a; 
+  int* ip;
+  double* w;
+  ITER i;
+ 
+  a = mpalloc(sizeof(double)*N);
+  ip = mpalloc(sizeof(int)*((int)(sqrt(N/2))+1));
+  w = mpalloc(sizeof(double)*(N/2)); 
+  ip[0]=0;
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(a,in) private(i)
+  for(i=0;i<N;i++)
+    a[i] = in[i];
+
+  rdft(N,1,a,ip,w);
+
+#pragma omp parallddel for schedule(dynamic,CHUNK_SIZE) shared(a,out) private(i)
+  for(i=0;i<(N/2);i++){
+    out[i].re = a[2*i];
+    out[i].im =- a[2*i+1];
+  }
+  out[0].im = 0;
+  out[N/2].re = a[1];
+  out[N/2].im = 0;
+
+#pragma omp parallddel for schedule(dynamic,CHUNK_SIZE) shared(out) private(i)
+  for(i = N/2+1;i<N;i++ ){
+    out[i].re = out[N-i].re;
+    out[i].im = -out[N-i].im;
+  }
+
+  mpfree(w);
+  mpfree(ip);
+  mpfree(a);
 
 }
 
 
+void cfft(CMAT*in, MAT*out){
+  UINT N = in->d0;
 
+  cfft_col(N,in->data,out->data);
 
+}
+
+void cfft_col(UINT N,CTYPE*in,DTYPE*out){
+  double*a; 
+  int* ip;
+  double* w;
+  ITER i;
+ 
+  a = mpalloc(sizeof(double)*2*N);
+  ip = mpalloc(sizeof(int)*((int)(sqrt(N))+3));
+  w = mpalloc(sizeof(double)*(N/2)); 
+  ip[0]=0;
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(a,in) private(i)
+  for(i=0;i<N;i++){
+    a[2*i] = in[i].re;
+    a[2*i+1] = in[i].im;
+  }
+
+  cdft(N*2,-1,a,ip,w);
+
+#pragma omp parallddel for schedule(dynamic,CHUNK_SIZE) shared(a,out) private(i)
+  for(i=0;i<(N);i++){
+    out[i]=a[i*2];
+  }
+
+  mpfree(w);
+  mpfree(ip);
+  mpfree(a);
+
+}
 /*
     Copyright:
     Copyright(C) 1996-2001 Takuya OOURA

@@ -7,22 +7,71 @@
  *
  *
  * */
-void fft(MAT*in,CMAT*out);
+void hfft(MAT*in, CMAT*out);
+void hfft_col(UINT N,DTYPE*in, CTYPE*out);
+
+void ifft(CMAT*in, MAT*out);
+void ifft_col(UINT N,CTYPE*in,DTYPE*out);
+
 /*
  *
  *
  * */
-void hfft(MAT*in, CMAT*out);
-void hfft_col(UINT N,DTYPE*in, CTYPE*out);
+void fft(MAT*in,CMAT*out);
+void fft_col(UINT N,DTYPE*in,CTYPE*out);
+
+void cfft(CMAT*in,MAT*out);
+void cfft_col(UINT N,CTYPE*in,DTYPE*out);
 
 /*
-    Ooura's FFt - fft4g
-    Copyright:
+    Ooura's FFt - fft4g.c
     Copyright(C) 1996-2001 Takuya OOURA
     email: ooura@mmm.t.u-tokyo.ac.jp
     download: http://momonga.t.u-tokyo.ac.jp/~ooura/fft.html
     You may use, copy, modify this code for any purpose and 
     without fee. You may distribute this ORIGINAL package.
+*/
+/*
+-------- Complex DFT (Discrete Fourier Transform) --------
+    [definition]
+        <case1>
+            X[k] = sum_j=0^n-1 x[j]*exp(2*pi*i*j*k/n), 0<=k<n
+        <case2>
+            X[k] = sum_j=0^n-1 x[j]*exp(-2*pi*i*j*k/n), 0<=k<n
+        (notes: sum_j=0^n-1 is a summation from j=0 to n-1)
+    [usage]
+        <case1>
+            ip[0] = 0; // first time only
+            cdft(2*n, 1, a, ip, w);
+        <case2>
+            ip[0] = 0; // first time only
+            cdft(2*n, -1, a, ip, w);
+    [parameters]
+        2*n            :data length (int)
+                        n >= 1, n = power of 2
+        a[0...2*n-1]   :input/output data (double *)
+                        input data
+                            a[2*j] = Re(x[j]), 
+                            a[2*j+1] = Im(x[j]), 0<=j<n
+                        output data
+                            a[2*k] = Re(X[k]), 
+                            a[2*k+1] = Im(X[k]), 0<=k<n
+        ip[0...*]      :work area for bit reversal (int *)
+                        length of ip >= 2+sqrt(n)
+                        strictly, 
+                        length of ip >= 
+                            2+(1<<(int)(log(n+0.5)/log(2))/2).
+                        ip[0],ip[1] are pointers of the cos/sin table.
+        w[0...n/2-1]   :cos/sin table (double *)
+                        w[],ip[] are initialized if ip[0] == 0.
+    [remark]
+        Inverse of 
+            cdft(2*n, -1, a, ip, w);
+        is 
+            cdft(2*n, 1, a, ip, w);
+            for (j = 0; j <= 2 * n - 1; j++) {
+                a[j] *= 1.0 / n;
+            }
 */
 void cdft(int, int, double *, int *, double *);
 /*
