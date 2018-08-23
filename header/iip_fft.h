@@ -1,27 +1,60 @@
+/*
+ * ===========================================================
+ *           Copyright (c) 2018, __IIPLAB__
+ *                All rights reserved.
+ *
+ * This Source Code Form is subject to the terms of
+ * the Mozilla Public License, v. 2.0.
+ * If a copy of the MPL was not distributed with this file,
+ *  You can obtain one at http://mozilla.org/MPL/2.0/.
+ * ===========================================================
+ */
+
 #ifndef IIP_FFT_H
 #define IIP_FFT_H
 
 #include "iip_type.h"
 
+
+
+/* Fast Fourier Transform
+ * perform fft on first dimension(d0).
+ * d0 must be power of 2
+ * Every fft function uses memory pool.
+ * Be sure initialize memory pool by init(<size>);
+ * */
+void fft(MAT*in,CMAT*out);
 /*
- *
+ * increment in column for further application.
+ * */
+void fft_col(UINT N,DTYPE*in,CTYPE*out);
+
+/* Inverse FFT */
+void ifft(CMAT*in, MAT*out);
+void ifft_col(UINT N,CTYPE*in,DTYPE*out);
+
+/* Complex FFT */
+void cfft(CMAT*in,MAT*out);
+void cfft_col(UINT N,CTYPE*in,DTYPE*out);
+
+/* Inverse Complex FFT */
+void cifft(MAT*in,CMAT*out);
+void cifft_col(UINT N,DTYPE*in,CTYPE*out);
+
+/* Half FFT 
+ *    | in    out
+ * d0 | N     N/ 2 + 1
  *
  * */
 void hfft(MAT*in, CMAT*out);
 void hfft_col(UINT N,DTYPE*in, CTYPE*out);
 
-void ifft(CMAT*in, MAT*out);
-void ifft_col(UINT N,CTYPE*in,DTYPE*out);
-
-/*
- *
- *
+/* Inverse Half FFT 
+ *    | in    out
+ * d0 | N     2*(N-1)
  * */
-void fft(MAT*in,CMAT*out);
-void fft_col(UINT N,DTYPE*in,CTYPE*out);
-
-void cfft(CMAT*in,MAT*out);
-void cfft_col(UINT N,CTYPE*in,DTYPE*out);
+void hifft(CMAT*in, MAT*out);
+void hifft_col(UINT N,CTYPE*in,DTYPE*out);
 
 /*
     Ooura's FFt - fft4g.c

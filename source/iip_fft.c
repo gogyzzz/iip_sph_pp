@@ -1,30 +1,53 @@
+/*
+ * ===========================================================
+ *           Copyright (c) 2018, __IIPLAB__
+ *                All rights reserved.
+ *
+ * This Source Code Form is subject to the terms of
+ * the Mozilla Public License, v. 2.0.
+ * If a copy of the MPL was not distributed with this file,
+ *  You can obtain one at http://mozilla.org/MPL/2.0/.
+ * ===========================================================
+ */
+
 #include "iip_fft.h"
 
-void hfft(MAT*in,CMAT*out){
-  
+/**** Fast Fourier Transform ****/
+
+void fft(MAT*in,CMAT*out){
   UINT N = in->d0;
+  ITER i,j;
 
+ ASSERT_DIM_EQUAL(in, out)
+ ASSERT(in->d2 == out->d2?1:0,"d2 must be eqaul.\n")
+ 
+ 
+  for(i=0;i<in->d2;i++){
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
+    for(j=0;j<in->d1; j++){
+        fft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
+    }
+  }
 
-  hfft_col(N,in->data,out->data);
 }
 
-void hfft_col(UINT N, DTYPE* in,CTYPE* out){
+void fft_col(UINT N,DTYPE*in,CTYPE*out){
   double*a; 
   int* ip;
   double* w;
   ITER i;
- 
+#if DEBUG
+ printf("%s\n",__func__); 
+#endif
   a = mpalloc(sizeof(double)*N);
   ip = mpalloc(sizeof(int)*((int)(sqrt(N/2))+1));
   w = mpalloc(sizeof(double)*(N/2)); 
   ip[0]=0;
-#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(a,in) private(i)
   for(i=0;i<N;i++)
     a[i] = in[i];
 
   rdft(N,1,a,ip,w);
 
-#pragma omp parallddel for schedule(dynamic,CHUNK_SIZE) shared(a,out) private(i)
   for(i=0;i<(N/2);i++){
     out[i].re = a[2*i];
     out[i].im =- a[2*i+1];
@@ -33,15 +56,31 @@ void hfft_col(UINT N, DTYPE* in,CTYPE* out){
   out[N/2].re = a[1];
   out[N/2].im = 0;
 
+  for(i = N/2+1;i<N;i++ ){
+    out[i].re = out[N-i].re;
+    out[i].im = -out[N-i].im;
+  }
+
   mpfree(w);
   mpfree(ip);
   mpfree(a);
+
 }
+
+/**** Inverse Fast Fourier Transform ****/
 
 void ifft(CMAT*in,MAT*out){
 UINT N = in->d0;
+ITER i,j;
+ ASSERT_DIM_EQUAL(in, out)
+ ASSERT(in->d2 == out->d2?1:0,"d2 must be eqaul.\n")
 
-ifft_col(N,in->data,out->data);
+  for(i=0;i<in->d2;i++){
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
+    for(j=0;j<in->d1; j++){
+        ifft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
+    }
+  }
 
 }
 
@@ -51,11 +90,13 @@ int* ip;
 double* w;
 ITER i;
 
+#if DEBUG
+ printf("%s\n",__func__); 
+#endif
 a = mpalloc(sizeof(double)*N);
 ip = mpalloc(sizeof(int)*((int)(sqrt(N/2))+1));
 w = mpalloc(sizeof(double)*(N/2)); 
 ip[0]=0;
-#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(a,in) private(i)
 for(i=0;i<N/2;i++){
   a[2*i] = in[i].re;
   a[2*i+1] = -in[i].im;
@@ -68,7 +109,6 @@ for(i=0;i<N;i++) {
   a[i] /=N;
 }
 
-#pragma omp parallddel for schedule(dynamic,CHUNK_SIZE) shared(a,out) private(i)
 for(i=0;i<N;i++){
   out[i] = a[i];
 }
@@ -79,58 +119,20 @@ mpfree(a);
 }
 
 
-void fft(MAT*in,CMAT*out){
-  UINT N = in->d0;
-  ITER i;
-
-  fft_col(N,in->data,out->data);
-
-
-}
-
-void fft_col(UINT N,DTYPE*in,CTYPE*out){
-  double*a; 
-  int* ip;
-  double* w;
-  ITER i;
- 
-  a = mpalloc(sizeof(double)*N);
-  ip = mpalloc(sizeof(int)*((int)(sqrt(N/2))+1));
-  w = mpalloc(sizeof(double)*(N/2)); 
-  ip[0]=0;
-#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(a,in) private(i)
-  for(i=0;i<N;i++)
-    a[i] = in[i];
-
-  rdft(N,1,a,ip,w);
-
-#pragma omp parallddel for schedule(dynamic,CHUNK_SIZE) shared(a,out) private(i)
-  for(i=0;i<(N/2);i++){
-    out[i].re = a[2*i];
-    out[i].im =- a[2*i+1];
-  }
-  out[0].im = 0;
-  out[N/2].re = a[1];
-  out[N/2].im = 0;
-
-#pragma omp parallddel for schedule(dynamic,CHUNK_SIZE) shared(out) private(i)
-  for(i = N/2+1;i<N;i++ ){
-    out[i].re = out[N-i].re;
-    out[i].im = -out[N-i].im;
-  }
-
-  mpfree(w);
-  mpfree(ip);
-  mpfree(a);
-
-}
-
+/**** Complex Fast Fourier Transform****/
 
 void cfft(CMAT*in, MAT*out){
   UINT N = in->d0;
+ITER i,j;
+ ASSERT_DIM_EQUAL(in, out)
+ ASSERT(in->d2 == out->d2?1:0,"d2 must be eqaul.\n")
 
-  cfft_col(N,in->data,out->data);
-
+  for(i=0;i<in->d2;i++){
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
+    for(j=0;j<in->d1; j++){
+        cfft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
+    }
+  }
 }
 
 void cfft_col(UINT N,CTYPE*in,DTYPE*out){
@@ -139,11 +141,13 @@ void cfft_col(UINT N,CTYPE*in,DTYPE*out){
   double* w;
   ITER i;
  
+#if DEBUG
+ printf("%s\n",__func__); 
+#endif
   a = mpalloc(sizeof(double)*2*N);
   ip = mpalloc(sizeof(int)*((int)(sqrt(N))+3));
   w = mpalloc(sizeof(double)*(N/2)); 
   ip[0]=0;
-#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(a,in) private(i)
   for(i=0;i<N;i++){
     a[2*i] = in[i].re;
     a[2*i+1] = in[i].im;
@@ -151,7 +155,6 @@ void cfft_col(UINT N,CTYPE*in,DTYPE*out){
 
   cdft(N*2,-1,a,ip,w);
 
-#pragma omp parallddel for schedule(dynamic,CHUNK_SIZE) shared(a,out) private(i)
   for(i=0;i<(N);i++){
     out[i]=a[i*2];
   }
@@ -161,6 +164,159 @@ void cfft_col(UINT N,CTYPE*in,DTYPE*out){
   mpfree(a);
 
 }
+
+/* Inverse Complex FFT*/
+
+void cifft(MAT*in,CMAT*out){
+  UINT N = in->d0;
+ITER i,j;
+ ASSERT_DIM_EQUAL(in, out)
+ ASSERT(in->d2 == out->d2?1:0,"d2 must be eqaul.\n")
+
+  for(i=0;i<in->d2;i++){
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
+    for(j=0;j<in->d1; j++){
+        cifft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
+    }
+  }
+
+}
+void cifft_col(UINT N,DTYPE*in,CTYPE*out){
+  double*a; 
+  int* ip;
+  double* w;
+  ITER i;
+ 
+#if DEBUG
+ printf("%s\n",__func__); 
+#endif
+  a = mpalloc(sizeof(double)*2*N);
+  ip = mpalloc(sizeof(int)*((int)(sqrt(N))+3));
+  w = mpalloc(sizeof(double)*(N/2)); 
+  ip[0]=0;
+  for(i=0;i<N;i++){
+    a[2*i] = in[i];
+    a[2*i + 1] = 0;
+    
+  }
+
+  cdft(N*2,1,a,ip,w);
+  for(i=0;i<2*N;i++){
+    a[i] /=N;
+  }
+
+  for(i=0;i<(N);i++){
+    out[i].re=a[i*2];
+    out[i].im=a[i*2 +1];
+  }
+
+  mpfree(w);
+  mpfree(ip);
+  mpfree(a);
+
+
+}
+
+/**** Half Fast Fourier Transform ****/
+
+void hfft(MAT*in,CMAT*out){
+  UINT N = in->d0;
+  ITER i,j;
+
+ ASSERT(in->d2 == out->d2?1:0,"d2 must be eqaul.\n")
+ 
+ for(i=0;i<in->d2;i++){
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
+    for(j=0;j<in->d1; j++){
+        cfft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(out->d0*out->d1) + j*out->d0 ]));
+    }
+  }
+
+  hfft_col(N,in->data,out->data);
+}
+
+void hfft_col(UINT N, DTYPE* in,CTYPE* out){
+  double*a; 
+  int* ip;
+  double* w;
+  ITER i;
+ 
+#if DEBUG
+ printf("%s\n",__func__); 
+#endif
+  a = mpalloc(sizeof(double)*N);
+  ip = mpalloc(sizeof(int)*((int)(sqrt(N/2))+1));
+  w = mpalloc(sizeof(double)*(N/2)); 
+  ip[0]=0;
+  for(i=0;i<N;i++)
+    a[i] = in[i];
+
+  rdft(N,1,a,ip,w);
+
+  for(i=0;i<(N/2);i++){
+    out[i].re = a[2*i];
+    out[i].im =- a[2*i+1];
+  }
+  out[0].im = 0;
+  out[N/2].re = a[1];
+  out[N/2].im = 0;
+
+  mpfree(w);
+  mpfree(ip);
+  mpfree(a);
+}
+
+/**** Inverse Half FFT ****/
+
+void hifft(CMAT*in,MAT*out){
+UINT N = out->d0;
+ITER i,j;
+ ASSERT(in->d2 == out->d2?1:0,"d2 must be eqaul.\n")
+
+  for(i=0;i<in->d2;i++){
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
+    for(j=0;j<in->d1; j++){
+        hifft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
+    }
+  }
+
+}
+
+void hifft_col(UINT N,CTYPE*in,DTYPE*out){
+double*a; 
+int* ip;
+double* w;
+ITER i;
+
+#if DEBUG
+ printf("%s\n",__func__); 
+#endif
+a = mpalloc(sizeof(double)*N);
+ip = mpalloc(sizeof(int)*((int)(sqrt(N/2))+1));
+w = mpalloc(sizeof(double)*(N/2)); 
+ip[0]=0;
+for(i=0;i<N/2;i++){
+  a[2*i] = in[i].re;
+  a[2*i+1] = -in[i].im;
+}
+a[1] = in[N/2].re;
+
+rdft(N,-1,a,ip,w);
+for(i=0;i<N;i++) {
+  a[i] *=2.0;
+  a[i] /=N;
+}
+
+for(i=0;i<N;i++){
+  out[i] = a[i];
+}
+
+mpfree(w);
+mpfree(ip);
+mpfree(a);
+}
+
+
 /*
     Copyright:
     Copyright(C) 1996-2001 Takuya OOURA
