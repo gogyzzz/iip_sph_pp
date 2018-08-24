@@ -228,7 +228,7 @@ void hfft(MAT*in,CMAT*out){
  for(i=0;i<in->d2;i++){
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
     for(j=0;j<in->d1; j++){
-        cfft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(out->d0*out->d1) + j*out->d0 ]));
+        hfft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(out->d0*out->d1) + j*out->d0 ]));
     }
   }
 
