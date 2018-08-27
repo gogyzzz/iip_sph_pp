@@ -959,10 +959,10 @@ void init_list() {
 	func_list[27].param_cnt = 2;
 	strcpy(func_list[27].name, "cReshape");
 
-	func_list[28].fp = gemm;
+	func_list[28].fp = gemm_mat;
 	func_list[28].param_cnt = 7;
 	strcpy(func_list[28].name, "Gemm");
-	func_list[29].fp = cgemm;
+	func_list[29].fp = gemm_cmat;
 	func_list[29].param_cnt = 7;
 	strcpy(func_list[29].name, "cGemm");
 
@@ -1018,23 +1018,23 @@ void init_list() {
 	func_list[func_list_size - 7].param_cnt = 2;
 	strcpy(func_list[func_list_size - 7].name, "cPow cMat");
 
-	func_list[func_list_size - 6].fp = add;
+	func_list[func_list_size - 6].fp = add_mat;
 	func_list[func_list_size - 6].param_cnt = 2;
 	strcpy(func_list[func_list_size - 6].name, "Add");
-	func_list[func_list_size - 5].fp = cadd;
+	func_list[func_list_size - 5].fp = add_cmat;
 	func_list[func_list_size - 5].param_cnt = 2;
 	strcpy(func_list[func_list_size - 5].name, "cAdd");
-	func_list[func_list_size - 4].fp = uadd;
+	func_list[func_list_size - 4].fp = cadd_cmat;
 	func_list[func_list_size - 4].param_cnt = 2;
 	strcpy(func_list[func_list_size - 4].name, "uAdd");
 
-	func_list[func_list_size - 3].fp = scal;
+	func_list[func_list_size - 3].fp = scal_mat;
 	func_list[func_list_size - 3].param_cnt = 2;
 	strcpy(func_list[func_list_size - 3].name, "Scale");
-	func_list[func_list_size - 2].fp = cscal;
+	func_list[func_list_size - 2].fp = scal_cmat;
 	func_list[func_list_size - 2].param_cnt = 2;
 	strcpy(func_list[func_list_size - 2].name, "cScale");
-	func_list[func_list_size - 1].fp = uscal;
+	func_list[func_list_size - 1].fp = cscal_cmat;
 	func_list[func_list_size - 1].param_cnt = 2;
 	strcpy(func_list[func_list_size - 1].name, "uScale");
 }

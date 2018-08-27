@@ -13,7 +13,7 @@
 
 /****  gemv ****/
 
-void gemv(cublasOperation_t transA, DTYPE alpha, MAT* A, MAT*X, DTYPE beta, MAT*Y )
+void gemv_mat(cublasOperation_t transA, DTYPE alpha, MAT* A, MAT*X, DTYPE beta, MAT*Y )
 {
 UINT m,n,lda;
 #if DEBUG
@@ -48,7 +48,7 @@ printf("trans : %d m : %u n: %u lda : %u\nalpha : %lf beta : %lf\n",transA,m,n,l
 	#endif
 }
 
-void cgemv(cublasOperation_t transA, CTYPE alpha, CMAT* A, CMAT*X, CTYPE beta, CMAT*Y )
+void gemv_cmat(cublasOperation_t transA, CTYPE alpha, CMAT* A, CMAT*X, CTYPE beta, CMAT*Y )
 {
 UINT m,n,lda;
 #if DEBUG
