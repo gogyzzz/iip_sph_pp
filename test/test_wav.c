@@ -9,14 +9,11 @@ int main(int argc, char *argv[]) {
   }
   wav = read_wav(argv[1]);
   print_wav(wav);
-  write_wav(wav, "w2w.wav");
-  free_wav(wav);
-  wav = read_wav("w2w.wav");
-  print_wav(wav);
-
   mat = wav2mat(wav);
 
-  m_wav = mat2wav(mat, 48000);
+  scal(10., mat);
+
+  m_wav = mat2wav(mat, wav->sample_rate);
   print_wav(m_wav);
   write_wav(m_wav, "m2w.wav");
 
