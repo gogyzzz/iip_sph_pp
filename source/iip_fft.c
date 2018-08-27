@@ -12,6 +12,36 @@
 
 #include "iip_fft.h"
 
+mkl_handle* create_handle(UINT N){
+long status;
+mkl_handle* handle;
+
+ handle = (mkl_handle*)malloc(sizeof(mkl_handle));
+#if NTYPE == 0
+status = DftiCreateDescriptor( handle, DFTI_SINGLE,
+          DFTI_REAL, 1, N);
+#elif NTYPE == 1
+status = DftiCreateDescriptor( handle, DFTI_DOUBLE,
+          DFTI_REAL, 1, N);
+#endif
+status = DftiSetValue( *handle, DFTI_PLACEMENT, DFTI_NOT_INPLACE);
+status = DftiSetValue(*handle, DFTI_CONJUGATE_EVEN_STORAGE,
+                          DFTI_COMPLEX_COMPLEX);
+
+status = DftiCommitDescriptor( *handle );
+
+return handle;
+}
+
+void mkl_fft(mkl_handle*handle,DTYPE*in,CTYPE*out){
+long status;
+status = DftiComputeForward( *handle, in, out);
+}
+
+void free_handle(mkl_handle*handle){
+DftiFreeDescriptor(handle);
+}
+
 /**** Fast Fourier Transform ****/
 
 void fft(MAT*in,CMAT*out){
@@ -20,7 +50,6 @@ void fft(MAT*in,CMAT*out){
 
  ASSERT_DIM_EQUAL(in, out)
  ASSERT(in->d2 == out->d2?1:0,"d2 must be eqaul.\n")
- 
  
   for(i=0;i<in->d2;i++){
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 

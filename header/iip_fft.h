@@ -15,8 +15,18 @@
 
 #include "iip_type.h"
 
-
-
+/*FFT for MKL*/
+mkl_handle* create_handle(UINT N);
+void mkl_fft(mkl_handle*handle,DTYPE*in,CTYPE*out);
+void free_handle(mkl_handle*handle);
+/*
+    Ooura's FFt - fft4g.c
+    Copyright(C) 1996-2001 Takuya OOURA
+    email: ooura@mmm.t.u-tokyo.ac.jp
+    download: http://momonga.t.u-tokyo.ac.jp/~ooura/fft.html
+    You may use, copy, modify this code for any purpose and 
+    without fee. You may distribute this ORIGINAL package.
+*/
 /* Fast Fourier Transform
  * perform fft on first dimension(d0).
  * d0 must be power of 2
@@ -56,14 +66,6 @@ void ooura_hfft_col(UINT N,DTYPE*in, CTYPE*out);
 void hifft(CMAT*in, MAT*out);
 void ooura_hifft_col(UINT N,CTYPE*in,DTYPE*out);
 
-/*
-    Ooura's FFt - fft4g.c
-    Copyright(C) 1996-2001 Takuya OOURA
-    email: ooura@mmm.t.u-tokyo.ac.jp
-    download: http://momonga.t.u-tokyo.ac.jp/~ooura/fft.html
-    You may use, copy, modify this code for any purpose and 
-    without fee. You may distribute this ORIGINAL package.
-*/
 /*
 -------- Complex DFT (Discrete Fourier Transform) --------
     [definition]
