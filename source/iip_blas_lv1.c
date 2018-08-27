@@ -141,7 +141,8 @@ void omp_caxpy(UINT N, CTYPE alpha, CTYPE *X, UINT INCX, CTYPE *Y, UINT INCY) {
  *  <?>acopy(integer N, DTYPE* X, intefer INCX, DTYPE* Y, integer INCY)
  * */
 void copy_mat(MAT *src, MAT *des) {
-  ASSERT_DIM_EQUAL(src, des)
+  //TEST
+  //ASSERT_DIM_EQUAL(src, des)
 
   copy_mat_inc(src->d0*src->d1*src->d2,src->data,1,des->data,1);
 }
@@ -401,18 +402,26 @@ CTYPE cdot(CMAT *src_x,MAT *src_y) {
 }
 
 CTYPE cdot_inc(UINT N,CTYPE *X,ITER incx, DTYPE *Y, ITER incy){
-
+CTYPE ret;
 ASSERT(N, "size is 0.\n");
 #if USE_CBLAS
 // DTYPE = float
 #if NTYPE == 0
+#if USE_MKL
+  cblas_cdotc_sub(N, X, incx, Y,incy,&ret);
+  return ret;
+#else
   return cblas_cdotc_sub(N, X, incx, Y,incy);
-
+#endif
 // DTYPE = double
 #elif NTYPE == 1
+#if USE_MKL
+  cblas_zdotc_sub(N, X, incx, Y,incy,&ret);
+  return ret;
+#else
   return cblas_zdotc_sub(N, X, incx, Y,incy);
 #endif
-
+#endif
 // USE_BLAS = 0 -> just c implement
 #else
   return omp_cdot(N, X, incx, Y,incy);
@@ -449,16 +458,25 @@ CTYPE udot(CMAT *src_x,CMAT *src_y) {
 }
 
 CTYPE udot_inc(UINT N,CTYPE *X,ITER incx, CTYPE *Y, ITER incy){
-
+CTYPE ret;
 ASSERT(N, "size is 0.\n");
 #if USE_CBLAS
 // DTYPE = float
 #if NTYPE == 0
+#if USE_MKL
+  cblas_cdotu_sub(N, X, incx, Y,incy,&ret);
+  return ret;
+#else
   return cblas_cdotu_sub(N, X, incx, Y,incy);
-
+#endif
 // DTYPE = double
 #elif NTYPE == 1
+#if USE_MKL
+  cblas_zdotu_sub(N, X, incx, Y,incy,&ret);
+  return ret;
+#else
   return cblas_zdotu_sub(N, X, incx, Y,incy);
+#endif
 #endif
 
 // USE_BLAS = 0 -> just c implement
