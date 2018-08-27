@@ -1,4 +1,3 @@
-#include <fftw3.h>
 #include "mother.h"
 
 #define a0 0  // FFT

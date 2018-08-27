@@ -186,7 +186,7 @@ void print_wav(WAV *wav) {
   printf("data_size      : %u\n", wav->data_size);
 }
 
-MAT *wav_buf2MAT(WAV_BUF *buf) {
+MAT *wav_buf2mat(WAV_BUF *buf) {
   MAT *mat;
   ITER i, j;
 #if DEBUG

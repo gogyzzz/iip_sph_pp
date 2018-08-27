@@ -39,7 +39,7 @@ int main() {
   print_mat(X);
   print_mat(Y);
 
-  gemv(NoTran, 10, A, X, 3, Y);
+  gemv_mat(NoTran, 10, A, X, 3, Y);
 
   print_mat(A);
   print_mat(X);
@@ -64,7 +64,7 @@ int main() {
   print_mat(TX);
   print_mat(TY);
 
-  gemv(Tran, 10, TA, TX, 3, TY);
+  gemv_mat(Tran, 10, TA, TX, 3, TY);
 
   print_mat(TA);
   print_mat(TX);
@@ -89,7 +89,7 @@ int main() {
   print_cmat(CX);
   print_cmat(CY);
 
-  cgemv(NoTran, calpha, CA, CX, cbeta, CY);
+  gemv_cmat(NoTran, calpha, CA, CX, cbeta, CY);
 
   print_cmat(CA);
   print_cmat(CX);
@@ -113,7 +113,7 @@ int main() {
   print_cmat(TCX);
   print_cmat(TCY);
 
-  cgemv(Tran, calpha, TCA, TCX, cbeta, TCY);
+  gemv_cmat(Tran, calpha, TCA, TCX, cbeta, TCY);
 
   print_cmat(TCA);
   print_cmat(TCX);
@@ -136,7 +136,7 @@ int main() {
   print_cmat(TCX);
   print_cmat(TCY);
 
-  cgemv(CTran, calpha, TCA, TCX, cbeta, TCY);
+  gemv_cmat(CTran, calpha, TCA, TCX, cbeta, TCY);
 
   print_cmat(TCA);
   print_cmat(TCX);

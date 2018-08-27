@@ -34,10 +34,10 @@ int main() {
   print_mat(B);
   print_cmat(CA);
   print_cmat(CB);
-  printf("===== axpy(5,B,A) =====\n");
+  printf("===== axpy_mat(5,B,A) =====\n");
 
-  axpy(5, B, A);
-  caxpy(ctemp, CB, CA);
+  axpy_mat(5, B, A);
+  axpy_cmat(ctemp, CB, CA);
 
   printf("===== print A,CA =====\n");
   print_mat(A);
@@ -69,9 +69,9 @@ int main() {
   print_cmat(CA);
   print_cmat(CB);
 
-  printf("===== asum(B,1) =====\n");
-  printf("asum(B,1) = %.2f\n", asum(B, 1));
-  printf("casum(CB,1) = %.2f\n", casum(CB, 1));
+  printf("===== asum_mat(B,1) =====\n");
+  printf("asum(B,1) = %.2f\n", asum_mat(B, 1));
+  printf("casum(CB,1) = %.2f\n", asum_cmat(CB, 1));
 
   /*
           printf("===== fill(AB, 2) =====\n");
@@ -82,75 +82,75 @@ int main() {
           print_mat(A);
           print_mat(B);
   */
-  printf("===== dot(A) =====\n");
-  printf("dot(A, 1, B, 1) = %.2f\n\n", dot(A, 1, B, 1));
+  printf("===== dot_mat(A) =====\n");
+  printf("dot(A, 1, B, 1) = %.2f\n\n", dot_mat(A, 1, B, 1));
 
-  printf("===== cdot(CA, A) =====\n");
-  CTYPE temp = cdot(CA, 1, A, 1);
+  printf("===== dot_cmat(CA, A) =====\n");
+  CTYPE temp = dot_cmat(CA, 1, A, 1);
   printf("cdot(CA, 1, A, 1).re = %.2f\n", temp.re);
   printf("cdot(CA, 1, A, 1).im = %.2f\n\n", temp.im);
 
-  printf("===== udot(CA, CB) =====\n");
-  temp = udot(CA, 1, CB, 1);
+  printf("===== cdot_cmat(CA, CB) =====\n");
+  temp = cdot_cmat(CA, 1, CB, 1);
   printf("udot(CA, 1, CB, 1).re = %.2f\n", temp.re);
   printf("udot(CA, 1, CB, 1).im = %.2f\n\n", temp.im);
 
-  printf("===== swap(A, B) =====\n");
-  swap(A, B);
+  printf("===== swap_mat(A, B) =====\n");
+  swap_mat(A, B);
   printf("#A\n");
   print_mat(A);
   printf("#B\n");
   print_mat(B);
 
-  printf("===== cswap(CA, CB) =====\n");
-  cswap(CA, CB);
+  printf("===== swap_cmat(CA, CB) =====\n");
+  swap_cmat(CA, CB);
   printf("#CA\n");
   print_cmat(CA);
   printf("#CB\n");
   print_cmat(CB);
 
-  printf("===== amin(A) =====\n");
+  printf("===== temp_amin_mat(A) =====\n");
   print_mat(A);
-  printf("A[%u] : %lf\n", amin(A), A->data[amin(A)]);
+  printf("A[%u] : %lf\n", temp_amin_mat(A), A->data[amin(A)]);
 
-  printf("===== camin(CA) =====\n");
+  printf("===== temp_amin_cmat(CA) =====\n");
   print_mat(A);
-  printf("CA[%u] : %lf %lf\n", camin(CA), CA->data[camin(CA)].re,
+  printf("CA[%u] : %lf %lf\n", temp_amin_cmat(CA), CA->data[camin(CA)].re,
          CA->data[camin(CA)].im);
 
-  printf("===== amax(A) =====\n");
+  printf("===== temp_amax_mat(A) =====\n");
   print_mat(A);
-  printf("A[%u] : %lf\n", amax(A), A->data[amax(A)]);
+  printf("A[%u] : %lf\n", temp_amax_mat(A), A->data[amax(A)]);
 
-  printf("===== camax(CA) =====\n");
+  printf("===== temp_amax_cmat(CA) =====\n");
   print_cmat(CA);
-  printf("CA[%u] : %lf %lf\n", camax(CA), CA->data[camax(CA)].re,
+  printf("CA[%u] : %lf %lf\n", temp_amax_cmat(CA), CA->data[camax(CA)].re,
          CA->data[camax(CA)].im);
 
   printf("===== cabs1(%lf,%lfi) =====\n", ctemp.re, ctemp.im);
   printf("cabs1(ctemp) : %lf\n", cabs1(ctemp));
 
-  printf("===== nrm2(A) =====\n");
-  printf("%lf\n", nrm2(A));
+  printf("===== nrm2_mat(A) =====\n");
+  printf("%lf\n", nrm2_mat(A));
 
-  printf("===== cnrm2(CA) =====\n");
-  printf("%lf\n", cnrm2(CA));
+  printf("===== nrm2_cmat(CA) =====\n");
+  printf("%lf\n", nrm2_cmat(CA));
 
-  printf("==== print(A) scal(100.1,A) print(A) ====\n");
+  printf("==== print(A) scal_mat(100.1,A) print(A) ====\n");
   print_mat(A);
-  scal(100.1, A);
+  scal_mat(100.1, A);
   print_mat(A);
 
-  printf("==== print(CA) cscal(100.1,CA) print(CA) ====\n");
+  printf("==== print(CA) scal_cmat(100.1,CA) print(CA) ====\n");
   print_cmat(CA);
-  cscal(100.1, CA);
+  scal_cmat(100.1, CA);
   print_cmat(CA);
 
-  printf("==== print(CA) uscal(-10 + 10i  ,CA) print(CA) ====\n");
+  printf("==== print(CA) cscal_cmat(-10 + 10i  ,CA) print(CA) ====\n");
   print_cmat(CA);
   ctemp.re = -10;
   ctemp.im = 10;
-  uscal(ctemp, CA);
+  cscal_cmat(ctemp, CA);
   print_cmat(CA);
 
   free_mat(A);

@@ -13,7 +13,7 @@ int main() {
 
   print_mat(A);
 
-  add(10, A);
+  add_mat(10, A);
 
   print_mat(A);
 
