@@ -27,19 +27,19 @@ void fft(MAT*in,CMAT*out);
 /*
  * increment in column for further application.
  * */
-void fft_col(UINT N,DTYPE*in,CTYPE*out);
+void ooura_fft_col(UINT N,DTYPE*in,CTYPE*out);
 
 /* Inverse FFT */
 void ifft(CMAT*in, MAT*out);
-void ifft_col(UINT N,CTYPE*in,DTYPE*out);
+void ooura_ifft_col(UINT N,CTYPE*in,DTYPE*out);
 
 /* Complex FFT */
 void cfft(CMAT*in,MAT*out);
-void cfft_col(UINT N,CTYPE*in,DTYPE*out);
+void ooura_cfft_col(UINT N,CTYPE*in,DTYPE*out);
 
 /* Inverse Complex FFT */
 void cifft(MAT*in,CMAT*out);
-void cifft_col(UINT N,DTYPE*in,CTYPE*out);
+void ooura_cifft_col(UINT N,DTYPE*in,CTYPE*out);
 
 /* Half FFT 
  *    | in    out
@@ -47,14 +47,14 @@ void cifft_col(UINT N,DTYPE*in,CTYPE*out);
  *
  * */
 void hfft(MAT*in, CMAT*out);
-void hfft_col(UINT N,DTYPE*in, CTYPE*out);
+void ooura_hfft_col(UINT N,DTYPE*in, CTYPE*out);
 
 /* Inverse Half FFT 
  *    | in    out
  * d0 | N     2*(N-1)
  * */
 void hifft(CMAT*in, MAT*out);
-void hifft_col(UINT N,CTYPE*in,DTYPE*out);
+void ooura_hifft_col(UINT N,CTYPE*in,DTYPE*out);
 
 /*
     Ooura's FFt - fft4g.c

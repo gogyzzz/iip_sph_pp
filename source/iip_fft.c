@@ -25,13 +25,13 @@ void fft(MAT*in,CMAT*out){
   for(i=0;i<in->d2;i++){
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
     for(j=0;j<in->d1; j++){
-        fft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
+        ooura_fft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
     }
   }
 
 }
 
-void fft_col(UINT N,DTYPE*in,CTYPE*out){
+void ooura_fft_col(UINT N,DTYPE*in,CTYPE*out){
   double*a; 
   int* ip;
   double* w;
@@ -78,13 +78,13 @@ ITER i,j;
   for(i=0;i<in->d2;i++){
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
     for(j=0;j<in->d1; j++){
-        ifft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
+        ooura_ifft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
     }
   }
 
 }
 
-void ifft_col(UINT N,CTYPE*in,DTYPE*out){
+void ooura_ifft_col(UINT N,CTYPE*in,DTYPE*out){
 double*a; 
 int* ip;
 double* w;
@@ -130,12 +130,12 @@ ITER i,j;
   for(i=0;i<in->d2;i++){
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
     for(j=0;j<in->d1; j++){
-        cfft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
+        ooura_cfft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
     }
   }
 }
 
-void cfft_col(UINT N,CTYPE*in,DTYPE*out){
+void ooura_cfft_col(UINT N,CTYPE*in,DTYPE*out){
   double*a; 
   int* ip;
   double* w;
@@ -176,12 +176,12 @@ ITER i,j;
   for(i=0;i<in->d2;i++){
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
     for(j=0;j<in->d1; j++){
-        cifft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
+        ooura_cifft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
     }
   }
 
 }
-void cifft_col(UINT N,DTYPE*in,CTYPE*out){
+void ooura_cifft_col(UINT N,DTYPE*in,CTYPE*out){
   double*a; 
   int* ip;
   double* w;
@@ -228,14 +228,12 @@ void hfft(MAT*in,CMAT*out){
  for(i=0;i<in->d2;i++){
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
     for(j=0;j<in->d1; j++){
-        hfft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(out->d0*out->d1) + j*out->d0 ]));
+        ooura_hfft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(out->d0*out->d1) + j*out->d0 ]));
     }
   }
-
-  hfft_col(N,in->data,out->data);
 }
 
-void hfft_col(UINT N, DTYPE* in,CTYPE* out){
+void ooura_hfft_col(UINT N, DTYPE* in,CTYPE* out){
   double*a; 
   int* ip;
   double* w;
@@ -248,8 +246,9 @@ void hfft_col(UINT N, DTYPE* in,CTYPE* out){
   ip = mpalloc(sizeof(int)*((int)(sqrt(N/2))+1));
   w = mpalloc(sizeof(double)*(N/2)); 
   ip[0]=0;
-  for(i=0;i<N;i++)
+  for(i=0;i<N;i++){
     a[i] = in[i];
+  }
 
   rdft(N,1,a,ip,w);
 
@@ -271,18 +270,19 @@ void hfft_col(UINT N, DTYPE* in,CTYPE* out){
 void hifft(CMAT*in,MAT*out){
 UINT N = out->d0;
 ITER i,j;
+ ASSERT(in->d1 == out->d1?1:0,"d1 must be eqaul.\n")
  ASSERT(in->d2 == out->d2?1:0,"d2 must be eqaul.\n")
 
   for(i=0;i<in->d2;i++){
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
     for(j=0;j<in->d1; j++){
-        hifft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
+        ooura_hifft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(out->d0*out->d1) + j*out->d0 ]));
     }
   }
 
 }
 
-void hifft_col(UINT N,CTYPE*in,DTYPE*out){
+void ooura_hifft_col(UINT N,CTYPE*in,DTYPE*out){
 double*a; 
 int* ip;
 double* w;
