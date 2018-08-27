@@ -1,9 +1,12 @@
+# Development Environment.
+# CMAKE version of Ubuntu 16.04 is 3.5.
 cmake_minimum_required(VERSION 3.5)
+# This will be Name of Executable.
 project(iip_sph_pp)
 
 #################################
 #         CMAKE INDEX           #
-#  1. Declaration               #
+#  1. Declarations              #
 #  2. ** User Setting **        #
 #  3. Macros                    #
 #  4. Add executable            #
@@ -14,8 +17,8 @@ project(iip_sph_pp)
 #  9. WIP : CUDA                #
 #################################
 
-#### 1. Declaration ####
-# TARGET_NAME will be the name of executable.
+#### 1. Declarations ####
+# set excutable name as project name.
 set(TARGET_NAME ${PROJECT_NAME})
 
 # Compile flags
@@ -30,8 +33,13 @@ set(HD)
 #### 2. User Setting ####
 
 ## BUILD ENVIRONMENT OPTIONS ##
-option(USE_BLAS    "Using BLAS"      OFF)
-option(USE_OPENMP  "Using OpenMP"    OFF)
+# option(USE_BLAS        "Using BLAS"       OFF)
+
+## WIP ##
+option(USE_OPENBLAS    "Using OpenBLAS"   OFF)
+option(USE_MKL         "Using Intel MKL"  ON)
+
+option(USE_OPENMP      "Using OpenMP"     OFF)
 
 # Not supported, yet.
 # option(USE_CUDA    "Using CUDA"      OFF)
@@ -43,7 +51,7 @@ set(MAIN_SRC
 	# EXAMPLE
   #	test/test_matlab.c	
   # test/test_wav.c
-  # test/test_fft.c
+   test/test_fft.c
 	)
 	
 list(APPEND HD
@@ -59,6 +67,7 @@ list(APPEND CF
 	)
 list(APPEND LF
 	# my link option
+  fftw3
 	)
 list(APPEND CD
 	# my pre-process defines
@@ -111,7 +120,8 @@ target_include_directories(${TARGET_NAME}
 #### 6. check options ####
 # This section checks whether your option is available or not. 
 
-if(USE_BLAS)
+#if(USE_BLAS)
+if(NOT)
 # MKL also can be found by find_package(BLAS)
 # But, MKL requires specific compile & link option.
 # just using "target_link_libraries" doesn't work for MKL.
@@ -163,8 +173,12 @@ endif()
 # Check whether PATH is set correctly or not.
 # message(STATUS "ENV_PATH : " $ENV{PATH})
 
+# #include <math.h> for gcc 
 if(NOT MSVC)
-  list(APPEND LF m)
+  # MKL need to set 'm' but need to be in order.
+  if(NOT USE_MKL)
+    list(APPEND LF m)
+  endif(NOT USE_MKL)
 endif(NOT MSVC)
 
 
@@ -183,7 +197,29 @@ if(USE_OPEN OR USE_MKL )
   list(APPEND CD
 	    USE_OPEN=1
       )
-  elseif(USE_MKL)
+ elseif(USE_MKL)
+ # SEE
+ # https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor/
+ 
+ # == Options ==
+ # Intel(R) MKL 2018.0
+ # Linux
+ # None
+ # GNU C/C++
+ # Intel(R) 64
+ # Dynamic
+ # 32-bit integer 
+ # OpenMP threading
+ # Intel(R) (libmop5)
+
+  list(APPEND LF
+         -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl
+         # -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_intel_lp64.a ${MKLROOT}/lib/intel64/libmkl_intel_thread.a ${MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -liomp5 -lpthread -lm -ldl
+    )
+
+  list(APPEND CF
+     -m64 -I${MKLROOT}/include
+    )
 
   list(APPEND CD  
 	    USE_MKL=1
