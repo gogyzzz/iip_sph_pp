@@ -16,9 +16,9 @@ int aks_preheat();
 void preheat();
 
 int main() {
-  int selection=0;
-   init(1024);
-  while(1){
+  int selection = 0;
+  init(1024);
+  while (1) {
     printf("============= TESTING =============\n");
     printf(" IIPLAB - project iip sph pp       \n");
     printf("-----------------------------------\n");
@@ -31,7 +31,7 @@ int main() {
 #else
     scanf("%d", &selection);
 #endif
-    switch(selection){
+    switch (selection) {
       case 1:
         run_test(ask_preheat(), 1);
         break;
@@ -51,16 +51,14 @@ int main() {
   return 0;
 }
 
-
-int ask_preheat(){
+int ask_preheat() {
   char temp = 0;
   printf(" Preheat CPU? This may take a few seconds.(y/n) : ");
-  while(1){
+  while (1) {
     temp = getchar();
-    if (temp == 'Y' || temp == 'y'){
+    if (temp == 'Y' || temp == 'y') {
       return 1;
-    }
-    else if (temp == 'N' || temp == 'n')
+    } else if (temp == 'N' || temp == 'n')
       return 0;
   }
 }

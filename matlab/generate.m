@@ -1,4 +1,4 @@
-N = 1024;
+N = 5;
 
 create_mat(N,N,4);
 create_mat(1,1,1);
@@ -27,3 +27,4 @@ create_cmat(N,1,4);
 create_cmat(1,N,1);
 create_cmat(N,1,1);
 create_cmat(1,1,4);
+
