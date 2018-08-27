@@ -50,31 +50,31 @@ void cmatmul(CMAT* A, CMAT* B, CMAT* C);
  * Tran   : Trasposed
  * CTran  : Hermitian transposed
  *
- * ex) gemm(NoTran,NoTran,1,A,B,0,C)
+ * ex) gemm_mat(NoTran,NoTran,1,A,B,0,C)
  *     is equal to matmul(A,B,C)
  *
- *     cgemm(CTran,Tran,alpha,A,B,beta,C)
+ *     gemm_cmat(CTran,Tran,alpha,A,B,beta,C)
  *     is equal to caAhBtpbC(alpha,A,B,beta,C)
  *
  *
  * */
-void gemm(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
+void gemm_mat(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
           MAT* C);
 void omp_gemm(char transA, char transB, UINT m, UINT n, UINT k, DTYPE alpha,
               DTYPE* A, UINT lda, DTYPE* B, UINT ldb, DTYPE beta, DTYPE* C,
               UINT ldc);
 
-void cgemm(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
+void gemm_cmat(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
            CMAT* C);
 void omp_cgemm(char transA, char transB, UINT m, UINT n, UINT k, CTYPE alpha,
                CTYPE* A, UINT lda, CTYPE* B, UINT ldb, CTYPE beta, CTYPE* C,
                UINT ldc);
 #else
 
-void gemm(cublasOperation_t transA, cublasOperation_t transB, DTYPE alpha,
+void gemm_mat(cublasOperation_t transA, cublasOperation_t transB, DTYPE alpha,
           MAT* A, MAT* B, DTYPE beta, MAT* C);
 
-void cgemm(cublasOperation_t transA, cublasOperation_t transB, CTYPE alpha,
+void gemm_cmat(cublasOperation_t transA, cublasOperation_t transB, CTYPE alpha,
            CMAT* A, CMAT* B, CTYPE beta, CMAT* C);
 #endif
 

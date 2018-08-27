@@ -42,7 +42,7 @@ __device__ double atomicAdd_(double* address, double val) {
 
 
 /*** AXPY ***/
-void axpy(DTYPE alpha, MAT *x, MAT *y) // for real mat
+void axpy_mat(DTYPE alpha, MAT *x, MAT *y) // for real mat
 {
 #if DEBUG
 	printf("%s\n",__func__);
@@ -63,7 +63,7 @@ __global__ void cu_axpy(DTYPE alpha, DTYPE *X, UINT INCX, DTYPE *Y, UINT INCY, U
 }
 
 
-void caxpy(CTYPE alpha, CMAT *x, CMAT *y) // for real mat
+void axpy_cmat(CTYPE alpha, CMAT *x, CMAT *y) // for real mat
 {
 #if DEBUG
 	printf("%s\n",__func__);
@@ -129,7 +129,7 @@ __global__ void cu_ccopy(CTYPE *SRC, UINT INC_SRC, CTYPE *DES, UINT INC_DES, UIN
 
 
 /*** SUM ***/
-DTYPE asum(MAT *mat, UINT inc)
+DTYPE asum_mat(MAT *mat, UINT inc)
 {
 #if DEBUG
 	printf("%s\n",__func__);
@@ -206,7 +206,7 @@ __global__ void cu_asum(DTYPE *data, UINT inc, UINT len, UINT block_size, DTYPE 
 }
 */
 
-DTYPE casum(CMAT *mat, UINT inc)
+DTYPE asum_cmat(CMAT *mat, UINT inc)
 {
 #if DEBUG
 	printf("%s\n",__func__);
@@ -268,7 +268,7 @@ __global__ void cu_casum(CTYPE *data, UINT inc, UINT len, UINT block_size, CTYPE
 
 
 /*** DOT ***/
-DTYPE dot(MAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment)
+DTYPE dot_mat(MAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment)
 {
 #if DEBUG
 	printf("%s\n",__func__);
@@ -291,7 +291,7 @@ DTYPE dot(MAT *src_x, UINT x_increment, MAT *src_y, UINT y_increment)
 	cu_dot<<<num_block,max_thread>>>(temp->data, src_x->data, 1, src_y->data, 1, mat_size-1, max_thread);
 	CUDA_CALL(cudaThreadSynchronize())
 
-	result = asum(temp, 1);
+	result = asum_mat(temp, 1);
 
 	cudaFree(temp->data);
 	free(temp);

@@ -31,7 +31,7 @@
  *  <?>axpy(integer N, DTYPE alpha, DTYPE *x, integer incx, DTYPE beta )
  * */
 
-void axpy(DTYPE alpha, MAT *x, MAT *y) {
+void axpy_mat(DTYPE alpha, MAT *x, MAT *y) {
   UINT size;
   ITER i;
 #if DEBUG
@@ -80,7 +80,7 @@ void omp_axpy(UINT N, DTYPE alpha, DTYPE *X, UINT INCX, DTYPE *Y, UINT INCY) {
     Y[i * INCY] = X[i * INCX] * alpha + Y[i * INCY];
   }
 }
-void caxpy(CTYPE alpha, CMAT *x, CMAT *y) {
+void axpy_cmat(CTYPE alpha, CMAT *x, CMAT *y) {
   UINT size;
   ITER i;
 #if DEBUG
@@ -269,7 +269,7 @@ void omp_ccopy_mat(UINT N, CTYPE *src, SINT src_inc, CTYPE *des, SINT des_inc) {
 /* get sum of every element in matrix */
 
 /*** Get sum of the magnitudes of elements of a vector ***/
-DTYPE asum(MAT *mat, UINT inc) {
+DTYPE asum_mat(MAT *mat, UINT inc) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -307,7 +307,7 @@ DTYPE omp_asum(UINT N, DTYPE *data, UINT inc) {
   return sum;
 }
 
-DTYPE casum(CMAT *mat, UINT inc) {
+DTYPE asum_cmat(CMAT *mat, UINT inc) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -347,7 +347,7 @@ DTYPE omp_casum(UINT N, CTYPE *data, UINT inc) {
 }
 
 /*** Get a vector-vector dot product ***/
-DTYPE dot(MAT *src_x,MAT *src_y) {
+DTYPE dot_mat(MAT *src_x,MAT *src_y) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -390,7 +390,7 @@ DTYPE omp_dot(UINT N, DTYPE *src_x, ITER x_inc, DTYPE *src_y, ITER y_inc) {
 }
 
 /* (complex vector)-(real vector) dot product. */
-CTYPE cdot(CMAT *src_x,MAT *src_y) {
+CTYPE dot_cmat(CMAT *src_x,MAT *src_y) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -446,7 +446,7 @@ CTYPE omp_cdot(UINT N, CTYPE *src_x, ITER x_inc, DTYPE *src_y, ITER y_inc) {
 
 
 /* (complex vector)-(complex vector) dot product. */
-CTYPE udot(CMAT *src_x,CMAT *src_y) {
+CTYPE cdot_cmat(CMAT *src_x,CMAT *src_y) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -504,7 +504,7 @@ CTYPE omp_udot(UINT N, CTYPE *src_x, ITER x_inc, CTYPE *src_y, ITER y_inc) {
 }
 
 /*** Swaps vector ***/
-void swap(MAT *src_x, MAT *src_y) {
+void swap_mat(MAT *src_x, MAT *src_y) {
   ASSERT_DIM_EQUAL(src_x, src_y)
 
   swap_inc(src_x->d0 * src_x->d1 * src_x->d2, src_x->data, 1, src_y->data, 1);
@@ -547,7 +547,7 @@ void omp_swap(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc) {
   }
 }
 
-void cswap(CMAT *src_x, CMAT *src_y) {
+void swap_cmat(CMAT *src_x, CMAT *src_y) {
   ASSERT_DIM_EQUAL(src_x, src_y)
   cswap_inc(src_x->d0 * src_x->d1 * src_x->d2, src_x->data, 1, src_y->data, 1);
 }
@@ -626,7 +626,7 @@ void row_cswap(CMAT *mat, UINT a, UINT b) {
               &(mat->data[b + i * (mat->d0 * mat->d1)]), mat->d0);
 }
 /*** Finds MAX_ABS_VALUE_ELEMENT's index ***/
-UINT amax(MAT *src) { return amax_inc(src, 1); }
+UINT temp_amax_mat(MAT *src) { return amax_inc(src, 1); }
 UINT amax_inc(MAT *src, UINT inc) {
 #if DEBUG
   printf("%s\n", __func__);
@@ -671,7 +671,7 @@ UINT omp_amax(UINT N, DTYPE *src, UINT inc) {
   return idx;
 }
 
-UINT camax(CMAT *src) { return camax_inc(src, 1); }
+UINT temp_amax_cmat(CMAT *src) { return camax_inc(src, 1); }
 UINT camax_inc(CMAT *src, UINT inc) {
 #if DEBUG
   printf("%s\n", __func__);
@@ -716,7 +716,7 @@ UINT omp_camax(UINT N, CTYPE *src, UINT inc) {
 }
 
 /*** Finds MIN_ABS_VALUE_ELEMENT's index ***/
-UINT amin(MAT *src) { return amin_inc(src, 1); }
+UINT temp_amin_mat(MAT *src) { return amin_inc(src, 1); }
 UINT amin_inc(MAT *src, UINT inc) {
 #if DEBUG
   printf("%s\n", __func__);
@@ -763,7 +763,7 @@ UINT omp_amin(UINT N, DTYPE *src, UINT inc) {
   return idx;
 }
 
-UINT camin(CMAT *src) { return camin_inc(src, 1); }
+UINT temp_amin_cmat(CMAT *src) { return camin_inc(src, 1); }
 UINT camin_inc(CMAT *src, UINT inc) {
 #if DEBUG
   printf("%s\n", __func__);
@@ -813,7 +813,7 @@ UINT omp_camin(UINT N, CTYPE *src, UINT inc) {
 /*** Get absolute value of complex number ***/
 DTYPE cabs1(CTYPE val) { return ABS_CTYPE(val); }
 
-DTYPE nrm2(MAT *src) { return nrm2_inc(src, 1); }
+DTYPE nrm2_mat(MAT *src) { return nrm2_inc(src, 1); }
 DTYPE nrm2_inc(MAT *src, UINT inc) {
 #if DEBUG
   printf("%s\n", __func__);
@@ -853,7 +853,7 @@ DTYPE omp_nrm2(UINT N, DTYPE *data, UINT inc) {
   return 0;  // sqrt(temp);
 }
 
-DTYPE cnrm2(CMAT *src) { return cnrm2_inc(src, 1); }
+DTYPE nrm2_cmat(CMAT *src) { return cnrm2_inc(src, 1); }
 DTYPE cnrm2_inc(CMAT *src, UINT inc) {
 #if DEBUG
   printf("%s\n", __func__);
@@ -894,7 +894,7 @@ DTYPE omp_cnrm2(UINT N, CTYPE *data, UINT inc) {
 }
 
 /*** Performs rotation of points in the plane. ***/
-void rot(MAT *src_x, MAT *src_y, DTYPE c, DTYPE s) {
+void rot_mat(MAT *src_x, MAT *src_y, DTYPE c, DTYPE s) {
   rot_inc(src_x, 1, src_y, 1, c, s);
 }
 void rot_inc(MAT *src_x, UINT x_inc, MAT *src_y, UINT y_inc, DTYPE c, DTYPE s) {
@@ -940,7 +940,7 @@ void omp_rot(UINT N, DTYPE *src_x, UINT x_inc, DTYPE *src_y, UINT y_inc,
   }
 }
 
-void crot(CMAT *src_x, CMAT *src_y, DTYPE c, DTYPE s) {
+void rot_cmat(CMAT *src_x, CMAT *src_y, DTYPE c, DTYPE s) {
   crot_inc(src_x, 1, src_y, 1, c, s);
 }
 void crot_inc(CMAT *src_x, UINT x_inc, CMAT *src_y, UINT y_inc, DTYPE c,
@@ -992,7 +992,7 @@ void omp_crot(UINT N, CTYPE *src_x, UINT x_inc, CTYPE *src_y, UINT y_inc,
   }
 }
 /** real matrix * real number **/
-void scal(DTYPE alpha, MAT *mat) {
+void scal_mat(DTYPE alpha, MAT *mat) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -1022,7 +1022,7 @@ void omp_scal(UINT size, DTYPE alpha, DTYPE *X, UINT incx) {
   }
 }
 /** complex matrix * real number   **/
-void cscal(DTYPE alpha, CMAT *mat) {
+void scal_cmat(DTYPE alpha, CMAT *mat) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -1054,7 +1054,7 @@ void omp_cscal(UINT size, DTYPE alpha, CTYPE *X, UINT incx) {
 }
 
 /** complex matrix * complex number **/
-void uscal(CTYPE alpha, CMAT *mat) {
+void cscal_cmat(CTYPE alpha, CMAT *mat) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -1122,7 +1122,7 @@ void row_uscal(CTYPE alpha, CMAT *X, UINT idx) {
     uscal_inc(X->d1, alpha, &(X->data[idx + i * (X->d0 * X->d1)]), X->d0);
 }
 /** real matrix + real number **/
-void add(DTYPE alpha, MAT *mat) {
+void add_mat(DTYPE alpha, MAT *mat) {
   add_inc(mat->d0 * mat->d1 * mat->d2, alpha, mat->data, 1);
 }
 void add_inc(UINT size, DTYPE alpha, DTYPE *X, UINT incx) {
@@ -1135,7 +1135,7 @@ void add_inc(UINT size, DTYPE alpha, DTYPE *X, UINT incx) {
 }
 
 /** complex matrix + real number **/
-void cadd(DTYPE alpha, CMAT *mat) {
+void add_cmat(DTYPE alpha, CMAT *mat) {
   cadd_inc(mat->d0 * mat->d1 * mat->d2, alpha, mat->data, 1);
 }
 void cadd_inc(UINT size, DTYPE alpha, CTYPE *X, UINT incx) {
@@ -1147,7 +1147,7 @@ void cadd_inc(UINT size, DTYPE alpha, CTYPE *X, UINT incx) {
   for (i = 0; i < size * incx; i += incx) X[i].re += alpha;
 }
 /** complex matrix + complex number **/
-void uadd(CTYPE alpha, CMAT *mat) {
+void cadd_cmat(CTYPE alpha, CMAT *mat) {
   uadd_inc(mat->d0 * mat->d1 * mat->d2, alpha, mat->data, 1);
 }
 void uadd_inc(UINT size, CTYPE alpha, CTYPE *X, UINT incx) {
@@ -1194,7 +1194,7 @@ void row_uadd(CTYPE alpha, CMAT *X, UINT idx) {
 }
 
 /*** Computes the parameters for a Givens rotation. ***/
-void rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s) {
+void rotg_mat(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -1243,7 +1243,7 @@ void omp_rotg(DTYPE *a, DTYPE *b, DTYPE *c, DTYPE *s) {
   (*b) = z_;
 }
 
-void crotg(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s) {
+void rotg_cmat(CTYPE *a, CTYPE *b, DTYPE *c, CTYPE *s) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
