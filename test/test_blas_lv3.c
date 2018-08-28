@@ -60,7 +60,7 @@ int main() {
   print_mat(C);
 #endif
 
-  gemm(NoTran, NoTran, 1, A, B, 0, C);
+  gemm_mat(NoTran, NoTran, 1, A, B, 0, C);
 
 #if _print
   print_mat(C);
@@ -92,7 +92,7 @@ int main() {
   print_mat(C);
 #endif
 
-  gemm(Tran, NoTran, 1, A, B, 0, C);
+  gemm_mat(Tran, NoTran, 1, A, B, 0, C);
 
 #if _print
   print_mat(C);
@@ -123,7 +123,7 @@ int main() {
   print_mat(C);
 #endif
 
-  gemm(Tran, Tran, 1, A, B, 0, C);
+  gemm_mat(Tran, Tran, 1, A, B, 0, C);
 
 #if _print
   print_mat(C);
@@ -154,7 +154,7 @@ int main() {
   print_mat(C);
 #endif
 
-  gemm(NoTran, Tran, 1, A, B, 0, C);
+  gemm_mat(NoTran, Tran, 1, A, B, 0, C);
 
 #if _print
   print_mat(C);
@@ -189,7 +189,7 @@ int main() {
   print_cmat(CC);
 #endif
 
-  cgemm(NoTran, NoTran, alpha, CA, CB, beta, CC);
+  gemm_cmat(NoTran, NoTran, alpha, CA, CB, beta, CC);
 
 #if _print
   print_cmat(CC);
@@ -221,7 +221,7 @@ int main() {
   print_cmat(CC);
 #endif
 
-  cgemm(NoTran, Tran, alpha, CA, CB, beta, CC);
+  gemm_cmat(NoTran, Tran, alpha, CA, CB, beta, CC);
 
 #if _print
   print_cmat(CC);
@@ -254,7 +254,7 @@ int main() {
   print_cmat(CC);
 #endif
 
-  cgemm(NoTran, CTran, alpha, CA, CB, beta, CC);
+  gemm_cmat(NoTran, CTran, alpha, CA, CB, beta, CC);
 
 #if _print
   print_cmat(CC);
@@ -285,7 +285,7 @@ int main() {
   print_cmat(CC);
 #endif
 
-  cgemm(Tran, NoTran, alpha, CA, CB, beta, CC);
+  gemm_cmat(Tran, NoTran, alpha, CA, CB, beta, CC);
 
 #if _print
   print_cmat(CC);
@@ -316,7 +316,7 @@ int main() {
   print_cmat(CC);
 #endif
 
-  cgemm(Tran, Tran, alpha, CA, CB, beta, CC);
+  gemm_cmat(Tran, Tran, alpha, CA, CB, beta, CC);
 
 #if _print
   print_cmat(CC);
@@ -348,7 +348,7 @@ int main() {
   print_cmat(CC);
 #endif
 
-  cgemm(Tran, CTran, alpha, CA, CB, beta, CC);
+  gemm_cmat(Tran, CTran, alpha, CA, CB, beta, CC);
 
 #if _print
   print_cmat(CC);
@@ -379,7 +379,7 @@ int main() {
   print_cmat(CC);
 #endif
 
-  cgemm(CTran, NoTran, alpha, CA, CB, beta, CC);
+  gemm_cmat(CTran, NoTran, alpha, CA, CB, beta, CC);
 
 #if _print
   print_cmat(CC);
@@ -411,7 +411,7 @@ int main() {
   print_cmat(CC);
 #endif
 
-  cgemm(CTran, Tran, alpha, CA, CB, beta, CC);
+  gemm_cmat(CTran, Tran, alpha, CA, CB, beta, CC);
 
 #if _print
   print_cmat(CC);
@@ -444,7 +444,7 @@ int main() {
   print_cmat(CC);
 #endif
 
-  cgemm(CTran, CTran, alpha, CA, CB, beta, CC);
+  gemm_cmat(CTran, CTran, alpha, CA, CB, beta, CC);
 
 #if _print
   print_cmat(CC);

@@ -15,12 +15,12 @@ int main() {
   printf("reading : %s\n", file);
   read_mat(file, A);
   for (i = 0; i < 5; i++) {
-    // add(1,A);
+    // add_mat(1,A);
     invert(A, B);
   }
   for (i = 0; i < 50; i++) {
     stopwatch(0);
-    // add(1,A);
+    // add_mat(1,A);
     invert_nbyn(A->data, B->data, d0);
     total += stopwatch(1);
   }
