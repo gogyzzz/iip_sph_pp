@@ -548,10 +548,6 @@ void run_test(int heat, int print_flag) {
 		// mul, div)_elements
 		else if (func_list[i].param_cnt == 3) {
 			calced = 1;
-			stopwatch(0);
-			func_list[i].fp(pA_, pB_, pC_);
-			total += stopwatch(1);
-			result = pC_;
 
 			switch (i) {
 			case 36:
