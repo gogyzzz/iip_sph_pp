@@ -6,14 +6,14 @@ C library for speech preprocessing.
 * Ubuntu 16.04 x64 (or higher)
 * Windows 10 x64
 * Mac high sierra 10.13.5
-* Ebeded board(razberry pie, zynx board etc)
+* Embedded board(raspberry pi, zynx board etc)
 
 ## Requirement
-* cmake 3.6 or higher  
+* cmake 3.5 or higher  
 * (OPTION) OpenBLAS[Linux]  
 * (OPTION) IntelMKL[Windows]  
 
-## Notaion
+## Notice
 * Set Options of CMAKE properly for you Envrionment
 * We don't provide backend library, we assume your Environment contains backend library
 * If you want to use memory pool, you need to call 

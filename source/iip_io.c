@@ -21,7 +21,9 @@ void read_mat(const char* filename, MAT* mat) {
   ASSERT_FILE(f, filename)
   while (fread(&(mat->data[i++]), sizeof(DTYPE), 1, f) > 0)
     ;
+
   fclose(f);
+  ASSERT_FILE_SIZE(i-1,mat->d0*mat->d1*mat->d2)
 }
 
 void read_cmat(const char* filename, CMAT* mat) {
@@ -33,6 +35,7 @@ void read_cmat(const char* filename, CMAT* mat) {
   while (fread(&(mat->data[i++]), sizeof(CTYPE), 1, f) > 0)
     ;
   fclose(f);
+  ASSERT_FILE_SIZE(i-1,mat->d0*mat->d1*mat->d2)
 }
 
 /**** WRITE MATLAB .bin FILE ****/

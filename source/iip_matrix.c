@@ -336,30 +336,7 @@ void cset_3d(CMAT *mat, UINT idx0, UINT idx1, UINT idx2, DTYPE re, DTYPE im) {
   mat->data[idx0 + (mat->d0) * idx1 + (mat->d0) * (mat->d1) * idx2].im = im;
 }
 
-/**** fill ****/
 
-void fill(MAT *mat, DTYPE val)  // for real mat
-{
-  ITER i = 0;
-  UINT len = mat->d0 * mat->d1 * mat->d2;
-#if DEBUG
-  printf("%s\n", __func__);
-#endif
-  for (i = 0; i < len; i++) mat->data[i] = val;
-}
-
-void cfill(CMAT *cmat, DTYPE re, DTYPE im)  // for complex mat
-{
-  ITER i = 0;
-  UINT len = cmat->d0 * cmat->d1 * cmat->d2;
-#if DEBUG
-  printf("%s\n", __func__);
-#endif
-  for (i = 0; i < len; i++) {
-    cmat->data[i].re = re;
-    cmat->data[i].im = im;
-  }
-}
 
 /**** get ****/
 
@@ -380,7 +357,7 @@ DTYPE get_3d(MAT *mat, UINT idx0, UINT idx1, UINT idx2) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  return mat->data[idx0 + (mat->d0) * idx1 + (mat->d0) * (mat->d1) * idx0];
+  return mat->data[idx0 + (mat->d0) * idx1 + (mat->d0) * (mat->d1) * idx2];
 }
 
 CTYPE cget_1d(CMAT *mat, UINT idx0) {
@@ -400,7 +377,40 @@ CTYPE cget_3d(CMAT *mat, UINT idx0, UINT idx1, UINT idx2) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  return mat->data[idx0 + (mat->d0) * idx1 + (mat->d0) * (mat->d1) * idx0];
+  return mat->data[idx0 + (mat->d0) * idx1 + (mat->d0) * (mat->d1) * idx2];
+}
+
+/**** fill ****/
+
+void fill(MAT *mat, DTYPE val)  // for real mat
+{
+  fill_inc(mat->d0*mat->d1*mat->d2,mat->data,1,val);
+}
+
+void fill_inc(UINT N, DTYPE*X, ITER incx, DTYPE v){
+  ITER i = 0;
+#if DEBUG
+  printf("%s\n", __func__);
+#endif
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
+  for (i = 0; i < N; i+=incx) X[i] = v;
+}
+
+void cfill(CMAT *mat, CTYPE val)  // for complex mat
+{
+  cfill_inc(mat->d0*mat->d1*mat->d2,mat->data,1,val);
+}
+
+void cfill_inc(UINT N, CTYPE*X, ITER incx, CTYPE v){
+  ITER i = 0;
+#if DEBUG
+  printf("%s\n", __func__);
+#endif
+#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(X) private(i)
+  for (i = 0; i < N; i+=incx){
+    X[i].re = v.re;
+    X[i].im = v.im;
+  }
 }
 
 /**** submat ****/
@@ -562,14 +572,14 @@ MAT *mpsubmat_3d(MAT *mat, ITER d0_st, ITER d0_ed, ITER d1_st, ITER d1_ed,
   return submat;
 }
 
-CMAT *mem_csubmat_1d(CMAT *mat, ITER d0_st, ITER d0_ed) {
-  return mem_csubmat_3d(mat, d0_st, d0_ed, -1, -1, -1, -1);
+CMAT *mpcsubmat_1d(CMAT *mat, ITER d0_st, ITER d0_ed) {
+  return mpcsubmat_3d(mat, d0_st, d0_ed, -1, -1, -1, -1);
 }
-CMAT *mem_csubmat_2d(CMAT *Cmat, ITER d0_st, ITER d0_ed, ITER d1_st,
+CMAT *mpcsubmat_2d(CMAT *Cmat, ITER d0_st, ITER d0_ed, ITER d1_st,
                      ITER d1_ed) {
-  return mem_csubmat_3d(Cmat, d0_st, d0_ed, d1_st, d1_ed, -1, -1);
+  return mpcsubmat_3d(Cmat, d0_st, d0_ed, d1_st, d1_ed, -1, -1);
 }
-CMAT *mem_csubmat_3d(CMAT *mat, ITER d0_st, ITER d0_ed, ITER d1_st, ITER d1_ed,
+CMAT *mpcsubmat_3d(CMAT *mat, ITER d0_st, ITER d0_ed, ITER d1_st, ITER d1_ed,
                      ITER d2_st, ITER d2_ed) {
   ITER i, j, k;
   CMAT *submat;
@@ -730,7 +740,7 @@ void add_elements(MAT *A, MAT *B, MAT *C) {
     if ((C->d0 != 1) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++) {
+      for (i = 0; i < a1; i++) {
         C->data[ic * j + i] = A->data[ia * j + i] + B->data[ib * j + 0];
       }
   }
@@ -910,7 +920,7 @@ void cadd_elements(CMAT *A, CMAT *B, CMAT *C) {
     if ((C->d0 != 1) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++) {
+      for (i = 0; i < a1; i++) {
         CXEADD(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + 0])
       }
   }
@@ -1094,7 +1104,7 @@ void mul_elements(MAT *A, MAT *B, MAT *C) {
     if ((C->d0 != 1) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++)
+      for (i = 0; i < a1; i++)
         C->data[ic * j + i] =
             A->data[ia * j + ia * j + i] * B->data[ib * j + ib * j + 0];
   }
@@ -1191,7 +1201,6 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-
   a2 = A->d2;
   b2 = B->d2;
   c2 = C->d2;
@@ -1244,7 +1253,7 @@ void cmul_elements(CMAT *A, CMAT *B, CMAT *C) {
     if ((C->d0 != 1) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++)
+      for (i = 0; i < a1; i++) // b1 -> a1
         CXEMUL(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + 0])
   }
   // a0 1 1 1
@@ -1419,7 +1428,7 @@ void div_elements(MAT *A, MAT *B, MAT *C) {
     if ((C->d0 != 1) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++) {
+      for (i = 0; i < a1; i++) {
         ASSERT(B->data[ib * j], "Divide by zero.\n")
         C->data[ic * j + i] = A->data[ia * j + i] / B->data[ib * j + 0];
       }
@@ -1608,7 +1617,7 @@ void cdiv_elements(CMAT *A, CMAT *B, CMAT *C) {
     if ((C->d0 != 1) || (C->d1 != a1)) ASSERT_DIM_INVALID()
     for (j = 0; j < c2; j++)
 #pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(C, B, A) private(i)
-      for (i = 0; i < b1; i++) {
+      for (i = 0; i < a1; i++) {
         CXEDIV(C->data[ic * j + i], A->data[ia * j + i], B->data[ib * j + 0])
       }
   }
@@ -1749,7 +1758,6 @@ void repmat(MAT *mat, DIM *dim) {
   MAT *t_mat;
   ITER i, j, k, l;
   UINT size, idx;
-  UINT v, h, b;  // vertical, horizontal, blockal
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -1781,7 +1789,6 @@ void crepmat(CMAT *mat, DIM *dim) {
   CMAT *t_mat;
   ITER i, j, k, l;
   UINT size, idx;
-  UINT v, h, b;  // vertical, horizontal, blockal
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -2118,7 +2125,7 @@ CMAT *create_ctranspose(CMAT *mat) {
 
 void transpose(MAT *mat) {
   MAT *temp;
-  ITER i, j, k;
+  ITER i, j;
   UINT d0, d1, d2;
 
 #if DEBUG
@@ -2160,7 +2167,7 @@ void transpose(MAT *mat) {
 
 void ctranspose(CMAT *mat) {
   CMAT *temp;
-  ITER i, j, k;
+  ITER i, j;
   UINT d0, d1, d2;
 
 #if DEBUG
@@ -2222,7 +2229,7 @@ void ctranspose(CMAT *mat) {
 
 /**** get Diagonal of Matrix ****/
 void diagonal(MAT *mat, MAT *dia) {
-  ITER i, j, k;
+  ITER i, k;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -2240,7 +2247,7 @@ void diagonal(MAT *mat, MAT *dia) {
 }
 
 void cdiagonal(CMAT *mat, CMAT *dia) {
-  ITER i, j, k;
+  ITER i, k;
 #if DEBUG
   printf("%s\n", __func__);
 #endif
@@ -2273,7 +2280,7 @@ void cdiagonal(CMAT *mat, CMAT *dia) {
 
 /**** get trace of Matrix ****/
 void trace(MAT *mat, MAT *tr) {
-  ITER i, j, k;
+  ITER i, k;
   DTYPE temp = 0;
 #if DEBUG
   printf("%s\n", __func__);
@@ -2293,7 +2300,7 @@ void trace(MAT *mat, MAT *tr) {
 }
 
 void ctrace(CMAT *mat, CMAT *tr) {
-  ITER i, j, k;
+  ITER i, k;
   CTYPE temp;
 #if DEBUG
   printf("%s\n", __func__);
@@ -2355,7 +2362,7 @@ CMAT *create_hermit(CMAT *mat) {
 
 void hermit(CMAT *mat) {
   CMAT *temp;
-  ITER i, j, k;
+  ITER i, j; 
   UINT d0, d1, d2;
 
 #if DEBUG

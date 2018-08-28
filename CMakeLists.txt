@@ -1,52 +1,79 @@
+# Development Environment.
+# CMAKE version of Ubuntu 16.04 is 3.5.
 cmake_minimum_required(VERSION 3.5)
+# This will be Name of Executable.
 project(iip_sph_pp)
 
+#################################
+#         CMAKE INDEX           #
+#  1. Declarations              #
+#  2. ** User Setting **        #
+#  3. Macros                    #
+#  4. Add executable            #
+#  5. Header Includes           #
+#  6. Availability of Options   #
+#  7. Library Setting           #
+#  8. Basic Compile options     #
+#  9. WIP : CUDA                #
+#################################
+
+#### 1. Declarations ####
+# set excutable name as project name.
 set(TARGET_NAME ${PROJECT_NAME})
 
-#### BUILD ENVIRONMENT OPTIONS ######
-option(USE_CUDA    "Using CUDA"      OFF) # Not supported, yet.
-option(USE_BLAS    "Using BLAS"      ON)
-option(USE_OPENMP  "Using OpenMP"    ON)
-
-#### set Your Source files ####
-
-# example for adding code
-# 
-# set(MAIN_SRC
-# my_main.c
-# src/my_c_code.c
-# src2/my_other_c_code.c
-# )
-#
-# include_directories(${CMAKE_CURRENT_SOURCE_DIR}/my_header_folder)
-
-#set(MAIN_SRC test/test_time.c)
-set(MAIN_SRC test/test_matlab.c)
-
-
-###############################
-#         CMAKE INDEX         #
-#  1. Functions               #
-#  2. Includes                #
-#  3. Sources and executable  #
-#  4. Check options           #
-#  5. Defines and links       #
-#  6. Compile optinos         #
-#  7. WIP : CUDA              #
-###############################
-
-# setting options by 'set' is unstable. Often not working.
-# recommed using 'target_<blah>_<blah>'
-# which is more robust and modern.
-
-#compile flags
+# Compile flags
 set(CF)
-#link flags
+# Link flags
 set(LF)
-#compule definitions
+# Compile definitions
 set(CD)
+# Header directory
+set(HD)
 
-#### 1. functions ####
+#### 2. User Setting ####
+
+## BUILD ENVIRONMENT OPTIONS ##
+# option(USE_BLAS        "Using BLAS"       OFF)
+
+## WIP ##
+option(USE_OPENBLAS    "Using OpenBLAS"   OFF)
+option(USE_MKL         "Using Intel MKL"  ON)
+
+option(USE_OPENMP      "Using OpenMP"     OFF)
+
+# Not supported, yet.
+# option(USE_CUDA    "Using CUDA"      OFF)
+
+set(MAIN_SRC 
+	# Add your source files here.
+	# including the source which contains main().
+	# root directory is location of CMakeLists.txt 
+	# EXAMPLE
+  #	test/test_matlab.c	
+  # test/test_wav.c
+   test/test_fft.c
+	)
+	
+list(APPEND HD
+    # Add additional header folders here.
+	# ${CMAKE_CURRENT_SOURCE_DIR} means root directory.
+	# EXAMPLE
+	# ${CMAKE_CURRENT_SOURCE_DIR}/my_new_header_folder
+    ) 
+
+# Additional link flags and defines can be attached.
+list(APPEND CF
+	# my compile option
+	)
+list(APPEND LF
+	# my link option
+  fftw3
+	)
+list(APPEND CD
+	# my pre-process defines
+	)	
+	
+#### 3. Macros ####
 
 macro(display_elements
 	DISPLAY_MESSAGE
@@ -57,17 +84,9 @@ macro(display_elements
     endforeach()
 endmacro()
 
-#### 2. includes ####
+#### 4. sources and executable ####
 
-# Below method is better. But, in this point, 'TARGET_NAME' isn't set.
-# target_include_directories(${TARGET_NAME}
-#	PUBLIC
-#	${CMAKE_CURRENT_SOURCE_DIR}/header)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/header)
-
-
-#### 3. sources and executable ####
-
+#library source files
 set(C_SOURCE
     source/iip_matrix.c
     source/iip_wav.c
@@ -80,13 +99,29 @@ set(C_SOURCE
     source/iip_io.c
     source/iip_invert.c
     source/iip_test.c
+    source/iip_fft.c
     )
 
 add_executable(${TARGET_NAME} ${MAIN_SRC} ${C_SOURCE})
 
-#### 4. check options ####
+#### 5. Header includes ####
 
-if(USE_BLAS)
+# Setting options by 'set(CMAKE_<blah>_<blah>)' is unstable. Often not working.
+# Recommed using 'target_<blah>_<blah>'
+# which is more robust and modern.
+
+
+target_include_directories(${TARGET_NAME}
+	PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}/header
+	$(HD)	
+	)
+
+#### 6. check options ####
+# This section checks whether your option is available or not. 
+
+#if(USE_BLAS)
+if(NOT)
 # MKL also can be found by find_package(BLAS)
 # But, MKL requires specific compile & link option.
 # just using "target_link_libraries" doesn't work for MKL.
@@ -118,13 +153,13 @@ message(STATUS "USE_OPEN  : " ${USE_OPEN})
 message(STATUS "USE_MKL   : " ${USE_MKL})
 message(STATUS "USE_OPENMP : " ${USE_OPENMP})
 
-#### 5. defines and links  ####
+#### 7. defines and Libraries  ####
+# This section sets pre-processing defines and flags specified by environment
 
 #GET OS
 #UNIX   TRUE for UNIX,APPLE
 #WIN32  TRUE for Windows 32bit and 64bit
 #APPLE  TRUE for APPLE
-
 if(UNIX)
   list(APPEND CD
     OS_UNIX=1
@@ -135,15 +170,19 @@ elseif(WIN32)
     )
 endif()
 
-#message(STATUS "ENV_PATH : " $ENV{PATH})
+# Check whether PATH is set correctly or not.
+# message(STATUS "ENV_PATH : " $ENV{PATH})
 
+# #include <math.h> for gcc 
 if(NOT MSVC)
-  list(APPEND LF m)
+  # MKL need to set 'm' but need to be in order.
+  if(NOT USE_MKL)
+    list(APPEND LF m)
+  endif(NOT USE_MKL)
 endif(NOT MSVC)
 
 
 if(USE_OPEN OR USE_MKL )
-
 
   list(APPEND CD
     USE_CBLAS=1
@@ -151,7 +190,6 @@ if(USE_OPEN OR USE_MKL )
 
  if(USE_OPEN)
 	message(STATUS ${BLAS_LIBRARIES})
-
   list(APPEND LF
     openblas
     )
@@ -159,7 +197,29 @@ if(USE_OPEN OR USE_MKL )
   list(APPEND CD
 	    USE_OPEN=1
       )
-  elseif(USE_MKL)
+ elseif(USE_MKL)
+ # SEE
+ # https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor/
+ 
+ # == Options ==
+ # Intel(R) MKL 2018.0
+ # Linux
+ # None
+ # GNU C/C++
+ # Intel(R) 64
+ # Dynamic
+ # 32-bit integer 
+ # OpenMP threading
+ # Intel(R) (libmop5)
+
+  list(APPEND LF
+         -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl
+         # -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_intel_lp64.a ${MKLROOT}/lib/intel64/libmkl_intel_thread.a ${MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -liomp5 -lpthread -lm -ldl
+    )
+
+  list(APPEND CF
+     -m64 -I${MKLROOT}/include
+    )
 
   list(APPEND CD  
 	    USE_MKL=1
@@ -169,8 +229,7 @@ if(USE_OPEN OR USE_MKL )
 endif(USE_OPEN OR USE_MKL)
 
 if(USE_OPENMP)
- #    set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS})
- #    set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_C_FLAGS})
+
 if(MSVC)
    # Visual Studio uses '/' for compile option
     list(APPEND CF
@@ -192,48 +251,46 @@ list(APPEND CD
     )
 endif(USE_OPENMP)
 
+target_link_libraries     (${TARGET_NAME} PRIVATE ${LF} )
+target_compile_definitions(${TARGET_NAME} PRIVATE ${CD} )
 
-##### 6. compile optinos ####
-
-#if(WIN32)
-  #There is something wrong about the way CMAKE set /W3 flag
-  #string (REPLACE "/W3" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
-  #string (REPLACE ";" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") 
-  #endif(WIN32)
+##### 8. compile optinos ####
+# This section adds basic compile options 
 
 if(WIN32 AND MSVC)
   # No /O3 in VS2013 (higher, too)?
 
-  # /O2 - fastest code in the majority of cases
-  # /MP - compiled in mult-process : faster build time
   #list(APPEND  CMAKE_C_FLAGS " /O2 /MP ") -- This method is unstable.
   list(APPEND CF
+     # /O2 - fastest code in the majority of cases
+     # /MP - compiled in mult-process : faster build time
      /MP
-     # /O2 - not compatible with debug mod flag /RTC1
-     # you have to set manuallu /O2 in release mod
+     # /O2 - not compatible with debug mode flag /RTC1
+     # /O2 is set as default in release mode of visual Studio
      )
  else(WIN32 AND MSVC)
   # list(APPEND CMAKE_C_FLAGS "-g -O3 -Wall -Wextra ") : Wall is too much for now
   list(APPEND CF
       -g
-      -O3
+      # -O3 : maximize performace
+      # -O2 : maximize performance as long as not increasing size of executable
+      # -O1 : minimize compile time and others are secondary
+      # -Os : minimize size of executable
+       -O3
       -Wextra
       )
   endif(WIN32 AND MSVC)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE ${CD} )
 target_compile_options    (${TARGET_NAME} PRIVATE ${CF} )
-target_link_libraries     (${TARGET_NAME} PRIVATE ${LF} )
 
+message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
 display_elements("MAIN SOURCE" "${MAIN_SRC}")
 display_elements("LIBRARY SOURCE" "${C_SOURCE}")
 display_elements("Compile Flags" "${CF}")
 display_elements("Linker Flags" "${LF}")
 display_elements("Compile Defines" "${CD}")
 
-message(STATUS "CMAKE_GENERATOR : "  ${CMAKE_GENERATOR})
-
-#### 7. misc : CUDA(Work in Progress) ####
+#### 9. misc : CUDA(Work in Progress) ####
 
 set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 

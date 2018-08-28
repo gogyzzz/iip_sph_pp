@@ -44,7 +44,7 @@
  **		                 	   	''    rows   when CblasColMajor
 */
 
-void gemm(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
+void gemm_mat(char transA, char transB, DTYPE alpha, MAT* A, MAT* B, DTYPE beta,
           MAT* C) {
   UINT m, n, k;
   UINT lda, ldb, ldc;
@@ -221,7 +221,7 @@ void omp_gemm(char transA, char transB, UINT m, UINT n, UINT k, DTYPE alpha,
   }
 }
 
-void cgemm(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
+void gemm_cmat(char transA, char transB, CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta,
            CMAT* C) {
   UINT m, n, k;
   UINT lda, ldb, ldc;
@@ -494,33 +494,33 @@ void aABpbC(DTYPE alpha, MAT* A, MAT* B, DTYPE beta, MAT* C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  gemm(NoTran, NoTran, alpha, A, B, beta, C);
+  gemm_mat(NoTran, NoTran, alpha, A, B, beta, C);
 }
 void aABtpbC(DTYPE alpha, MAT* A, MAT* B, DTYPE beta, MAT* C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  gemm(NoTran, Tran, alpha, A, B, beta, C);
+  gemm_mat(NoTran, Tran, alpha, A, B, beta, C);
 }
 
 void aAtBpbC(DTYPE alpha, MAT* A, MAT* B, DTYPE beta, MAT* C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  gemm(Tran, NoTran, alpha, A, B, beta, C);
+  gemm_mat(Tran, NoTran, alpha, A, B, beta, C);
 }
 void aAtBtpbC(DTYPE alpha, MAT* A, MAT* B, DTYPE beta, MAT* C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  gemm(Tran, Tran, alpha, A, B, beta, C);
+  gemm_mat(Tran, Tran, alpha, A, B, beta, C);
 }
 
 void matmul(MAT* A, MAT* B, MAT* C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  gemm(NoTran, NoTran, 1, A, B, 0, C);
+  gemm_mat(NoTran, NoTran, 1, A, B, 0, C);
 }
 
 /**** COMPLEX ****/
@@ -529,57 +529,57 @@ void caABpbC(CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta, CMAT* C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  cgemm(NoTran, NoTran, alpha, A, B, beta, C);
+  gemm_cmat(NoTran, NoTran, alpha, A, B, beta, C);
 }
 void caABtpbC(CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta, CMAT* C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  cgemm(NoTran, Tran, alpha, A, B, beta, C);
+  gemm_cmat(NoTran, Tran, alpha, A, B, beta, C);
 }
 void caABhpbC(CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta, CMAT* C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  cgemm(NoTran, CTran, alpha, A, B, beta, C);
+  gemm_cmat(NoTran, CTran, alpha, A, B, beta, C);
 }
 
 void caAtBpbC(CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta, CMAT* C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  cgemm(Tran, NoTran, alpha, A, B, beta, C);
+  gemm_cmat(Tran, NoTran, alpha, A, B, beta, C);
 }
 void caAtBtpbC(CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta, CMAT* C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  cgemm(Tran, Tran, alpha, A, B, beta, C);
+  gemm_cmat(Tran, Tran, alpha, A, B, beta, C);
 }
 void caAtBhpbC(CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta, CMAT* C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  cgemm(Tran, CTran, alpha, A, B, beta, C);
+  gemm_cmat(Tran, CTran, alpha, A, B, beta, C);
 }
 
 void caAhBpbC(CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta, CMAT* C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  cgemm(CTran, NoTran, alpha, A, B, beta, C);
+  gemm_cmat(CTran, NoTran, alpha, A, B, beta, C);
 }
 void caAhBtpbC(CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta, CMAT* C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  cgemm(CTran, Tran, alpha, A, B, beta, C);
+  gemm_cmat(CTran, Tran, alpha, A, B, beta, C);
 }
 void caAhBhpbC(CTYPE alpha, CMAT* A, CMAT* B, CTYPE beta, CMAT* C) {
 #if DEBUG
   printf("%s\n", __func__);
 #endif
-  cgemm(CTran, CTran, alpha, A, B, beta, C);
+  gemm_cmat(CTran, CTran, alpha, A, B, beta, C);
 }
 
 void cmatmul(CMAT* A, CMAT* B, CMAT* C) {
@@ -592,5 +592,5 @@ void cmatmul(CMAT* A, CMAT* B, CMAT* C) {
   one_zero.im = 0;
   zero_zero.re = 0;
   zero_zero.im = 0;
-  cgemm(NoTran, NoTran, one_zero, A, B, zero_zero, C);
+  gemm_cmat(NoTran, NoTran, one_zero, A, B, zero_zero, C);
 }

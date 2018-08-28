@@ -41,10 +41,6 @@
  * By adjusting argument, row or column operation is available.
  * */
 
-/*fill every elements of matrix as v*/
-void fill(MAT* mat, DTYPE v);
-void cfill(CMAT* mat, DTYPE vr, DTYPE vi);
-
 #if USE_CUDA
 __global__ void cu_fill(DTYPE*, UINT, DTYPE, UINT);
 __global__ void cu_cfill(CTYPE*, UINT, DTYPE, DTYPE, UINT);
@@ -144,6 +140,14 @@ CTYPE cget_1d(CMAT* mat, UINT d0);
 CTYPE cget_2d(CMAT* mat, UINT d0, UINT d1);
 CTYPE cget_3d(CMAT* mat, UINT d0, UINT d1, UINT d2);
 
+/*fill every elements of matrix as v*/
+void fill(MAT* mat, DTYPE v);
+void fill_inc(UINT N, DTYPE*X, ITER incx, DTYPE v);
+
+void cfill(CMAT* mat, CTYPE v);
+void cfill_inc(UINT N, CTYPE*X, ITER incx, CTYPE v);
+
+
 /* Extract sub-matrix elements from mat by given range
  * This function doesn't allocated submat
  * 'submat' must be allocated
@@ -203,9 +207,9 @@ MAT* mpsubmat_3d(MAT* src, ITER s0, ITER e0, ITER s1, ITER e1, ITER s2,
 #define mem_csubmat(...)                                                \
   mem_csubmat_load_((__VA_ARGS__, mem_csubmat_3d, _, mem_csubmat_2d, _, \
                      mem_csubmat_1d)(__VA_ARGS__))
-CMAT* mem_csubmat_1d(CMAT* src, ITER s0, ITER e0);
-CMAT* mem_csubmat_2d(CMAT* src, ITER s0, ITER e0, ITER s1, ITER e1);
-CMAT* mem_csubmat_3d(CMAT* src, ITER s0, ITER e0, ITER s1, ITER e1, ITER s2,
+CMAT* mpcsubmat_1d(CMAT* src, ITER s0, ITER e0);
+CMAT* mpcsubmat_2d(CMAT* src, ITER s0, ITER e0, ITER s1, ITER e1);
+CMAT* mpcsubmat_3d(CMAT* src, ITER s0, ITER e0, ITER s1, ITER e1, ITER s2,
                      ITER e2);
 
 /**** allocate DIM

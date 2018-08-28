@@ -141,10 +141,10 @@ void run_test(int heat, int print_flag) {
 	};
 
   /* SETTING */
-	int mat_size = 1024, mat_batch = 4;
+	int mat_size = 256, mat_batch = 4;
   int broad_alpha = 1;
 	int broad_beta = 4;
-	int broad_gamma = 1024;
+	int broad_gamma = 256;
 
 	char temp = 0;
 
@@ -156,7 +156,7 @@ void run_test(int heat, int print_flag) {
 	if (heat == 1){
 		preheat();
 		printf("\n # Preparing Cache\n");
-		run_test(0, 0, 0);
+		run_test(0, 0);
 		printf("\n Cache prepared.\n");
 	}
 
@@ -238,7 +238,6 @@ void run_test(int heat, int print_flag) {
 	ans_cbroad[3] = czeros(broad_gamma, broad_gamma, broad_alpha);
 
 
-  /* SETTING */
 
 	//set A
 	sprintf(ans_path, "../test_data/d_%d_%d_%d.bin", A->d0, A->d1, A->d2);
@@ -307,14 +306,14 @@ void run_test(int heat, int print_flag) {
 	}
 
 
-	A_mul = zeros(1, mat_size, mat_batch);
+	A_mul = zeros(mat_size, mat_size, mat_batch);
 	B_mul = zeros(mat_size, mat_size, mat_batch);
-	C_mul = zeros(1, mat_size, mat_batch);
+	C_mul = zeros(mat_size, mat_size, mat_batch);
 	sprintf(ans_path, "../test_data/d_%d_%d_%d.bin", A_mul->d0, A_mul->d1, A_mul->d2);
 	read_mat(ans_path, A_mul);
 	sprintf(ans_path, "../test_data/d_%d_%d_%d.bin", B_mul->d0, B_mul->d1, B_mul->d2);
 	read_mat(ans_path, B_mul);
-	ans_mul = zeros(1, mat_size, mat_batch);
+	ans_mul = zeros(mat_size, mat_size, mat_batch);
 
 	sprintf(ans_path, "../test_ans/d_%d_%d_%d_Gemm.bin", ans_mul->d0, ans_mul->d1, ans_mul->d2);
 	read_mat(ans_path, ans_mul);
@@ -323,14 +322,14 @@ void run_test(int heat, int print_flag) {
 	}
 
 
-	cA_mul = czeros(1, mat_size, mat_batch);
+	cA_mul = czeros(mat_size, mat_size, mat_batch);
 	cB_mul = czeros(mat_size, mat_size, mat_batch);
-	cC_mul = czeros(1, mat_size, mat_batch);
+	cC_mul = czeros(mat_size, mat_size, mat_batch);
 	sprintf(ans_path, "../test_data/c_%d_%d_%d.bin", cA_mul->d0, cA_mul->d1, cA_mul->d2);
 	read_cmat(ans_path, cA_mul);
 	sprintf(ans_path, "../test_data/c_%d_%d_%d.bin", cB_mul->d0, cB_mul->d1, cB_mul->d2);
 	read_cmat(ans_path, cB_mul);
-	ans_cmul = czeros(1, mat_size, mat_batch);
+	ans_cmul = czeros(mat_size, mat_size, mat_batch);
 
 	sprintf(ans_path, "../test_ans/c_%d_%d_%d_cGemm.bin", ans_cmul->d0, ans_cmul->d1, ans_cmul->d2);
 	read_cmat(ans_path, ans_cmul);
@@ -956,10 +955,10 @@ void init_list() {
 	func_list[27].param_cnt = 2;
 	strcpy(func_list[27].name, "cReshape");
 
-	func_list[28].fp = gemm;
+	func_list[28].fp = gemm_mat;
 	func_list[28].param_cnt = 7;
 	strcpy(func_list[28].name, "Gemm");
-	func_list[29].fp = cgemm;
+	func_list[29].fp = gemm_cmat;
 	func_list[29].param_cnt = 7;
 	strcpy(func_list[29].name, "cGemm");
 
@@ -1015,31 +1014,32 @@ void init_list() {
 	func_list[func_list_size - 7].param_cnt = 2;
 	strcpy(func_list[func_list_size - 7].name, "cPow cMat");
 
-	func_list[func_list_size - 6].fp = add;
+	func_list[func_list_size - 6].fp = add_mat;
 	func_list[func_list_size - 6].param_cnt = 2;
 	strcpy(func_list[func_list_size - 6].name, "Add");
-	func_list[func_list_size - 5].fp = cadd;
+	func_list[func_list_size - 5].fp = add_cmat;
 	func_list[func_list_size - 5].param_cnt = 2;
 	strcpy(func_list[func_list_size - 5].name, "cAdd");
-	func_list[func_list_size - 4].fp = uadd;
+	func_list[func_list_size - 4].fp = cadd_cmat;
 	func_list[func_list_size - 4].param_cnt = 2;
 	strcpy(func_list[func_list_size - 4].name, "uAdd");
 
-	func_list[func_list_size - 3].fp = scal;
+	func_list[func_list_size - 3].fp = scal_mat;
 	func_list[func_list_size - 3].param_cnt = 2;
 	strcpy(func_list[func_list_size - 3].name, "Scale");
-	func_list[func_list_size - 2].fp = cscal;
+	func_list[func_list_size - 2].fp = scal_cmat;
 	func_list[func_list_size - 2].param_cnt = 2;
 	strcpy(func_list[func_list_size - 2].name, "cScale");
-	func_list[func_list_size - 1].fp = uscal;
+	func_list[func_list_size - 1].fp = cscal_cmat;
 	func_list[func_list_size - 1].param_cnt = 2;
 	strcpy(func_list[func_list_size - 1].name, "uScale");
 }
 
 void read_ans(int is_ctype, char *func_name, char *ans_name, void *data_d, void *data_c, void **result_mat){
 
-	char ans_dtype[32] = "d_1024_1024_4_.bin";
-	char ans_ctype[32] = "c_1024_1024_4_.bin";
+  //SETTING
+	char ans_dtype[32] = "d_256_256_4_.bin";
+	char ans_ctype[32] = "c_256_256_4_.bin";
 
 	if (is_ctype == 0) {
 		append_post(ans_dtype, func_name, ans_name);

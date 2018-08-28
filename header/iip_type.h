@@ -36,6 +36,18 @@
 * If DTYPE = double ->  set NTYPE = 1
 * */
 #define NTYPE 1
+
+/* When USE_OPENMP is ON, we use schedule(dynamic,CHUNK_SIZE) ...
+ * CHUNK_SIZE means the number of iterations that each thread would perform at once.
+ * the number of CHUNK_SIZE affects to performance.
+ * 
+ * Depending on CPU and data size, optimal number of CHUNK_SIZE varies.
+ * 
+ * see https://github.com/gogyzzz/iip_sph_pp/wiki/Performance-Comparision
+ * for case comparision.
+ * */
+#define CHUNK_SIZE 128
+
 /************************************
 *********************************** */
 
@@ -62,7 +74,6 @@
 #define CTran 113
 #endif
 
-#define CHUNK_SIZE 128
 
 /**** LIBRARY SETTING ****/
 
@@ -313,6 +324,14 @@ __func__, A->d, B->d);
       ASSERT(0, str_assert)                                  \
     }                                                        \
   }
+
+#define ASSERT_FILE_SIZE(read,expect)                                   \
+  {                                                                     \
+    if( (read) != (expect)){                                            \
+      sprintf(str_assert, "File size is different from expactation.\n");   \
+      ASSERT(0,str_assert)                                              \
+    }                                                                   \
+  }                                                                     
 
 /*****************************
  **** MEMORY MANAGER *********

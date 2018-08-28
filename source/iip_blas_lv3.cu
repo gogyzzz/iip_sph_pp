@@ -45,7 +45,7 @@
  **		                 	   	''    rows   when CblasColMajor
 */
 
-void gemm(cublasOperation_t transA,cublasOperation_t transB, DTYPE alpha, MAT*A,MAT*B, DTYPE beta, MAT*C)
+void gemm_mat(cublasOperation_t transA,cublasOperation_t transB, DTYPE alpha, MAT*A,MAT*B, DTYPE beta, MAT*C)
 {
 
 UINT m,n,k;
@@ -100,7 +100,7 @@ if((transA == CTran)||(transB == CTran ) )
 }
 
 
-void cgemm(cublasOperation_t transA,cublasOperation_t transB, CTYPE alpha, CMAT*A,CMAT*B, CTYPE beta, CMAT*C)
+void gemm_cmat(cublasOperation_t transA,cublasOperation_t transB, CTYPE alpha, CMAT*A,CMAT*B, CTYPE beta, CMAT*C)
 {
 
 UINT m,n,k;

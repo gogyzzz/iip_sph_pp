@@ -13,7 +13,7 @@
 
 /****  gemv ****/
 
-void gemv(char transA, DTYPE alpha, MAT *A, MAT *X, DTYPE beta, MAT *Y) {
+void gemv_mat(char transA, DTYPE alpha, MAT *A, MAT *X, DTYPE beta, MAT *Y) {
   UINT m, n, lda;
 #if DEBUG
   printf("%s\n", __func__);
@@ -89,7 +89,7 @@ void omp_gemv(char tranA, UINT m, UINT n, DTYPE alpha, DTYPE *A, UINT lda,
   }
 }
 
-void cgemv(char transA, CTYPE alpha, CMAT *A, CMAT *X, CTYPE beta, CMAT *Y) {
+void gemv_cmat(char transA, CTYPE alpha, CMAT *A, CMAT *X, CTYPE beta, CMAT *Y) {
   UINT m, n, lda;
 #if DEBUG
   printf("%s\n", __func__);

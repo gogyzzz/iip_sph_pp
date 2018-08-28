@@ -7,6 +7,7 @@ file data sequence
 : 1 2 5 6 3 4 7 8
 %}
 function write_cmat(filename,mat)
+
 mat_real = real(mat);
 mat_imag = imag(mat);
 [d0,d1,d2] = size(mat);
@@ -21,6 +22,7 @@ for i = 1:d2
         newrow = newrow + 2;
     end
 end
+
 fileID = fopen(filename,'w');
 fwrite(fileID, out_mat, 'double');
 fclose(fileID);
