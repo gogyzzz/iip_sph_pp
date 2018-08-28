@@ -93,6 +93,9 @@
 
 #if USE_MKL
 #include "mkl.h"
+
+#define mkl_handle DFTI_DESCRIPTOR_HANDLE
+
 #endif
 
 #if USE_CUDA
