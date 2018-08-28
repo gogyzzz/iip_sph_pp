@@ -16,17 +16,25 @@
 #include "iip_type.h"
 
 /**** MKL HFFT ****/
+/* N = in->d0
+ * out->d0 = N/2 + 1
+ *
+ * */
 mkl_handle* fft_handle(UINT N);
 void mkl_hfft(mkl_handle*handle,MAT*in,CMAT*out);
 void mkl_hfft_col(mkl_handle*handle,DTYPE*in,CTYPE*out);
 
 /**** MKL HIFFT ****/
+/* N : out->d0
+ * in ->d0 = N/2 + 1
+ * */
 mkl_handle* ifft_handle(UINT N);
 void mkl_hifft(mkl_handle*handle,CMAT*in,MAT*out);
 void mkl_hifft_col(mkl_handle*handle,CTYPE*in,DTYPE*out);
 
 /**** MKL FFT & IFFT   ****/
-
+/* use same handle with hfft.
+ * */
 void mkl_fft(mkl_handle*handle,MAT*in,CMAT*out);
 void mkl_ifft(mkl_handle*handle,CMAT*in,MAT*out);
 
@@ -44,7 +52,7 @@ void free_handle(mkl_handle*handle);
  * perform fft on first dimension(d0).
  * d0 must be power of 2
  * Every fft function uses memory pool.
- * Be sure initialize memory pool by init(<size>);
+ * Be sure to initialize memory pool by init(<size>);
  * */
 void fft(MAT*in,CMAT*out);
 /*
