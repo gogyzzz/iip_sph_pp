@@ -12,11 +12,21 @@
 
 #include "iip_fft.h"
 
-mkl_handle* create_handle(UINT N){
+/**** MKL HFFT ****/
+/*
+ * in  = real    - d0 = N
+ * out = complex - d0 = N/2 + 1
+ * hfft_handle(in->d0);
+ *
+ * */
+mkl_handle* fft_handle(UINT N){
 long status;
 mkl_handle* handle;
 
- handle = (mkl_handle*)malloc(sizeof(mkl_handle));
+#if DEBUG
+ printf("%s\n",__func__); 
+#endif
+handle = (mkl_handle*)malloc(sizeof(mkl_handle));
 #if NTYPE == 0
 status = DftiCreateDescriptor( handle, DFTI_SINGLE,
           DFTI_REAL, 1, N);
@@ -33,13 +43,113 @@ status = DftiCommitDescriptor( *handle );
 return handle;
 }
 
-void mkl_fft(mkl_handle*handle,DTYPE*in,CTYPE*out){
+void mkl_hfft(mkl_handle*handle,MAT*in,CMAT*out){
+  ITER i,j;
+  UINT d2 = in->d2;
+  UINT d1 = in->d1;
+  UINT d0 = in->d0;
+  UINT o_d0 = out->d0;
+#if DEBUG
+ printf("%s\n",__func__); 
+#endif
+  for(i=0;i<d2;i++){
+    for(j=0;j<d1;j++){
+      mkl_hfft_col(handle,&(in->data[i*d1*d0 + j*d0]),&(out->data[i*d1*o_d0 + j*o_d0]));
+    }
+  }
+}
+
+void mkl_hfft_col(mkl_handle*handle,DTYPE*in,CTYPE*out){
+
 long status;
 status = DftiComputeForward( *handle, in, out);
 }
 
+/**** MKL HIFFT  ****/
+/*
+ * in  : complex - d0 = N/2 + 1
+ * out : real    - d0 = N
+ *
+ * hifft_handle(out->d0)
+ * */
+mkl_handle* ifft_handle(UINT N){
+long status;
+mkl_handle* handle;
+
+#if DEBUG
+ printf("%s\n",__func__); 
+#endif
+handle = (mkl_handle*)malloc(sizeof(mkl_handle));
+#if NTYPE == 0
+status = DftiCreateDescriptor( handle, DFTI_SINGLE,
+          DFTI_REAL, 1, N);
+#elif NTYPE == 1
+status = DftiCreateDescriptor( handle, DFTI_DOUBLE,
+          DFTI_REAL, 1, N);
+#endif
+status = DftiSetValue( *handle, DFTI_PLACEMENT, DFTI_NOT_INPLACE);
+status = DftiSetValue(*handle, DFTI_BACKWARD_SCALE,1.0 / N);
+status = DftiCommitDescriptor( *handle );
+
+return handle;
+}
+
+void mkl_hifft(mkl_handle*handle,CMAT*in,MAT*out){
+  ITER i,j;
+  UINT d2 = in->d2;
+  UINT d1 = in->d1;
+  UINT d0 = in->d0;
+  UINT o_d0 = out->d0;
+#if DEBUG
+ printf("%s\n",__func__); 
+#endif
+  for(i=0;i<d2;i++){
+    for(j=0;j<d1;j++){
+      mkl_hifft_col(handle, &(in->data[i*d1*d0 + j*d0]), &(out->data[i*d1*o_d0 + j*o_d0]));
+    }
+  }
+}
+
+void mkl_hifft_col(mkl_handle*handle,CTYPE*in,DTYPE*out){
+
+long status;
+status = DftiComputeBackward( *handle, in, out);
+}
+
+/**** MKL FFT****/
+
+void mkl_fft(mkl_handle*handle,MAT*in,CMAT*out){
+ ITER i,j,k;
+ UINT d0,d1,d2;
+
+ d2 = in->d2;
+ d1 = in->d1;
+ d0 = in->d0;
+
+ mkl_hfft(handle,in,out); 
+ for(k=0;k<d2;k++){
+   for(j=0;j<d1;j++){
+     for(i=d0/2 +1;i<d0;i++){
+      out->data[k*d0*d1 + j*d0 + i].re =  out->data[ k*d0*d1 + j*d0 + d0-i].re;
+      out->data[ k*d0*d1 + j*d0 + i].im =  out->data[ k*d0*d1 + j*d0 +  d0-i].im;
+    }
+  }
+ }
+}
+
+
+void mkl_ifft(mkl_handle*handle,CMAT*in,MAT*out){
+  mkl_hifft(handle,in,out);
+
+}
+
+/**** MKL misc ****/
 void free_handle(mkl_handle*handle){
-DftiFreeDescriptor(handle);
+#if DEBUG
+ printf("%s\n",__func__); 
+#endif
+  DftiFreeDescriptor(handle);
+  free(handle);
 }
 
 /**** Fast Fourier Transform ****/

@@ -208,7 +208,7 @@ MAT *wav_buf2mat(WAV_BUF *buf) {
   return mat;
 }
 
-MAT *wav2mat(WAV *wav) { return wav_buf2MAT(&(wav->buffer)); }
+MAT *wav2mat(WAV *wav) { return wav_buf2mat(&(wav->buffer)); }
 
 WAV *mat2wav(MAT *mat, UINT sample_rate) {
 #if DEBUG
