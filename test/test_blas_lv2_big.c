@@ -15,7 +15,7 @@ int main() {
   fill(X, 1);
   fill(Y, -1);
 
-  gemv(NoTran, 10, A, X, 3, Y);
+  gemv_mat(NoTran, 10, A, X, 3, Y);
 
   free_mat(A);
   free_mat(X);
@@ -31,7 +31,7 @@ int main() {
   fill(TX, 1);
   fill(TY, -1);
 
-  gemv(Tran, 10, TA, TX, 3, TY);
+  gemv_mat(Tran, 10, TA, TX, 3, TY);
 
   free_mat(TA);
   free_mat(TX);

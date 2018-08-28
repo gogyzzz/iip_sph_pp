@@ -51,7 +51,8 @@ set(MAIN_SRC
 	# EXAMPLE
   #	test/test_matlab.c	
   # test/test_wav.c
-   test/test_fft.c
+  # test/test_fft.c
+   test/test_mkl_fft.c
 	)
 	
 list(APPEND HD
@@ -67,7 +68,6 @@ list(APPEND CF
 	)
 list(APPEND LF
 	# my link option
-  fftw3
 	)
 list(APPEND CD
 	# my pre-process defines
@@ -120,7 +120,9 @@ target_include_directories(${TARGET_NAME}
 #### 6. check options ####
 # This section checks whether your option is available or not. 
 
-#if(USE_BLAS)
+# if(USE_BLAS)
+# Need to you MKL in Linux this check section
+# is not used for now.
 if(NOT)
 # MKL also can be found by find_package(BLAS)
 # But, MKL requires specific compile & link option.
@@ -153,7 +155,7 @@ message(STATUS "USE_OPEN  : " ${USE_OPEN})
 message(STATUS "USE_MKL   : " ${USE_MKL})
 message(STATUS "USE_OPENMP : " ${USE_OPENMP})
 
-#### 7. defines and Libraries  ####
+#### 7. Library Setting  ####
 # This section sets pre-processing defines and flags specified by environment
 
 #GET OS
@@ -212,6 +214,7 @@ if(USE_OPEN OR USE_MKL )
  # OpenMP threading
  # Intel(R) (libmop5)
 
+if(UNIX)
   list(APPEND LF
          -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl
          # -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_intel_lp64.a ${MKLROOT}/lib/intel64/libmkl_intel_thread.a ${MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -liomp5 -lpthread -lm -ldl
@@ -220,7 +223,7 @@ if(USE_OPEN OR USE_MKL )
   list(APPEND CF
      -m64 -I${MKLROOT}/include
     )
-
+endif(UNIX)
   list(APPEND CD  
 	    USE_MKL=1
       )

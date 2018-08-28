@@ -23,7 +23,7 @@ int main() {
   }
   printf("JUST %d batch gemm (%d,%d) : ", BATCH_SIZE, MAT_SIZE, MAT_SIZE);
   stopwatch(0);
-  for (i = 0; i < BATCH_SIZE; i++) gemm(NoTran, NoTran, 1, A[i], B[i], 0, C[i]);
+  for (i = 0; i < BATCH_SIZE; i++) gemm_mat(NoTran, NoTran, 1, A[i], B[i], 0, C[i]);
   stopwatch(1);
 
   for (i = 0; i < BATCH_SIZE; i++) {
@@ -35,7 +35,7 @@ int main() {
   printf("OMP  %d batch gemm (%d,%d) : ", BATCH_SIZE, MAT_SIZE, MAT_SIZE);
   stopwatch(0);
 #pragma omp parallel for shared(A, B, C) private(i)
-  for (i = 0; i < BATCH_SIZE; i++) gemm(NoTran, NoTran, 1, A[i], B[i], 0, C[i]);
+  for (i = 0; i < BATCH_SIZE; i++) gemm_mat(NoTran, NoTran, 1, A[i], B[i], 0, C[i]);
   stopwatch(1);
 
   for (i = 0; i < BATCH_SIZE; i++) {

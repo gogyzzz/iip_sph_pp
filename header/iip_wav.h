@@ -52,7 +52,7 @@ void write_wav(WAV* wav, char* file_path);
 MAT* wav2mat(WAV* wav);
 
 /*return MAT struct with wav_buf*/
-MAT* wav_buf2MAT(WAV_BUF* buf);
+MAT* wav_buf2mat(WAV_BUF* buf);
 
 /*return WAV struct mat as wav_buf with given sample_rate*/
 WAV* mat2wav(MAT* mat, UINT sample_rate);

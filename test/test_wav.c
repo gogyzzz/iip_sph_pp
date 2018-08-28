@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
   print_wav(wav);
   mat = wav2mat(wav);
 
-  scal(10., mat);
+  scal_mat(10., mat);
 
   m_wav = mat2wav(mat, wav->sample_rate);
   print_wav(m_wav);
