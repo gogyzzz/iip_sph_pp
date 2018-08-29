@@ -12,6 +12,8 @@
 
 #include "iip_fft.h"
 
+#if USE_MKL
+
 /**** MKL HFFT ****/
 /*
  * in  = real    - d0 = N
@@ -151,6 +153,8 @@ void free_handle(mkl_handle*handle){
   DftiFreeDescriptor(handle);
   free(handle);
 }
+
+#endif
 
 /**** Fast Fourier Transform ****/
 void fft(MAT*in,CMAT*out){

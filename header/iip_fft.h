@@ -15,6 +15,8 @@
 
 #include "iip_type.h"
 
+#if USE_MKL
+
 /**** MKL HFFT ****/
 /* N = in->d0
  * out->d0 = N/2 + 1
@@ -66,6 +68,8 @@ void mkl_fft(mkl_handle*handle,MAT*in,CMAT*out);
 void mkl_ifft(mkl_handle*handle,CMAT*in,MAT*out);
 
 void free_handle(mkl_handle*handle);
+
+#endif
 
 /*
     Ooura's FFt - fft4g.c
