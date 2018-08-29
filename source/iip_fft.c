@@ -153,7 +153,6 @@ void free_handle(mkl_handle*handle){
 }
 
 /**** Fast Fourier Transform ****/
-
 void fft(MAT*in,CMAT*out){
   UINT N = in->d0;
   ITER i,j;
@@ -162,12 +161,10 @@ void fft(MAT*in,CMAT*out){
  ASSERT(in->d2 == out->d2?1:0,"d2 must be eqaul.\n")
  
   for(i=0;i<in->d2;i++){
-#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
     for(j=0;j<in->d1; j++){
         ooura_fft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
     }
   }
-
 }
 
 void ooura_fft_col(UINT N,DTYPE*in,CTYPE*out){
@@ -215,7 +212,6 @@ ITER i,j;
  ASSERT(in->d2 == out->d2?1:0,"d2 must be eqaul.\n")
 
   for(i=0;i<in->d2;i++){
-#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
     for(j=0;j<in->d1; j++){
         ooura_ifft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
     }
@@ -267,7 +263,6 @@ ITER i,j;
  ASSERT(in->d2 == out->d2?1:0,"d2 must be eqaul.\n")
 
   for(i=0;i<in->d2;i++){
-#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
     for(j=0;j<in->d1; j++){
         ooura_cfft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
     }
@@ -313,7 +308,6 @@ ITER i,j;
  ASSERT(in->d2 == out->d2?1:0,"d2 must be eqaul.\n")
 
   for(i=0;i<in->d2;i++){
-#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
     for(j=0;j<in->d1; j++){
         ooura_cifft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(in->d0*in->d1) + j*in->d0 ]));
     }
@@ -365,7 +359,6 @@ void hfft(MAT*in,CMAT*out){
  ASSERT(in->d2 == out->d2?1:0,"d2 must be eqaul.\n")
  
  for(i=0;i<in->d2;i++){
-#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
     for(j=0;j<in->d1; j++){
         ooura_hfft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(out->d0*out->d1) + j*out->d0 ]));
     }
@@ -413,7 +406,6 @@ ITER i,j;
  ASSERT(in->d2 == out->d2?1:0,"d2 must be eqaul.\n")
 
   for(i=0;i<in->d2;i++){
-#pragma omp parallel for schedule(dynamic,CHUNK_SIZE) shared(in,out,i) private(j) 
     for(j=0;j<in->d1; j++){
         ooura_hifft_col(N, &(in->data[i*(in->d0*in->d1) + j*in->d0]),&(out->data[i*(out->d0*out->d1) + j*out->d0 ]));
     }
