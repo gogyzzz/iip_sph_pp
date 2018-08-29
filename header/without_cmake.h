@@ -1,7 +1,15 @@
-/* This header is for
- * when you are not using CMAKE.
+/*************************************
+ * Header for building without CMAKE *
+ *************************************/
+
+/* You have to
+ * 1. set defines.
+ * 2. add header folder to project path
+ *    or keep all sources and headers together.
+ * 3. link libraries you use manually.
  * */
 
+/**** Defines ****/
 /* set 1 for your OS
  * MAC is considered as UNIX
  */
@@ -16,10 +24,4 @@
  * */
 #define USE_OPEN  0
 #define USE_MKL   0
-
-/* include this header at iip_type.h 
- *
- * NOTE)
- * you need to link libraries manually.
- * */
 
