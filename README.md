@@ -3,20 +3,20 @@
 C library for speech preprocessing.
 
 ## Target Platform
-* Ubuntu 16.04 x64 (or higher)
+* Ubuntu 16.04 x64
 * Windows 10 x64
 * Mac high sierra 10.13.5
-* Embedded board(raspberry pi, zynx board etc)
+* Embeded board(razberry pie, zynx board etc)
 
 ## Requirement
 * cmake 3.5 or higher  
-* (OPTION) OpenBLAS[Linux]  
-* (OPTION) IntelMKL[Windows]  
+* (OPTION) OpenBLAS[Recommended in Linux] 
+* (OPTION) IntelMKL[Recommended in Windows] 
 
-## Notice
+## Notaion
 * Set Options of CMAKE properly for you Envrionment
-* We don't provide backend library, we assume your Environment contains backend library
-* If you want to use memory pool, you need to call 
+* We don't provide Backend library, we assume your Environment contains Backend library
+* If you want to use memory pool, you need to call  |  [Functions with memory pool](https://github.com/gogyzzz/iip_sph_pp/wiki/Functions-which-use-memory-pool) 
 ```C
 init(); //begining of your main()
 finit(); //at the end of your main()
@@ -45,4 +45,3 @@ finit(); //at the end of your main()
  You can obtain one at http://mozilla.org/MPL/2.0/.
 ===========================================================
 ```
-
