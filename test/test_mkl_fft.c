@@ -5,18 +5,15 @@
 int main()
 {
  mkl_handle* hand,ihand;
- MAT*A,*B;
- CMAT*CA,*CB;
- ITER i;
+ MAT*A;
+ CMAT*CA;
 
  init(1024);
  hand = fft_handle(N);
 
  ihand = ifft_handle(N);
  A = zeros(N);
- B = zeros(N);
  CA = czeros(N);
- CB = czeros(N);
 
  randn(A,0.,100.);
  print_mat(A);

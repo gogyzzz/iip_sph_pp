@@ -15,10 +15,27 @@
 
 #include "iip_type.h"
 
+#if USE_MKL
+
 /**** MKL HFFT ****/
 /* N = in->d0
  * out->d0 = N/2 + 1
- *
+ */
+/* example)
+ * mkl_handle* my_handle;
+ * MAT*A;
+ * CMAT*C;
+ * A = alloc_mat(1024);
+ * C = alloc_cmat(1024/2 + 1);
+ * read_mat("some_file",A);
+ * my_handle = fft_handle(1024);
+ * mkl_hfft(A,C); 
+ * free_handle(my_handle);
+ * */
+/* Note)
+ * If you want to parallelize mkl_fft.
+ * you need to create multiple handles.
+ * use each handle for each mkl_fft.
  * */
 mkl_handle* fft_handle(UINT N);
 void mkl_hfft(mkl_handle*handle,MAT*in,CMAT*out);
@@ -35,10 +52,24 @@ void mkl_hifft_col(mkl_handle*handle,CTYPE*in,DTYPE*out);
 /**** MKL FFT & IFFT   ****/
 /* use same handle with hfft.
  * */
+/* example)
+ * mkl_handle* my_handle;
+ * MAT*A;
+ * CMAT*C;
+ * A = alloc_mat(1024);
+ * C = alloc_cmat(1024);
+ * read_mat("some_file",A);
+ * my_handle = fft_handle(1024);
+ * mkl_fft(A,C); 
+ * free_handle(my_handle);
+ * */
+
 void mkl_fft(mkl_handle*handle,MAT*in,CMAT*out);
 void mkl_ifft(mkl_handle*handle,CMAT*in,MAT*out);
 
 void free_handle(mkl_handle*handle);
+
+#endif
 
 /*
     Ooura's FFt - fft4g.c

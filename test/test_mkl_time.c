@@ -1,7 +1,7 @@
 #include "mother.h"
 #include "fftw3.h"
 
-#define loop 1000
+#define loop 100
 
 int main(){
  mkl_handle* handle;
@@ -35,7 +35,7 @@ int main(){
    scal_mat(10.,in); 
  }
  read_mat(file,in);
- 
+ /*
  stopwatch(0);
  handle = fft_handle(in->d0);
  t = stopwatch(1);
@@ -49,7 +49,8 @@ int main(){
    t+=stopwatch(1);
  }
  printf("%6lf |",(double)t/(loop*5));
-//  if(N==32){printf("== mkl ==\n");print_cmat(out);}
+*/
+ //  if(N==32){printf("== mkl ==\n");print_cmat(out);}
 
   stopwatch(0);
 	p = fftw_plan_dft_r2c_1d(N, in->data, out->data,0);

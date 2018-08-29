@@ -37,7 +37,7 @@ set(HD)
 
 ## WIP ##
 option(USE_OPENBLAS    "Using OpenBLAS"   OFF)
-option(USE_MKL         "Using Intel MKL"  ON)
+option(USE_MKL         "Using Intel MKL"  OFF)
 
 option(USE_OPENMP      "Using OpenMP"     OFF)
 
@@ -50,10 +50,8 @@ set(MAIN_SRC
 	# root directory is location of CMakeLists.txt 
 	# EXAMPLE
   #	test/test_matlab.c	
-  # test/test_wav.c
-  # test/test_fft.c
-   test/test_mkl_fft.c
-	)
+  # test/test_mkl_time.c
+  )
 	
 list(APPEND HD
     # Add additional header folders here.
@@ -279,7 +277,7 @@ if(WIN32 AND MSVC)
       # -O2 : maximize performance as long as not increasing size of executable
       # -O1 : minimize compile time and others are secondary
       # -Os : minimize size of executable
-       -O3
+      # -O3
       -Wextra
       )
   endif(WIN32 AND MSVC)
