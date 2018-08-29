@@ -24,7 +24,6 @@
 mkl_handle* fft_handle(UINT N){
 long status;
 mkl_handle* handle;
-
 #if DEBUG
  printf("%s\n",__func__); 
 #endif

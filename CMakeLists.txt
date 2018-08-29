@@ -51,7 +51,6 @@ set(MAIN_SRC
 	# EXAMPLE
   #	test/test_matlab.c	
   # test/test_mkl_time.c
-	
   )
 	
 list(APPEND HD
@@ -278,7 +277,7 @@ if(WIN32 AND MSVC)
       # -O2 : maximize performance as long as not increasing size of executable
       # -O1 : minimize compile time and others are secondary
       # -Os : minimize size of executable
-       -O3
+      # -O3
       -Wextra
       )
   endif(WIN32 AND MSVC)
