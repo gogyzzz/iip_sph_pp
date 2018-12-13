@@ -445,11 +445,11 @@ void submat_3d(MAT *mat, MAT *submat, ITER d0_st, ITER d0_ed, ITER d1_st,
   }
 
   if (d0_st == -1) d0_st = 0;
-  if (d0_ed == -1) d0_ed = mat->d0 +1;
+  if (d0_ed == -1) d0_ed = mat->d0;
   if (d1_st == -1) d1_st = 0;
-  if (d1_ed == -1) d1_ed = mat->d1 +1;
+  if (d1_ed == -1) d1_ed = mat->d1;
   if (d2_st == -1) d2_st = 0;
-  if (d2_ed == -1) d2_ed = mat->d2 +1;
+  if (d2_ed == -1) d2_ed = mat->d2;
 
   ASSERT((d0_ed - d0_st) == submat->d0 &&
              (d1_ed - d1_st) == submat->d1 &&
@@ -495,11 +495,11 @@ void csubmat_3d(CMAT *mat, CMAT *submat, ITER d0_st, ITER d0_ed, ITER d1_st,
     return;
   }
   if (d0_st == -1) d0_st = 0;
-  if (d0_ed == -1) d0_ed = mat->d0 + 1;
+  if (d0_ed == -1) d0_ed = mat->d0;
   if (d1_st == -1) d1_st = 0;
-  if (d1_ed == -1) d1_ed = mat->d1 + 1;
+  if (d1_ed == -1) d1_ed = mat->d1;
   if (d2_st == -1) d2_st = 0;
-  if (d2_ed == -1) d2_ed = mat->d2 + 1;
+  if (d2_ed == -1) d2_ed = mat->d2;
 
   ASSERT((d0_ed - d0_st) == submat->d0 &&
              (d1_ed - d1_st) == submat->d1 &&
