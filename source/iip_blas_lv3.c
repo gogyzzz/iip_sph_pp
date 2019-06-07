@@ -30,6 +30,8 @@
  **     		 	 ii) X**T     ''        = CblasTrans
  **
  **     			iii) X**H     ''        = CblasConjTrans
+ ** 
+ **                            iv) X**C     ''        = CblasConjNoTrans
  **
  **      m  = the number of rows of op(A)
  **      n  = the number of columns of op(B) and C
